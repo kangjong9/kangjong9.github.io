@@ -102,7 +102,45 @@ if (dialog) {
 // Category membership and display order were supplied by the owner.
 function initProjectFolders(content) {
   const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작'};
-  const projects = {"fun": [["코딩놀이", "coding.svg"], ["귀염뽀짝 가계부", "ledger.svg"], ["맹맹 다이어트 작전(앱)", "maeng-app.svg"], ["다이어트 저리가(PC)", "diet-pc.svg"], ["유나세리나데", "yuna.svg"]], "network": [["포터블", "portable.svg"], ["현재 홈페이지", "homepage.png"]], "work": [["내역서 마스터", "estimate.svg"], ["AI친구들 전원 참여 회의실", "meeting.svg"]]};
+  const projects = {
+    "fun": [
+      ["코딩놀이", "coding.svg"],
+      ["귀염뽀짝 가계부(PC)", "ledger.svg"],
+      ["맹맹 다이어트 작전(앱)", "maeng-app.svg"],
+      ["찌꺼기 저리가", "cleaner.svg"],
+      ["다이어트 저리가(PC)", "diet-pc.svg"],
+      ["유나세리나데", "yuna.svg"]
+    ],
+    "network": [
+      ["포터블", "portable.svg"],
+      ["현재 홈페이지", "homepage.png"]
+    ],
+    "work": [
+      ["내역서 마스터", "estimate.svg"],
+      ["AI친구들 전원 참여 회의실", "meeting.svg"]
+    ]
+  };
+  const projectDownloads = {
+    "귀염뽀짝 가계부(PC)": {
+      tag: "🌸 PC 가계부 실행파일 (최신본)",
+      links: [
+        { label: "💻 가계부 PC 실행파일 (12.9MB)", url: "./downloads/귀염뽀작_가계부.exe", download: "귀염뽀작_가계부.exe", primary: true }
+      ]
+    },
+    "맹맹 다이어트 작전(앱)": {
+      tag: "🏃‍♀️ 모바일 APK (v2.8 최신본)",
+      links: [
+        { label: "📲 맹맹다이어트 v2.8 APK (1.8MB)", url: "./downloads/MaengDiet_v2.8_GreenLight.apk", download: "MaengDiet_v2.8_GreenLight.apk", primary: true },
+        { label: "📄 설치·사용법 가이드 (PDF)", url: "./downloads/맹맹다이어트_v2.8_설치_및_사용법_완벽가이드.pdf", download: "맹맹다이어트_v2.8_설치_및_사용법_완벽가이드.pdf", primary: false }
+      ]
+    },
+    "찌꺼기 저리가": {
+      tag: "🧹 PC 클리너 실행파일 (최신본)",
+      links: [
+        { label: "💻 찌꺼기저리가 실행파일 (12.5MB)", url: "./downloads/찌꺼기저리가.exe", download: "찌꺼기저리가.exe", primary: true }
+      ]
+    }
+  };
   const root = content.querySelector('.project-root');
   const view = content.querySelector('.project-category-view');
   let selected = null;
@@ -126,6 +164,21 @@ function initProjectFolders(content) {
         const caption = document.createElement('figcaption');
         caption.textContent = name;
         card.append(image, caption);
+        if (projectDownloads[name]) {
+          const actionRow = document.createElement('div');
+          actionRow.className = 'project-download-row';
+          actionRow.style.cssText = 'display:flex; flex-direction:column; gap:5px; margin-top:8px;';
+          projectDownloads[name].links.forEach(item => {
+            const btn = document.createElement('a');
+            btn.href = item.url;
+            btn.download = item.download;
+            btn.textContent = item.label;
+            btn.className = item.primary ? 'project-dl-btn primary' : 'project-dl-btn';
+            btn.style.cssText = 'display:block; padding:7px 10px; font-size:12px; font-weight:800; border-radius:8px; text-decoration:none; text-align:center; ' + (item.primary ? 'background:#38bdf8; color:#0f172a; box-shadow:0 2px 8px rgba(56,189,248,0.3);' : 'background:rgba(255,255,255,0.15); color:var(--ink); border:1px solid var(--edge);');
+            actionRow.appendChild(btn);
+          });
+          card.appendChild(actionRow);
+        }
         return card;
       }));
       root.hidden = true;
