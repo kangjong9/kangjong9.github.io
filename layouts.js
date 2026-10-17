@@ -105,6 +105,7 @@ function initProjectFolders(content) {
   const projects = {
     "fun": [
       ["코딩놀이", "coding.svg"],
+      ["귀염뽀짝 가계부[앱]", "ledger-app.svg"],
       ["귀염뽀짝 가계부(PC)", "ledger.svg"],
       ["맹맹 다이어트 작전(앱)", "maeng-app.svg"],
       ["찌꺼기저리가[PC]", "cleaner.svg"],
@@ -121,6 +122,18 @@ function initProjectFolders(content) {
     ]
   };
   const projectDownloads = {
+    "귀염뽀짝 가계부[앱]": {
+      tag: "🌸 모바일 가계부 APK (v1.0 최신본)",
+      links: [
+        { label: "📲 귀염뽀짝 가계부 APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0.apk", download: "귀염뽀짝가계부_v1.0.apk", primary: true }
+      ]
+    },
+    "귀염뽀짝 가계부(앱)": {
+      tag: "🌸 모바일 가계부 APK (v1.0 최신본)",
+      links: [
+        { label: "📲 귀염뽀짝 가계부 APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0.apk", download: "귀염뽀짝가계부_v1.0.apk", primary: true }
+      ]
+    },
     "귀염뽀짝 가계부(PC)": {
       tag: "🌸 PC 가계부 실행파일 (최신본)",
       links: [
