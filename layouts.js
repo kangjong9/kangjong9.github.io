@@ -171,6 +171,57 @@ async function fetchSharedPosts() {
   return SEED_POSTS;
 }
 
+const ADMIN_VAULT = {
+  salt: '2e6fUK484cPMGXQE6MwaDQ==',
+  cipher: '+aKOA6mcf0HfLR8czdfvGrIb4CH1ZmvyEIXLVn4TEszu7j5AqL0UzA==',
+  tag: 'VHij4glVtwgU0wfsTn5ko6ezrGprl7NF',
+  iterations: 100000
+};
+
+function b64ToBytes(b64) {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+async function unlockAdminVault(inputValue) {
+  if (inputValue.startsWith('ghp_') || inputValue.startsWith('github_pat_')) {
+    await verifyGitHubAdmin(inputValue);
+    return inputValue;
+  }
+  const saltBytes = b64ToBytes(ADMIN_VAULT.salt);
+  const cipherBytes = b64ToBytes(ADMIN_VAULT.cipher);
+  const tagBytes = b64ToBytes(ADMIN_VAULT.tag);
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(inputValue),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt: saltBytes, iterations: ADMIN_VAULT.iterations, hash: 'SHA-256' },
+    keyMaterial,
+    512
+  );
+  const dk = new Uint8Array(bits);
+  let diff = 0;
+  for (let i = 0; i < tagBytes.length; i++) {
+    diff |= (dk[40 + i] ^ tagBytes[i]);
+  }
+  if (diff !== 0) {
+    throw new Error('관리자 비밀번호가 올바르지 않아요. 다시 확인해 주세요.');
+  }
+  const plainBytes = new Uint8Array(cipherBytes.length);
+  for (let i = 0; i < cipherBytes.length; i++) {
+    plainBytes[i] = cipherBytes[i] ^ dk[i];
+  }
+  const token = new TextDecoder().decode(plainBytes);
+  await verifyGitHubAdmin(token);
+  return token;
+}
+
 async function verifyGitHubAdmin(token) {
   const res = await fetch('https://api.github.com/user', {
     headers: {
@@ -178,7 +229,7 @@ async function verifyGitHubAdmin(token) {
       'Authorization': `Bearer ${token}`
     }
   });
-  if (!res.ok) throw new Error('GitHub 인증에 실패했어요. 토큰을 확인해 주세요.');
+  if (!res.ok) throw new Error('GitHub 관리자 인증에 실패했어요.');
   const user = await res.json();
   if (user.login !== OWNER_GITHUB_LOGIN && user.id !== OWNER_GITHUB_ID) {
     throw new Error('주인아저씨(@kangjong9) 계정만 관리자로 로그인할 수 있어요.');
@@ -234,24 +285,25 @@ async function initGuestbook(content, showAdminPrompt = false) {
   let localState = readLocalPosts();
   let busy = false;
 
-  // Build inline admin auth box
+  // Build inline admin password auth box
   const adminBox = document.createElement('div');
   adminBox.className = 'guestbook-admin-box';
   adminBox.hidden = !showAdminPrompt;
   adminBox.style.cssText = 'margin: 10px 0 14px; padding: 12px; border-radius: 10px; border: 1px dashed currentColor; display: grid; gap: 8px;';
   const adminLabel = document.createElement('label');
-  adminLabel.textContent = '주인아저씨(@kangjong9) GitHub 관리자 토큰';
-  adminLabel.style.fontWeight = '700';
+  adminLabel.textContent = '주인아저씨 관리자 비밀번호';
+  adminLabel.style.fontWeight = '800';
   const adminInputRow = document.createElement('div');
   adminInputRow.style.cssText = 'display: flex; gap: 8px; flex-wrap: wrap;';
   const adminInput = document.createElement('input');
   adminInput.type = 'password';
-  adminInput.placeholder = 'ghp_... 토큰 입력';
+  adminInput.placeholder = '관리자 비밀번호 입력';
+  adminInput.autocomplete = 'current-password';
   adminInput.style.cssText = 'flex: 1; min-width: 180px; padding: 8px 10px; border-radius: 8px; border: 1px solid currentColor;';
   const adminConfirmBtn = document.createElement('button');
   adminConfirmBtn.type = 'button';
   adminConfirmBtn.className = 'os-primary';
-  adminConfirmBtn.textContent = '인증 확인';
+  adminConfirmBtn.textContent = '로그인';
   adminInputRow.append(adminInput, adminConfirmBtn);
   adminBox.append(adminLabel, adminInputRow);
   form.before(adminBox);
@@ -274,7 +326,7 @@ async function initGuestbook(content, showAdminPrompt = false) {
     if (admin) {
       form.elements.nickname.value = '주인아저씨';
       form.elements.nickname.readOnly = true;
-      nameHelp.textContent = '✓ 관리자로 작성하고 있어요. (GitHub 저장소에 영구 반영됩니다)';
+      nameHelp.textContent = '✓ 주인아저씨 관리자로 로그인되었어요. (글 작성·삭제가 모두에게 반영됩니다)';
       if (adminLink) adminLink.textContent = '관리자 로그아웃';
       adminBox.hidden = true;
     } else {
@@ -349,24 +401,32 @@ async function initGuestbook(content, showAdminPrompt = false) {
     });
   }
 
-  adminConfirmBtn.addEventListener('click', async () => {
+  async function doAdminLogin() {
     const val = adminInput.value.trim();
-    if (!val) { feedback.textContent = 'GitHub 토큰을 입력해 주세요.'; return; }
+    if (!val) { feedback.textContent = '관리자 비밀번호를 입력해 주세요.'; return; }
     adminConfirmBtn.disabled = true;
-    feedback.textContent = '주인아저씨 계정 확인 중…';
+    feedback.textContent = '주인아저씨 비밀번호 확인 중…';
     try {
-      await verifyGitHubAdmin(val);
+      const unlockedToken = await unlockAdminVault(val);
       admin = true;
-      adminToken = val;
-      setAdminToken(val);
+      adminToken = unlockedToken;
+      setAdminToken(unlockedToken);
       adminInput.value = '';
       applyAdminUI();
       render();
-      feedback.textContent = '✓ 주인아저씨(@kangjong9) 관리자 모드가 활성화되었어요!';
+      feedback.textContent = '✓ 주인아저씨 관리자 모드로 로그인되었어요!';
     } catch (e) {
       feedback.textContent = e.message;
     } finally {
       adminConfirmBtn.disabled = false;
+    }
+  }
+
+  adminConfirmBtn.addEventListener('click', doAdminLogin);
+  adminInput.addEventListener('keydown', event => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      doAdminLogin();
     }
   });
 
