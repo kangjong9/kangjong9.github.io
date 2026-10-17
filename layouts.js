@@ -125,13 +125,13 @@ function initProjectFolders(content) {
     "귀염뽀짝 가계부[앱]": {
       tag: "🌸 모바일 가계부 APK (v1.0 최신본)",
       links: [
-        { label: "📲 귀염뽀짝 가계부 APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0.apk", download: "귀염뽀짝가계부_v1.0.apk", primary: true }
+        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0_Release.apk", download: "귀염뽀짝가계부_v1.0_Release.apk", primary: true }
       ]
     },
     "귀염뽀짝 가계부(앱)": {
       tag: "🌸 모바일 가계부 APK (v1.0 최신본)",
       links: [
-        { label: "📲 귀염뽀짝 가계부 APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0.apk", download: "귀염뽀짝가계부_v1.0.apk", primary: true }
+        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0_Release.apk", download: "귀염뽀짝가계부_v1.0_Release.apk", primary: true }
       ]
     },
     "귀염뽀짝 가계부(PC)": {
