@@ -127,6 +127,7 @@ function initProjectFolders(content) {
       links: [
         { label: "📦 코딩놀이터 저장소 패키지 (1.1MB ZIP)", url: "./downloads/코딩놀이_저장소_패키지.zip", download: "코딩놀이_저장소_패키지.zip", primary: true },
         { label: "📄 구글 무료배포 가이드 (사용자용 PDF)", url: "./downloads/구글_무료배포_가이드_사용자용.pdf", download: "구글_무료배포_가이드_사용자용.pdf", primary: false },
+        { label: "🔒 구글 무료배포 가이드 (개발자용 PDF)", url: "./downloads/구글_무료배포_가이드_개발자용.pdf", download: "구글_무료배포_가이드_개발자용.pdf", primary: false, adminOnly: true },
         { label: "🌐 공식 GitHub 저장소 둘러보기 ↗", url: "https://github.com/kangjong9", download: "", primary: false, external: true }
       ]
     },
@@ -215,7 +216,9 @@ function initProjectFolders(content) {
           const actionRow = document.createElement('div');
           actionRow.className = 'project-download-row';
           actionRow.style.cssText = 'display:flex; flex-direction:column; gap:5px; margin-top:8px;';
+          const isAdmin = Boolean(getAdminToken());
           projectDownloads[name].links.forEach(item => {
+            if (item.adminOnly && !isAdmin) return;
             const btn = document.createElement('a');
             btn.href = item.url;
             if (item.external) {
@@ -225,8 +228,16 @@ function initProjectFolders(content) {
               btn.download = item.download;
             }
             btn.textContent = item.label;
-            btn.className = item.primary ? 'project-dl-btn primary' : 'project-dl-btn';
-            btn.style.cssText = 'display:block; padding:7px 10px; font-size:12px; font-weight:800; border-radius:8px; text-decoration:none; text-align:center; cursor:pointer; ' + (item.primary ? 'background:#38bdf8; color:#0f172a; box-shadow:0 2px 8px rgba(56,189,248,0.3);' : 'background:rgba(255,255,255,0.15); color:var(--ink); border:1px solid var(--edge);');
+            btn.className = item.primary ? 'project-dl-btn primary' : (item.adminOnly ? 'project-dl-btn admin-only' : 'project-dl-btn');
+            let style = 'display:block; padding:7px 10px; font-size:12px; font-weight:800; border-radius:8px; text-decoration:none; text-align:center; cursor:pointer; ';
+            if (item.primary) {
+              style += 'background:#38bdf8; color:#0f172a; box-shadow:0 2px 8px rgba(56,189,248,0.3);';
+            } else if (item.adminOnly) {
+              style += 'background:rgba(236,72,153,0.18); color:#db2777; border:1px solid #f472b6; box-shadow:0 2px 8px rgba(236,72,153,0.2);';
+            } else {
+              style += 'background:rgba(255,255,255,0.15); color:var(--ink); border:1px solid var(--edge);';
+            }
+            btn.style.cssText = style;
             btn.addEventListener('click', (e) => {
               e.preventDefault();
               e.stopPropagation();
