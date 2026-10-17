@@ -13,7 +13,7 @@
     document.body.dataset.theme = theme;
     buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme)));
     document.querySelector('#theme-name').textContent = names[theme];
-    document.title = `놀이방 OS · ${names[theme]}`;
+    document.title = '코딩놀이터OS, 개인홈페이지';
     document.querySelector('#theme-status').textContent = announce ? `${names[theme]} 테마가 적용되었습니다.` : '';
     try { localStorage.setItem(storageKey, theme); } catch { /* selection remains active for this visit */ }
     if (announce) {
