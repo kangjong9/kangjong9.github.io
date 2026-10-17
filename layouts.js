@@ -126,6 +126,7 @@ function initProjectFolders(content) {
       tag: "🎮 AI 코딩놀이터 프로젝트 (최신본)",
       links: [
         { label: "📦 코딩놀이터 저장소 패키지 (1.1MB ZIP)", url: "./downloads/코딩놀이_저장소_패키지.zip", download: "코딩놀이_저장소_패키지.zip", primary: true },
+        { label: "📄 구글 무료배포 가이드 (사용자용 PDF)", url: "./downloads/구글_무료배포_가이드_사용자용.pdf", download: "구글_무료배포_가이드_사용자용.pdf", primary: false },
         { label: "🌐 공식 GitHub 저장소 둘러보기 ↗", url: "https://github.com/kangjong9", download: "", primary: false, external: true }
       ]
     },
