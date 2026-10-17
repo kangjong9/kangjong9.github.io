@@ -125,13 +125,15 @@ function initProjectFolders(content) {
     "귀염뽀짝 가계부[앱]": {
       tag: "🌸 모바일 가계부 APK (v1.0 최신본)",
       links: [
-        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0_Release.apk", download: "귀염뽀짝가계부_v1.0_Release.apk", primary: true }
+        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0_Release.apk", download: "귀염뽀짝가계부_v1.0_Release.apk", primary: true },
+        { label: "📄 구글 무료배포 실전 매뉴얼 (PDF)", url: "./downloads/구글_무료배포_실전매뉴얼_개발자_사용자_구분판.pdf", download: "구글_무료배포_실전매뉴얼_개발자_사용자_구분판.pdf", primary: false }
       ]
     },
     "귀염뽀짝 가계부(앱)": {
       tag: "🌸 모바일 가계부 APK (v1.0 최신본)",
       links: [
-        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0_Release.apk", download: "귀염뽀짝가계부_v1.0_Release.apk", primary: true }
+        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0_Release.apk", download: "귀염뽀짝가계부_v1.0_Release.apk", primary: true },
+        { label: "📄 구글 무료배포 실전 매뉴얼 (PDF)", url: "./downloads/구글_무료배포_실전매뉴얼_개발자_사용자_구분판.pdf", download: "구글_무료배포_실전매뉴얼_개발자_사용자_구분판.pdf", primary: false }
       ]
     },
     "귀염뽀짝 가계부(PC)": {
