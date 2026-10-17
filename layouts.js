@@ -33,7 +33,7 @@ function setAdminToken(token) {
 function updateToolbarAdminButtons() {
   const active = Boolean(getAdminToken());
   document.querySelectorAll('.toolbar-admin').forEach(btn => {
-    btn.textContent = active ? '✓ 관리자 모드' : '관리자 로그인';
+    btn.textContent = active ? '관리자 로그아웃' : '관리자 로그인';
   });
 }
 updateToolbarAdminButtons();
@@ -77,6 +77,15 @@ if (dialog) {
   }));
   document.querySelectorAll('.toolbar-admin').forEach(button=>button.addEventListener('click', event => {
     event.preventDefault();
+    if (getAdminToken()) {
+      setAdminToken('');
+      if (dialog.open && document.querySelector('#guestbook-form')) {
+        openAppModal('guestbook', button, false);
+      }
+      const statusEl = document.querySelector('#theme-status');
+      if (statusEl) statusEl.textContent = '관리자 모드에서 로그아웃되어 일반 방문자 화면으로 전환되었습니다.';
+      return;
+    }
     openAppModal('guestbook', button, true);
   }));
   dialog.querySelector('[data-close]').addEventListener('click',()=>dialog.close());
