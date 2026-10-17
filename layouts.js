@@ -107,7 +107,7 @@ function initProjectFolders(content) {
       ["코딩놀이", "coding.svg"],
       ["귀염뽀짝 가계부(PC)", "ledger.svg"],
       ["맹맹 다이어트 작전(앱)", "maeng-app.svg"],
-      ["찌꺼기 저리가", "cleaner.svg"],
+      ["찌꺼기저리가[PC]", "cleaner.svg"],
       ["다이어트 저리가(PC)", "diet-pc.svg"],
       ["유나세리나데", "yuna.svg"]
     ],
@@ -116,8 +116,8 @@ function initProjectFolders(content) {
       ["현재 홈페이지", "homepage.png"]
     ],
     "work": [
-      ["내역서 마스터", "estimate.svg"],
-      ["AI친구들 전원 참여 회의실", "meeting.svg"]
+      ["내역서 마스터[개발중 30%]", "estimate.svg"],
+      ["AI친구들과 함께 실시간 회의실[개발중 90%]", "meeting.svg"]
     ]
   };
   const projectDownloads = {
@@ -134,10 +134,16 @@ function initProjectFolders(content) {
         { label: "📄 설치·사용법 가이드 (PDF)", url: "./downloads/맹맹다이어트_v2.8_설치_및_사용법_완벽가이드.pdf", download: "맹맹다이어트_v2.8_설치_및_사용법_완벽가이드.pdf", primary: false }
       ]
     },
-    "찌꺼기 저리가": {
+    "찌꺼기저리가[PC]": {
       tag: "🧹 PC 클리너 실행파일 (최신본)",
       links: [
         { label: "💻 찌꺼기저리가 실행파일 (12.5MB)", url: "./downloads/찌꺼기저리가.exe", download: "찌꺼기저리가.exe", primary: true }
+      ]
+    },
+    "다이어트 저리가(PC)": {
+      tag: "🥗 PC 다이어트 실행파일 (최신본)",
+      links: [
+        { label: "💻 MaengDiet PC 실행파일 (13.0MB)", url: "./downloads/MaengDiet.exe", download: "MaengDiet.exe", primary: true }
       ]
     }
   };
@@ -165,6 +171,23 @@ function initProjectFolders(content) {
         caption.textContent = name;
         card.append(image, caption);
         if (projectDownloads[name]) {
+          card.style.cursor = 'pointer';
+          card.title = `${name} 다운로드`;
+          const triggerDownload = (item) => {
+            const confirmed = window.confirm(`[${name}]\n'${item.download}' 파일을 다운로드하시겠습니까?`);
+            if (confirmed) {
+              const a = document.createElement('a');
+              a.href = item.url;
+              a.download = item.download;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            }
+          };
+          card.addEventListener('click', (e) => {
+            const primaryItem = projectDownloads[name].links.find(l => l.primary) || projectDownloads[name].links[0];
+            if (primaryItem) triggerDownload(primaryItem);
+          });
           const actionRow = document.createElement('div');
           actionRow.className = 'project-download-row';
           actionRow.style.cssText = 'display:flex; flex-direction:column; gap:5px; margin-top:8px;';
@@ -174,7 +197,12 @@ function initProjectFolders(content) {
             btn.download = item.download;
             btn.textContent = item.label;
             btn.className = item.primary ? 'project-dl-btn primary' : 'project-dl-btn';
-            btn.style.cssText = 'display:block; padding:7px 10px; font-size:12px; font-weight:800; border-radius:8px; text-decoration:none; text-align:center; ' + (item.primary ? 'background:#38bdf8; color:#0f172a; box-shadow:0 2px 8px rgba(56,189,248,0.3);' : 'background:rgba(255,255,255,0.15); color:var(--ink); border:1px solid var(--edge);');
+            btn.style.cssText = 'display:block; padding:7px 10px; font-size:12px; font-weight:800; border-radius:8px; text-decoration:none; text-align:center; cursor:pointer; ' + (item.primary ? 'background:#38bdf8; color:#0f172a; box-shadow:0 2px 8px rgba(56,189,248,0.3);' : 'background:rgba(255,255,255,0.15); color:var(--ink); border:1px solid var(--edge);');
+            btn.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              triggerDownload(item);
+            });
             actionRow.appendChild(btn);
           });
           card.appendChild(actionRow);
