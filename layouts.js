@@ -122,18 +122,25 @@ function initProjectFolders(content) {
     ]
   };
   const projectDownloads = {
+    "코딩놀이": {
+      tag: "🎮 AI 코딩놀이터 프로젝트 (최신본)",
+      links: [
+        { label: "📦 코딩놀이터 저장소 패키지 (1.1MB ZIP)", url: "./downloads/코딩놀이_저장소_패키지.zip", download: "코딩놀이_저장소_패키지.zip", primary: true },
+        { label: "🌐 공식 GitHub 저장소 둘러보기 ↗", url: "https://github.com/kangjong9", download: "", primary: false, external: true }
+      ]
+    },
     "귀염뽀짝 가계부[앱]": {
       tag: "🌸 모바일 가계부 APK (v1.0 최신본)",
       links: [
-        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0_Release.apk", download: "귀염뽀짝가계부_v1.0_Release.apk", primary: true },
-        { label: "📄 구글 무료배포 실전 매뉴얼 (PDF)", url: "./downloads/구글_무료배포_실전매뉴얼_개발자_사용자_구분판.pdf", download: "구글_무료배포_실전매뉴얼_개발자_사용자_구분판.pdf", primary: false }
+        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/CuteLedger_v1.0_Release.apk", download: "CuteLedger_v1.0_Release.apk", primary: true },
+        { label: "📄 구글 무료배포 실전 매뉴얼 (PDF)", url: "./downloads/구글_무료배포_가이드_사용자용.pdf", download: "구글_무료배포_가이드_사용자용.pdf", primary: false }
       ]
     },
     "귀염뽀짝 가계부(앱)": {
       tag: "🌸 모바일 가계부 APK (v1.0 최신본)",
       links: [
-        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/귀염뽀짝가계부_v1.0_Release.apk", download: "귀염뽀짝가계부_v1.0_Release.apk", primary: true },
-        { label: "📄 구글 무료배포 실전 매뉴얼 (PDF)", url: "./downloads/구글_무료배포_실전매뉴얼_개발자_사용자_구분판.pdf", download: "구글_무료배포_실전매뉴얼_개발자_사용자_구분판.pdf", primary: false }
+        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/CuteLedger_v1.0_Release.apk", download: "CuteLedger_v1.0_Release.apk", primary: true },
+        { label: "📄 구글 무료배포 실전 매뉴얼 (PDF)", url: "./downloads/구글_무료배포_가이드_사용자용.pdf", download: "구글_무료배포_가이드_사용자용.pdf", primary: false }
       ]
     },
     "귀염뽀짝 가계부(PC)": {
@@ -189,15 +196,16 @@ function initProjectFolders(content) {
           card.style.cursor = 'pointer';
           card.title = `${name} 다운로드`;
           const triggerDownload = (item) => {
-            const confirmed = window.confirm(`[${name}]\n'${item.download}' 파일을 다운로드하시겠습니까?`);
-            if (confirmed) {
-              const a = document.createElement('a');
-              a.href = item.url;
-              a.download = item.download;
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
+            if (item.external) {
+              window.open(item.url, '_blank', 'noopener,noreferrer');
+              return;
             }
+            const a = document.createElement('a');
+            a.href = item.url;
+            a.download = item.download || '';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => a.remove(), 200);
           };
           card.addEventListener('click', (e) => {
             const primaryItem = projectDownloads[name].links.find(l => l.primary) || projectDownloads[name].links[0];
@@ -209,7 +217,12 @@ function initProjectFolders(content) {
           projectDownloads[name].links.forEach(item => {
             const btn = document.createElement('a');
             btn.href = item.url;
-            btn.download = item.download;
+            if (item.external) {
+              btn.target = '_blank';
+              btn.rel = 'noopener noreferrer';
+            } else {
+              btn.download = item.download;
+            }
             btn.textContent = item.label;
             btn.className = item.primary ? 'project-dl-btn primary' : 'project-dl-btn';
             btn.style.cssText = 'display:block; padding:7px 10px; font-size:12px; font-weight:800; border-radius:8px; text-decoration:none; text-align:center; cursor:pointer; ' + (item.primary ? 'background:#38bdf8; color:#0f172a; box-shadow:0 2px 8px rgba(56,189,248,0.3);' : 'background:rgba(255,255,255,0.15); color:var(--ink); border:1px solid var(--edge);');
