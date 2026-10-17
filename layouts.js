@@ -141,9 +141,9 @@ function initProjectFolders(content) {
       ]
     },
     "맹맹 다이어트 작전(앱)": {
-      tag: "🏃‍♀️ 모바일 APK (v2.8 최신본)",
+      tag: "🏃‍♀️ 모바일 APK (v2.8 릴리즈 최신본)",
       links: [
-        { label: "📲 맹맹다이어트 v2.8 APK (1.8MB)", url: "./downloads/MaengDiet_v2.8_GreenLight.apk", download: "MaengDiet_v2.8_GreenLight.apk", primary: true },
+        { label: "📲 맹맹다이어트 v2.8 릴리즈 APK (1.7MB)", url: "./downloads/MaengDiet_v2.8_Release_GreenLight.apk", download: "MaengDiet_v2.8_Release_GreenLight.apk", primary: true },
         { label: "📄 설치·사용법 가이드 (PDF)", url: "./downloads/맹맹다이어트_v2.8_설치_및_사용법_완벽가이드.pdf", download: "맹맹다이어트_v2.8_설치_및_사용법_완벽가이드.pdf", primary: false }
       ]
     },
