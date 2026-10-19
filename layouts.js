@@ -130,17 +130,17 @@ function initProjectFolders(content) {
       ]
     },
     "귀염뽀짝 가계부[앱]": {
-      tag: "🌸 모바일 가계부 APK (개인정보보호 배포제한)",
+      tag: "🌸 모바일 가계부 APK (v1.0 릴리즈 최신본)",
       links: [
-        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "javascript:void(0);", download: "", primary: true },
-        { label: "📄 구글 무료배포 실전 매뉴얼 (PDF)", url: "javascript:void(0);", download: "", primary: false }
+        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/CuteLedger_v1.0_Release.apk", download: "CuteLedger_v1.0_Release.apk", primary: true },
+        { label: "📄 구글 무료배포 실전 매뉴얼 (PDF)", url: "./downloads/구글_무료배포_가이드_사용자용.pdf", download: "구글_무료배포_가이드_사용자용.pdf", primary: false }
       ]
     },
     "귀염뽀짝 가계부(앱)": {
-      tag: "🌸 모바일 가계부 APK (개인정보보호 배포제한)",
+      tag: "🌸 모바일 가계부 APK (v1.0 릴리즈 최신본)",
       links: [
-        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "javascript:void(0);", download: "", primary: true },
-        { label: "📄 구글 무료배포 실전 매뉴얼 (PDF)", url: "javascript:void(0);", download: "", primary: false }
+        { label: "📲 귀염뽀짝 가계부 Release APK (1.2MB)", url: "./downloads/CuteLedger_v1.0_Release.apk", download: "CuteLedger_v1.0_Release.apk", primary: true },
+        { label: "📄 구글 무료배포 실전 매뉴얼 (PDF)", url: "./downloads/구글_무료배포_가이드_사용자용.pdf", download: "구글_무료배포_가이드_사용자용.pdf", primary: false }
       ]
     },
     "귀염뽀짝 가계부(PC)": {
@@ -203,14 +203,6 @@ function initProjectFolders(content) {
             const ok = window.confirm(`[${name}]\n'${targetName}' 파일을 다운로드하시겠습니까?`);
             if (!ok) return;
 
-            const isRestrictedLedger = (name.includes('가계부') && (name.includes('앱') || name.includes('[앱]'))) || (item.download && item.download.toLowerCase().includes('cuteledger') && item.download.endsWith('.apk'));
-            if (isRestrictedLedger) {
-              alert('개인정보문제로 필요시 개발자에게 개별 요청하세요.');
-              const statusEl = document.querySelector('#theme-status');
-              if (statusEl) statusEl.textContent = '개인정보문제로 필요시 개발자에게 개별 요청하세요.';
-              return;
-            }
-
             const a = document.createElement('a');
             a.href = item.url;
             a.download = item.download || '';
@@ -229,10 +221,7 @@ function initProjectFolders(content) {
           projectDownloads[name].links.forEach(item => {
             if (item.adminOnly && !isAdmin) return;
             const btn = document.createElement('a');
-            const isRestrictedLedger = (name.includes('가계부') && (name.includes('앱') || name.includes('[앱]'))) || (item.download && item.download.toLowerCase().includes('cuteledger') && item.download.endsWith('.apk'));
-            if (isRestrictedLedger) {
-              btn.href = 'javascript:void(0);';
-            } else if (item.external) {
+            if (item.external) {
               btn.href = item.url;
               btn.target = '_blank';
               btn.rel = 'noopener noreferrer';
