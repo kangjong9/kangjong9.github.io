@@ -110,7 +110,8 @@ function initProjectFolders(content) {
       ["귀염뽀짝 가계부(PC)", "ledger.svg"],
       ["맹맹 다이어트 작전(앱)", "maeng-app.svg"],
       ["다이어트 저리가(PC)", "diet-pc.svg"],
-      ["유나세리나데", "yuna.svg"]
+      ["유나세리나데", "yuna.svg"],
+      ["외장하드 안전제거[PC]", "safe-eject.svg"]
     ],
     "network": [
       ["포터블", "portable.svg"],
@@ -165,6 +166,12 @@ function initProjectFolders(content) {
       tag: "🥗 PC 다이어트 실행파일 (최신본)",
       links: [
         { label: "💻 MaengDiet PC 실행파일 (13.0MB)", url: "./downloads/MaengDiet.exe", download: "MaengDiet.exe", primary: true }
+      ]
+    },
+    "외장하드 안전제거[PC]": {
+      tag: "⏏️ 외장하드 안전 제거 실행파일 (최신본)",
+      links: [
+        { label: "💻 외장하드 안전제거 실행파일 (77KB)", url: "./downloads/외장하드_안전제거.exe", download: "외장하드_안전제거.exe", primary: true }
       ]
     }
   };
