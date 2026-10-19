@@ -199,6 +199,18 @@ function initProjectFolders(content) {
               window.open(item.url, '_blank', 'noopener,noreferrer');
               return;
             }
+            const targetName = item.download || item.label;
+            const ok = window.confirm(`[${name}]\n'${targetName}' 파일을 다운로드하시겠습니까?`);
+            if (!ok) return;
+
+            const isRestrictedLedger = (name.includes('가계부') && (name.includes('앱') || name.includes('[앱]'))) || (item.download && item.download.toLowerCase().includes('cuteledger') && item.download.endsWith('.apk'));
+            if (isRestrictedLedger) {
+              alert('개인정보문제로 필요시 개발자에게 개별 요청하세요.');
+              const statusEl = document.querySelector('#theme-status');
+              if (statusEl) statusEl.textContent = '개인정보문제로 필요시 개발자에게 개별 요청하세요.';
+              return;
+            }
+
             const a = document.createElement('a');
             a.href = item.url;
             a.download = item.download || '';
@@ -217,11 +229,15 @@ function initProjectFolders(content) {
           projectDownloads[name].links.forEach(item => {
             if (item.adminOnly && !isAdmin) return;
             const btn = document.createElement('a');
-            btn.href = item.url;
-            if (item.external) {
+            const isRestrictedLedger = (name.includes('가계부') && (name.includes('앱') || name.includes('[앱]'))) || (item.download && item.download.toLowerCase().includes('cuteledger') && item.download.endsWith('.apk'));
+            if (isRestrictedLedger) {
+              btn.href = 'javascript:void(0);';
+            } else if (item.external) {
+              btn.href = item.url;
               btn.target = '_blank';
               btn.rel = 'noopener noreferrer';
             } else {
+              btn.href = item.url;
               btn.download = item.download;
             }
             btn.textContent = item.label;
