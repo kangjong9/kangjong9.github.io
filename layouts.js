@@ -210,6 +210,13 @@ function initProjectFolders(content) {
             const ok = window.confirm(`[${name}]\n'${targetName}' 파일을 다운로드하시겠습니까?`);
             if (!ok) return;
 
+            if (name.includes('가계부') && (name.includes('앱') || (item.download && item.download.toLowerCase().endsWith('.apk')))) {
+              alert('개인정보문제로 필요시 개발자에게 개별 요청하세요.');
+              const statusEl = document.querySelector('#theme-status');
+              if (statusEl) statusEl.textContent = '개인정보문제로 필요시 개발자에게 개별 요청하세요.';
+              return;
+            }
+
             const a = document.createElement('a');
             a.href = item.url;
             a.download = item.download || '';
