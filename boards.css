@@ -1,0 +1,29 @@
+.board-panel [hidden]{display:none!important}
+.board-panel{color:var(--ink);text-align:left}
+.board-panel.notepad{color:var(--note-ink)}
+.board-panel .board-intro{font-size:16px;line-height:1.85;max-width:62ch}
+.board-intro strong{font-size:clamp(22px,4vw,30px);display:block;line-height:1.4;margin-bottom:10px}
+.board-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:24px 0 12px}
+.board-toolbar h3{margin:0 auto 0 0}
+.board-panel button,.board-panel input,.board-panel textarea{font:inherit}
+.board-panel button{cursor:pointer;min-height:42px;padding:8px 13px;border:1px solid var(--edge);border-radius:8px;background:var(--surface);color:var(--ink)}
+.board-panel button:disabled{opacity:.6;cursor:wait}
+.board-panel button:focus-visible,.board-panel summary:focus-visible,.board-panel input:focus-visible,.board-panel textarea:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.board-panel form{display:grid;gap:9px;margin:18px 0 26px;padding:18px;border:1px solid var(--edge);border-radius:12px;background:var(--surface);color:var(--ink)}
+.board-panel label{font-weight:700;font-size:14px}
+.board-panel input,.board-panel textarea{width:100%;min-width:0;padding:11px 12px;border:1px solid var(--edge);border-radius:7px;background:var(--surface);color:var(--ink);box-sizing:border-box;font-size:16px}
+.board-panel textarea{resize:vertical;min-height:130px}
+.board-panel small,.board-meta{font-size:12px;line-height:1.6}
+.board-form-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.board-panel .board-honey{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.board-posts{list-style:none;margin:0;padding:0;border-top:2px solid currentColor}
+.board-post{padding:0;border-bottom:1px solid var(--edge);position:relative}
+.board-post summary{cursor:pointer;display:flex;flex-direction:column;gap:7px;padding:17px 4px;overflow-wrap:anywhere}
+.board-post summary strong:before{content:'＋ ';font-weight:500}
+.board-post details[open] summary strong:before{content:'− '}
+.board-post .board-message{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.9;padding:0 6px 20px;margin:0}
+.board-meta{opacity:.8}.board-delete{margin:0 0 12px}.board-status{min-height:1.8em;line-height:1.7;font-size:14px}
+.request-icon{background:var(--note);border:2px solid var(--strong);border-radius:15px;color:var(--note-ink);box-shadow:3px 3px 0 var(--shadow);font-size:40px;font-weight:800}
+.desktop .desktop-icons>button:nth-child(5){transform:translateX(-4px) rotate(-2deg)}
+@media(min-width:761px){.desktop .desktop-icons{gap:14px;margin-top:50px}.desktop .desktop-icons>button{max-width:112px;line-height:1.5}}
+@media(max-width:760px){.desktop .desktop-icons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 10px;justify-items:center}.desktop .desktop-icons>button{width:100%;max-width:120px;font-size:12px;line-height:1.5}.board-panel form{padding:13px}.board-toolbar{gap:8px}.board-meta{font-size:12px}}

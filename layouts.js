@@ -29,6 +29,7 @@ function setAdminToken(token) {
     else sessionStorage.removeItem(ADMIN_SESSION_KEY);
   } catch {}
   updateToolbarAdminButtons();
+  window.dispatchEvent(new Event('playroom-auth-change'));
 }
 function updateToolbarAdminButtons() {
   const active = Boolean(getAdminToken());
@@ -59,7 +60,7 @@ if (stage) {
 
 const dialog = document.querySelector('#app-window');
 if (dialog) {
-  const names={projects:'작업물 폴더',notes:'생각 노트',about:'주인아저씨 프로필',guestbook:'떠든 사람'};
+  const names={projects:'작업물 폴더',notes:'생각 노트',about:'주인아저씨 프로필',guestbook:'떠든 사람',requests:'이런거도 해줄까?'};
   let opener=null;
   function openAppModal(key, triggerButton = null, showAdminPrompt = false) {
     const template=document.getElementById(`${key}-content`);
@@ -68,6 +69,7 @@ if (dialog) {
     document.querySelector('#app-window-title').textContent=names[key];
     const content=document.querySelector('#app-window-content');content.replaceChildren(template.content.cloneNode(true));fillBio(content);
     if (key === 'projects') initProjectFolders(content);
+    if (key === 'notes' || key === 'requests') initBoard(content, key);
     if (key === 'guestbook') initGuestbook(content, showAdminPrompt);
     if (!dialog.open) dialog.showModal();
     dialog.querySelector('[data-close]').focus();
@@ -94,6 +96,8 @@ if (dialog) {
   const clock=document.querySelector('#clock');
   function tick(){clock.textContent=new Intl.DateTimeFormat('ko-KR',{hour:'2-digit',minute:'2-digit'}).format(new Date());}
   tick();setInterval(tick,30000);
+  if (location.hash === '#notes') openAppModal('notes');
+  if (location.hash === '#requests') openAppModal('requests');
   if (location.hash === '#projects') openAppModal('projects');
   if (location.hash === '#guestbook') openAppModal('guestbook');
   if (location.hash === '#admin') openAppModal('guestbook', null, true);
