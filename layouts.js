@@ -101,8 +101,9 @@ if (dialog) {
 
 // Category membership and display order were supplied by the owner.
 function initProjectFolders(content) {
-  const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작'};
+  const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
   const projects = {
+    "requested": [["보컬트레이너[앱]", "vocalmate.svg"]],
     "fun": [
       ["코딩놀이", "coding.svg"],
       ["찌꺼기저리가[PC]", "cleaner.svg"],
@@ -123,6 +124,13 @@ function initProjectFolders(content) {
     ]
   };
   const projectDownloads = {
+    "보컬트레이너[앱]": {
+      tag: "VocalMate 0.2.0-dev · Android 8 이상 · 개발판",
+      links: [
+        { label: "🎤 보컬트레이너 개발판 APK (0.2.0 · 7.6MB)", url: "./downloads/VocalMate-0.2.0-dev.apk", download: "VocalMate-0.2.0-dev.apk", primary: true },
+        { label: "📄 설치 안내 · 지원 기능과 제한", url: "./downloads/VocalMate-설치안내.txt", download: "VocalMate-설치안내.txt", primary: false }
+      ]
+    },
     "코딩놀이": {
       tag: "🎮 AI 코딩놀이터 프로젝트 (최신본)",
       links: [
