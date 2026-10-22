@@ -129,9 +129,9 @@ function initProjectFolders(content) {
   };
   const projectDownloads = {
     "보컬트레이너[앱]": {
-      tag: "VocalMate 0.2.2-dev · Android 8 이상 · 개발판",
+      tag: "VocalMate 0.3.0-dev · 로컬 훈련·기록·캘리브레이션 · Android 8 이상 · 실기기 미검증 개발판",
       links: [
-        { label: "🎤 보컬트레이너 개발판 APK (0.2.2 · 7.6MB)", url: "./downloads/VocalMate-0.2.2-dev.apk", download: "VocalMate-0.2.2-dev.apk", primary: true },
+        { label: "🎤 보컬트레이너 개발판 APK (0.3.0 · 7.7MB)", url: "./downloads/VocalMate-0.3.0-dev.apk", download: "VocalMate-0.3.0-dev.apk", primary: true },
         { label: "📄 설치 안내 · 지원 기능과 제한", url: "./downloads/VocalMate-설치안내.txt", download: "VocalMate-설치안내.txt", primary: false }
       ]
     },
