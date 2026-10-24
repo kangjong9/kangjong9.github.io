@@ -130,11 +130,11 @@ function initProjectFolders(content) {
   };
   const projectDownloads = {
     "한걸음[앱·초안]": {
-      tag: "한걸음 0.6.0-dev · 프랑스어·중국어·일본어 · 1/5/15분 · 실기기 미검증 초안",
+      tag: "한걸음 0.7.0-dev · 프랑스어·중국어·일본어 · 1/5/15분 · 실기기 미검증 초안",
       links: [
-        { label: "한걸음 0.6 APK · Android 8 이상", url: "./downloads/Hangeoreum-0.6.0-dev.apk", download: "Hangeoreum-0.6.0-dev.apk", primary: true },
+        { label: "한걸음 0.7 APK · Android 8 이상", url: "./downloads/Hangeoreum-0.7.0-dev.apk", download: "Hangeoreum-0.7.0-dev.apk", primary: true },
         { label: "화면 시안 체험 · 녹음/AI는 앱에서", url: "./downloads/Hangeoreum-preview.html", external: true },
-        { label: "사용 안내 · 승급 잠금과 검증 범위", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
+        { label: "사용 안내 · 노베이스 5단계 및 검증 범위", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
       ]
     },
 

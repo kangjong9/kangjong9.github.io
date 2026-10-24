@@ -2,6 +2,56 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>한걸음 · 나의 속도로 배우는 언어</title><style>:root{--canvas:#FAF8F5;--surface:#fff;--soft:#F2EFE9;--line:#E5E0D8;--ink:#2D2E2B;--sub:#6E6C65;--green:#2E6F40;--tint:#EAF2EC;--amber:#FFF3E0;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink);background:var(--soft);font-size:16px}*{box-sizing:border-box}body{margin:0}button,input,textarea,select{font:inherit}button{cursor:pointer;min-height:48px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:11px 16px}button:hover{background:var(--tint)}button:focus-visible,input:focus,textarea:focus{outline:3px solid #80a48a;outline-offset:2px}button:disabled{cursor:wait;opacity:.55}.shell{max-width:720px;margin:auto;min-height:100vh;background:var(--canvas)}header{display:flex;align-items:center;gap:8px;padding:12px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--canvas);z-index:5}.brand{display:flex;align-items:center;gap:8px;font-weight:750;font-size:20px;margin-right:auto;padding:0}.brand svg{width:30px;height:30px;fill:var(--green)}.brand .bars{stroke:var(--canvas);stroke-width:3}.quiet{border:0;background:transparent}.pill{font-size:13px;border-radius:30px;min-height:40px;padding:8px 12px}.icon{font-size:24px;padding:6px;width:44px}main{padding:32px 24px 110px;min-height:75vh}h1{font-size:32px;line-height:1.25;letter-spacing:-1.2px;margin:14px 0 20px}h2{font-size:22px;line-height:1.4;margin:16px 0}h3{font-size:18px}p{line-height:1.7;margin:12px 0}.muted,small{color:var(--sub);line-height:1.6}.eyebrow{font-size:12px;letter-spacing:1.5px;font-weight:700;color:var(--green);text-transform:uppercase}.primary{background:var(--green);border-color:var(--green);color:#fff;font-weight:650}.primary:hover{background:#245633}.wide{width:100%}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.section{padding:24px 0;border-top:1px solid var(--line);margin-top:24px}.language{display:flex;align-items:center;width:100%;padding:22px 0;border:0;border-bottom:1px solid var(--line);background:none;border-radius:0;text-align:left;gap:20px}.language b{display:block;font-size:22px}.language .glyph{font-family:Georgia,serif;font-size:32px;width:60px;color:var(--green)}.language small{display:block;margin-top:6px;font-size:13px}.arrow{margin-left:auto;font-size:22px}.hero{padding:26px;background:var(--tint);border-radius:16px;margin:24px 0}.hero h2{font-size:26px;margin:8px 0}.hero p{margin:8px 0 22px}.routine{display:flex;gap:8px}.routine button{flex:1;background:transparent}.routine button.selected{border:2px solid var(--green);color:var(--green);background:var(--tint);font-weight:700}.level{display:flex;gap:14px;align-items:center;text-align:left;width:100%;background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:20px 0}.level .num{font-size:21px;min-width:40px;color:var(--green);font-variant-numeric:tabular-nums}.level b{font-size:16px}.level small{display:block;margin-top:5px}.level.locked .num{color:var(--sub)}.tag{display:inline-block;background:var(--tint);color:var(--green);font-size:12px;border-radius:30px;padding:5px 10px}.notice,.admin{padding:12px 20px;font-size:13px;line-height:1.6;background:var(--soft)}.admin{background:var(--amber)}.admin button{min-height:32px;padding:4px 12px;margin-left:10px}nav{position:fixed;bottom:0;width:min(100%,720px);padding:8px 20px max(8px,env(safe-area-inset-bottom));display:flex;background:var(--canvas);border-top:1px solid var(--line);z-index:4}nav button{flex:1;border:0;background:none;font-size:14px}nav button.active{color:var(--green);font-weight:750}.steps{display:flex;gap:6px;margin:24px 0}.steps span{flex:1;height:4px;border-radius:2px;background:var(--line)}.steps span.on{background:var(--green)}.scene{height:160px;background:var(--tint);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:20px 0}.scene svg{height:140px;width:230px}.phrase{text-align:center;padding:16px 0}.phrase .target{font-size:30px;font-weight:600;line-height:1.5;overflow-wrap:anywhere;letter-spacing:-.5px}.phrase .reading{font-size:14px;color:var(--green);margin:10px}.hint{padding:16px 18px;background:var(--soft);border-radius:10px;font-size:14px;line-height:1.7}.timer{font-variant-numeric:tabular-nums;font-size:13px;color:var(--sub)}.unitHead{display:flex;justify-content:space-between;align-items:center}.chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.chips button{font-size:13px;min-height:40px}.field{display:block;width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0;min-height:50px}label{font-size:14px;font-weight:600}textarea{resize:vertical;min-height:90px}.bubble{background:#fff;border:1px solid var(--line);padding:18px;border-radius:12px;margin:16px 0;white-space:pre-wrap;line-height:1.7;overflow-wrap:anywhere}.bubble.user{background:var(--tint);margin-left:30px}.bubble h3{margin:0 0 8px}.feedback{border-left:3px solid var(--green);padding:12px 16px;line-height:1.8;white-space:pre-wrap;background:var(--tint);margin:16px 0}#toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#28372c;color:#fff;padding:15px 20px;border-radius:12px;width:min(90%,600px);z-index:20;line-height:1.6}dialog{max-width:440px;width:90%;border:1px solid var(--line);border-radius:16px;padding:24px;background:var(--canvas);color:var(--ink)}dialog::backdrop{background:#0005}.empty{padding:26px 0}.buttonStack{display:grid;gap:10px}.recording{border:2px solid #b33e30;color:#a22a20}progress{width:100%;height:5px;accent-color:var(--green)}[hidden]{display:none!important}@media(max-width:360px){main{padding:24px 18px 100px}header{padding:10px 14px}h1{font-size:28px}.phrase .target{font-size:25px}.row button{padding:10px}.brand{font-size:18px}}@media(min-width:700px){main{padding:40px 56px 110px}.scene{height:200px}.scene svg{height:180px}}
+
+/* SOW-LANG-001 5-Stage Zero-Base Architecture Styles */
+.stageTabs{display:flex;gap:6px;overflow-x:auto;padding:6px 0 16px;scrollbar-width:none}
+.stageTabs button{flex:0 0 auto;min-height:40px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600}
+.stageTabs button.active{background:var(--green);color:#fff;border-color:var(--green)}
+.mouthCard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;text-align:center;margin:16px 0}
+.mouthSvg{width:140px;height:90px;margin:0 auto;display:block}
+.mouthSvg .lips{fill:#fca5a5;stroke:#e11d48;stroke-width:3;transition:all .25s ease}
+.mouthSvg .teeth{fill:#fff;stroke:#e2e8f0;stroke-width:1.5}
+.mouthSvg .tongue{fill:#f43f5e;opacity:.9}
+.mouthActive .lips{transform-origin:center;animation:mouthPulse .4s ease-in-out infinite alternate}
+@keyframes mouthPulse{0%{transform:scale(1)}100%{transform:scale(1.15,1.25)}}
+.phonemeGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:10px;margin:16px 0}
+.phonemeCard{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:75px;padding:10px;border-radius:12px;border:1.5px solid var(--line);background:#fff;cursor:pointer;transition:transform .15s,border-color .15s}
+.phonemeCard:hover,.phonemeCard.selected{border-color:var(--green);transform:translateY(-2px);background:var(--tint)}
+.phonemeCard .symbol{font-size:24px;font-weight:700;color:var(--green)}
+.phonemeCard .ipa{font-size:12px;color:var(--sub);margin-top:4px}
+.quizCardGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.quizCard{min-height:90px;font-size:26px;font-weight:700;border-radius:14px;border:2px solid var(--line);background:#fff;cursor:pointer;transition:all .2s}
+.quizCard:hover{border-color:var(--green);background:var(--tint)}
+.quizCard.correct{border-color:#16a34a;background:#dcfce7;color:#15803d}
+.quizCard.wrong{border-color:#dc2626;background:#fee2e2;color:#b91c1c}
+.slotBoard{display:flex;gap:8px;justify-content:center;align-items:center;min-height:72px;padding:14px;background:var(--soft);border-radius:14px;border:2px dashed var(--line);margin:18px 0;flex-wrap:wrap}
+.slotBoard.snapped{border-style:solid;border-color:#16a34a;background:#f0fdf4;animation:snapGlow .5s ease}
+@keyframes snapGlow{0%{transform:scale(.98)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+.blockSlot{min-width:90px;min-height:48px;border-radius:10px;border:2px dashed #cbd5e1;display:flex;align-items:center;justify-content:center;padding:4px 10px;font-size:14px;color:#94a3b8}
+.blockSlot.filled{border:none;padding:0}
+.blockTray{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0;min-height:54px}
+.blockPill{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:8px 16px;border-radius:10px;font-size:18px;font-weight:650;cursor:pointer;border:none;box-shadow:0 2px 4px rgba(0,0,0,.08);transition:transform .15s,opacity .15s;user-select:none}
+.blockPill:hover{transform:translateY(-2px)}
+.blockPill.used{opacity:.3;pointer-events:none}
+.blockPill.blue{background:#2563eb;color:#fff}
+.blockPill.red{background:#dc2626;color:#fff}
+.blockPill.green{background:#16a34a;color:#fff}
+.drillBox{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:22px 18px;text-align:center;margin:18px 0}
+.drillPattern{font-size:26px;font-weight:700;line-height:1.5}
+.drillSlot{display:inline-block;padding:2px 10px;border-radius:8px;background:#fef08a;color:#854d0e;border-bottom:3px solid #eab308}
+.drillChips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+.drillChip{min-height:42px;border-radius:20px;font-size:14px;padding:6px 14px;background:#fff}
+.drillChip.active{background:var(--green);color:#fff;border-color:var(--green)}
+.builderBox{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;background:#fff;padding:18px;border-radius:14px;border:1px solid var(--line);margin:18px 0;font-size:18px;font-weight:600}
+.conjunctionDrop{min-width:90px;min-height:42px;padding:6px 12px;border:2px dashed #f59e0b;border-radius:8px;background:#fffbeb;color:#b45309;text-align:center}
+.domainChips{display:flex;gap:8px;overflow-x:auto;padding:8px 0;scrollbar-width:none}
+.domainChip{flex:0 0 auto;border-radius:20px;font-size:13px;font-weight:600;padding:6px 14px}
+.domainChip.active{background:#1e293b;color:#fff;border-color:#1e293b}
+.polishCard{background:#fff;border-left:4px solid #2563eb;border-radius:0 12px 12px 0;padding:16px 18px;margin:16px 0;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.gaugeBar{height:8px;border-radius:4px;background:#e2e8f0;overflow:hidden;margin:8px 0 14px}
+.gaugeFill{height:100%;border-radius:4px;transition:width .4s ease}
+.gaugeFill.blue{background:#2563eb}
+.gaugeFill.gold{background:#d97706}
 </style></head>
 <body><div class="shell"><header><button class="brand quiet" id="brand" aria-label="한걸음 홈"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M4 5h28v21H19l-8 7v-7H4Z"/><path class="bars" d="M10 17v4m8-10v10m8-15v15"/></svg>한걸음</button><button id="changeLanguage" class="pill">언어 선택</button><button id="settings" class="quiet icon" aria-label="설정">⚙</button></header>
 <div id="preview" class="notice" hidden>브라우저 화면 시안 · 녹음과 AI 연결은 Android 앱에서 사용할 수 있습니다.</div>
@@ -700,7 +750,512 @@
         ]
       }
     ],
-    "contentVersion": "lessons-1"
+    "contentVersion": "lessons-1",
+    "stages": {
+      "1": {
+        "title": "Stage 1. 문자 및 음소 체계 (초기초)",
+        "subtitle": "사운드-심볼 매핑 · 입모양 비주얼",
+        "goal": "프랑스어 모음·비모음 소리를 듣고 글자와 1:1로 연결하기",
+        "phonemes": [
+          {
+            "id": "fr-p1",
+            "symbol": "A",
+            "audio": "a",
+            "shape": "open_wide",
+            "ipa": "[a]",
+            "tip": "입을 크게 벌리고 맑게 발음해요."
+          },
+          {
+            "id": "fr-p2",
+            "symbol": "E",
+            "audio": "e",
+            "shape": "round_pucker",
+            "ipa": "[ə]",
+            "tip": "입술을 둥글게 모으고 '으'와 '어' 중간 소리를 내요."
+          },
+          {
+            "id": "fr-p3",
+            "symbol": "I",
+            "audio": "i",
+            "shape": "smile_spread",
+            "ipa": "[i]",
+            "tip": "입꼬리를 양쪽으로 길게 당기며 발음해요."
+          },
+          {
+            "id": "fr-p4",
+            "symbol": "O",
+            "audio": "o",
+            "shape": "round_pucker",
+            "ipa": "[o]",
+            "tip": "입술을 앞으로 둥글게 오므리며 소리 내요."
+          },
+          {
+            "id": "fr-p5",
+            "symbol": "U",
+            "audio": "u",
+            "shape": "teeth_bite",
+            "ipa": "[y]",
+            "tip": "입술은 '우' 모양으로 내밀고 소리는 '이'를 내요."
+          },
+          {
+            "id": "fr-p6",
+            "symbol": "AN",
+            "audio": "an",
+            "shape": "nasal_relax",
+            "ipa": "[ɑ̃]",
+            "tip": "코로 공기를 통과시키는 대표적인 비모음이에요."
+          },
+          {
+            "id": "fr-p7",
+            "symbol": "ON",
+            "audio": "on",
+            "shape": "nasal_relax",
+            "ipa": "[ɔ̃]",
+            "tip": "입술을 둥글게 모은 채 비강을 울리는 비모음이에요."
+          },
+          {
+            "id": "fr-p8",
+            "symbol": "IN",
+            "audio": "in",
+            "shape": "nasal_relax",
+            "ipa": "[ɛ̃]",
+            "tip": "입을 옆으로 벌리고 코로 울리는 비모음이에요."
+          },
+          {
+            "id": "fr-p9",
+            "symbol": "CH",
+            "audio": "ch",
+            "shape": "teeth_bite",
+            "ipa": "[ʃ]",
+            "tip": "치아 사이로 부드럽게 바람을 내보내는 '쉬' 소리예요."
+          },
+          {
+            "id": "fr-p10",
+            "symbol": "R",
+            "audio": "r",
+            "shape": "open_wide",
+            "ipa": "[ʁ]",
+            "tip": "목구멍 안쪽 목젖을 가볍게 긁는 프랑스어 R 소리예요."
+          }
+        ],
+        "quizzes": [
+          {
+            "audio": "a",
+            "options": [
+              "A",
+              "E",
+              "O"
+            ],
+            "answer": 0
+          },
+          {
+            "audio": "i",
+            "options": [
+              "U",
+              "I",
+              "AN"
+            ],
+            "answer": 1
+          },
+          {
+            "audio": "on",
+            "options": [
+              "IN",
+              "AN",
+              "ON"
+            ],
+            "answer": 2
+          },
+          {
+            "audio": "u",
+            "options": [
+              "U",
+              "O",
+              "E"
+            ],
+            "answer": 0
+          },
+          {
+            "audio": "r",
+            "options": [
+              "CH",
+              "R",
+              "A"
+            ],
+            "answer": 1
+          }
+        ]
+      },
+      "2": {
+        "title": "Stage 2. 생존 어휘 및 3색 블록 조립 (기초)",
+        "subtitle": "무문법 블록 조립 · 즉시 오디오 스냅",
+        "goal": "파랑(주체)·빨강(동작)·녹색(대상) 블록을 결합해 문장 완성하기",
+        "challenges": [
+          {
+            "id": "fr-b1",
+            "scene": "person",
+            "target": "Je suis étudiant.",
+            "meaning": "저는 학생입니다.",
+            "slots": [
+              "subj",
+              "verb",
+              "obj"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "Je",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "suis",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "étudiant",
+                "color": "green"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "verb",
+                "text": "ai",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "un café",
+                "color": "green"
+              }
+            ]
+          },
+          {
+            "id": "fr-b2",
+            "scene": "cafe",
+            "target": "Je veux un café.",
+            "meaning": "저는 커피 한 잔을 원해요.",
+            "slots": [
+              "subj",
+              "verb",
+              "obj"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "Je",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "veux",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "un café",
+                "color": "green"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "subj",
+                "text": "Tu",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "suis",
+                "color": "red"
+              }
+            ]
+          },
+          {
+            "id": "fr-b3",
+            "scene": "greeting",
+            "target": "Tu as faim.",
+            "meaning": "너는 배가 고프구나.",
+            "slots": [
+              "subj",
+              "verb",
+              "obj"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "Tu",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "as",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "faim",
+                "color": "green"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "verb",
+                "text": "veux",
+                "color": "red"
+              }
+            ]
+          },
+          {
+            "id": "fr-b4",
+            "scene": "train",
+            "target": "Il prend le train.",
+            "meaning": "그는 기차를 탑니다.",
+            "slots": [
+              "subj",
+              "verb",
+              "obj"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "Il",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "prend",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "le train",
+                "color": "green"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "obj",
+                "text": "un café",
+                "color": "green"
+              }
+            ]
+          },
+          {
+            "id": "fr-b5",
+            "scene": "map",
+            "target": "Elle cherche l'hôtel.",
+            "meaning": "그녀는 호텔을 찾고 있어요.",
+            "slots": [
+              "subj",
+              "verb",
+              "obj"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "Elle",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "cherche",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "l'hôtel",
+                "color": "green"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "verb",
+                "text": "prend",
+                "color": "red"
+              }
+            ]
+          }
+        ]
+      },
+      "3": {
+        "title": "Stage 3. 문장 조립 및 상황 롤플레잉 (초중급)",
+        "subtitle": "5회 패턴 치환 드릴 · 상황별 미션 발화",
+        "goal": "기준 문장 구조에 핵심 어휘를 5회 연속 바꿔 말하며 자동화하기",
+        "drills": [
+          {
+            "id": "fr-d1",
+            "pattern": "Je voudrais {slot}.",
+            "template": "Je voudrais ___.",
+            "meaning": "~를 원합니다 (정중한 요청)",
+            "items": [
+              {
+                "text": "un café",
+                "meaning": "커피 한 잔"
+              },
+              {
+                "text": "l'addition",
+                "meaning": "계산서"
+              },
+              {
+                "text": "un croissant",
+                "meaning": "크루아상"
+              },
+              {
+                "text": "de l'eau",
+                "meaning": "물"
+              },
+              {
+                "text": "ce plat",
+                "meaning": "이 요리"
+              }
+            ]
+          },
+          {
+            "id": "fr-d2",
+            "pattern": "Où est {slot} ?",
+            "template": "Où est ___ ?",
+            "meaning": "~는 어디에 있나요? (위치 문의)",
+            "items": [
+              {
+                "text": "la gare",
+                "meaning": "기차역"
+              },
+              {
+                "text": "le musée",
+                "meaning": "박물관"
+              },
+              {
+                "text": "la pharmacie",
+                "meaning": "약국"
+              },
+              {
+                "text": "l'arrêt de bus",
+                "meaning": "버스 정류장"
+              },
+              {
+                "text": "le métro",
+                "meaning": "지하철역"
+              }
+            ]
+          }
+        ],
+        "roleplays": [
+          {
+            "id": "fr-r1",
+            "scene": "cafe",
+            "title": "파리 카페에서 주문하기",
+            "scenario": "웨이터가 다가와 주문을 묻습니다. 크루아상과 커피를 정중하게 주문해 보세요.",
+            "npc": "Bonjour ! Que désirez-vous prendre ?",
+            "choices": [
+              {
+                "label": "A. 정중하게 커피와 크루아상 요청",
+                "say": "Bonjour, je voudrais un café et un croissant, s'il vous plaît."
+              },
+              {
+                "label": "B. 메뉴판 먼저 요청",
+                "say": "Bonjour, pouvez-vous m'apporter la carte, s'il vous plaît ?"
+              }
+            ]
+          },
+          {
+            "id": "fr-r2",
+            "scene": "train",
+            "title": "기차역에서 티켓 예매하기",
+            "scenario": "매표소에서 니스(Nice)행 편도 티켓을 예매합니다.",
+            "npc": "Bonjour monsieur, pour quelle destination ?",
+            "choices": [
+              {
+                "label": "A. 니스행 편도 티켓 1장 요청",
+                "say": "Je voudrais un billet simple pour Nice, s'il vous plaît."
+              },
+              {
+                "label": "B. 다음 출발 기차 시간 문의",
+                "say": "À quelle heure part le prochain train pour Nice ?"
+              }
+            ]
+          }
+        ]
+      },
+      "4": {
+        "title": "Stage 4. 의견 표현 및 맥락 확장 (중상급)",
+        "subtitle": "접속사 복문 빌더 · 45초 담화 리스닝 STT",
+        "goal": "이유·조건·반박 접속사로 복문을 만들고 요약 리스닝에 답하기",
+        "builders": [
+          {
+            "id": "fr-c1",
+            "part1": "Je suis fatigué",
+            "part2": "j'ai beaucoup travaillé",
+            "conjunction": "parce que",
+            "options": [
+              "parce que",
+              "mais",
+              "si"
+            ],
+            "full": "Je suis fatigué parce que j'ai beaucoup travaillé.",
+            "meaning": "일을 많이 해서 피곤해요. (원인과 결과)"
+          },
+          {
+            "id": "fr-c2",
+            "part1": "Il fait beau",
+            "part2": "il fait un peu froid",
+            "conjunction": "mais",
+            "options": [
+              "mais",
+              "donc",
+              "parce que"
+            ],
+            "full": "Il fait beau, mais il fait un peu froid.",
+            "meaning": "날씨는 맑지만 약간 추워요. (대비와 전환)"
+          }
+        ],
+        "listening": {
+          "id": "fr-l1",
+          "audioText": "Bienvenue à la gare de Lyon. Le train TGV numéro 6214 en provenance de Marseille arrivera voie B avec dix minutes de retard. Veuillez nous excuser pour la gêne occasionnée.",
+          "duration": "45초 담화 안내방송",
+          "question": "열차가 몇 분 지연되나요?",
+          "expected": "dix minutes",
+          "hint": "10 minutes 또는 dix minutes라고 답해 보세요."
+        }
+      },
+      "5": {
+        "title": "Stage 5. 전문 도메인 회화 및 AI 실전 (고급)",
+        "subtitle": "5대 전문 비즈니스 도메인 · 실시간 격식도 첨삭",
+        "goal": "까다로운 글로벌 바이어와의 협상에서 외교적 완곡 어조 구사하기",
+        "domains": [
+          {
+            "id": "it",
+            "name": "IT · 소프트웨어",
+            "role": "글로벌 테크 PM",
+            "scenario": "API 배포 일정 단축 요구에 대한 기술적 방어 및 대안 제안"
+          },
+          {
+            "id": "trade",
+            "name": "무역 · 물류",
+            "role": "까다로운 수입사 바이어",
+            "scenario": "해상 운임 급등 및 납기 지연에 따른 인코텀즈 책임 조율"
+          },
+          {
+            "id": "finance",
+            "name": "금융 · 핀테크",
+            "role": "보수적인 투자 심사역",
+            "scenario": "신규 지급결제 솔루션의 보안성 입증 및 자금 조달 협의"
+          },
+          {
+            "id": "business",
+            "name": "일반 비즈니스",
+            "role": "구매 총괄 이사",
+            "scenario": "연간 장기 공급 계약 수량 할인율 및 대금 지급 조건 협상"
+          },
+          {
+            "id": "current",
+            "name": "시사 · 학술",
+            "role": "국제 포럼 패널",
+            "scenario": "EU 인공지능 법안(AI Act) 규제 준수와 기업 혁신의 균형 토론"
+          }
+        ]
+      }
+    }
   },
   "zh": {
     "name": "중국어",
@@ -1392,7 +1947,490 @@
         ]
       }
     ],
-    "contentVersion": "lessons-1"
+    "contentVersion": "lessons-1",
+    "stages": {
+      "1": {
+        "title": "Stage 1. 문자 및 음소 체계 (초기초)",
+        "subtitle": "성모 · 운모 사운드 매핑 · 4성 성조 시각화",
+        "goal": "중국어 한어병음과 4개 성조를 소리로 구분하고 터치하기",
+        "phonemes": [
+          {
+            "id": "zh-p1",
+            "symbol": "ā",
+            "audio": "ā",
+            "shape": "open_wide",
+            "ipa": "[a˥˥]",
+            "tip": "1성: 높고 평평하게 쭉 뻗는 소리 (솔 음높이)"
+          },
+          {
+            "id": "zh-p2",
+            "symbol": "á",
+            "audio": "á",
+            "shape": "smile_spread",
+            "ipa": "[a˧˥]",
+            "tip": "2성: 아래에서 위로 경쾌하게 올라가는 소리"
+          },
+          {
+            "id": "zh-p3",
+            "symbol": "ǎ",
+            "audio": "ǎ",
+            "shape": "round_pucker",
+            "ipa": "[a˨˩˦]",
+            "tip": "3성: 낮게 내려갔다가 살짝 고개를 들며 꺾는 소리"
+          },
+          {
+            "id": "zh-p4",
+            "symbol": "à",
+            "audio": "à",
+            "shape": "teeth_bite",
+            "ipa": "[a˥˩]",
+            "tip": "4성: 위에서 아래로 강하고 짧게 뚝 떨어뜨리는 소리"
+          },
+          {
+            "id": "zh-p5",
+            "symbol": "b",
+            "audio": "b",
+            "shape": "teeth_bite",
+            "ipa": "[p]",
+            "tip": "성모 b: 두 입술을 붙였다 떼며 내는 무기음"
+          },
+          {
+            "id": "zh-p6",
+            "symbol": "p",
+            "audio": "p",
+            "shape": "teeth_bite",
+            "ipa": "[pʰ]",
+            "tip": "성모 p: 입술 사이로 바람을 강하게 터뜨리는 유기음"
+          },
+          {
+            "id": "zh-p7",
+            "symbol": "m",
+            "audio": "m",
+            "shape": "nasal_relax",
+            "ipa": "[m]",
+            "tip": "성모 m: 두 입술을 닫고 코로 공기를 내보내는 비음"
+          },
+          {
+            "id": "zh-p8",
+            "symbol": "zh",
+            "audio": "zh",
+            "shape": "open_wide",
+            "ipa": "[ʈʂ]",
+            "tip": "권설음 zh: 혀끝을 입천장 안쪽으로 말아 올리는 소리"
+          },
+          {
+            "id": "zh-p9",
+            "symbol": "ch",
+            "audio": "ch",
+            "shape": "open_wide",
+            "ipa": "[ʈʂʰ]",
+            "tip": "권설음 ch: 혀끝을 만 상태에서 강하게 숨을 내뿜는 소리"
+          },
+          {
+            "id": "zh-p10",
+            "symbol": "sh",
+            "audio": "sh",
+            "shape": "open_wide",
+            "ipa": "[ʂ]",
+            "tip": "권설음 sh: 혀끝을 만 상태에서 마찰을 일으키는 소리"
+          }
+        ],
+        "quizzes": [
+          {
+            "audio": "ā",
+            "options": [
+              "ā",
+              "á",
+              "ǎ"
+            ],
+            "answer": 0
+          },
+          {
+            "audio": "à",
+            "options": [
+              "á",
+              "ǎ",
+              "à"
+            ],
+            "answer": 2
+          },
+          {
+            "audio": "zh",
+            "options": [
+              "b",
+              "zh",
+              "ch"
+            ],
+            "answer": 1
+          },
+          {
+            "audio": "á",
+            "options": [
+              "ǎ",
+              "á",
+              "à"
+            ],
+            "answer": 1
+          },
+          {
+            "audio": "p",
+            "options": [
+              "p",
+              "b",
+              "m"
+            ],
+            "answer": 0
+          }
+        ]
+      },
+      "2": {
+        "title": "Stage 2. 생존 어휘 및 3색 블록 조립 (기초)",
+        "subtitle": "파랑(인칭) · 빨강(술어) · 녹색(양사+명사)",
+        "goal": "문법 용어 없이 블록 조립으로 중국어 SVO 어순과 양사 체화하기",
+        "challenges": [
+          {
+            "id": "zh-b1",
+            "scene": "cafe",
+            "target": "我要一杯咖啡。",
+            "meaning": "커피 한 잔 주세요.",
+            "slots": [
+              "subj",
+              "verb",
+              "obj"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "我",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "要",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "一杯咖啡",
+                "color": "green"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "subj",
+                "text": "他",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "是",
+                "color": "red"
+              }
+            ]
+          },
+          {
+            "id": "zh-b2",
+            "scene": "person",
+            "target": "他是老师。",
+            "meaning": "그는 선생님입니다.",
+            "slots": [
+              "subj",
+              "verb",
+              "obj"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "他",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "是",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "老师",
+                "color": "green"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "verb",
+                "text": "去",
+                "color": "red"
+              }
+            ]
+          },
+          {
+            "id": "zh-b3",
+            "scene": "train",
+            "target": "我们去机场。",
+            "meaning": "우리는 공항에 갑니다.",
+            "slots": [
+              "subj",
+              "verb",
+              "obj"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "我们",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "去",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "机场",
+                "color": "green"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "obj",
+                "text": "一杯咖啡",
+                "color": "green"
+              }
+            ]
+          },
+          {
+            "id": "zh-b4",
+            "scene": "book",
+            "target": "你看这本书。",
+            "meaning": "너 이 책 봐봐.",
+            "slots": [
+              "subj",
+              "verb",
+              "obj"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "你",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "看",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "这本书",
+                "color": "green"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "verb",
+                "text": "要",
+                "color": "red"
+              }
+            ]
+          },
+          {
+            "id": "zh-b5",
+            "scene": "food",
+            "target": "她喜欢中国菜。",
+            "meaning": "그녀는 중국 음식을 좋아해요.",
+            "slots": [
+              "subj",
+              "verb",
+              "obj"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "她",
+                "color": "blue"
+              },
+              {
+                "type": "verb",
+                "text": "喜欢",
+                "color": "red"
+              },
+              {
+                "type": "obj",
+                "text": "中国菜",
+                "color": "green"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "subj",
+                "text": "我",
+                "color": "blue"
+              }
+            ]
+          }
+        ]
+      },
+      "3": {
+        "title": "Stage 3. 문장 조립 및 상황 롤플레잉 (초중급)",
+        "subtitle": "5회 패턴 치환 드릴 · 상황별 실전 발화",
+        "goal": "쇼핑·길찾기 핵심 구조에 목적어를 5회 연속 치환 발화하기",
+        "drills": [
+          {
+            "id": "zh-d1",
+            "pattern": "我想买 {slot}。",
+            "template": "我想买 ___。",
+            "meaning": "~를 사고 싶어요 (쇼핑 표현)",
+            "items": [
+              {
+                "text": "手机",
+                "meaning": "휴대폰"
+              },
+              {
+                "text": "电脑",
+                "meaning": "컴퓨터"
+              },
+              {
+                "text": "衬衫",
+                "meaning": "셔츠"
+              },
+              {
+                "text": "机票",
+                "meaning": "비행기 표"
+              },
+              {
+                "text": "绿茶",
+                "meaning": "녹차"
+              }
+            ]
+          },
+          {
+            "id": "zh-d2",
+            "pattern": "请问，{slot} 在哪里？",
+            "template": "请问，___ 在哪里？",
+            "meaning": "말씀 좀 묻겠습니다, ~는 어디에 있나요?",
+            "items": [
+              {
+                "text": "洗手间",
+                "meaning": "화장실"
+              },
+              {
+                "text": "地铁站",
+                "meaning": "지하철역"
+              },
+              {
+                "text": "银行",
+                "meaning": "은행"
+              },
+              {
+                "text": "超市",
+                "meaning": "슈퍼마켓"
+              },
+              {
+                "text": "饭店",
+                "meaning": "식당"
+              }
+            ]
+          }
+        ],
+        "roleplays": [
+          {
+            "id": "zh-r1",
+            "scene": "food",
+            "title": "베이징 식당에서 음식 주문하기",
+            "scenario": "종업원이 메뉴판을 건넵니다. 꿔바로우와 칭다오 맥주를 주문해 보세요.",
+            "npc": "您好！几位？请问想吃点什么？",
+            "choices": [
+              {
+                "label": "A. 꿔바로우와 맥주 1병 주문",
+                "say": "请给我们一份锅包肉和一瓶啤酒。"
+              },
+              {
+                "label": "B. 추천 메뉴 먼저 문의",
+                "say": "请问你们店有什么特色菜推荐吗？"
+              }
+            ]
+          }
+        ]
+      },
+      "4": {
+        "title": "Stage 4. 의견 표현 및 맥락 확장 (중상급)",
+        "subtitle": "접속사 복문 빌더 · 45초 담화 리스닝 STT",
+        "goal": "인과·전환·가정 접속사로 복문을 만들고 요약 리스닝에 답하기",
+        "builders": [
+          {
+            "id": "zh-c1",
+            "part1": "因为今天下雨",
+            "part2": "所以我们不去公园",
+            "conjunction": "所以",
+            "options": [
+              "所以",
+              "但是",
+              "如果"
+            ],
+            "full": "因为今天下雨，所以我们不去公园。",
+            "meaning": "오늘 비가 오기 때문에 우리는 공원에 가지 않아요."
+          },
+          {
+            "id": "zh-c2",
+            "part1": "虽然汉语有点难",
+            "part2": "但是非常有意思",
+            "conjunction": "但是",
+            "options": [
+              "但是",
+              "所以",
+              "如果"
+            ],
+            "full": "虽然汉语有点难，但是非常有意思。",
+            "meaning": "비록 중국어가 좀 어렵지만, 매우 재미있어요."
+          }
+        ],
+        "listening": {
+          "id": "zh-l1",
+          "audioText": "各位旅客请注意，由北京开往上海的G105次列车即将开始检票，请前往三号检票口排队进站。",
+          "duration": "40초 고속철도 안내방송",
+          "question": "몇 번 게이트에서 탑승권을 확인하나요?",
+          "expected": "三号检票口",
+          "hint": "三号 또는 3号라고 답해 보세요."
+        }
+      },
+      "5": {
+        "title": "Stage 5. 전문 도메인 회화 및 AI 실전 (고급)",
+        "subtitle": "5대 전문 비즈니스 도메인 · 실시간 격식도 첨삭",
+        "goal": "비즈니스 중국어 존칭과 완곡한 협상 어조 구사하기",
+        "domains": [
+          {
+            "id": "it",
+            "name": "IT · 소프트웨어",
+            "role": "중국 하드웨어 공급사 총경리",
+            "scenario": "칩셋 납품 일정 및 단가 협상"
+          },
+          {
+            "id": "trade",
+            "name": "무역 · 통관",
+            "role": "상하이 세관 통관 대행사",
+            "scenario": "수입 관세 규정 준수 및 검역 서류 보완 조율"
+          },
+          {
+            "id": "finance",
+            "name": "금융 · 결제",
+            "role": "핀테크 결제망 파트너",
+            "scenario": "크로스보더 위안화 결제 수수료 인하 협상"
+          },
+          {
+            "id": "business",
+            "name": "일반 비즈니스",
+            "role": "독점 유통 총대리상",
+            "scenario": "연간 최저 판매 목표량(MOQ) 및 마케팅 지원 분담"
+          },
+          {
+            "id": "current",
+            "name": "시사 · 경제",
+            "role": "경제 연구소 수석연구원",
+            "scenario": "신에너지 자동차 배터리 공급망 전략 토론"
+          }
+        ]
+      }
+    }
   },
   "ja": {
     "name": "일본어",
@@ -2084,7 +3122,490 @@
         ]
       }
     ],
-    "contentVersion": "lessons-1"
+    "contentVersion": "lessons-1",
+    "stages": {
+      "1": {
+        "title": "Stage 1. 문자 및 음소 체계 (초기초)",
+        "subtitle": "50음도 청음 · 탁음/반탁음/요음 매핑",
+        "goal": "히라가나 발음을 듣고 글자와 1:1로 일치시키기",
+        "phonemes": [
+          {
+            "id": "ja-p1",
+            "symbol": "あ",
+            "audio": "あ",
+            "shape": "open_wide",
+            "ipa": "[a]",
+            "tip": "입을 자연스럽게 벌리고 '아' 소리를 내요."
+          },
+          {
+            "id": "ja-p2",
+            "symbol": "い",
+            "audio": "い",
+            "shape": "smile_spread",
+            "ipa": "[i]",
+            "tip": "입술을 옆으로 당기며 맑게 '이'"
+          },
+          {
+            "id": "ja-p3",
+            "symbol": "う",
+            "audio": "う",
+            "shape": "round_pucker",
+            "ipa": "[ɯ]",
+            "tip": "한국어 '우'보다 입술을 덜 내밀고 평평하게"
+          },
+          {
+            "id": "ja-p4",
+            "symbol": "え",
+            "audio": "え",
+            "shape": "smile_spread",
+            "ipa": "[e]",
+            "tip": "입을 약간 벌리고 부드럽게 '에'"
+          },
+          {
+            "id": "ja-p5",
+            "symbol": "お",
+            "audio": "お",
+            "shape": "round_pucker",
+            "ipa": "[o]",
+            "tip": "입술을 둥글게 모아 '오'"
+          },
+          {
+            "id": "ja-p6",
+            "symbol": "か",
+            "audio": "か",
+            "shape": "open_wide",
+            "ipa": "[ka]",
+            "tip": "K 계열 첫소리: 맑고 가볍게 '카'"
+          },
+          {
+            "id": "ja-p7",
+            "symbol": "が",
+            "audio": "が",
+            "shape": "open_wide",
+            "ipa": "[ɡa]",
+            "tip": "탁음 が: 목 울림을 더해 부드럽게 '가'"
+          },
+          {
+            "id": "ja-p8",
+            "symbol": "ぱ",
+            "audio": "ぱ",
+            "shape": "teeth_bite",
+            "ipa": "[pa]",
+            "tip": "반탁음 ぱ: 입술을 가볍게 튕기며 '파'"
+          },
+          {
+            "id": "ja-p9",
+            "symbol": "きゃ",
+            "audio": "きゃ",
+            "shape": "smile_spread",
+            "ipa": "[kʲa]",
+            "tip": "요음 きゃ: 한 박자로 매끄럽게 '캬'"
+          },
+          {
+            "id": "ja-p10",
+            "symbol": "っ",
+            "audio": "っと",
+            "shape": "teeth_bite",
+            "ipa": "[ʔ]",
+            "tip": "촉음 っ: 한 박자를 숨죽여 멈추는 받침 소리"
+          }
+        ],
+        "quizzes": [
+          {
+            "audio": "あ",
+            "options": [
+              "あ",
+              "い",
+              "お"
+            ],
+            "answer": 0
+          },
+          {
+            "audio": "い",
+            "options": [
+              "う",
+              "い",
+              "え"
+            ],
+            "answer": 1
+          },
+          {
+            "audio": "が",
+            "options": [
+              "か",
+              "が",
+              "ぱ"
+            ],
+            "answer": 1
+          },
+          {
+            "audio": "ぱ",
+            "options": [
+              "ば",
+              "が",
+              "ぱ"
+            ],
+            "answer": 2
+          },
+          {
+            "audio": "お",
+            "options": [
+              "あ",
+              "お",
+              "う"
+            ],
+            "answer": 1
+          }
+        ]
+      },
+      "2": {
+        "title": "Stage 2. 생존 어휘 및 3색 블록 조립 (기초)",
+        "subtitle": "파랑(주어+조사) · 빨강(동사) · 녹색(목적어+조사)",
+        "goal": "문법 용어 없이 파랑-빨강-녹색 결합으로 일본어 SOV 어순 체화하기",
+        "challenges": [
+          {
+            "id": "ja-b1",
+            "scene": "cafe",
+            "target": "私はお茶を飲みます。",
+            "meaning": "저는 차를 마십니다.",
+            "slots": [
+              "subj",
+              "obj",
+              "verb"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "私 は",
+                "color": "blue"
+              },
+              {
+                "type": "obj",
+                "text": "お茶 を",
+                "color": "green"
+              },
+              {
+                "type": "verb",
+                "text": "飲みます",
+                "color": "red"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "verb",
+                "text": "食べます",
+                "color": "red"
+              },
+              {
+                "type": "subj",
+                "text": "彼 は",
+                "color": "blue"
+              }
+            ]
+          },
+          {
+            "id": "ja-b2",
+            "scene": "book",
+            "target": "これは本です。",
+            "meaning": "이것은 책입니다.",
+            "slots": [
+              "subj",
+              "obj",
+              "verb"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "これ は",
+                "color": "blue"
+              },
+              {
+                "type": "obj",
+                "text": "本",
+                "color": "green"
+              },
+              {
+                "type": "verb",
+                "text": "です",
+                "color": "red"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "verb",
+                "text": "飲みます",
+                "color": "red"
+              }
+            ]
+          },
+          {
+            "id": "ja-b3",
+            "scene": "train",
+            "target": "田中さんは東京へ行きます。",
+            "meaning": "다나카 씨는 도쿄에 갑니다.",
+            "slots": [
+              "subj",
+              "obj",
+              "verb"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "田中さん は",
+                "color": "blue"
+              },
+              {
+                "type": "obj",
+                "text": "東京 へ",
+                "color": "green"
+              },
+              {
+                "type": "verb",
+                "text": "行きます",
+                "color": "red"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "obj",
+                "text": "お茶 を",
+                "color": "green"
+              }
+            ]
+          },
+          {
+            "id": "ja-b4",
+            "scene": "food",
+            "target": "彼はラーメンを食べます。",
+            "meaning": "그는 라멘을 먹습니다.",
+            "slots": [
+              "subj",
+              "obj",
+              "verb"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "彼 は",
+                "color": "blue"
+              },
+              {
+                "type": "obj",
+                "text": "ラーメン を",
+                "color": "green"
+              },
+              {
+                "type": "verb",
+                "text": "食べます",
+                "color": "red"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "verb",
+                "text": "行きます",
+                "color": "red"
+              }
+            ]
+          },
+          {
+            "id": "ja-b5",
+            "scene": "train",
+            "target": "私は切符を買います。",
+            "meaning": "저는 표를 삽니다.",
+            "slots": [
+              "subj",
+              "obj",
+              "verb"
+            ],
+            "blocks": [
+              {
+                "type": "subj",
+                "text": "私 は",
+                "color": "blue"
+              },
+              {
+                "type": "obj",
+                "text": "切符 を",
+                "color": "green"
+              },
+              {
+                "type": "verb",
+                "text": "買います",
+                "color": "red"
+              }
+            ],
+            "distractors": [
+              {
+                "type": "subj",
+                "text": "これ は",
+                "color": "blue"
+              }
+            ]
+          }
+        ]
+      },
+      "3": {
+        "title": "Stage 3. 문장 조립 및 상황 롤플레잉 (초중급)",
+        "subtitle": "5회 패턴 치환 드릴 · 상황별 실전 발화",
+        "goal": "식당·역 필수 패턴에 단어를 5회 연속 바꿔 말하며 자동화하기",
+        "drills": [
+          {
+            "id": "ja-d1",
+            "pattern": "{slot} をください。",
+            "template": "___ をください。",
+            "meaning": "~를 주세요 (주문 표현)",
+            "items": [
+              {
+                "text": "水",
+                "meaning": "물"
+              },
+              {
+                "text": "メニュー",
+                "meaning": "메뉴판"
+              },
+              {
+                "text": "コーヒー",
+                "meaning": "커피"
+              },
+              {
+                "text": "レシート",
+                "meaning": "영수증"
+              },
+              {
+                "text": "お弁当",
+                "meaning": "도시락"
+              }
+            ]
+          },
+          {
+            "id": "ja-d2",
+            "pattern": "{slot} はどこですか？",
+            "template": "___ はどこですか？",
+            "meaning": "~는 어디인가요? (위치 문의)",
+            "items": [
+              {
+                "text": "駅",
+                "meaning": "역"
+              },
+              {
+                "text": "トイレ",
+                "meaning": "화장실"
+              },
+              {
+                "text": "コンビニ",
+                "meaning": "편의점"
+              },
+              {
+                "text": "ホテル",
+                "meaning": "호텔"
+              },
+              {
+                "text": "薬局",
+                "meaning": "약국"
+              }
+            ]
+          }
+        ],
+        "roleplays": [
+          {
+            "id": "ja-r1",
+            "scene": "food",
+            "title": "도쿄 식당에서 주문하기",
+            "scenario": "직원이 물을 가져다주며 주문을 받습니다. 메뉴판을 보며 라멘과 맥주를 주문해 보세요.",
+            "npc": "いらっしゃいませ！ご注文はお決まりですか？",
+            "choices": [
+              {
+                "label": "A. 라멘 1개와 맥주 1잔 주문",
+                "say": "すみません、ラーメン一つとビール一杯をください。"
+              },
+              {
+                "label": "B. 추천 메뉴 먼저 문의",
+                "say": "おすすめのメニューは何ですか？"
+              }
+            ]
+          }
+        ]
+      },
+      "4": {
+        "title": "Stage 4. 의견 표현 및 맥락 확장 (중상급)",
+        "subtitle": "접속사 복문 빌더 · 45초 담화 리스닝 STT",
+        "goal": "이유(~から)·역접(~けれど)·조건(~たら) 복문을 만들고 답하기",
+        "builders": [
+          {
+            "id": "ja-c1",
+            "part1": "雨が降っています",
+            "part2": "傘を持っていきます",
+            "conjunction": "から",
+            "options": [
+              "から",
+              "けれど",
+              "たら"
+            ],
+            "full": "雨が降っていますから、傘を持っていきます。",
+            "meaning": "비가 오고 있으니까 우산을 가져갑니다."
+          },
+          {
+            "id": "ja-c2",
+            "part1": "値段は高いです",
+            "part2": "とても美味しいです",
+            "conjunction": "けれど",
+            "options": [
+              "けれど",
+              "から",
+              "なら"
+            ],
+            "full": "値段は高いですけれど、とても美味しいです。",
+            "meaning": "가격은 비싸지만 아주 맛있어요."
+          }
+        ],
+        "listening": {
+          "id": "ja-l1",
+          "audioText": "本日もJR東日本をご利用いただきましてありがとうございます。まもなく2番線に東京行き電車が到着いたします。黄色い点字ブロックの内側までお下がりください。",
+          "duration": "35초 도쿄역 안내방송",
+          "question": "열차가 도착하는 홈은 몇 번선인가요?",
+          "expected": "2番線",
+          "hint": "2番線(にばんせん) 또는 2라고 답해 보세요."
+        }
+      },
+      "5": {
+        "title": "Stage 5. 전문 도메인 회화 및 AI 실전 (고급)",
+        "subtitle": "5대 전문 비즈니스 도메인 · 비즈니스 경어(敬語) 첨삭",
+        "goal": "비즈니스 미팅에서 존경어·겸양어를 상황에 맞게 정확히 구사하기",
+        "domains": [
+          {
+            "id": "it",
+            "name": "IT · 시스템 개발",
+            "role": "일본 SI 파트너 PM",
+            "scenario": "클라우드 마이그레이션 장애 대응 및 긴급 패치 일정 조율"
+          },
+          {
+            "id": "trade",
+            "name": "무역 · 상사",
+            "role": "종합상사 부장",
+            "scenario": "독점 수입 계약 조항 및 최소 발주 수량(MOQ) 조건 협상"
+          },
+          {
+            "id": "finance",
+            "name": "금융 · 결제",
+            "role": "메가뱅크 외환담당역",
+            "scenario": "해외 송금 API 연동 보안 심사 및 수수료 체계 협의"
+          },
+          {
+            "id": "business",
+            "name": "일반 비즈니스",
+            "role": "거래처 임원",
+            "scenario": "신규 프로젝트 제안 프레젠테이션 및 질의응답 (정중한 거절/완곡 대응)"
+          },
+          {
+            "id": "current",
+            "name": "시사 · 경제",
+            "role": "경제 주간지 기자",
+            "scenario": "엔저 기조와 일본 내 글로벌 인재 유치 정책 토론"
+          }
+        ]
+      }
+    }
   }
 };
 'use strict';
@@ -2101,12 +3622,45 @@ let renderedScreen = '', checkpointKey = '', reviewMode = false;
 let recallQueue=[],recallPosition=0,recallToken='',recallRevealed=false,recallCanRemember=false,recallHeard=false,recallResults=[];let recallStartSeconds=0;
 const rounds = {1:1,5:2,15:4};
 const plans = {1:'핵심 표현 1개 · 듣기 20초 → 따라 말하기 30초 → 복습 10초',5:'핵심 표현 2개 · 듣기 1분 → 발음 연습 2분 → 짧은 회화 1분 30초 → 복습 30초',15:'표현 비교 3분 → 발음 반복 6분 → 주제 회화 5분 → 복습 1분'};
+
+// SOW-LANG-001 State
+let currentStageTab = 1, currentPhonemeIndex = 0, stage1QuizIndex = 0, stage1QuizState = null, mouthActive = false;
+let stage2Index = 0, placedBlocks = [], blockSnapped = false;
+let stage3DrillIndex = 0, stage3SlotIndex = 0;
+let stage4Index = 0, stage4SelectedConn = null;
+let stage5Domain = 'it';
+function playSpeech(text, lang=language, rate=1.0) {
+  mouthActive = true; render();
+  setTimeout(() => { mouthActive = false; render(); }, 1200);
+  if (native) { bridge('speakText', { text, language: lang, rate }); }
+  else {
+    try {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang === 'zh' ? 'zh-CN' : lang === 'ja' ? 'ja-JP' : 'fr-FR';
+        u.rate = rate; window.speechSynthesis.speak(u);
+      }
+    } catch(e) {}
+  }
+}
+function mouthSVG(shape='open_wide', active=false) {
+  const shapes = {
+    open_wide: '<ellipse cx="70" cy="45" rx="36" ry="24" class="lips"/><ellipse cx="70" cy="46" rx="28" ry="18" fill="#1e293b"/><path d="M52 50 Q70 62 88 50" class="tongue"/>',
+    smile_spread: '<path d="M30 45 Q70 65 110 45 Q70 30 30 45" class="lips"/><path d="M42 45 H98" class="teeth"/><ellipse cx="70" cy="48" rx="24" ry="10" fill="#1e293b"/>',
+    round_pucker: '<circle cx="70" cy="45" r="22" class="lips"/><circle cx="70" cy="45" r="14" fill="#1e293b"/>',
+    teeth_bite: '<rect x="36" y="32" width="68" height="26" rx="12" class="lips"/><rect x="42" y="37" width="56" height="7" rx="2" class="teeth"/><rect x="44" y="44" width="52" height="6" rx="2" class="teeth"/>',
+    nasal_relax: '<ellipse cx="70" cy="45" rx="30" ry="16" class="lips"/><path d="M50 44 Q70 54 90 44" fill="#1e293b"/>'
+  };
+  return `<svg class="mouthSvg ${active?'mouthActive':''}" viewBox="0 0 140 90" aria-label="원어민 입모양 애니메이션">${shapes[shape] || shapes.open_wide}</svg>`;
+}
+
 function bridge(command,payload={}) {
   if (!native) {
     if(command === 'status') return {...state,ok:true};
     if(command === 'open') return {ok:true,epoch:++sessionEpoch};
     if(command === 'cancel') return {ok:true};
-    info(command === 'admin' ? '관리자 비밀번호 입력' : 'Android 앱에서 사용해 주세요', command === 'admin' ? '실제 앱에서는 이곳에 비밀번호 입력창이 열립니다. 비밀번호는 설정에서 직접 정하며, 인증하면 모든 단원을 별도 테스트할 수 있습니다.' : '이 화면은 디자인 시안입니다. 기기 음성·녹음·보안 저장·Gemini 연결은 설치한 Android 앱에서 작동합니다.');
+    info(command === 'admin' ? '관리자 비밀번호 입력' : 'Android 앱에서 사용해 주세요', command === 'admin' ? '실제 앱에서는 이곳에 비밀번호 입력창이 열립니다. 화면을 5번 눌러 설정하며, 인증하면 모든 단원을 별도 테스트할 수 있습니다.' : '이 화면은 디자인 시안입니다. 기기 음성·녹음·보안 저장·Gemini 연결은 설치한 Android 앱에서 작동합니다.');
     return {ok:false};
   }
   try { const result=JSON.parse(window.Native.call(command,JSON.stringify(payload))); if(!result.ok) toast(result.error || '요청을 처리하지 못했습니다.'); return result; }
@@ -2154,6 +3708,134 @@ function illustration(scene) {
   };
   return `<div class="scene" role="img" aria-label="${escapeHTML({greeting:'인사하는 사람',person:'자기소개',cafe:'따뜻한 음료',book:'펼친 책',map:'길 안내 지도',clock:'시계',park:'공원',help:'질문 말풍선',train:'기차',rain:'비 오는 날',food:'식사',camera:'사진기'}[scene] || '단원 그림')}"><svg viewBox="0 0 230 150" fill="none" stroke="#2E6F40" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${shapes[scene]||shapes.greeting}</svg></div>`;
 }
+
+function renderStage1() {
+  const s1 = data[language].stages?.['1'];
+  if (!s1) return '<p>Stage 1 준비 중</p>';
+  const phonemes = s1.phonemes;
+  const current = phonemes[currentPhonemeIndex] || phonemes[0];
+  const quiz = s1.quizzes[stage1QuizIndex] || s1.quizzes[0];
+  let html = `<div class="eyebrow">${escapeHTML(data[language].name)} · SOW-LANG-001</div><h1>${escapeHTML(s1.title)}</h1><p class="muted">${escapeHTML(s1.subtitle)} · ${escapeHTML(s1.goal)}</p>`;
+  html += `<div class="mouthCard">${mouthSVG(current.shape, mouthActive)}<div style="font-size:38px;font-weight:750;color:var(--green);margin:10px 0 4px">${escapeHTML(current.symbol)}</div><div style="font-size:16px;color:var(--sub);margin-bottom:8px">${escapeHTML(current.ipa)}</div><p class="hint" style="margin:8px 0">${escapeHTML(current.tip)}</p>${button('playCurrentPhoneme', '▶ 입모양 보며 소리 듣기 (0.1s)', 'primary wide')}</div>`;
+  html += `<h3>음소 카드 터치 학습</h3><p class="muted">글자를 누르면 0.1초 딜레이 없이 원어민 입모양과 소리가 즉시 재생됩니다.</p><div class="phonemeGrid">`;
+  phonemes.forEach((p, idx) => {
+    html += `<div class="phonemeCard ${idx === currentPhonemeIndex ? 'selected' : ''}" data-action="pickPhoneme" data-index="${idx}"><span class="symbol">${escapeHTML(p.symbol)}</span><span class="ipa">${escapeHTML(p.ipa)}</span></div>`;
+  });
+  html += `</div>`;
+  html += `<div class="section"><h3>직관적 청각-문자 퀴즈</h3><p class="muted">모국어 번역 없이 소리를 듣고 일치하는 문자 카드 3장 중 하나를 선택하세요.</p>${button('playQuizAudio', '🔊 문제 소리 다시 듣기', '')}<div class="quizCardGrid">`;
+  quiz.options.forEach((opt, optIdx) => {
+    let cls = '';
+    if (stage1QuizState && stage1QuizState.quizIndex === stage1QuizIndex) {
+      if (optIdx === quiz.answer) cls = 'correct';
+      else if (optIdx === stage1QuizState.chosen) cls = 'wrong';
+    }
+    html += `<button class="quizCard ${cls}" data-action="answerQuiz" data-choice="${optIdx}">${escapeHTML(opt)}</button>`;
+  });
+  html += `</div>`;
+  if (stage1QuizState && stage1QuizState.quizIndex === stage1QuizIndex) {
+    html += `<div class="feedback" style="margin-top:12px"><b>${stage1QuizState.correct ? '🎉 정답입니다!' : '다시 들어보세요!'}</b> ${button('nextQuiz', '다음 퀴즈 풀기 →', 'primary')}</div>`;
+  }
+  html += `</div>`;
+  html += `<div class="section">${button('openStage', 'Stage 2. 3색 블록 조립으로 이동 →', 'primary wide', 'data-stage="2"')}${button('path', '전체 학습 로드맵으로', 'wide')}</div>`;
+  return html;
+}
+
+function renderStage2() {
+  const s2 = data[language].stages?.['2'];
+  if (!s2) return '<p>Stage 2 준비 중</p>';
+  const challenge = s2.challenges[stage2Index] || s2.challenges[0];
+  const allBlocks = challenge.blocks.concat(challenge.distractors || []);
+  let html = `<div class="eyebrow">${escapeHTML(data[language].name)} · SOW-LANG-001</div><h1>${escapeHTML(s2.title)}</h1><p class="muted">${escapeHTML(s2.subtitle)} · ${escapeHTML(s2.goal)}</p>`;
+  html += illustration(challenge.scene || 'cafe');
+  html += `<div class="phrase"><h2 style="font-size:24px;margin:8px 0">${escapeHTML(challenge.meaning)}</h2><p class="muted">문법 용어 없이 파랑(주체)·빨강(동작)·녹색(대상) 블록을 맞춰 문장을 조립하세요.</p></div>`;
+  html += `<div class="slotBoard ${blockSnapped ? 'snapped' : ''}">`;
+  challenge.slots.forEach((slotType, i) => {
+    const placed = placedBlocks[i];
+    if (placed) {
+      html += `<div class="blockPill ${placed.color}" data-action="unplaceBlock" data-index="${i}">${escapeHTML(placed.text)} ✕</div>`;
+    } else {
+      const label = { subj: '주체 (파랑)', verb: '동작 (빨강)', obj: '대상 (녹색)' }[slotType] || '블록';
+      html += `<div class="blockSlot">[ ${label} ]</div>`;
+    }
+  });
+  html += `</div>`;
+  if (blockSnapped) {
+    html += `<div class="feedback" style="text-align:center;background:#dcfce7;border-color:#16a34a"><h3 style="color:#15803d;margin:4px 0">🎉 문장 결합 완성!</h3><p style="font-size:20px;font-weight:700">${escapeHTML(challenge.target)}</p>${button('replaySentence', '▶ 전체 문장 다시 듣기', 'primary')} ${button('nextStage2Challenge', '다음 블록 도전하기 →', 'primary')}</div>`;
+  }
+  html += `<h3>사용 가능한 블록 선택</h3><div class="blockTray">`;
+  allBlocks.forEach((b, bIdx) => {
+    const isUsed = placedBlocks.some(p => p.text === b.text && p.type === b.type);
+    html += `<button class="blockPill ${b.color} ${isUsed ? 'used' : ''}" data-action="placeBlock" data-index="${bIdx}" ${isUsed ? 'disabled' : ''}>${escapeHTML(b.text)}</button>`;
+  });
+  html += `</div>`;
+  html += `<div class="section">${button('openStage', 'Stage 3. 5회 패턴 치환 드릴로 이동 →', 'primary wide', 'data-stage="3"')}${button('path', '전체 학습 로드맵으로', 'wide')}</div>`;
+  return html;
+}
+
+function renderStage3() {
+  const s3 = data[language].stages?.['3'];
+  if (!s3) return '<p>Stage 3 준비 중</p>';
+  const drill = s3.drills[stage3DrillIndex] || s3.drills[0];
+  const currentItem = drill.items[stage3SlotIndex] || drill.items[0];
+  const parts = drill.pattern.split('{slot}');
+  let html = `<div class="eyebrow">${escapeHTML(data[language].name)} · SOW-LANG-001</div><h1>${escapeHTML(s3.title)}</h1><p class="muted">${escapeHTML(s3.subtitle)} · ${escapeHTML(s3.goal)}</p>`;
+  html += `<div class="drillBox"><div class="tag" style="margin-bottom:10px">${escapeHTML(drill.meaning)}</div><div class="drillPattern">${escapeHTML(parts[0])}<span class="drillSlot">${escapeHTML(currentItem.text)}</span>${escapeHTML(parts[1] || '')}</div><p style="font-size:18px;color:var(--sub);margin-top:8px">${escapeHTML(currentItem.meaning)}</p><div class="row" style="margin-top:16px">${button('playDrillAudio', '▶ 치환 문장 듣기', 'primary')}${button('nextDrillSlot', '다음 단어로 치환 (5회 드릴) →', '')}</div></div>`;
+  html += `<h3>치환 단어 선택 (5회 자동화)</h3><div class="drillChips">`;
+  drill.items.forEach((item, idx) => {
+    html += `<button class="drillChip ${idx === stage3SlotIndex ? 'active' : ''}" data-action="selectDrillSlot" data-index="${idx}">${idx + 1}. ${escapeHTML(item.text)}</button>`;
+  });
+  html += `</div>`;
+  if (s3.roleplays && s3.roleplays.length) {
+    const rp = s3.roleplays[0];
+    html += `<div class="section"><h3>상황별 롤플레잉 미션</h3><div class="hero"><b>${escapeHTML(rp.title)}</b><p class="muted">${escapeHTML(rp.scenario)}</p><div class="bubble"><p><b>상대방:</b> ${escapeHTML(rp.npc)}</p></div><div class="buttonStack">`;
+    rp.choices.forEach(c => {
+      html += `<button class="wide" data-action="speakRoleplayChoice" data-text="${escapeHTML(c.say)}" style="text-align:left"><small style="color:var(--green)">${escapeHTML(c.label)}</small><br><b>${escapeHTML(c.say)}</b></button>`;
+    });
+    html += `</div></div></div>`;
+  }
+  html += `<div class="section">${button('openStage', 'Stage 4. 접속사 복문 빌더로 이동 →', 'primary wide', 'data-stage="4"')}${button('path', '전체 학습 로드맵으로', 'wide')}</div>`;
+  return html;
+}
+
+function renderStage4() {
+  const s4 = data[language].stages?.['4'];
+  if (!s4) return '<p>Stage 4 준비 중</p>';
+  const b = s4.builders[stage4Index] || s4.builders[0];
+  let html = `<div class="eyebrow">${escapeHTML(data[language].name)} · SOW-LANG-001</div><h1>${escapeHTML(s4.title)}</h1><p class="muted">${escapeHTML(s4.subtitle)} · ${escapeHTML(s4.goal)}</p>`;
+  html += `<div class="builderBox"><span>${escapeHTML(b.part1)}</span><span class="conjunctionDrop">${escapeHTML(stage4SelectedConn || '[ 접속사 선택 ]')}</span><span>${escapeHTML(b.part2)}</span></div>`;
+  html += `<p class="muted" style="text-align:center">${escapeHTML(b.meaning)}</p>`;
+  if (stage4SelectedConn === b.conjunction) {
+    html += `<div class="feedback" style="text-align:center;background:#dcfce7;border-color:#16a34a"><h3 style="color:#15803d;margin:4px 0">🎉 복문 결합 성공!</h3><p style="font-size:18px;font-weight:700">${escapeHTML(b.full)}</p>${button('playComplexAudio', '▶ 전체 복문 듣기', 'primary')} ${button('nextBuilder', '다음 복문 빌더 도전 →', 'primary')}</div>`;
+  }
+  html += `<h3>알맞은 접속사를 고르세요</h3><div class="row">`;
+  b.options.forEach(opt => {
+    html += `<button class="primary" data-action="pickConjunction" data-conn="${escapeHTML(opt)}">${escapeHTML(opt)}</button>`;
+  });
+  html += `</div>`;
+  if (s4.listening) {
+    html += `<div class="section"><h3>45초 실전 담화 리스닝 STT</h3><div class="hero"><b>${escapeHTML(s4.listening.duration)}</b><p class="muted">${escapeHTML(s4.listening.question)}</p>${button('playListeningAudio', '▶ 담화 오디오 듣기', 'primary')}<p class="hint" style="margin-top:12px">💡 힌트: ${escapeHTML(s4.listening.hint)}</p></div></div>`;
+  }
+  html += `<div class="section">${button('openStage', 'Stage 5. 비즈니스 AI 롤플레잉으로 이동 →', 'primary wide', 'data-stage="5"')}${button('path', '전체 학습 로드맵으로', 'wide')}</div>`;
+  return html;
+}
+
+function renderStage5() {
+  const s5 = data[language].stages?.['5'];
+  if (!s5) return '<p>Stage 5 준비 중</p>';
+  const domains = s5.domains;
+  const current = domains.find(d => d.id === stage5Domain) || domains[0];
+  let html = `<div class="eyebrow">${escapeHTML(data[language].name)} · SOW-LANG-001</div><h1>${escapeHTML(s5.title)}</h1><p class="muted">${escapeHTML(s5.subtitle)} · ${escapeHTML(s5.goal)}</p>`;
+  html += `<div class="domainChips">`;
+  domains.forEach(d => {
+    html += `<button class="domainChip ${d.id === stage5Domain ? 'active' : ''}" data-action="selectDomain" data-id="${escapeHTML(d.id)}">${escapeHTML(d.name)}</button>`;
+  });
+  html += `</div>`;
+  html += `<div class="hero"><h2>${escapeHTML(current.name)} 실전 시나리오</h2><p><b>상대역:</b> ${escapeHTML(current.role)}</p><p class="muted">${escapeHTML(current.scenario)}</p>${button('startDomainChat', '이 시나리오로 Gemini AI 회화 시작', 'primary wide')}</div>`;
+  html += `<div class="polishCard"><h3>실시간 격식도 & 외교적 어조 분석 카드</h3><p class="muted">학습자의 발화가 단순 문법 정답을 넘어 비즈니스 격식과 외교적 완곡성을 갖추었는지 실시간 분석합니다.</p><label>격식도 (Formality Level): Business Formal (88%)</label><div class="gaugeBar"><div class="gaugeFill blue" style="width:88%"></div></div><label>외교적 완곡성 (Diplomatic Phrasing): High (92%)</label><div class="gaugeBar"><div class="gaugeFill gold" style="width:92%"></div></div><p class="hint">💡 추천 완곡 표현: 직설적인 거절 대신 <i>"대안을 검토한 후 다시 논의하는 방안을 제안드립니다"</i>로 완곡하게 답해보세요.</p></div>`;
+  html += `<div class="section">${button('openStage', 'Stage 1. 기초 음소 매핑으로 처음부터 복습 →', 'wide', 'data-stage="1"')}${button('home', '홈 화면으로', 'primary wide')}</div>`;
+  return html;
+}
+
 function render() {
   if(!data) return;
   $('changeLanguage').textContent=selected?data[language].name+' ▾':'언어 선택';
@@ -2167,6 +3849,7 @@ function render() {
   } else if(screen==='home') {
     const count=data[language].units.flatMap(u=>u.lessons||[]).filter(lessonComplete).length;
     html=`<div class="eyebrow">${data[language].native} · 나의 속도로</div><h1>작은 한마디가<br>대화의 시작이니까.</h1><p class="muted">오늘도, 어제보다 편하게 말해 봐요.</p><div class="hero"><span class="tag">${unlockedStage()}단계 · 나의 현재 과정</span><h2>${data[language].units[unlockedStage()-1].title}</h2><p>${data[language].focus}</p>${button('start','이어서 연습하기 →','primary wide')}${button('lessons','작은 단원 골라 연습하기','wide')}</div><h3>오늘은 얼마나 연습할까요?</h3><div class="routine">${[1,5,15].map(n=>button('routine',n+'분',routine===n?'selected':'',`data-min="${n}" aria-pressed="${routine===n}"`)).join('')}</div><p class="muted" id="routinePlan">${plans[routine]}</p><div class="section"><span class="eyebrow">배운 만큼, 단단하게</span><p>표현 연습을 마친 단원 <b>${count}개</b> · 현재 <b>${unlockedStage()} / 10단계</b></p><p class="muted">연습 완료와 단계 통과는 달라요. 다음 단계는 듣기·말하기 실력이 검증되면 열립니다.</p>${button('gate','단계 통과 기준 보기','wide')}</div>`;
+    html+=`<div class="section"><span class="eyebrow">SOW-LANG-001 파이프라인</span><h2>노베이스 5단계 학습 로드맵</h2><p class="muted">문자 음소부터 3색 블록 조립, 패턴 치환, 복문 빌더, 전문 비즈니스 AI 롤플레잉까지 순서대로 정복해요.</p><div class="stageTabs"><button class="primary" data-action="openStage" data-stage="1">Stage 1. 문자·음소</button><button data-action="openStage" data-stage="2">Stage 2. 3색 블록</button><button data-action="openStage" data-stage="3">Stage 3. 패턴 치환</button><button data-action="openStage" data-stage="4">Stage 4. 복문 빌더</button><button data-action="openStage" data-stage="5">Stage 5. 비즈니스 AI</button></div></div>`;
   } else if(screen==='path') {
     html=`<div class="eyebrow">${data[language].name}의 독립 과정</div><h1>천천히, 확실하게.<br>나의 10단계</h1><p class="muted">기간이 아닌 실제 실력으로 넘어갑니다.</p>`;
     data[language].units.forEach((u,i)=>{const locked=i>=unlockedStage()&&!state.admin; html+=`<button class="level ${locked?'locked':''}" data-action="unit" data-index="${i}" aria-label="${i+1}단계 ${escapeHTML(u.title)} ${locked?'잠김':''}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><b>${u.title}</b><small>${locked?'이전 단계 실력 검증 후 열림':state.admin?'관리자 테스트로 열기':'현재 학습 중'}</small></span><span class="arrow">${locked?'◇':'→'}</span></button>`;});
@@ -2177,6 +3860,11 @@ function render() {
   else if(screen==='recall') html=renderRecall();
   else if(screen==='recallSummary') html=renderRecallSummary();
   else if(screen==='evidence') html=renderEvidence();
+  else if(screen==='stage1') html=renderStage1();
+  else if(screen==='stage2') html=renderStage2();
+  else if(screen==='stage3') html=renderStage3();
+  else if(screen==='stage4') html=renderStage4();
+  else if(screen==='stage5') html=renderStage5();
   else if(screen==='exams')html=renderExams();
   else if(screen==='exam')html=renderExam();
   else if(screen==='summary')html=renderLessonSummary();
@@ -2284,6 +3972,130 @@ document.addEventListener('click',event=>{
   else if(action==='examListen')bridge('examListen',{epoch:sessionEpoch});
   else if(action==='examSend'){examConsent=!!$('examConsent')?.checked;examRequest('examSubmit',{consent:examConsent});}
   else if(action==='gate') {resetSession();refresh();screen='evidence';render();}
+  else if(action==='openStage') {
+    const st = element.dataset.stage;
+    screen = 'stage' + st;
+    if (st === '2' && data[language].stages?.['2']) {
+      placedBlocks = []; blockSnapped = false;
+    }
+    render();
+  }
+  else if(action==='pickPhoneme') {
+    currentPhonemeIndex = Number(element.dataset.index);
+    const p = data[language].stages['1'].phonemes[currentPhonemeIndex];
+    render();
+    playSpeech(p.audio, language, 0.9);
+  }
+  else if(action==='playCurrentPhoneme') {
+    const p = data[language].stages['1'].phonemes[currentPhonemeIndex];
+    playSpeech(p.audio, language, 0.9);
+  }
+  else if(action==='playQuizAudio') {
+    const q = data[language].stages['1'].quizzes[stage1QuizIndex];
+    playSpeech(q.audio, language, 0.9);
+  }
+  else if(action==='answerQuiz') {
+    const choice = Number(element.dataset.choice);
+    const q = data[language].stages['1'].quizzes[stage1QuizIndex];
+    stage1QuizState = { quizIndex: stage1QuizIndex, chosen: choice, correct: choice === q.answer };
+    render();
+  }
+  else if(action==='nextQuiz') {
+    const quizzes = data[language].stages['1'].quizzes;
+    stage1QuizIndex = (stage1QuizIndex + 1) % quizzes.length;
+    stage1QuizState = null;
+    render();
+    setTimeout(() => playSpeech(quizzes[stage1QuizIndex].audio, language, 0.9), 300);
+  }
+  else if(action==='placeBlock') {
+    const s2 = data[language].stages['2'];
+    const challenge = s2.challenges[stage2Index];
+    const allBlocks = challenge.blocks.concat(challenge.distractors || []);
+    const b = allBlocks[Number(element.dataset.index)];
+    if (placedBlocks.length < challenge.slots.length && !placedBlocks.some(p => p.text === b.text && p.type === b.type)) {
+      placedBlocks.push(b);
+      if (placedBlocks.length === challenge.slots.length) {
+        const match = challenge.slots.every((slotType, idx) => placedBlocks[idx].type === slotType);
+        if (match) {
+          blockSnapped = true;
+          setTimeout(() => playSpeech(challenge.target, language, 1.0), 200);
+        } else {
+          toast('블록 순서를 다시 확인해 보세요.');
+        }
+      }
+      render();
+    }
+  }
+  else if(action==='unplaceBlock') {
+    placedBlocks.splice(Number(element.dataset.index), 1);
+    blockSnapped = false;
+    render();
+  }
+  else if(action==='replaySentence') {
+    const s2 = data[language].stages['2'];
+    playSpeech(s2.challenges[stage2Index].target, language, 1.0);
+  }
+  else if(action==='nextStage2Challenge') {
+    const s2 = data[language].stages['2'];
+    stage2Index = (stage2Index + 1) % s2.challenges.length;
+    placedBlocks = [];
+    blockSnapped = false;
+    render();
+  }
+  else if(action==='selectDrillSlot') {
+    stage3SlotIndex = Number(element.dataset.index);
+    const drill = data[language].stages['3'].drills[stage3DrillIndex];
+    const item = drill.items[stage3SlotIndex];
+    render();
+    playSpeech(drill.pattern.replace('{slot}', item.text), language, 1.0);
+  }
+  else if(action==='nextDrillSlot') {
+    const drill = data[language].stages['3'].drills[stage3DrillIndex];
+    stage3SlotIndex = (stage3SlotIndex + 1) % drill.items.length;
+    render();
+    playSpeech(drill.pattern.replace('{slot}', drill.items[stage3SlotIndex].text), language, 1.0);
+  }
+  else if(action==='playDrillAudio') {
+    const drill = data[language].stages['3'].drills[stage3DrillIndex];
+    playSpeech(drill.pattern.replace('{slot}', drill.items[stage3SlotIndex].text), language, 1.0);
+  }
+  else if(action==='speakRoleplayChoice') {
+    playSpeech(element.dataset.text, language, 1.0);
+  }
+  else if(action==='pickConjunction') {
+    const s4 = data[language].stages['4'];
+    const b = s4.builders[stage4Index];
+    stage4SelectedConn = element.dataset.conn;
+    render();
+    if (stage4SelectedConn === b.conjunction) {
+      setTimeout(() => playSpeech(b.full, language, 1.0), 200);
+    }
+  }
+  else if(action==='playComplexAudio') {
+    const s4 = data[language].stages['4'];
+    playSpeech(s4.builders[stage4Index].full, language, 1.0);
+  }
+  else if(action==='nextBuilder') {
+    const s4 = data[language].stages['4'];
+    stage4Index = (stage4Index + 1) % s4.builders.length;
+    stage4SelectedConn = null;
+    render();
+  }
+  else if(action==='playListeningAudio') {
+    const s4 = data[language].stages['4'];
+    playSpeech(s4.listening.audioText, language, 0.95);
+  }
+  else if(action==='selectDomain') {
+    stage5Domain = element.dataset.id;
+    render();
+  }
+  else if(action==='startDomainChat') {
+    const s5 = data[language].stages['5'];
+    const cur = s5.domains.find(d => d.id === stage5Domain);
+    topic = cur ? cur.name + ' - ' + cur.scenario : '비즈니스 실전 회화';
+    send('chat', false, true);
+  }
+
 });
 $('brand').onclick=goHome;
 $('changeLanguage').onclick=()=>{resetSession(); screen='languages';render();};
