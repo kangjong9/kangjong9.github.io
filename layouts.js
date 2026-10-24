@@ -201,6 +201,11 @@ function initProjectFolders(content) {
   const view = content.querySelector('.project-category-view');
   let selected = null;
   content.querySelectorAll('[data-project-category]').forEach(button => {
+    const key = button.dataset.projectCategory;
+    if (projects[key]) {
+      const countEl = button.querySelector('small');
+      if (countEl) countEl.textContent = `${projects[key].length}개`;
+    }
     button.addEventListener('click', () => {
       const key = button.dataset.projectCategory;
       if (!Object.prototype.hasOwnProperty.call(categories, key)) return;
