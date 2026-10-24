@@ -108,7 +108,7 @@ function initProjectFolders(content) {
   initGameEditorFolder(content);
   const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
   const projects = {
-    "requested": [["보컬트레이너[앱]", "vocalmate.svg"]],
+    "requested": [["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음[앱·초안]", "hangeoreum.svg"]],
     "fun": [
       ["코딩놀이", "coding.svg"],
       ["찌꺼기저리가[PC]", "cleaner.svg"],
@@ -129,6 +129,15 @@ function initProjectFolders(content) {
     ]
   };
   const projectDownloads = {
+    "한걸음[앱·초안]": {
+      tag: "한걸음 0.1.0-dev · 프랑스어·중국어·일본어 · 1/5/15분 · 실기기 미검증 초안",
+      links: [
+        { label: "한걸음 초안 APK · Android 8 이상", url: "./downloads/Hangeoreum-0.1.0-dev.apk", download: "Hangeoreum-0.1.0-dev.apk", primary: true },
+        { label: "화면 시안 체험 · 녹음/AI는 앱에서", url: "./downloads/Hangeoreum-preview.html", external: true },
+        { label: "사용 안내 · 승급 잠금과 검증 범위", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
+      ]
+    },
+
     "보컬트레이너[앱]": {
       tag: "VocalMate 0.12.0-dev · 노래방 녹음 코칭·리프·화음 연습 · Android 8 이상 · 실기기 미검증 개발판",
       links: [
