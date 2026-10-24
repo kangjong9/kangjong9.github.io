@@ -2251,33 +2251,447 @@
     }
   }
 
-  function normalizeText(str) {
-    return (str || '').toLowerCase()
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?'"‘’“”]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+  /* =========================================================
+     3. 4단계 섀도잉 루프 데이터베이스 (THEMED_DATA)
+     ========================================================= */
+  const THEMED_DATA = {
+    work: {
+      themeName: "💼 [야근 & 피로 회복]",
+      keywords: "#야근 #피곤 #칼퇴",
+      fr: {
+        t1: [
+          {
+            lv: 1, words: "1단어", note: "피로 감정 1단어 청크",
+            base: { ko: "피곤해.", target: "Fatigué.", phonetic: "[파티게]", note: "기준 기본형" },
+            vars: [
+              { ko: "정말 피곤해.", target: "Très fatigué.", phonetic: "[트레 파티게]", note: "부사 결합 변형 1" },
+              { ko: "난 피곤해.", target: "Je suis fatigué.", phonetic: "[주 쉬 파티게]", note: "주어+동사 변형 2" },
+              { ko: "오늘 너무 지쳤어.", target: "Je suis épuisé aujourd'hui.", phonetic: "[주 쉬 에퓌제 오주르뒤]", note: "상황 완성 변형 3" }
+            ]
+          },
+          {
+            lv: 2, words: "1단어", note: "휴식 제안 1단어 청크",
+            base: { ko: "휴식.", target: "Pause.", phonetic: "[포즈]", note: "기준 기본형" },
+            vars: [
+              { ko: "잠깐 쉬자.", target: "Une petite pause.", phonetic: "[윈 쁘띳 포즈]", note: "관사 결합 변형 1" },
+              { ko: "우리 쉬어야 해.", target: "On fait une pause.", phonetic: "[옹 페 윈 포즈]", note: "구어체 변형 2" },
+              { ko: "10분만 쉬었다 하자.", target: "Prenons dix minutes de pause.", phonetic: "[프르농 디 미뉘트 드 포즈]", note: "완성 문장 변형 3" }
+            ]
+          }
+        ],
+        t2: [
+          {
+            lv: 11, words: "기본문장", note: "퇴근 의사 표현",
+            base: { ko: "나 퇴근해.", target: "Je pars.", phonetic: "[주 파르]", note: "기준 기본형" },
+            vars: [
+              { ko: "나 지금 퇴근해.", target: "Je pars maintenant.", phonetic: "[주 파르 맹트낭]", note: "부사 결합 변형 1" },
+              { ko: "나 집에 가.", target: "Je rentre à la maison.", phonetic: "[주 랑트르 아 라 메종]", note: "장소 확장 변형 2" },
+              { ko: "오늘 칼퇴할 거야.", target: "Je finis à l'heure ce soir.", phonetic: "[주 피니 아 뢰르 스 수아르]", note: "상황 완성 변형 3" }
+            ]
+          }
+        ],
+        t3: [
+          {
+            lv: 21, words: "복합문", note: "인과 접속사 복문",
+            base: { ko: "피곤해서 집에 가요.", target: "Je rentre parce que je suis fatigué.", phonetic: "[주 랑트르 파르스크 주 쉬 파티게]", note: "기준 기본형" },
+            vars: [
+              { ko: "야근해서 지쳤어요.", target: "Je suis épuisé à cause des heures sup.", phonetic: "[주 쉬 에퓌제 아 코즈 데 쇠르 슾]", note: "원인 표현 변형 1" },
+              { ko: "힘들지만 끝냈어요.", target: "C'était dur mais j'ai fini.", phonetic: "[세테 뒤르 메 제 피니]", note: "대비 접속사 변형 2" },
+              { ko: "내일 보고서 내야 해서 오늘은 쉴게요.", target: "Je me repose car demain j'ai le rapport.", phonetic: "[주 므 르포즈 카르 드맹 제 르 라포르]", note: "비즈니스 변형 3" }
+            ]
+          }
+        ],
+        t4: [
+          {
+            lv: 31, words: "고급원어민", note: "외교적 완곡 뉘앙스",
+            base: { ko: "솔직히 말씀드리면 한계입니다.", target: "Pour être franc, nous atteignons la limite.", phonetic: "[푸르 에트르 프랑, 누 자테뇽 라 리미트]", note: "기준 기본형" },
+            vars: [
+              { ko: "일정을 조정해주실 수 있나요?", target: "Pourriez-vous décaler le délai ?", phonetic: "[푸리에 부 데칼레 르 들레]", note: "정중한 요청 변형 1" },
+              { ko: "이 건은 내일 아침에 다루죠.", target: "Traitons ce dossier demain matin à la première heure.", phonetic: "[트레통 스 도시에 드맹 마탱 아 라 프르미에르 뢰르]", note: "업무 지연 제안 변형 2" },
+              { ko: "팀원들의 피로 누적이 심각합니다.", target: "La fatigue de l'équipe devient préoccupante.", phonetic: "[라 파티그 드 레킵 드비앙 프레오퀴팡트]", note: "조직 보고 변형 3" }
+            ]
+          }
+        ],
+        persona: {
+          name: "피에르 (Pierre)", role: "파리 지사 동료 · 따뜻함", avatar: "💼",
+          greetings: "Salut ! Tu as l'air épuisé aujourd'hui. Une longue journée ?",
+          greetingsKo: "안녕! 오늘 진짜 지쳐 보이네. 힘든 하루였어?",
+          suggested: "Oui, les heures supplémentaires m'ont achevé."
+        }
+      },
+      cn: {
+        t1: [
+          {
+            lv: 1, words: "1단어", note: "피로 감정 1단어 청크",
+            base: { ko: "피곤해.", target: "累了。", phonetic: "[레이 러]", note: "기준 기본형" },
+            vars: [
+              { ko: "정말 피곤해.", target: "太累了。", phonetic: "[타이 레이 러]", note: "부사 결합 변형 1" },
+              { ko: "오늘 너무 피곤해.", target: "今天很累。", phonetic: "[진티엔 헌 레이]", note: "시간 결합 변형 2" },
+              { ko: "피곤해서 죽겠어.", target: "我累死了。", phonetic: "[워 레이 쓰 러]", note: "구어체 변형 3" }
+            ]
+          }
+        ],
+        t2: [
+          {
+            lv: 11, words: "기본문장", note: "퇴근 의사 표현",
+            base: { ko: "나 퇴근해.", target: "我下班了。", phonetic: "[워 샤반 러]", note: "기준 기본형" },
+            vars: [
+              { ko: "나 지금 퇴근해.", target: "我现​​在下班。", phonetic: "[워 시엔짜이 샤반]", note: "시간 강조 변형 1" },
+              { ko: "나 먼저 집에 가.", target: "我先回家了。", phonetic: "[워 시엔 후이지아 러]", note: "동작 선행 변형 2" },
+              { ko: "내일 또 보자.", target: "明天见吧。", phonetic: "[밍티엔 지엔 바]", note: "작별 인사 변형 3" }
+            ]
+          }
+        ],
+        t3: [
+          {
+            lv: 21, words: "복합문", note: "인과 접속사 복문",
+            base: { ko: "야근해서 피곤해요.", target: "因为加班，所以很累。", phonetic: "[인웨이 지아반, 쑤어이 헌 레이]", note: "기준 기본형" },
+            vars: [
+              { ko: "비록 피곤하지만 다 끝냈어요.", target: "虽然很累，但是做完了。", phonetic: "[쑤이란 헌 레이, 단스 쭈어 완 러]", note: "역접 접속사 변형 1" },
+              { ko: "퇴근하면 바로 잘 거예요.", target: "一下班我就睡觉。", phonetic: "[이 샤반 워 지우 쉐이지아오]", note: "연속 동작 변형 2" },
+              { ko: "피곤하니까 먼저 들어갈게요.", target: "太累了，我就先回去了。", phonetic: "[타이 레이 러, 워 지우 시엔 후이취 러]", note: "상황 정리 변형 3" }
+            ]
+          }
+        ],
+        t4: [
+          {
+            lv: 31, words: "고급원어민", note: "비즈니스 피로 조율",
+            base: { ko: "효율을 위해 오늘은 여기까지 하시죠.", target: "为了工作效率，今天就先到这里吧。", phonetic: "[웨이러 꽁쭈어 샤오뤼, 진티엔 지우 시엔 따오 쩌리 바]", note: "기준 기본형" },
+            vars: [
+              { ko: "납기를 조정할 수 있는지 상의하고 싶습니다.", target: "我想和您商量一下能否调整交期。", phonetic: "[워 시앙 허 닌 샹량 이시아 넝포우 티아오정 지아오치]", note: "일정 협의 변형 1" },
+              { ko: "팀원들의 피로도가 매우 높습니다.", target: "团队成员的疲劳度已经非常高了。", phonetic: "[투안뛔이 청위엔 더 피라오두 이징 페이창 가오 러]", note: "현황 보고 변형 2" },
+              { ko: "충분히 쉬어야 더 좋은 성과가 납니다.", target: "充分休息才能有更好的产出。", phonetic: "[총펀 시우시 차이넝 요우 껑 하오 더 찬추]", note: "설득 뉘앙스 변형 3" }
+            ]
+          }
+        ],
+        persona: {
+          name: "왕웨이 (Wang Wei)", role: "상하이 지사 동료 · 유쾌함", avatar: "🍜",
+          greetings: "辛苦啦！今天加班加得头晕了吧？要不要一起去吃宵夜？",
+          greetingsKo: "수고했어! 오늘 야근하느라 어질어질하지? 같이 야식 먹으러 갈래?",
+          suggested: "太好了！正好肚子饿扁了，走吧！"
+        }
+      },
+      ja: {
+        t1: [
+          {
+            lv: 1, words: "1단어", note: "피로 감정 1단어 청크",
+            base: { ko: "피곤해.", target: "疲れた。", phonetic: "[츠카레타]", note: "기준 기본형" },
+            vars: [
+              { ko: "정말 피곤해.", target: "すごく疲れた。", phonetic: "[스고쿠 츠카레타]", note: "부사 결합 변형 1" },
+              { ko: "아, 피곤하다.", target: "あー、疲れたな。", phonetic: "[아-, 츠카레타나]", note: "종조사 결합 변형 2" },
+              { ko: "피곤해 죽겠어.", target: "疲れ果てたよ。", phonetic: "[츠카레하테타요]", note: "강조 구어체 변형 3" }
+            ]
+          }
+        ],
+        t2: [
+          {
+            lv: 11, words: "기본문장", note: "퇴근 인사 표현",
+            base: { ko: "먼저 일어납니다.", target: "お先に失礼します。", phonetic: "[오사키니 시츠레이시마스]", note: "기준 기본형" },
+            vars: [
+              { ko: "오늘 수고하셨습니다.", target: "今日はお疲れ様でした。", phonetic: "[쿄-와 오츠카레사마데시타]", note: "정중 인사 변형 1" },
+              { ko: "나 먼저 갈게.", target: "お先に帰るね。", phonetic: "[오사키니 카에루네]", note: "친근한 반말 변형 2" },
+              { ko: "내일 봬요.", target: "また明日ですね。", phonetic: "[마타 아시타데스네]", note: "작별 인사 변형 3" }
+            ]
+          }
+        ],
+        t3: [
+          {
+            lv: 21, words: "복합문", note: "이유 및 양보 복문",
+            base: { ko: "야근해서 피곤하지만 끝냈어요.", target: "残業で疲れたけど終わりました。", phonetic: "[잔교-데 츠카레타케도 오와리마시타]", note: "기준 기본형" },
+            vars: [
+              { ko: "피곤하니까 먼저 돌아갈게요.", target: "疲れたのでお先に帰らせていただきます。", phonetic: "[츠카레타노데 오사키니 카에라세테 이타다키마스]", note: "정중한 퇴근 이유 변형 1" },
+              { ko: "내일도 아침 일찍 출근해야 해요.", target: "明日も朝早いので早く寝ます。", phonetic: "[아시타모 아사하야이노데 하야쿠 네마스]", note: "후속 계획 변형 2" },
+              { ko: "오늘 할 일은 전부 정리했습니다.", target: "今日のタスクは全て片付けました。", phonetic: "[쿄-노 타스쿠와 스베테 카타즈케마시타]", note: "완료 보고 변형 3" }
+            ]
+          }
+        ],
+        t4: [
+          {
+            lv: 31, words: "고급원어민", note: "비즈니스 정중 거절 및 조율",
+            base: { ko: "무리한 일정은 품질 저하로 이어집니다.", target: "無理なスケジュールは品質低下につながります。", phonetic: "[무리나 스케쥬-루와 힌시츠테이카니 츠나가리마스]", note: "기준 기본형" },
+            vars: [
+              { ko: "기한 조정을 검토해주실 수 있습니까?", target: "納期のご調整をご検討いただけないでしょうか。", phonetic: "[노-키노 고쵸-세-오 고켄토- 이타다케나이데쇼-카]", note: "완곡한 제안 변형 1" },
+              { ko: "본 건은 내일 신선한 머리로 다시 보시죠.", target: "本件は明日、頭を切り替えて再確認いたしましょう。", phonetic: "[혼켄와 아시타, 아타마오 키리카에테 사이카쿠닌 이타시마쇼-]", note: "업무 순연 변형 2" },
+              { ko: "팀 전체의 과중한 부담이 우려됩니다.", target: "チーム全体の過度な負担が懸念されます。", phonetic: "[치-무 젠타이노 카도나 후탄가 케넨사레마스]", note: "우려 표명 변형 3" }
+            ]
+          }
+        ],
+        persona: {
+          name: "타쿠야 (Takuya)", role: "신주쿠 이자카야 친구 · 호탕함", avatar: "🍺",
+          greetings: "おっす！仕事終わりに焼き鳥で乾杯しようぜ！",
+          greetingsKo: "안녕! 일 끝나고 야키토리에 건배하자!",
+          suggested: "賛成！すぐ行くから席取っておいて！"
+        }
+      }
+    }
+  };
+
+  /* =========================================================
+     4. 앱 상태 관리
+     ========================================================= */
+  userName = localStorage.getItem("hangeoreum_user_name") || (typeof userName !== 'undefined' ? userName : "옵빠야");
+  selectedLang = (typeof selectedLang !== 'undefined' ? selectedLang : "fr");
+  currentLevel = (typeof currentLevel !== 'undefined' ? currentLevel : 1);
+  var currentTheme = "work";
+  var currentStoryQuote = "오늘 회사에서 야근해서 너무 피곤해...";
+  if (typeof comboCount === 'undefined') var comboCount = 0;
+
+  if (typeof obStep === 'undefined') var obStep = 1;
+  if (typeof obAnswers === 'undefined') var obAnswers = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  if (typeof obDiagnosedLevel === 'undefined') var obDiagnosedLevel = 1;
+
+  if (typeof currentRound === 'undefined') var currentRound = 1;
+  if (typeof roundPassed === 'undefined') var roundPassed = [false, false, false, false];
+
+  /* =========================================================
+     4-1. 4단계 섀도잉 루프 컨트롤러 & 수업 관리자
+     ========================================================= */
+
+  function getCurrentLessonUnit() {
+    const themeObj = THEMED_DATA[currentTheme] || THEMED_DATA.work;
+    const langObj = themeObj[selectedLang] || themeObj.fr;
+
+    let list = langObj.t1;
+    if (currentLevel >= 11 && currentLevel <= 20 && langObj.t2) list = langObj.t2;
+    else if (currentLevel >= 21 && currentLevel <= 30 && langObj.t3) list = langObj.t3;
+    else if (currentLevel >= 31 && currentLevel <= 40 && langObj.t4) list = langObj.t4;
+    
+    const idx = (currentLevel - 1) % list.length;
+    return list[idx] || list[0];
   }
 
-  function calculateSimilarity(s1, s2) {
-    const str1 = normalizeText(s1);
-    const str2 = normalizeText(s2);
-    if (!str1 || !str2) return 0;
-    if (str1 === str2) return 100;
-
-    const w1 = str1.split(' ');
-    const w2 = str2.split(' ');
-    let matches = 0;
-    w2.forEach(w => {
-      if (w1.includes(w)) matches++;
-    });
-
-    const wordScore = (matches / Math.max(w1.length, w2.length)) * 100;
-    return Math.min(100, Math.round(wordScore));
+  function getCurrentRoundData() {
+    const unit = getCurrentLessonUnit();
+    if (currentRound === 1) {
+      return {
+        type: "[기준 예문] 최초 듣고 따라하기",
+        ko: unit.base.ko,
+        target: unit.base.target,
+        phonetic: unit.base.phonetic,
+        note: unit.base.note
+      };
+    } else {
+      const vIdx = currentRound - 2;
+      const v = (unit.vars && unit.vars[vIdx]) ? unit.vars[vIdx] : unit.base;
+      return {
+        type: `[변형 ${currentRound - 1}] 상황 및 슬롯 치환 발화`,
+        ko: v.ko,
+        target: v.target,
+        phonetic: v.phonetic,
+        note: v.note
+      };
+    }
   }
 
+  function renderCurrentRoundUI() {
+    const data = getCurrentRoundData();
+    if (!data) return;
+
+    const roundBadge = document.getElementById('roundBadge');
+    if (roundBadge) roundBadge.textContent = `따라하기 ${currentRound} / 4`;
+
+    const roundTypeLabel = document.getElementById('roundTypeLabel');
+    if (roundTypeLabel) roundTypeLabel.textContent = data.type;
+
+    for (let r = 1; r <= 4; r++) {
+      const dot = document.getElementById(`dotR${r}`);
+      if (dot) {
+        if (r === currentRound) {
+          dot.style.background = "#4f46e5";
+          dot.style.transform = "scale(1.25)";
+        } else if (roundPassed[r - 1]) {
+          dot.style.background = "#58cc02";
+          dot.style.transform = "scale(1)";
+        } else {
+          dot.style.background = "#cbd5e1";
+          dot.style.transform = "scale(1)";
+        }
+      }
+    }
+
+    const koreanPrompt = document.getElementById('koreanPrompt');
+    if (koreanPrompt) koreanPrompt.textContent = `"${data.ko}"`;
+
+    const targetDisplay = document.getElementById('targetDisplay');
+    if (targetDisplay) targetDisplay.textContent = data.target;
+
+    const targetPhonetic = document.getElementById('targetPhonetic');
+    if (targetPhonetic) targetPhonetic.textContent = data.phonetic;
+
+    const buildUpNote = document.getElementById('buildUpNote');
+    if (buildUpNote) buildUpNote.textContent = data.note;
+
+    const feedbackSheet = document.getElementById('feedbackSheet');
+    if (feedbackSheet) feedbackSheet.classList.add('hidden');
+
+    const userSpokenFeedback = document.getElementById('userSpokenFeedback');
+    if (userSpokenFeedback) userSpokenFeedback.textContent = '';
+
+    const sttStatusText = document.getElementById('sttStatusText');
+    if (sttStatusText) sttStatusText.innerHTML = "원어민 발음을 듣고 아래 [🎙️ 마이크로 말하기]를 눌러 따라해보세요! AI가 <strong>합격 / 재시작</strong>을 즉시 판정합니다.";
+
+    // 다음 단계로 버튼 잠금 가드!
+    const nextBtn = document.getElementById('btnNextRound');
+    if (nextBtn) {
+      if (roundPassed[currentRound - 1]) {
+        nextBtn.classList.remove('btn-disabled');
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
+      } else {
+        nextBtn.classList.add('btn-disabled');
+        nextBtn.disabled = true;
+        nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
+      }
+    }
+
+    // 새 단계 진입 시 원어민 소리 1회 자동 재생
+    setTimeout(() => {
+      playTargetTTS();
+    }, 280);
+  }
+
+  function playTargetTTS() {
+    const roundData = getCurrentRoundData();
+    if (roundData && roundData.target) {
+      speakTextWithFallback(roundData.target, selectedLang);
+    }
+  }
+
+  /* 초기화면(온보딩) 복귀 함수 */
+  function returnToOnboardingView() {
+    soundTap();
+    document.getElementById('viewOnboarding').classList.remove('hidden');
+    document.getElementById('viewCanvas').classList.add('hidden');
+    obStep = 1;
+    updateObStepUI();
+  }
+
+  /* =========================================================
+     5. 다국어 정밀 발음 유사도 평가 & Levenshtein 엔진
+     ========================================================= */
+  function normalizeTextForLang(str, lang) {
+    if (!str) return '';
+    let s = str.toLowerCase().trim();
+    // 부호 제거
+    s = s.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?'"‘’“”]/g, '');
+    
+    // 프랑스어: 악센트 정규화 (NFD 분해로 악센트 제거 병행)
+    if (lang === 'fr') {
+      s = s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+    }
+    // 중국어 및 일본어: 띄어쓰기 완전 제거 (연속 문자열 비교)
+    if (lang === 'cn' || lang === 'zh' || lang === 'ja') {
+      s = s.replace(/\s+/g, '');
+    } else {
+      s = s.replace(/\s+/g, ' ');
+    }
+    return s.trim();
+  }
+
+  function levenshteinDistance(s1, s2) {
+    const len1 = s1.length;
+    const len2 = s2.length;
+    const matrix = [];
+
+    for (let i = 0; i <= len1; i++) matrix[i] = [i];
+    for (let j = 0; j <= len2; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= len1; i++) {
+      for (let j = 1; j <= len2; j++) {
+        const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j] + 1,       // 삭제
+          matrix[i][j - 1] + 1,       // 삽입
+          matrix[i - 1][j - 1] + cost // 대체
+        );
+      }
+    }
+    return matrix[len1][len2];
+  }
+
+  function calculateSimilarity(target, spoken) {
+    if (!target || !spoken) return 0;
+    
+    const normTarget = normalizeTextForLang(target, selectedLang);
+    const normSpoken = normalizeTextForLang(spoken, selectedLang);
+
+    if (!normTarget || !normSpoken) return 0;
+    if (normTarget === normSpoken) return 100;
+
+    // 1. Levenshtein 문자 단위 점수
+    const dist = levenshteinDistance(normTarget, normSpoken);
+    const maxLen = Math.max(normTarget.length, normSpoken.length);
+    const charScore = Math.max(0, Math.round(((maxLen - dist) / maxLen) * 100));
+
+    // 2. 단어/토큰 단위 점수 (띄어쓰기 있는 언어)
+    if (selectedLang === 'fr') {
+      const wTarget = normTarget.split(' ');
+      const wSpoken = normSpoken.split(' ');
+      let matches = 0;
+      wSpoken.forEach(w => {
+        if (wTarget.includes(w)) matches++;
+      });
+      const tokenScore = Math.round((matches / Math.max(wTarget.length, wSpoken.length)) * 100);
+      // 토큰 60% + 문자 40%
+      return Math.min(100, Math.round(tokenScore * 0.6 + charScore * 0.4));
+    }
+
+    // 중국어, 일본어는 문자 단위가 곧 음절이므로 문자 점수 90% + 포함 점수 10%
+    const isIncluded = normTarget.includes(normSpoken) || normSpoken.includes(normTarget);
+    const finalScore = isIncluded ? Math.max(charScore, 75) : charScore;
+    return Math.min(100, Math.round(finalScore));
+  }
+
+  /* =========================================================
+     6. AI 엑자일 음성 선언 (합격 / 재시작 육성 선언)
+     ========================================================= */
+  function speakJudgeVoice(judgeType, score, name) {
+    let msg = "";
+    const isAnime = (activeVoiceEngineMode === 'anime');
+
+    if (judgeType === 'pass') {
+      if (isAnime) {
+        msg = `${name}! 합격이야! 아주 완벽한 발음이었어!`;
+      } else {
+        msg = `합격입니다, ${name}님! 발음이 아주 좋습니다. 다음 단계로 넘어가볼까요?`;
+      }
+    } else {
+      if (isAnime) {
+        msg = `${name}! 아쉽지만 재시작이야. 원어민 발음 잘 듣고 다시 도전해봐!`;
+      } else {
+        msg = `재시작입니다, ${name}님. 원어민 발음을 다시 듣고 마이크로 한 번 더 해보세요.`;
+      }
+    }
+
+    // 한국어 안내 음성 재생 (VoiceEngine20 이용)
+    speakExileTutor(msg, 'ko');
+  }
+
+  /* 원클릭 원어민 듣고 마이크 재시작 파이프라인 */
+  function restartCurrentRoundWithTTS() {
+    soundTap();
+    const statusEl = document.getElementById('sttStatusText');
+    if (statusEl) {
+      statusEl.innerHTML = "<span style='color:#6366f1; font-weight:800;'>🔊 원어민 소리를 듣는 중입니다...</span> 소리가 끝나면 곧바로 말씀하세요!";
+    }
+    
+    // 원어민 음성 재생
+    playTargetTTS();
+
+    // 음성 재생 후 1.6초 뒤 마이크 자동 시작!
+    setTimeout(() => {
+      startVoiceRecognition();
+    }, 1600);
+  }
+
+  /* =========================================================
+     7. AI 발음 분석 및 합격 / 재시작 전담 엔진
+     ========================================================= */
   function analyzePronunciationAndJudge(spokenText) {
     const roundData = getCurrentRoundData();
-    const score = calculateSimilarity(roundData.target, spokenText);
+    const targetText = roundData.target || '';
+    const score = calculateSimilarity(targetText, spokenText);
+    const isPass = (score >= 70);
 
     const sheet = document.getElementById('feedbackSheet');
     const badge = document.getElementById('passFailBadge');
@@ -2287,13 +2701,18 @@
     const nextBtn = document.getElementById('btnNextRound');
 
     if (sheet) sheet.classList.remove('hidden');
+
+    // 단어별 3색 시각 하이라이팅
     if (wordsContainer) {
       wordsContainer.innerHTML = '';
-      const targetWords = (roundData.target || '').split(/\s+/);
+      const targetWords = (selectedLang === 'cn' || selectedLang === 'ja') 
+        ? targetText.split('') 
+        : targetText.split(/\s+/);
+
       targetWords.forEach(w => {
         const span = document.createElement('span');
         span.textContent = w;
-        if (score >= 70) {
+        if (isPass) {
           span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#dcfce7; color:#166534; border:1.5px solid #86efac; font-size:14px;";
         } else {
           span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#fee2e2; color:#991b1b; border:1.5px solid #fca5a5; font-size:14px;";
@@ -2302,8 +2721,8 @@
       });
     }
 
-    if (score >= 70) {
-      // 정답 통과 효과음: 시끄러운 팡파레 대신 은은하고 맑은 단일 코인음 재생!
+    if (isPass) {
+      // 🟢 [합격 판정 (Pass)]
       soundCorrect();
       comboCount++;
       const comboBadge = document.getElementById('comboBadge');
@@ -2313,20 +2732,24 @@
       if (badge) {
         badge.style.background = "#dcfce7";
         badge.style.color = "#166534";
-        badge.innerHTML = `🎉 통과 완료! (정확도 ${score}점)`;
+        badge.innerHTML = `🎉 <span style="font-weight:900; font-size:16px;">[합격]</span> 참 잘하셨어요! (정확도 ${score}점 / 기준 70점)`;
       }
 
       if (polishText) {
-        polishText.innerHTML = `AI 엑자일 분석: <strong>"정확한 발음입니다! ${userName}님의 조음 감각이 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>정답 문장: ${roundData.target}</span>`;
+        polishText.innerHTML = `AI 엑자일 분석: <strong>"🎉 합격! 정확한 발음입니다! ${userName}님의 조음 감각이 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>목표 문장: ${targetText} | 학습자 발화: "${spokenText}"</span>`;
       }
       
       if (noticeEl) {
         if (currentRound < 4) {
-          noticeEl.innerHTML = `<span style='color:#166534;'>✅ [통과 성공] 다음 변형 예문으로 도전할 수 있습니다! 우측 [다음 단계로 ➔]를 누르세요.</span>`;
+          noticeEl.innerHTML = `<span style='color:#166534; font-weight:800;'>✅ [합격 완료] 다음 변형 예문으로 도전할 수 있습니다! 우측 [다음 단계로 ➔]를 누르세요.</span>`;
         } else {
-          noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4단계 정복 완료!] 이번 레벨의 모든 따라하기를 완벽히 통과했습니다!</span>`;
+          noticeEl.innerHTML = `<span style='color:#166534; font-weight:800;'>🏆 [4단계 전체 합격!] 이번 레벨의 모든 따라하기 수업을 완벽히 마스터했습니다!</span>`;
         }
       }
+
+      // 재시작 버튼 제거 (이미 합격했으므로)
+      const existingRestartBtn = document.getElementById('btnRestartRound');
+      if (existingRestartBtn) existingRestartBtn.remove();
 
       if (nextBtn) {
         nextBtn.classList.remove('btn-disabled');
@@ -2338,8 +2761,11 @@
         localStorage.setItem(`hangeoreum_lv${currentLevel}_r${currentRound}`, '1');
       } catch(e) {}
 
+      // AI 음성으로 직접 "합격" 선언!
+      speakJudgeVoice('pass', score, userName);
+
     } else {
-      // 오답 효과음
+      // 🔴 [재시작 판정 (Retry / Restart)]
       soundWrong();
       comboCount = 0;
       const comboBadge = document.getElementById('comboBadge');
@@ -2349,31 +2775,48 @@
       if (badge) {
         badge.style.background = "#fee2e2";
         badge.style.color = "#991b1b";
-        badge.innerHTML = `❌ 통과 실패 (정확도 ${score}점 / 합격 기준 70점)`;
+        badge.innerHTML = `❌ <span style="font-weight:900; font-size:16px;">[재시작]</span> 다시 연습해 보세요 (정확도 ${score}점 / 합격 기준 70점)`;
       }
 
       if (polishText) {
-        polishText.innerHTML = `AI 엑자일 코칭: <strong>"발음이 명확하지 않습니다. 원어민 음성을 다시 듣고 따라 해보세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발화: "${spokenText}"</span>`;
+        polishText.innerHTML = `AI 엑자일 코칭: <strong>"❌ 재시작! 발음이 다소 부정확합니다. 원어민 소리를 다시 듣고 마이크로 재도전하세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발화: "${spokenText}"</span>`;
       }
 
       if (noticeEl) {
-        noticeEl.innerHTML = `<span style='color:#dc2626;'>⛔ [진행 잠금] 70점 미만은 다음 단계로 절대 넘어갈 수 없습니다! [🔊 원어민 소리]를 듣고 다시 도전하세요!</span>`;
+        noticeEl.innerHTML = `<span style='color:#dc2626; font-weight:800;'>⛔ [재시작 필요] 70점 미만은 다음 단계로 절대 넘어갈 수 없습니다! 아래 [🔄 재시작] 버튼을 누르세요.</span>`;
       }
 
+      // [다음 단계로] 버튼 철저히 잠금!
       if (nextBtn) {
         nextBtn.classList.add('btn-disabled');
         nextBtn.disabled = true;
         nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
       }
+
+      // 원클릭 재시작 액션 버튼 삽입 (feedbackSheet 내부)
+      let restartBtn = document.getElementById('btnRestartRound');
+      if (!restartBtn && sheet) {
+        restartBtn = document.createElement('button');
+        restartBtn.id = 'btnRestartRound';
+        restartBtn.className = 'btn-3d';
+        restartBtn.style.cssText = "width:100%; margin-top:12px; padding:12px; font-size:16px; font-weight:900; background:#f43f5e; color:#ffffff; border-radius:14px; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; box-shadow:0 4px 12px rgba(244,63,94,0.3);";
+        restartBtn.onclick = restartCurrentRoundWithTTS;
+        restartBtn.innerHTML = `<span>🔄 원어민 소리 듣고 마이크 재시작</span>`;
+        sheet.appendChild(restartBtn);
+      }
+
+      // AI 음성으로 직접 "재시작" 선언!
+      speakJudgeVoice('retry', score, userName);
     }
 
-    callAiPronunciationCoachIfAvailable(spokenText, roundData.target, score);
+    // 백그라운드 Gemini AI 심층 코칭 호출
+    callAiPronunciationCoachIfAvailable(spokenText, targetText, score, isPass);
   }
 
   function proceedNextRoundOrLevel() {
     if (!roundPassed[currentRound - 1]) {
       soundWrong();
-      alert("현재 단계를 70점 이상으로 통과해야만 다음 단계로 넘어갈 수 있습니다!");
+      alert("현재 단계를 70점 이상으로 합격해야만 다음 단계로 넘어갈 수 있습니다!");
       return;
     }
 
@@ -2384,7 +2827,7 @@
     } else {
       // 4단계 전체 통과 시: 시끄러운 팡파레 대신 은은하고 세련된 완료음!
       soundLevelUp();
-      alert(`🎉 축하합니다! ${userName}님이 Lv.${currentLevel}의 4단계 변형 문장을 모두 마스터하셨습니다!`);
+      alert(`🎉 축하합니다! ${userName}님이 Lv.${currentLevel} 수업을 완벽히 마스터 합격하셨습니다!`);
       if (currentLevel < 50) {
         currentLevel++;
         currentRound = 1;
@@ -2410,7 +2853,7 @@
     }
   }
 
-/* =========================================================
+  /* =========================================================
      3대 음성 엔진 모드 전환 및 서브 필터링 스위처
      ========================================================= */
   function switchVoiceEngineMode(mode) {
