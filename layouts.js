@@ -105,10 +105,7 @@ if (dialog) {
 
 // Category membership and display order were supplied by the owner.
 function initProjectFolders(content) {
-  // Sites enforces owner-only access for the page and every executable URL.
-  content.querySelector('[data-game-editors]')?.addEventListener('click', () => {
-    window.location.assign('https://game-editors-owner.smartdrum2048.chatgpt.site/');
-  });
+  initGameEditorFolder(content);
   const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
   const projects = {
     "requested": [["보컬트레이너[앱]", "vocalmate.svg"]],
@@ -648,4 +645,113 @@ async function initGuestbook(content, showAdminPrompt = false) {
       send.disabled = false;
     }
   });
+}
+
+// GAME 에디터: 기존 홈페이지 관리자 인증을 그대로 사용한다.
+function initGameEditorFolder(content) {
+  const folder = content.querySelector('[data-game-editors]');
+  if (!folder) return;
+  const endpoint = 'https://jonggoo-kang.smartdrum2048.chatgpt.site/api/game-editors';
+  const root = content.querySelector('.project-root');
+  const view = content.querySelector('.project-category-view');
+  const gallery = content.querySelector('.project-gallery');
+  let active = false;
+  let transfer = null;
+  const lifecycle = new AbortController();
+  window.gameEditorLifecycle?.abort();
+  window.gameEditorLifecycle = lifecycle;
+  lifecycle.signal.addEventListener('abort', () => transfer?.abort());
+  const message = text => {
+    gallery.replaceChildren();
+    const note = document.createElement('p');
+    note.textContent = text;
+    note.setAttribute('role', 'status');
+    gallery.append(note);
+    return note;
+  };
+  const needLogin = () => {
+    transfer?.abort();
+    message('홈페이지 관리자 로그인 후 내려받을 수 있습니다.');
+    const button = document.createElement('button');
+    button.className = 'os-primary'; button.type = 'button'; button.textContent = '관리자 로그인';
+    button.addEventListener('click', () => {
+      const afterLogin = () => {
+        if (!getAdminToken()) return;
+        queueMicrotask(() => {
+          document.querySelector('[data-open="projects"]')?.click();
+          document.querySelector('#app-window-content [data-game-editors]')?.click();
+        });
+      };
+      window.addEventListener('playroom-auth-change', afterLogin, {once:true, signal:lifecycle.signal});
+      document.querySelector('.toolbar-admin')?.click();
+    });
+    gallery.append(button);
+  };
+  async function download(item, button, status) {
+    const token = getAdminToken();
+    if (!token) { needLogin(); return; }
+    if (transfer) { status.textContent = '진행 중인 다운로드를 기다려 주세요.'; return; }
+    const controller = new AbortController(); transfer = controller;
+    button.disabled = true; status.textContent = '내려받는 중…';
+    try {
+      const response = await fetch(endpoint+'?file='+encodeURIComponent(item.file), {
+        headers:{Authorization:'Bearer '+token},cache:'no-store',signal:controller.signal});
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        if (response.status === 401 && token === getAdminToken()) setAdminToken('');
+        throw new Error(error.error || '다운로드하지 못했습니다. 다시 시도해 주세요.');
+      }
+      const buffer = await response.arrayBuffer();
+      if (controller.signal.aborted || token !== getAdminToken()) throw new Error('로그아웃되어 다운로드가 취소됐습니다.');
+      if (buffer.byteLength !== item.bytes) throw new Error('파일 크기가 일치하지 않습니다. 다시 시도해 주세요.');
+      const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', buffer))].map(x=>x.toString(16).padStart(2,'0')).join('');
+      if (hash !== item.sha256) throw new Error('파일 검증에 실패했습니다. 다시 시도해 주세요.');
+      if (controller.signal.aborted || token !== getAdminToken()) throw new Error('로그아웃되어 다운로드가 취소됐습니다.');
+      const url = URL.createObjectURL(new Blob([buffer], {type:'application/octet-stream'}));
+      const link = document.createElement('a'); link.href = url; link.download = item.file;
+      document.body.append(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      status.textContent = '다운로드 완료';
+    } catch (error) { status.textContent = error.name === 'AbortError' ? '다운로드가 취소됐습니다.' : error.message; }
+    finally { if (transfer === controller) transfer = null; button.disabled = false; }
+  }
+  async function render() {
+    const token = getAdminToken();
+    if (!token) { needLogin(); return; }
+    message('에디터 목록을 확인하는 중…');
+    try {
+      const response = await fetch(endpoint,{headers:{Authorization:'Bearer '+token},cache:'no-store',signal:lifecycle.signal});
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        if (response.status === 401) { if (token === getAdminToken()) { setAdminToken(''); if (active && content.isConnected) needLogin(); } return; }
+        throw new Error(error.error || '목록을 불러오지 못했습니다. 폴더를 다시 열어 주세요.');
+      }
+      const data = await response.json();
+      if (token !== getAdminToken() || !content.isConnected || !active) return;
+      gallery.replaceChildren();
+      for (const item of data.files) {
+        const card = document.createElement('figure'); card.className = 'project-card'; card.setAttribute('role','listitem');
+        const icon = document.createElement('img'); icon.src = './assets/game-editors/'+item.file.replace(/\.exe$/i,'.ico');
+        icon.alt = item.title+' 게임 아이콘'; icon.width = 96; icon.height = 96;
+        icon.style.cssText = 'width:96px;height:96px;object-fit:contain;margin:18px auto;display:block';
+        const title = document.createElement('figcaption'); title.textContent = item.title+' · '+item.version;
+        const desc = document.createElement('p'); desc.textContent = item.description;
+        const status = document.createElement('p'); status.setAttribute('role','status');
+        const button = document.createElement('button'); button.type = 'button'; button.className = 'os-primary';
+        button.textContent = 'EXE 내려받기 · '+(item.bytes/1024/1024).toFixed(2)+' MB';
+        button.addEventListener('click',()=>download(item,button,status));
+        card.append(icon,title,desc,button,status); gallery.append(card);
+      }
+    } catch (error) { if (error.name !== 'AbortError' && content.isConnected && active && !lifecycle.signal.aborted) message(error.message); }
+  }
+  folder.addEventListener('click', () => {
+    active = true; root.hidden = true; view.hidden = false;
+    content.querySelector('#category-title').textContent = 'GAME 에디터';
+    content.querySelector('#category-breadcrumb').textContent = 'GAME 에디터';
+    content.querySelector('#category-title').focus(); render();
+  });
+  content.querySelector('[data-project-back]').addEventListener('click',()=>{active=false;transfer?.abort();});
+  window.addEventListener('playroom-auth-change',()=>{
+    if (active && content.isConnected) { if (!getAdminToken()) needLogin(); else render(); }
+  },{signal:lifecycle.signal});
 }
