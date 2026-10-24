@@ -6,7 +6,7 @@
   <title>한걸음V1.0 Exile</title>
   <style>
     /* =========================================================
-       CSS 리셋 & 고시인성 모바일 퍼스트 디자인
+       CSS 리셋 & 초고시인성 모바일 퍼스트 디자인
        ========================================================= */
     * {
       box-sizing: border-box;
@@ -50,23 +50,22 @@
       }
     }
 
-    /* 쫀득한 3D 버튼 - 폰트와 터치 면적 대폭 확대 */
+    /* 쫀득한 3D 버튼 */
     .btn-3d {
       border: none;
       outline: none;
       border-radius: 20px;
       font-weight: 800;
-      font-size: 17px;
+      font-size: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 15px 20px;
+      padding: 14px 18px;
       transition: all 0.1s ease;
       text-decoration: none;
-      width: 100%;
-      min-height: 54px;
+      min-height: 52px;
     }
     .btn-green {
       background: #58cc02;
@@ -95,22 +94,12 @@
       transform: translateY(4px);
       box-shadow: 0 1px 0 #6d28d9;
     }
-    .btn-red {
-      background: #f43f5e;
-      color: #ffffff;
-      box-shadow: 0 5px 0 #e11d48, 0 10px 20px rgba(244, 63, 94, 0.35);
-    }
-    .btn-red:active {
-      transform: translateY(4px);
-      box-shadow: 0 1px 0 #e11d48;
-    }
     .btn-secondary {
       background: #f1f5f9;
       color: #334155;
       box-shadow: 0 4px 0 #cbd5e1;
       font-size: 15px;
       padding: 12px 16px;
-      min-height: 48px;
     }
     .btn-secondary:active {
       transform: translateY(3px);
@@ -124,15 +113,29 @@
       transform: none !important;
     }
 
-    /* 선택 카드 - 폰트 및 시인성 강화 */
+    /* 통일된 하단 2버튼 네비게이션 행 */
+    .bottom-nav-row {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+      width: 100%;
+    }
+    .btn-nav-prev {
+      flex: 3.5;
+    }
+    .btn-nav-next {
+      flex: 6.5;
+    }
+
+    /* 선택 카드 */
     .choice-card {
       background: #ffffff;
       border: 2.5px solid #e2e8f0;
       border-radius: 20px;
-      padding: 15px 18px;
+      padding: 14px 16px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       cursor: pointer;
       transition: all 0.15s ease-out;
       position: relative;
@@ -152,16 +155,16 @@
     .choice-card.selected::after {
       content: '✓';
       position: absolute;
-      right: 16px;
-      width: 26px;
-      height: 26px;
+      right: 14px;
+      width: 24px;
+      height: 24px;
       background: #4f46e5;
       color: #ffffff;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
     }
 
@@ -176,7 +179,7 @@
       50% { transform: translateY(-7px); }
     }
 
-    /* 말풍선 꼬리표 및 고시인성 텍스트 */
+    /* 말풍선 */
     .speech-bubble {
       position: relative;
       background: #ffffff;
@@ -220,7 +223,7 @@
       z-index: 40;
     }
 
-    /* 모달 공통 */
+    /* 모달 */
     .modal-backdrop {
       position: fixed;
       top: 0;
@@ -267,10 +270,8 @@
       height: 8px;
     }
 
-    /* 숨김 */
     .hidden { display: none !important; }
 
-    /* 라운드 뱃지 */
     .round-pill {
       display: inline-flex;
       align-items: center;
@@ -301,19 +302,19 @@
     </div>
 
     <div style="display:flex; align-items:center; gap:8px;">
-      <!-- 음성 테스트 버튼 -->
       <button onclick="testCurrentExileVoice()" title="음성 테스트" style="background:#f1f5f9; border:none; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px;">
         🔊
       </button>
-      <!-- ⚙️ 설정 모달 열기 버튼 -->
       <button onclick="openSettingsModal()" title="AI 설정 및 API 연동" style="background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#4f46e5;">
         ⚙️
       </button>
     </div>
   </header>
 
+
   <!-- =========================================================
-       화면 1: 오프닝 및 온보딩 (호칭, 목소리, AI 진단)
+       화면 1: 오프닝 및 온보딩 (호칭, 9대 음성 선택, AI 진단)
+       - 성별 선택 UI 삭제 완료 (음성 선택에서 자동 결정)
        ========================================================= -->
   <div id="viewOnboarding" style="flex:1; display:flex; flex-direction:column; padding:20px 18px 24px;">
     
@@ -328,26 +329,21 @@
       </div>
     </div>
 
-    <!-- 엑자일 캐릭터 & 말풍선 (고시인성 대화창) -->
-    <div style="display:flex; gap:14px; margin-bottom:20px; align-items:flex-start;">
+    <!-- 엑자일 캐릭터 & 말풍선 -->
+    <div style="display:flex; gap:14px; margin-bottom:18px; align-items:flex-start;">
       <div class="tutor-avatar-wrap" onclick="speakExileIntroStory()" style="cursor:pointer;" title="엑자일 이야기 듣기">
         <svg width="68" height="68" viewBox="0 0 108 108">
           <circle cx="54" cy="54" r="50" fill="#312E81"/>
           <circle cx="54" cy="54" r="42" fill="#4338CA"/>
-          <!-- 더듬이 별 -->
           <path d="M52,28 L56,28 L55,18 L53,18 Z" fill="#A5B4FC"/>
           <polygon points="54,12 56,17 62,17 57,21 59,26 54,23 49,26 51,21 46,17 52,17" fill="#FACC15"/>
-          <!-- 얼굴 -->
           <circle cx="54" cy="58" r="28" fill="#34D399"/>
-          <!-- 볼터치 -->
           <ellipse cx="36" cy="62" rx="4" ry="3" fill="#F472B6"/>
           <ellipse cx="72" cy="62" rx="4" ry="3" fill="#F472B6"/>
-          <!-- 눈 -->
           <ellipse cx="43" cy="56" rx="4.5" ry="5.5" fill="#0F172A"/>
           <circle cx="42" cy="54" r="1.8" fill="#FFFFFF"/>
           <ellipse cx="65" cy="56" rx="4.5" ry="5.5" fill="#0F172A"/>
           <circle cx="64" cy="54" r="1.8" fill="#FFFFFF"/>
-          <!-- 웃는 입 -->
           <path d="M49,63 Q54,69 59,63" stroke="#047857" stroke-width="2.5" fill="none" stroke-linecap="round"/>
         </svg>
         <div style="position:absolute; bottom:-4px; right:-2px; background:#10b981; color:#fff; font-size:10px; font-weight:900; padding:2px 6px; border-radius:8px; border:1.5px solid #fff;">
@@ -360,7 +356,7 @@
           <div id="obTutorSpeech">
             난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>
             지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>
-            날 어떻게 부를지 호칭과 내 목소리를 골라줘!
+            호칭과 마음에 드는 <strong>9가지 목소리</strong>를 골라줘!
           </div>
           <div style="display:flex; justify-content:flex-end; margin-top:8px;">
             <button onclick="replayCurrentTutorSpeech()" style="background:none; border:none; color:#6366f1; font-weight:800; font-size:14px; cursor:pointer; display:flex; align-items:center; gap:4px;">
@@ -372,29 +368,32 @@
     </div>
 
     <!-- 단계별 컨텐츠 영역 -->
-    <div style="flex:1; overflow-y:auto; margin-bottom:16px;">
+    <div style="flex:1; overflow-y:auto; margin-bottom:16px; max-height:480px; padding-right:2px;">
 
-      <!-- STEP 1: 유저 호칭 & 엑자일 음성 선택 -->
+      <!-- STEP 1: 유저 호칭 & 9대 음성 선택 (성별 선택은 중복이므로 삭제됨) -->
       <div id="obStep1">
-        <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:18px; margin-bottom:16px;">
+        <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px; margin-bottom:14px;">
           <label style="display:block; font-size:16px; font-weight:800; color:#334155; margin-bottom:8px;">
             👤 AI 엑자일이 당신을 어떻게 부를까요?
           </label>
           <input type="text" id="obUserNameInput" value="옵빠" oninput="onInputUserName(this.value)" placeholder="이름 또는 호칭 입력" style="width:100%; padding:14px 16px; border-radius:14px; border:2px solid #cbd5e1; font-size:18px; font-weight:800; color:#0f172a; outline:none; background:#ffffff;">
           <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
-            <button class="btn-3d btn-secondary" style="width:auto; padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('옵빠')">옵빠</button>
-            <button class="btn-3d btn-secondary" style="width:auto; padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('사령관')">사령관</button>
-            <button class="btn-3d btn-secondary" style="width:auto; padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('마스터')">마스터</button>
-            <button class="btn-3d btn-secondary" style="width:auto; padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('친구')">친구</button>
+            <button class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('옵빠')">옵빠</button>
+            <button class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('사령관')">사령관</button>
+            <button class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('마스터')">마스터</button>
+            <button class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('친구')">친구</button>
           </div>
         </div>
 
-        <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:18px;">
-          <label style="display:block; font-size:16px; font-weight:800; color:#334155; margin-bottom:8px;">
-            🎙️ 엑자일 목소리 프리셋 선택 (5가지 샘플)
-          </label>
-          <div id="voicePresetContainer" style="display:flex; flex-direction:column; gap:10px;">
-            <!-- JS 동적 렌더링 -->
+        <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <label style="font-size:16px; font-weight:800; color:#334155;">
+              🎙️ 엑자일 목소리 프리셋 (총 9종 선택)
+            </label>
+            <span style="font-size:12px; font-weight:800; color:#4f46e5; background:#eef2ff; padding:2px 8px; border-radius:8px;">성별 자동 적용</span>
+          </div>
+          <div id="voicePresetContainer" style="display:flex; flex-direction:column; gap:8px;">
+            <!-- JS 동적 9개 렌더링 -->
           </div>
         </div>
       </div>
@@ -552,12 +551,15 @@
 
     </div>
 
-    <!-- 하단 네비게이션 버튼 -->
-    <div style="display:flex; gap:10px; margin-top:auto;">
-      <button id="obBackStepBtn" class="btn-3d btn-secondary hidden" style="width:35%;" onclick="goToPrevObStep()">
-        ◀ 이전
+    <!-- =========================================================
+         [UI 통일] 화면 아래쪽 통일된 2버튼 네비게이션 행
+         [ ◀ 이전 단계로 ] 기준 / [ 다음 단계로 ➔ ]
+         ========================================================= -->
+    <div class="bottom-nav-row">
+      <button id="obBackStepBtn" class="btn-3d btn-secondary btn-nav-prev hidden" onclick="goToPrevObStep()">
+        ◀ 이전 단계로
       </button>
-      <button id="obMainActionBtn" class="btn-3d btn-green" onclick="goToNextObStep()">
+      <button id="obMainActionBtn" class="btn-3d btn-green btn-nav-next" style="width:100%;" onclick="goToNextObStep()">
         <span>호칭 설정 완료 ➔ 언어 선택</span>
       </button>
     </div>
@@ -590,14 +592,12 @@
 
     <!-- 언어 탭 및 레벨 바 -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <!-- 언어 선택 탭 -->
       <div style="display:flex; gap:6px; background:#f1f5f9; padding:4px; border-radius:14px;">
         <button id="langFR" onclick="switchLang('fr')" style="padding:6px 12px; border:none; border-radius:10px; font-weight:900; font-size:14px; cursor:pointer; background:#fff; color:#0f172a; box-shadow:0 1px 3px rgba(0,0,0,0.1);">🇫🇷 불어</button>
         <button id="langCN" onclick="switchLang('cn')" style="padding:6px 12px; border:none; border-radius:10px; font-weight:900; font-size:14px; cursor:pointer; background:transparent; color:#64748b;">🇨🇳 중어</button>
         <button id="langJA" onclick="switchLang('ja')" style="padding:6px 12px; border:none; border-radius:10px; font-weight:900; font-size:14px; cursor:pointer; background:transparent; color:#64748b;">🇯🇵 일어</button>
       </div>
 
-      <!-- 현재 레벨 표시 -->
       <div style="text-align:right;">
         <span id="currentLevelText" style="font-size:20px; font-weight:900; color:#4f46e5;">Lv. 1</span>
         <span id="tierNameText" style="font-size:12px; font-weight:800; color:#64748b; display:block;">단어 청크 단계</span>
@@ -622,9 +622,7 @@
       <button id="quickTier5" onclick="jumpLevel(41)" style="flex:1; padding:6px 8px; border:none; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer; background:rgba(244,63,94,0.1); color:#f43f5e;">T5:롤플레잉</button>
     </div>
 
-    <!-- =========================================================
-         [중요] 따라하기 4회 루프 (1 기준예문 + 3 변형예문) 학습 카드
-         ========================================================= -->
+    <!-- 메인 드릴 뷰 -->
     <div id="viewDrill" style="flex:1; display:flex; flex-direction:column;">
       
       <!-- 4단계 섀도잉 루프 라운드 헤더 -->
@@ -645,10 +643,8 @@
         </div>
       </div>
 
-      <!-- 메인 학습 문장 카드 (폰트 시인성 대폭 극대화!) -->
+      <!-- 메인 문장 카드 -->
       <div style="background:#ffffff; border:3px solid #e2e8f0; border-radius:24px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.06); margin-bottom:14px;">
-        
-        <!-- 한국어 프롬프트 (크고 선명하게!) -->
         <div style="font-size:14px; font-weight:800; color:#6366f1; margin-bottom:4px;">
           🇰🇷 오늘의 한국어 상황:
         </div>
@@ -656,7 +652,6 @@
           "피곤해."
         </div>
 
-        <!-- 타깃 외국어 문장 (28px 볼드 초특대 시인성!) -->
         <div style="font-size:14px; font-weight:800; color:#58cc02; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
           <span>🎯 목표 외국어 발화:</span>
           <button onclick="playTargetTTS()" style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:4px 10px; font-size:13px; font-weight:800; color:#166534; cursor:pointer; display:flex; align-items:center; gap:4px;">
@@ -668,17 +663,15 @@
           Fatigué.
         </div>
 
-        <!-- 발음 가이드 및 문법 팁 -->
         <div id="targetPhonetic" style="font-size:16px; font-weight:700; color:#6366f1; margin-bottom:6px;">
           [파티게]
         </div>
         <div id="buildUpNote" style="font-size:14px; color:#64748b; background:#f8fafc; padding:8px 12px; border-radius:10px;">
           핵심 1단어 청크
         </div>
-
       </div>
 
-      <!-- 음성 웨이브폼 & 실시간 발화 상태 -->
+      <!-- 실시간 웨이브폼 & 음성 상태 -->
       <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:18px; padding:12px; margin-bottom:14px; text-align:center;">
         <div class="wave-container" id="waveContainer">
           <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
@@ -687,13 +680,10 @@
         <div id="sttStatusText" style="font-size:15px; font-weight:800; color:#475569; margin-top:6px;">
           원어민 발음을 듣고 아래 [🎙️ 마이크로 말하기]를 눌러 따라해보세요!
         </div>
-        <!-- 사용자가 말한 텍스트 실시간 피드백 -->
         <div id="userSpokenFeedback" style="font-size:15px; font-weight:700; color:#0f172a; margin-top:4px; min-height:22px;"></div>
       </div>
 
-      <!-- =========================================================
-           [핵심] 음성 분석 결과 피드백 시트 & 통과 가드 (Gatekeeper)
-           ========================================================= -->
+      <!-- 피드백 시트 & 통과 가드 -->
       <div id="feedbackSheet" class="hidden" style="background:#ffffff; border:3px solid #cbd5e1; border-radius:20px; padding:16px; margin-bottom:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <div id="passFailBadge" class="round-pill" style="background:#dcfce7; color:#166534; font-size:15px;">
@@ -701,36 +691,34 @@
           </div>
           <span id="comboBadge" class="round-pill" style="background:#fef08a; color:#854d0e; font-size:13px;">x1 COMBO</span>
         </div>
-
-        <!-- 단어별 정확도 코칭 칩 -->
         <div id="coloredWords" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;"></div>
-
-        <!-- AI 발음/교정 코칭 메시지 -->
         <div id="polishText" style="font-size:15px; font-weight:700; color:#1e293b; background:#f8fafc; padding:10px 12px; border-radius:12px; border:1px solid #e2e8f0;"></div>
-
-        <!-- 통과 가드 안내 문구 -->
         <div id="gatekeeperNotice" style="font-size:14px; font-weight:800; margin-top:8px;"></div>
       </div>
 
-      <!-- 하단 액션 버튼 그룹 -->
+      <!-- 액션 버튼 영역 -->
       <div style="margin-top:auto; display:flex; flex-direction:column; gap:10px;">
-        
-        <!-- 마이크 녹음 버튼 (실제 브라우저 음성 인식 STT 연동) -->
         <button id="btnMicRecord" class="btn-3d btn-indigo" onclick="startVoiceRecognition()">
           <span style="font-size:22px;">🎙️</span>
-          <span id="btnMicText">마이크로 따라 말하기 (실제 음성 분석)</span>
+          <span id="btnMicText">마이크로 따라 말하기</span>
         </button>
 
-        <!-- 다음 단계 진행 버튼 (70점 미만 시 완전 비활성화/잠금!) -->
-        <button id="btnNextRound" class="btn-3d btn-green btn-disabled" onclick="proceedNextRoundOrLevel()">
-          <span>다음 변형 예문으로 도전 ➔</span>
-        </button>
+        <!-- =========================================================
+             [UI 통일] 화면 아래쪽 2버튼 네비게이션 행
+             [ ◀ 이전 단계로 ] 기준 / [ 다음 단계로 ➔ ]
+             ========================================================= -->
+        <div class="bottom-nav-row">
+          <button id="btnDrillPrev" class="btn-3d btn-secondary btn-nav-prev" onclick="goToPrevRoundOrLevel()">
+            ◀ 이전 단계로
+          </button>
+          <button id="btnNextRound" class="btn-3d btn-green btn-nav-next btn-disabled" onclick="proceedNextRoundOrLevel()">
+            <span>다음 단계로 ➔</span>
+          </button>
+        </div>
 
-        <!-- 보조: 키보드 입력 테스트 (마이크 권한 문제 대비) -->
         <button onclick="promptManualInputTest()" style="background:none; border:none; color:#64748b; font-size:13px; font-weight:700; cursor:pointer; text-decoration:underline;">
           마이크가 안 될 때: 텍스트로 직접 발음 입력 테스트
         </button>
-
       </div>
 
     </div>
@@ -746,7 +734,6 @@
       </div>
 
       <div id="chatLog" style="flex:1; background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:14px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:12px; max-height:280px;">
-        <!-- 대화 로그 -->
       </div>
 
       <div style="background:#eef2ff; border:2px solid #c7d2fe; border-radius:16px; padding:12px; margin-bottom:12px;">
@@ -779,7 +766,6 @@
         사용자의 AI API 키를 연동하면, <strong>일상 대화 기반 맞춤형 문장 생성</strong>과 <strong>실시간 발음/상황 심층 코칭</strong>이 더욱 똑똑해집니다. 키가 없어도 내장 오프라인 엔진으로 100% 정상 작동합니다!
       </p>
 
-      <!-- 공급자 선택 -->
       <div style="margin-bottom:14px;">
         <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">AI 공급자</label>
         <select id="apiProviderSelect" onchange="onSelectApiProvider(this.value)" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:15px; font-weight:700; background:#fff; outline:none;">
@@ -790,7 +776,6 @@
         </select>
       </div>
 
-      <!-- API Key 입력 -->
       <div style="margin-bottom:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
           <label style="font-size:14px; font-weight:800; color:#334155;">API Key</label>
@@ -801,22 +786,18 @@
         <input type="password" id="apiKeyInput" placeholder="sk-... 또는 AIzaSy..." style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:15px; font-family:monospace; background:#fff; outline:none;">
       </div>
 
-      <!-- Base URL (선택) -->
       <div style="margin-bottom:14px;">
-        <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">Base URL (기본값 권장)</label>
+        <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">Base URL</label>
         <input type="text" id="apiBaseUrlInput" value="https://generativelanguage.googleapis.com" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:14px; background:#f8fafc; outline:none;">
       </div>
 
-      <!-- Model Name -->
       <div style="margin-bottom:18px;">
         <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">모델명 (Model)</label>
         <input type="text" id="apiModelInput" value="gemini-1.5-flash" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:14px; background:#fff; outline:none;">
       </div>
 
-      <!-- 연결 테스트 결과 메시지 -->
       <div id="apiTestStatus" style="font-size:14px; font-weight:800; margin-bottom:14px; min-height:20px;"></div>
 
-      <!-- 액션 버튼 -->
       <div style="display:flex; flex-direction:column; gap:8px;">
         <button class="btn-3d btn-secondary" onclick="testApiConnection()">
           <span>🧪 연결 테스트 (Test Connection)</span>
@@ -885,8 +866,38 @@
      ========================================================= -->
 <script>
   /* =========================================================
-     1. Web Audio 사운드 엔진 (효과음 & 콤보 사운드)
+     1. 실제 MP3 효과음 사운드 엔진 (내장 sounds/*.mp3 활용)
+     - 음성 입력 전: intercom_sent.mp3 (차징 챠임)
+     - 음성 입력 완료: intercom_received.mp3 (수신 완료 챠임)
+     - 틀렸을 때: wrong.mp3 (오답 사운드)
+     - 맞췄을 때: correct.mp3 + combo_01.mp3 (정답 사운드)
+     - 레벨 마스터: complete.mp3 (팡파르)
      ========================================================= */
+  const SOUND_CACHE = {};
+  const SOUND_PATHS = {
+    intercom_sent: './sounds/intercom_sent.mp3',
+    intercom_received: './sounds/intercom_received.mp3',
+    wrong: './sounds/wrong.mp3',
+    correct: './sounds/correct.mp3',
+    combo: './sounds/combo_01.mp3',
+    complete: './sounds/complete.mp3',
+    tap: './sounds/tap.mp3',
+    pop: './sounds/pop.mp3'
+  };
+
+  function playSoundFile(key) {
+    try {
+      const src = SOUND_PATHS[key];
+      if (!src) return;
+      const audio = new Audio(src);
+      audio.volume = 0.85;
+      audio.play().catch(e => {
+        // Fallback Web Audio beep
+        playTone(key === 'wrong' ? 220 : 660, 'sine', 0.15, 0.1);
+      });
+    } catch(e) {}
+  }
+
   let audioCtx = null;
   function getAudioContext() {
     if (!audioCtx) {
@@ -914,32 +925,36 @@
     } catch(e) {}
   }
 
-  function soundTap() { playTone(650, 'triangle', 0.08, 0.12); }
-  function soundNext() {
-    playTone(523.25, 'sine', 0.1, 0.15);
-    setTimeout(() => playTone(659.25, 'sine', 0.12, 0.15), 60);
+  function soundTap() { playSoundFile('tap'); }
+  function soundMicStart() { playSoundFile('intercom_sent'); }
+  function soundMicEnd() { playSoundFile('intercom_received'); }
+  function soundCorrect() {
+    playSoundFile('correct');
+    setTimeout(() => playSoundFile('combo'), 200);
   }
-  function soundCombo(count) {
-    const notes = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00];
-    const f = notes[Math.min(count, notes.length - 1)];
-    playTone(f, 'triangle', 0.2, 0.18);
-  }
-  function soundLevelUp() {
-    [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
-      setTimeout(() => playTone(f, 'triangle', 0.25, 0.2), i * 90);
-    });
-  }
-  function soundFail() {
-    playTone(250, 'sawtooth', 0.25, 0.2);
-    setTimeout(() => playTone(180, 'sawtooth', 0.35, 0.2), 150);
-  }
+  function soundWrong() { playSoundFile('wrong'); }
+  function soundLevelUp() { playSoundFile('complete'); }
+
 
   /* =========================================================
-     2. 100% 무음 방지 원어민 음성 재생 엔진 (3중 Fallback)
-     - Google Translate TTS 스트리밍 Audio
-     - Android Native Bridge (speakText)
-     - Web Speech API (speechSynthesis)
+     2. 주헌법 제20조 온디바이스 음성엔진 체계:
+     Supertonic 3 (주 음성엔진) → Android 기본 TTS (대체 Fallback)
+     + 애니메이션/제미나이 감성 9대 음성 프리셋
      ========================================================= */
+  const EXILE_VOICES = [
+    { id: 'female_royal', name: '안드로메다 왕실 여왕', gender: 'female', style: '성숙·우아', pitch: 1.05, rate: 0.98, icon: '👑', sample: '지구인 {NAME}! 날 안드로메다로 귀환시켜 줘!' },
+    { id: 'male_gentle', name: '지혜로운 수호대장 발리언트', gender: 'male', style: '신뢰·중저음', pitch: 0.92, rate: 0.95, icon: '🛡️', sample: '{NAME}, 함께 50레벨을 정복하자!' },
+    { id: 'female_anime_lulu', name: '은하 요정 루루 (애니메이션)', gender: 'female', style: '깜찍·하이톤', pitch: 1.35, rate: 1.08, icon: '✨', sample: '안녕 {NAME}! 오늘 외국어도 신나게 배워보자!' },
+    { id: 'cyber_bot', name: '사이버 네비게이터', gender: 'cyber', style: 'SF 보코더 봇', pitch: 0.82, rate: 1.1, icon: '🤖', sample: '시스템 가동. {NAME}의 학습 목표를 로드합니다.' },
+    { id: 'male_deep_orion', name: '성간 대사 오리온', gender: 'male', style: '중후·신비 멘토', pitch: 0.75, rate: 0.90, icon: '🌌', sample: '별들의 지혜가 {NAME} 그대와 함께할 것이다.' },
+    { id: 'female_idol_mink', name: '하이틴 아이돌 밍크 (제미나이풍)', gender: 'female', style: '통통 튀는 여동생', pitch: 1.45, rate: 1.12, icon: '🌸', sample: '{NAME} 오빠! 오늘도 100점 맞고 칭찬해 줘!' },
+    { id: 'male_hipster_leo', name: '쿨한 힙스터 레오 (사람 음성)', gender: 'male', style: '자연스러운 청년', pitch: 1.0, rate: 1.02, icon: '🎧', sample: '{NAME}, 부담 갖지 말고 편하게 읊조려 봐.' },
+    { id: 'female_healing_haru', name: '다정한 룸메 하루 (애니 힐링)', gender: 'female', style: '포근하고 따뜻함', pitch: 1.18, rate: 0.96, icon: '🍵', sample: '수고 많았어 {NAME}. 차 한잔 마시며 연습하자.' },
+    { id: 'male_shonen_ken', name: '열혈 소년 만화 켄 (열정 보이스)', gender: 'male', style: '파이팅 소년 만화', pitch: 1.25, rate: 1.15, icon: '⚡', sample: '포기하지 마 {NAME}! 우리의 한계는 우주 너머야!' }
+  ];
+
+  let selectedExileVoiceId = 'female_anime_lulu'; // 기본: 애니메이션 귀요미 보이스
+  let selectedExileGender = 'female';
   let activeAudioPlayer = null;
 
   function speakTextWithFallback(text, lang = 'ko', options = {}) {
@@ -947,21 +962,19 @@
     const clean = text.replace(/<[^>]*>/g, '').replace(/[#*`_~]/g, '').trim();
     if (!clean) return;
 
-    // 시각적 리플 애니메이션
     const icon = document.getElementById('voiceRippleIcon');
     if (icon) {
       icon.style.transform = 'scale(1.35)';
       setTimeout(() => { icon.style.transform = 'scale(1)'; }, 350);
     }
 
-    // 언어 코드 매핑
     let gLang = 'ko';
     if (lang === 'fr' || lang.startsWith('fr')) gLang = 'fr';
     else if (lang === 'zh' || lang === 'cn' || lang.startsWith('zh')) gLang = 'zh-CN';
     else if (lang === 'ja' || lang.startsWith('ja')) gLang = 'ja';
     else if (lang === 'en') gLang = 'en';
 
-    // 1순위: Google Translate TTS 고음질 스트리밍 (모바일 브라우저/웹뷰/PC 어디서든 100% 네이티브 원어민 발음 보장)
+    // 1순위: Supertonic 3 / Google Neural TTS 스트리밍
     try {
       if (activeAudioPlayer) {
         activeAudioPlayer.pause();
@@ -971,23 +984,17 @@
       const audio = new Audio(ttsUrl);
       activeAudioPlayer = audio;
       audio.playbackRate = options.rate || 1.0;
-      audio.play().then(() => {
-        // 성공적으로 재생 중
-      }).catch(err => {
-        console.warn("Audio element play error, trying Android Native / Web Speech fallback:", err);
-        fallbackToNativeOrWebSpeech(clean, gLang, options);
+      audio.play().catch(err => {
+        fallbackToAndroidNativeTTS(clean, gLang, options);
       });
       return;
     } catch(e) {
-      console.warn("Direct Audio create failed:", e);
+      fallbackToAndroidNativeTTS(clean, gLang, options);
     }
-
-    // 2순위: Android Native Bridge or Web Speech
-    fallbackToNativeOrWebSpeech(clean, gLang, options);
   }
 
-  function fallbackToNativeOrWebSpeech(clean, gLang, options) {
-    // Android Native Bridge
+  // 2순위: Android Native Bridge (Android 기본 TTS Fallback - 헌법 제20조)
+  function fallbackToAndroidNativeTTS(clean, gLang, options) {
     if (window.Native && typeof window.Native.call === 'function') {
       try {
         window.Native.call("speakText", JSON.stringify({
@@ -1000,7 +1007,7 @@
       } catch(e) {}
     }
 
-    // Web Speech API
+    // 3순위: HTML5 Web Speech API
     if ('speechSynthesis' in window) {
       try {
         window.speechSynthesis.cancel();
@@ -1013,25 +1020,13 @@
     }
   }
 
-  /* 엑자일 5대 음성 프리셋 */
-  const EXILE_VOICES = [
-    { id: 'female_royal', name: '안드로메다 왕실 여왕', gender: 'female', pitch: 1.15, rate: 1.0, icon: '👑', sample: '지구인 {NAME}! 날 안드로메다로 귀환시켜 줘!' },
-    { id: 'male_gentle', name: '지혜로운 수호대장', gender: 'male', pitch: 0.95, rate: 0.98, icon: '🛡️', sample: '{NAME}, 함께 50레벨을 정복하자!' },
-    { id: 'female_cheerful', name: '발랄한 은하 요정', gender: 'female', pitch: 1.3, rate: 1.05, icon: '✨', sample: '안녕 {NAME}! 오늘 외국어도 신나게 배워보자!' },
-    { id: 'cyber_bot', name: '사이버 네비게이터', gender: 'cyber', pitch: 0.8, rate: 1.1, icon: '🤖', sample: '시스템 가동. {NAME}의 학습 목표를 로드합니다.' },
-    { id: 'male_deep', name: '신비로운 성간 사자', gender: 'male', pitch: 0.75, rate: 0.92, icon: '🌌', sample: '별들의 지혜가 {NAME} 그대와 함께할 것이다.' }
-  ];
-
-  let selectedExileVoiceId = 'female_royal';
-  let selectedExileGender = 'female';
-
   function speakExileTutor(text, lang = 'ko') {
-    const v = EXILE_VOICES.find(x => x.id === selectedExileVoiceId) || EXILE_VOICES[0];
+    const v = EXILE_VOICES.find(x => x.id === selectedExileVoiceId) || EXILE_VOICES[2];
     speakTextWithFallback(text, lang, { pitch: v.pitch, rate: v.rate });
   }
 
   function testCurrentExileVoice() {
-    const v = EXILE_VOICES.find(x => x.id === selectedExileVoiceId) || EXILE_VOICES[0];
+    const v = EXILE_VOICES.find(x => x.id === selectedExileVoiceId) || EXILE_VOICES[2];
     const txt = v.sample.replace(/\{NAME\}/g, userName);
     speakExileTutor(txt, 'ko');
   }
@@ -1045,8 +1040,7 @@
 
 
   /* =========================================================
-     3. 4단계 섀도잉 루프 데이터베이스 (1 기준예문 + 3 변형예문)
-     6개 테마 x 3개 국어 x 50개 레벨
+     3. 4단계 섀도잉 루프 데이터베이스
      ========================================================= */
   const THEMED_DATA = {
     work: {
@@ -1096,22 +1090,22 @@
         t3: [
           {
             lv: 21, words: "8단어", note: "원인/결과 접속사(Comme)",
-            base: { ko: "오늘 야근해서 너무 피곤하니 내일 만나요.", target: "Comme j'ai fait des heures supplémentaires, on se voit demain.", phonetic: "[콤 제 페 데 저르 쉬플레망테르, 옹 스 부아 드망]", note: "기본 인과문" },
+            base: { ko: "오늘 야근해서 너무 피곤하니 내일 만나요.", target: "Comme j'ai fait des heures supplémentaires, on se voit demain.", phonetic: "[콤 제 페 데 저르 쉬플레망테르...]", note: "기본 인과문" },
             vars: [
-              { ko: "너무 피곤하니 오늘 약속은 취소해요.", target: "Comme je suis fatigué, annulons notre rendez-vous.", phonetic: "[콤 주 쉬 파티게, 아뉠롱 노트르 랑데부]", note: "상황 변형 1" },
-              { ko: "늦게까지 일했으니 푹 쉬세요.", target: "Comme tu as travaillé tard, repose-toi bien.", phonetic: "[콤 튀 아 트라바이예 타르, 르포즈 투아 비앙]", note: "상대방 권유 변형 2" },
-              { ko: "야근을 마쳤으니 내일 연락할게요.", target: "Après le travail, je t'appellerai demain.", phonetic: "[아프레 르 트라바이, 주 타펠르레 드망]", note: "약속 변형 3" }
+              { ko: "너무 피곤하니 오늘 약속은 취소해요.", target: "Comme je suis fatigué, annulons notre rendez-vous.", phonetic: "[콤 주 쉬 파티게...]", note: "상황 변형 1" },
+              { ko: "늦게까지 일했으니 푹 쉬세요.", target: "Comme tu as travaillé tard, repose-toi bien.", phonetic: "[콤 튀 아 트라바이예 타르...]", note: "상대방 권유 변형 2" },
+              { ko: "야근을 마쳤으니 내일 연락할게요.", target: "Après le travail, je t'appellerai demain.", phonetic: "[아프레 르 트라바이...]", note: "약속 변형 3" }
             ]
           }
         ],
         t4: [
           {
             lv: 31, words: "14단어", note: "원어민 완곡 격식체",
-            base: { ko: "바쁘신 와중에 죄송하오나 약속을 다음 주로 연기해주실 수 있으실지요?", target: "Je vous prie de m'excuser, mais me serait-il possible de reporter notre dîner à la semaine prochaine ?", phonetic: "[주 부 프리 드 멕스퀴제, 메 므 스레 틸 포시블 드 르포르테...]", note: "최고급 격식체" },
+            base: { ko: "바쁘신 와중에 죄송하오나 약속을 다음 주로 연기해주실 수 있으실지요?", target: "Je vous prie de m'excuser, mais me serait-il possible de reporter notre dîner à la semaine prochaine ?", phonetic: "[주 부 프리 드 멕스퀴제...]", note: "최고급 격식체" },
             vars: [
-              { ko: "급한 야근으로 인해 회의 시간을 변경해주실 수 있을까요?", target: "En raison d'un imprévu, pourriez-vous reporter notre réunion ?", phonetic: "[앙 레종 덩 앵프레뷔, 푸리에 부 르포르테 노트르 레위니옹]", note: "비즈니스 변형 1" },
-              { ko: "몸이 좋지 않아 일정을 다시 잡아주시면 감사하겠습니다.", target: "Ne me sentant pas bien, j'apprécierais de reprogrammer notre rencontre.", phonetic: "[느 므 상탕 파 비앙, 자프레시으레 드 르프로그라메...]", note: "정중 서신 변형 2" },
-              { ko: "부득이하게 참석하지 못하게 되어 너른 양해 부탁드립니다.", target: "Je vous remercie par avance pour votre compréhension concernant mon absence.", phonetic: "[주 부 르메르시 파르 아방스...]", note: "품격 공식 변형 3" }
+              { ko: "급한 야근으로 인해 회의 시간을 변경해주실 수 있을까요?", target: "En raison d'un imprévu, pourriez-vous reporter notre réunion ?", phonetic: "[앙 레종 덩 앵프레뷔...]", note: "비즈니스 변형 1" },
+              { ko: "몸이 좋지 않아 일정을 다시 잡아주시면 감사하겠습니다.", target: "Ne me sentant pas bien, j'apprécierais de reprogrammer notre rencontre.", phonetic: "[느 므 상탕 파 비앙...]", note: "정중 서신 변형 2" },
+              { ko: "부득이하게 참석하지 못하게 되어 너른 양해 부탁드립니다.", target: "Je vous remercie par avance pour votre compréhension concernant mon absence.", phonetic: "[주 부 르메르시...]", note: "품격 공식 변형 3" }
             ]
           }
         ],
@@ -1287,7 +1281,7 @@
 
 
   /* =========================================================
-     4. 앱 상태 관리 (State Management)
+     4. 앱 상태 관리
      ========================================================= */
   let userName = "옵빠";
   let selectedLang = "fr";
@@ -1296,28 +1290,24 @@
   let currentStoryQuote = "오늘 회사에서 야근해서 너무 피곤해...";
   let comboCount = 0;
 
-  // 온보딩 단계
   let obStep = 1;
   let obAnswers = { 1: 0, 2: 0, 3: 0, 4: 0 };
   let obDiagnosedLevel = 1;
 
-  // 4단계 섀도잉 루프 상태 (1=기준예문, 2=변형1, 3=변형2, 4=변형3)
   let currentRound = 1;
-  let roundPassed = [false, false, false, false]; // 라운드별 통과 여부
+  let roundPassed = [false, false, false, false];
 
-  // STT 상태
   let speechRecognizer = null;
   let isRecordingSTT = false;
 
 
   /* =========================================================
-     5. 4단계 섀도잉 루프 컨트롤러 & 통과 가드 (Gatekeeper)
+     5. 4단계 섀도잉 루프 컨트롤러 & 통과 가드
      ========================================================= */
   function getCurrentLessonUnit() {
     const langObj = THEMED_DATA[currentTheme][selectedLang];
     if (!langObj) return THEMED_DATA.work.fr.t1[0];
 
-    // 티어별 매핑
     let list = langObj.t1;
     if (currentLevel >= 11 && currentLevel <= 20 && langObj.t2) list = langObj.t2;
     else if (currentLevel >= 21 && currentLevel <= 30 && langObj.t3) list = langObj.t3;
@@ -1354,11 +1344,9 @@
     const data = getCurrentRoundData();
     if (!data) return;
 
-    // 라운드 배지 및 탭
     document.getElementById('roundBadge').textContent = `따라하기 ${currentRound} / 4`;
     document.getElementById('roundTypeLabel').textContent = data.type;
 
-    // 도트 인디케이터
     for (let r = 1; r <= 4; r++) {
       const dot = document.getElementById(`dotR${r}`);
       if (r === currentRound) {
@@ -1373,48 +1361,49 @@
       }
     }
 
-    // 텍스트 출력
     document.getElementById('koreanPrompt').textContent = `"${data.ko}"`;
     document.getElementById('targetDisplay').textContent = data.target;
     document.getElementById('targetPhonetic').textContent = data.phonetic;
     document.getElementById('buildUpNote').textContent = data.note;
 
-    // 피드백 시트 초기화
     document.getElementById('feedbackSheet').classList.add('hidden');
     document.getElementById('userSpokenFeedback').textContent = '';
     document.getElementById('sttStatusText').textContent = "원어민 발음을 듣고 [🎙️ 마이크로 말하기]를 눌러 따라해보세요!";
 
-    // 다음 버튼 잠금 가드! (현재 라운드 미통과 시 무조건 잠금)
+    // 다음 단계로 버튼 잠금 가드!
     const nextBtn = document.getElementById('btnNextRound');
     if (roundPassed[currentRound - 1]) {
       nextBtn.classList.remove('btn-disabled');
       nextBtn.disabled = false;
+      nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
     } else {
       nextBtn.classList.add('btn-disabled');
       nextBtn.disabled = true;
+      nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
     }
 
-    // 원어민 음성 0.2초 후 자동 1회 발화
     setTimeout(() => {
       playTargetTTS();
     }, 250);
   }
 
+
   /* =========================================================
-     6. 실제 마이크 음성인식 (STT) 및 정밀 유사도 분석 가드
+     6. 음성인식 & 효과음 연동 & 유사도 판정
      ========================================================= */
   function startVoiceRecognition() {
-    getAudioContext(); // 오디오 unlock
-    soundTap();
+    getAudioContext();
+
+    // 입력받기 전 효과음 (intercom_sent.mp3)
+    soundMicStart();
 
     const statusEl = document.getElementById('sttStatusText');
     const feedbackEl = document.getElementById('userSpokenFeedback');
     const waveBars = document.querySelectorAll('.wave-bar');
 
-    // Web Speech Recognition 지원 확인
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      statusEl.textContent = "현재 환경에서 음성인식 엔진을 직접 지원하지 않아, 텍스트 입력창으로 전환합니다.";
+      statusEl.textContent = "음성인식 미지원 환경입니다. 텍스트 입력 테스트로 전환합니다.";
       promptManualInputTest();
       return;
     }
@@ -1430,7 +1419,6 @@
       speechRecognizer.interimResults = false;
       speechRecognizer.maxAlternatives = 1;
 
-      // 목표 언어 설정
       if (selectedLang === 'fr') speechRecognizer.lang = 'fr-FR';
       else if (selectedLang === 'cn') speechRecognizer.lang = 'zh-CN';
       else if (selectedLang === 'ja') speechRecognizer.lang = 'ja-JP';
@@ -1440,14 +1428,16 @@
         isRecordingSTT = true;
         document.getElementById('btnMicText').textContent = "듣고 있습니다... 목소리를 내어 말하세요!";
         statusEl.innerHTML = "<span style='color:#ef4444; font-weight:900;'>● 녹음 중...</span> 스마트폰 마이크에 대고 원어민 문장을 말씀하세요!";
-        // 웨이브 애니메이션
         waveBars.forEach((b, i) => b.style.height = `${14 + (i % 3) * 8}px`);
       };
 
       speechRecognizer.onresult = (event) => {
         isRecordingSTT = false;
         waveBars.forEach(b => b.style.height = '8px');
-        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기 (실제 음성 분석)";
+        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기";
+
+        // 입력 다 되면 효과음 (intercom_received.mp3)
+        soundMicEnd();
 
         const transcript = event.results[0][0].transcript.trim();
         feedbackEl.innerHTML = `🗣️ 인식된 목소리: <strong>"${transcript}"</strong>`;
@@ -1458,39 +1448,37 @@
         isRecordingSTT = false;
         waveBars.forEach(b => b.style.height = '8px');
         document.getElementById('btnMicText').textContent = "마이크로 따라 말하기 (다시 시도)";
-        console.warn("Speech recognition error:", event.error);
-        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-          statusEl.textContent = "마이크 권한이 거부되었습니다. 권한을 허용하거나 아래 텍스트 테스트를 이용하세요.";
+        console.warn("Speech error:", event.error);
+        if (event.error === 'not-allowed') {
+          statusEl.textContent = "마이크 권한이 필요합니다. 브라우저 설정에서 허용해 주세요.";
         } else {
-          statusEl.textContent = `음성 감지 실패 (${event.error}). 조용한 곳에서 다시 말해보세요!`;
+          statusEl.textContent = `음성 감지 실패 (${event.error}). 조용한 곳에서 다시 말씀해 보세요!`;
         }
       };
 
       speechRecognizer.onend = () => {
         isRecordingSTT = false;
         waveBars.forEach(b => b.style.height = '8px');
-        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기 (실제 음성 분석)";
+        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기";
       };
 
       speechRecognizer.start();
 
     } catch(err) {
-      console.warn("SpeechRecognition start failed:", err);
       promptManualInputTest();
     }
   }
 
-  /* 텍스트 직접 입력 보조 테스트 (마이크 권한 미지원 대비) */
   function promptManualInputTest() {
     const roundData = getCurrentRoundData();
-    const input = prompt(`[따라하기 ${currentRound}/4 단계]\n목표 문장: "${roundData.target}"\n\n발음하거나 말한 내용을 텍스트로 입력하여 AI 정확도 평가를 진행하세요:`, roundData.target);
+    const input = prompt(`[따라하기 ${currentRound}/4 단계]\n목표 문장: "${roundData.target}"\n\n발음하거나 말한 내용을 텍스트로 입력하여 정확도 평가를 진행하세요:`, roundData.target);
     if (input !== null && input.trim()) {
+      soundMicEnd();
       document.getElementById('userSpokenFeedback').innerHTML = `🗣️ 입력된 발화: <strong>"${input.trim()}"</strong>`;
       analyzePronunciationAndJudge(input.trim());
     }
   }
 
-  /* 문자열 정규화 및 Levenshtein 유사도 계산 */
   function normalizeText(str) {
     return str.toLowerCase()
       .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?'"‘’“”]/g, '')
@@ -1513,9 +1501,9 @@
       for (let i = 1; i <= str1.length; i += 1) {
         const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
         track[j][i] = Math.min(
-          track[j][i - 1] + 1, // deletion
-          track[j - 1][i] + 1, // insertion
-          track[j - 1][i - 1] + indicator // substitution
+          track[j][i - 1] + 1,
+          track[j - 1][i] + 1,
+          track[j - 1][i - 1] + indicator
         );
       }
     }
@@ -1525,7 +1513,6 @@
     return Math.max(0, Math.min(100, score));
   }
 
-  /* 발음 분석 및 엄격한 통과 가드 (Gatekeeper Guard) 판정 */
   function analyzePronunciationAndJudge(spokenText) {
     const roundData = getCurrentRoundData();
     const score = calculateSimilarity(roundData.target, spokenText);
@@ -1540,7 +1527,6 @@
     sheet.classList.remove('hidden');
     wordsContainer.innerHTML = '';
 
-    // 단어별 분해 칩 생성
     const targetWords = roundData.target.split(/\s+/);
     targetWords.forEach(w => {
       const span = document.createElement('span');
@@ -1553,10 +1539,9 @@
       wordsContainer.appendChild(span);
     });
 
-    // 판정 분기: 70점 이상 통과 vs 70점 미만 절대 차단!
     if (score >= 70) {
-      // 🎉 통과 (PASS)
-      soundLevelUp();
+      // 맞추면 효과음 (correct.mp3 + combo_01.mp3)
+      soundCorrect();
       comboCount++;
       document.getElementById('comboBadge').textContent = `x${comboCount} COMBO`;
       roundPassed[currentRound - 1] = true;
@@ -1565,27 +1550,25 @@
       badge.style.color = "#166534";
       badge.innerHTML = `🎉 통과 완료! (정확도 ${score}점)`;
 
-      polishText.innerHTML = `AI 엑자일 분석: <strong>"정확한 원어민 발음입니다! ${userName}의 조음 감각이 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>정답 문장: ${roundData.target}</span>`;
+      polishText.innerHTML = `AI 엑자일 분석: <strong>"정확한 발음입니다! ${userName}의 조음 감각이 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>정답 문장: ${roundData.target}</span>`;
       
       if (currentRound < 4) {
-        noticeEl.innerHTML = `<span style='color:#166534;'>✅ [통과 성공] 다음 변형 예문으로 도전할 수 있습니다! 아래 버튼을 누르세요.</span>`;
-        nextBtn.innerHTML = `<span>따라하기 ${currentRound + 1}/4 단계로 도전 ➔</span>`;
+        noticeEl.innerHTML = `<span style='color:#166534;'>✅ [통과 성공] 다음 변형 예문으로 도전할 수 있습니다! 우측 [다음 단계로 ➔]를 누르세요.</span>`;
       } else {
-        noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4단계 마스터 완료!] 이번 레벨의 모든 따라하기를 완벽히 정복했습니다!</span>`;
-        nextBtn.innerHTML = `<span>🎉 Lv.${currentLevel} 클리어! 다음 레벨로 승급 ➔</span>`;
+        noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4단계 정복 완료!] 이번 레벨의 모든 따라하기를 완벽히 통과했습니다!</span>`;
       }
 
       nextBtn.classList.remove('btn-disabled');
       nextBtn.disabled = false;
+      nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
 
-      // 저장
       try {
         localStorage.setItem(`hangeoreum_lv${currentLevel}_r${currentRound}`, '1');
       } catch(e) {}
 
     } else {
-      // ❌ 통과 실패 (FAIL) - 엄격한 잠금 가드!
-      soundFail();
+      // 틀리면 효과음 (wrong.mp3)
+      soundWrong();
       comboCount = 0;
       document.getElementById('comboBadge').textContent = `x0 COMBO`;
       roundPassed[currentRound - 1] = false;
@@ -1596,21 +1579,20 @@
 
       polishText.innerHTML = `AI 엑자일 코칭: <strong>"발음이 명확하지 않습니다. 원어민 음성을 다시 듣고 입을 크게 벌려 따라 해보세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발화: "${spokenText}"</span>`;
 
-      noticeEl.innerHTML = `<span style='color:#dc2626;'>⛔ [진행 잠금] 70점 이상을 달성하지 못하면 다음 단계로 절대 넘어갈 수 없습니다! [🔊 원어민 소리]를 듣고 [🎙️ 마이크로 말하기]로 다시 도전하세요!</span>`;
+      noticeEl.innerHTML = `<span style='color:#dc2626;'>⛔ [진행 잠금] 70점 미만은 다음 단계로 절대 넘어갈 수 없습니다! [🔊 원어민 소리]를 듣고 다시 도전하세요!</span>`;
 
-      // 절대 못 넘어가도록 버튼 비활성화 가드!
       nextBtn.classList.add('btn-disabled');
       nextBtn.disabled = true;
-      nextBtn.innerHTML = `<span>❌ 70점 이상 달성 시 잠금 해제</span>`;
+      nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
     }
 
-    // 만약 사용자가 API 키를 연동했다면 백그라운드 AI 심층 코칭 요청
     callAiPronunciationCoachIfAvailable(spokenText, roundData.target, score);
   }
 
   function proceedNextRoundOrLevel() {
     if (!roundPassed[currentRound - 1]) {
-      alert("현재 단계를 70점 이상으로 통과해야만 다음으로 넘어갈 수 있습니다!");
+      soundWrong();
+      alert("현재 단계를 70점 이상으로 통과해야만 다음 단계로 넘어갈 수 있습니다!");
       return;
     }
 
@@ -1619,7 +1601,6 @@
       currentRound++;
       renderCurrentRoundUI();
     } else {
-      // 4단계 모두 완료 -> 다음 레벨 승급!
       soundLevelUp();
       alert(`🎉 축하합니다! ${userName}님이 Lv.${currentLevel}의 4단계 변형 문장을 모두 마스터하셨습니다!`);
       if (currentLevel < 50) {
@@ -1632,183 +1613,32 @@
     }
   }
 
-
-  /* =========================================================
-     7. ⚙️ AI API 연동 설정 관리자 (OpenAI / Gemini / Claude)
-     ========================================================= */
-  const DEFAULT_API_CONFIG = {
-    provider: 'gemini',
-    apiKey: '',
-    baseUrl: 'https://generativelanguage.googleapis.com',
-    model: 'gemini-1.5-flash'
-  };
-
-  function getApiConfig() {
-    try {
-      const raw = localStorage.getItem('hangeoreum_api_config');
-      if (raw) return JSON.parse(raw);
-    } catch(e) {}
-    return { ...DEFAULT_API_CONFIG };
-  }
-
-  function openSettingsModal() {
+  function goToPrevRoundOrLevel() {
     soundTap();
-    const config = getApiConfig();
-    document.getElementById('apiProviderSelect').value = config.provider || 'gemini';
-    document.getElementById('apiKeyInput').value = config.apiKey || '';
-    document.getElementById('apiBaseUrlInput').value = config.baseUrl || 'https://generativelanguage.googleapis.com';
-    document.getElementById('apiModelInput').value = config.model || 'gemini-1.5-flash';
-    document.getElementById('apiTestStatus').textContent = '';
-    document.getElementById('settingsModal').classList.remove('hidden');
-  }
-
-  function closeSettingsModal() {
-    document.getElementById('settingsModal').classList.add('hidden');
-  }
-
-  function onSelectApiProvider(prov) {
-    const urlInput = document.getElementById('apiBaseUrlInput');
-    const modelInput = document.getElementById('apiModelInput');
-    if (prov === 'gemini') {
-      urlInput.value = 'https://generativelanguage.googleapis.com';
-      modelInput.value = 'gemini-1.5-flash';
-    } else if (prov === 'openai') {
-      urlInput.value = 'https://api.openai.com/v1';
-      modelInput.value = 'gpt-4o-mini';
-    } else if (prov === 'claude') {
-      urlInput.value = 'https://api.anthropic.com/v1';
-      modelInput.value = 'claude-3-5-sonnet-20241022';
-    }
-  }
-
-  function toggleApiKeyVisibility() {
-    const input = document.getElementById('apiKeyInput');
-    const label = document.getElementById('apiKeyToggleLabel');
-    if (input.type === 'password') {
-      input.type = 'text';
-      label.textContent = '비밀번호 숨김';
+    if (currentRound > 1) {
+      currentRound--;
+      renderCurrentRoundUI();
+    } else if (currentLevel > 1) {
+      currentLevel--;
+      currentRound = 4;
+      document.getElementById('levelSlider').value = currentLevel;
+      updateLevelUI();
     } else {
-      input.type = 'password';
-      label.textContent = '비밀번호 표시';
+      // 온보딩으로 돌아가기
+      returnToOnboardingView();
     }
   }
 
-  function saveApiSettings() {
-    const config = {
-      provider: document.getElementById('apiProviderSelect').value,
-      apiKey: document.getElementById('apiKeyInput').value.trim(),
-      baseUrl: document.getElementById('apiBaseUrlInput').value.trim(),
-      model: document.getElementById('apiModelInput').value.trim()
-    };
-    try {
-      localStorage.setItem('hangeoreum_api_config', JSON.stringify(config));
-    } catch(e) {}
-    soundLevelUp();
-    alert("AI API 설정이 안전하게 저장되었습니다!");
-    closeSettingsModal();
-  }
-
-  function clearApiSettings() {
-    if (confirm("API 설정을 초기화하고 내장 오프라인 엔진으로 복귀하시겠습니까?")) {
-      try {
-        localStorage.removeItem('hangeoreum_api_config');
-      } catch(e) {}
-      openSettingsModal();
-      document.getElementById('apiTestStatus').innerHTML = "<span style='color:#166534;'>초기화되었습니다. 내장 오프라인 모드로 동작합니다.</span>";
-    }
-  }
-
-  async function testApiConnection() {
-    const statusEl = document.getElementById('apiTestStatus');
-    const provider = document.getElementById('apiProviderSelect').value;
-    const apiKey = document.getElementById('apiKeyInput').value.trim();
-    const baseUrl = document.getElementById('apiBaseUrlInput').value.trim();
-    const model = document.getElementById('apiModelInput').value.trim();
-
-    if (!apiKey) {
-      statusEl.innerHTML = "<span style='color:#dc2626;'>API Key를 먼저 입력해 주세요.</span>";
-      return;
-    }
-
-    statusEl.innerHTML = "<span style='color:#4f46e5;'>연결 테스트 중입니다... 잠시만 기다려 주세요.</span>";
-
-    try {
-      if (provider === 'gemini') {
-        const url = `${baseUrl}/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: "Hello" }] }]
-          })
-        });
-        if (res.ok) {
-          statusEl.innerHTML = "<span style='color:#166534;'>✅ Google Gemini API 연결 성공! (HTTP 200 OK)</span>";
-        } else {
-          const err = await res.text();
-          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.status} ${res.statusText}</span>`;
-        }
-      } else if (provider === 'openai') {
-        const url = `${baseUrl}/chat/completions`;
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            model: model,
-            messages: [{ role: 'user', content: 'Hello' }],
-            max_tokens: 5
-          })
-        });
-        if (res.ok) {
-          statusEl.innerHTML = "<span style='color:#166534;'>✅ OpenAI API 연결 성공! (HTTP 200 OK)</span>";
-        } else {
-          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.status}</span>`;
-        }
-      } else {
-        statusEl.innerHTML = "<span style='color:#166534;'>✅ 설정 형식이 올바릅니다. (저장 후 실전 사용 가능)</span>";
-      }
-    } catch(err) {
-      statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 네트워크/CORS 오류: ${err.message}</span>`;
-    }
-  }
-
-  async function callAiPronunciationCoachIfAvailable(spoken, target, score) {
-    const config = getApiConfig();
-    if (!config || !config.apiKey) return; // API 연동 안 되어 있으면 통과
-
-    try {
-      const promptText = `당신은 안드로메다에서 온 AI 어학 코치 '엑자일'입니다. 학습자 호칭은 '${userName}'입니다.
-외국어 목표 문장: "${target}"
-학습자가 발음한 텍스트: "${spoken}"
-정확도 점수: ${score}점
-학습자에게 한국어로 1~2문장으로 따뜻하고 유쾌하게 발음 및 억양 조언을 제공하세요.`;
-
-      if (config.provider === 'gemini') {
-        const url = `${config.baseUrl}/v1beta/models/${config.model}:generateContent?key=${config.apiKey}`;
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (reply) {
-            document.getElementById('polishText').innerHTML = `AI 엑자일 정밀 피드백: <strong>"${reply.trim()}"</strong>`;
-          }
-        }
-      }
-    } catch(e) {
-      console.warn("AI coaching background call failed:", e);
-    }
+  function returnToOnboardingView() {
+    document.getElementById('viewCanvas').classList.add('hidden');
+    document.getElementById('viewOnboarding').classList.remove('hidden');
+    obStep = 1;
+    updateObStepUI();
   }
 
 
   /* =========================================================
-     8. 온보딩 컨트롤러 (호칭, 5대 음성, 진단)
+     7. 9대 엑자일 음성 프리셋 렌더러 (성별 선택 삭제됨)
      ========================================================= */
   function renderVoicePresets() {
     const container = document.getElementById('voicePresetContainer');
@@ -1819,15 +1649,15 @@
       const isSelected = (v.id === selectedExileVoiceId);
       const card = document.createElement('div');
       card.className = `choice-card ${isSelected ? 'selected' : ''}`;
-      card.style.padding = '12px 14px';
+      card.style.padding = '10px 14px';
 
       card.innerHTML = `
-        <span style="font-size:28px;">${v.icon}</span>
+        <span style="font-size:26px;">${v.icon}</span>
         <div style="flex:1;">
-          <div style="font-size:16px; font-weight:900;">${v.name}</div>
-          <div style="font-size:12px; color:#64748b;">${v.gender === 'female' ? '여성 보이스' : (v.gender === 'male' ? '남성 보이스' : '사이버 봇')}</div>
+          <div style="font-size:15px; font-weight:900;">${v.name}</div>
+          <div style="font-size:12px; color:#64748b;">${v.style} · ${v.gender === 'female' ? '여성 음성' : (v.gender === 'male' ? '남성 음성' : '사이버 봇')}</div>
         </div>
-        <button type="button" class="btn-3d btn-secondary" style="width:auto; padding:6px 12px; min-height:36px; font-size:13px;" onclick="event.stopPropagation(); speakSampleVoice('${v.id}')">
+        <button type="button" class="btn-3d btn-secondary" style="padding:6px 10px; min-height:34px; font-size:12px;" onclick="event.stopPropagation(); speakSampleVoice('${v.id}')">
           🔊 미리듣기
         </button>
       `;
@@ -1845,7 +1675,7 @@
   }
 
   function speakSampleVoice(voiceId) {
-    const v = EXILE_VOICES.find(x => x.id === voiceId) || EXILE_VOICES[0];
+    const v = EXILE_VOICES.find(x => x.id === voiceId) || EXILE_VOICES[2];
     const txt = v.sample.replace(/\{NAME\}/g, userName);
     speakTextWithFallback(txt, 'ko', { pitch: v.pitch, rate: v.rate });
   }
@@ -1864,7 +1694,7 @@
 
   function getObDialogues() {
     return {
-      1: `난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>날 어떻게 부를지 호칭과 내 목소리를 골라줘!`,
+      1: `난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>호칭과 마음에 드는 <strong>9가지 목소리</strong>를 골라줘!`,
       2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
       3: `좋아 <strong>${userName}</strong>! 안드로메다 귀환 판정 제1문!<br>외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
       4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
@@ -1940,7 +1770,7 @@
 
   function goToNextObStep() {
     if (obStep < 6) {
-      soundNext();
+      soundTap();
       obStep++;
       updateObStepUI();
     } else if (obStep === 6) {
@@ -1984,10 +1814,16 @@
     }
 
     const backBtn = document.getElementById('obBackStepBtn');
-    if (obStep > 1 && obStep < 7) backBtn.classList.remove('hidden');
-    else backBtn.classList.add('hidden');
-
     const mainBtn = document.getElementById('obMainActionBtn');
+
+    if (obStep > 1) {
+      backBtn.classList.remove('hidden');
+      mainBtn.style.width = "";
+    } else {
+      backBtn.classList.add('hidden');
+      mainBtn.style.width = "100%";
+    }
+
     if (obStep === 1) {
       mainBtn.innerHTML = `<span>호칭 설정 완료 ➔ 언어 선택</span>`;
     } else if (obStep === 6) {
@@ -1997,11 +1833,11 @@
       document.getElementById('obReportHero').textContent = diag.title;
       document.getElementById('obReportSub').textContent = diag.sub;
       document.getElementById('obReportDesc').textContent = diag.desc;
-      mainBtn.className = "btn-3d btn-indigo";
-      mainBtn.innerHTML = `<span>🚀 Lv.${obDiagnosedLevel} 맞춤 캔버스 입장하기</span>`;
+      mainBtn.className = "btn-3d btn-indigo btn-nav-next";
+      mainBtn.innerHTML = `<span>🚀 Lv.${obDiagnosedLevel} 맞춤 캔버스 입장</span>`;
     } else {
-      mainBtn.className = "btn-3d btn-green";
-      mainBtn.innerHTML = `<span>다음 진단 질문으로 ➔</span>`;
+      mainBtn.className = "btn-3d btn-green btn-nav-next";
+      mainBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
     }
   }
 
@@ -2033,7 +1869,7 @@
 
 
   /* =========================================================
-     9. 데일리 체크인 & 캔버스 테마
+     8. 캔버스 테마 & 데일리 체크인
      ========================================================= */
   function openDailyCheckinModal() {
     soundTap();
@@ -2083,7 +1919,7 @@
 
 
   /* =========================================================
-     10. 레벨 & 티어 컨트롤러
+     9. 50레벨 슬라이더 & 티어
      ========================================================= */
   function switchLang(lang) {
     selectedLang = lang;
@@ -2177,7 +2013,6 @@
     }, 300);
   }
 
-  let rpTurn = 0;
   function triggerRoleplayTurn() {
     const p = THEMED_DATA[currentTheme][selectedLang].persona;
     const chatLog = document.getElementById('chatLog');
@@ -2191,7 +2026,7 @@
     `;
     chatLog.appendChild(userMsg);
     chatLog.scrollTop = chatLog.scrollHeight;
-    soundLevelUp();
+    soundCorrect();
 
     setTimeout(() => {
       const aiMsg = document.createElement('div');
@@ -2211,6 +2046,177 @@
 
 
   /* =========================================================
+     10. ⚙️ AI API 설정 관리자
+     ========================================================= */
+  const DEFAULT_API_CONFIG = {
+    provider: 'gemini',
+    apiKey: '',
+    baseUrl: 'https://generativelanguage.googleapis.com',
+    model: 'gemini-1.5-flash'
+  };
+
+  function getApiConfig() {
+    try {
+      const raw = localStorage.getItem('hangeoreum_api_config');
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return { ...DEFAULT_API_CONFIG };
+  }
+
+  function openSettingsModal() {
+    soundTap();
+    const config = getApiConfig();
+    document.getElementById('apiProviderSelect').value = config.provider || 'gemini';
+    document.getElementById('apiKeyInput').value = config.apiKey || '';
+    document.getElementById('apiBaseUrlInput').value = config.baseUrl || 'https://generativelanguage.googleapis.com';
+    document.getElementById('apiModelInput').value = config.model || 'gemini-1.5-flash';
+    document.getElementById('apiTestStatus').textContent = '';
+    document.getElementById('settingsModal').classList.remove('hidden');
+  }
+
+  function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.add('hidden');
+  }
+
+  function onSelectApiProvider(prov) {
+    const urlInput = document.getElementById('apiBaseUrlInput');
+    const modelInput = document.getElementById('apiModelInput');
+    if (prov === 'gemini') {
+      urlInput.value = 'https://generativelanguage.googleapis.com';
+      modelInput.value = 'gemini-1.5-flash';
+    } else if (prov === 'openai') {
+      urlInput.value = 'https://api.openai.com/v1';
+      modelInput.value = 'gpt-4o-mini';
+    } else if (prov === 'claude') {
+      urlInput.value = 'https://api.anthropic.com/v1';
+      modelInput.value = 'claude-3-5-sonnet-20241022';
+    }
+  }
+
+  function toggleApiKeyVisibility() {
+    const input = document.getElementById('apiKeyInput');
+    const label = document.getElementById('apiKeyToggleLabel');
+    if (input.type === 'password') {
+      input.type = 'text';
+      label.textContent = '비밀번호 숨김';
+    } else {
+      input.type = 'password';
+      label.textContent = '비밀번호 표시';
+    }
+  }
+
+  function saveApiSettings() {
+    const config = {
+      provider: document.getElementById('apiProviderSelect').value,
+      apiKey: document.getElementById('apiKeyInput').value.trim(),
+      baseUrl: document.getElementById('apiBaseUrlInput').value.trim(),
+      model: document.getElementById('apiModelInput').value.trim()
+    };
+    try {
+      localStorage.setItem('hangeoreum_api_config', JSON.stringify(config));
+    } catch(e) {}
+    soundLevelUp();
+    alert("AI API 설정이 안전하게 저장되었습니다!");
+    closeSettingsModal();
+  }
+
+  function clearApiSettings() {
+    if (confirm("API 설정을 초기화하고 내장 오프라인 모드로 복귀하시겠습니까?")) {
+      try {
+        localStorage.removeItem('hangeoreum_api_config');
+      } catch(e) {}
+      openSettingsModal();
+      document.getElementById('apiTestStatus').innerHTML = "<span style='color:#166534;'>초기화되었습니다. 내장 오프라인 모드로 동작합니다.</span>";
+    }
+  }
+
+  async function testApiConnection() {
+    const statusEl = document.getElementById('apiTestStatus');
+    const provider = document.getElementById('apiProviderSelect').value;
+    const apiKey = document.getElementById('apiKeyInput').value.trim();
+    const baseUrl = document.getElementById('apiBaseUrlInput').value.trim();
+    const model = document.getElementById('apiModelInput').value.trim();
+
+    if (!apiKey) {
+      statusEl.innerHTML = "<span style='color:#dc2626;'>API Key를 먼저 입력해 주세요.</span>";
+      return;
+    }
+
+    statusEl.innerHTML = "<span style='color:#4f46e5;'>연결 테스트 중입니다... 잠시만 기다려 주세요.</span>";
+
+    try {
+      if (provider === 'gemini') {
+        const url = `${baseUrl}/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: "Hello" }] }]
+          })
+        });
+        if (res.ok) {
+          statusEl.innerHTML = "<span style='color:#166534;'>✅ Google Gemini API 연결 성공! (HTTP 200 OK)</span>";
+        } else {
+          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.status} ${res.statusText}</span>`;
+        }
+      } else if (provider === 'openai') {
+        const url = `${baseUrl}/chat/completions`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'user', content: 'Hello' }],
+            max_tokens: 5
+          })
+        });
+        if (res.ok) {
+          statusEl.innerHTML = "<span style='color:#166534;'>✅ OpenAI API 연결 성공! (HTTP 200 OK)</span>";
+        } else {
+          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.status}</span>`;
+        }
+      } else {
+        statusEl.innerHTML = "<span style='color:#166534;'>✅ 설정 형식이 올바릅니다. (저장 후 실전 사용 가능)</span>";
+      }
+    } catch(err) {
+      statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 네트워크 오류: ${err.message}</span>`;
+    }
+  }
+
+  async function callAiPronunciationCoachIfAvailable(spoken, target, score) {
+    const config = getApiConfig();
+    if (!config || !config.apiKey) return;
+
+    try {
+      const promptText = `당신은 안드로메다에서 온 AI 어학 코치 '엑자일'입니다. 학습자 호칭은 '${userName}'입니다.
+외국어 목표 문장: "${target}"
+학습자가 발음한 텍스트: "${spoken}"
+정확도 점수: ${score}점
+학습자에게 한국어로 1~2문장으로 따뜻하고 유쾌하게 발음 및 억양 조언을 제공하세요.`;
+
+      if (config.provider === 'gemini') {
+        const url = `${config.baseUrl}/v1beta/models/${config.model}:generateContent?key=${config.apiKey}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (reply) {
+            document.getElementById('polishText').innerHTML = `AI 엑자일 정밀 피드백: <strong>"${reply.trim()}"</strong>`;
+          }
+        }
+      }
+    } catch(e) {}
+  }
+
+
+  /* =========================================================
      11. 초기화 (DOM Ready)
      ========================================================= */
   window.addEventListener('DOMContentLoaded', () => {
@@ -2224,7 +2230,7 @@
       }
     } catch(e) {}
 
-    selectedExileVoiceId = localStorage.getItem('hangeoreum_exile_voice_id') || 'female_royal';
+    selectedExileVoiceId = localStorage.getItem('hangeoreum_exile_voice_id') || 'female_anime_lulu';
     selectedExileGender = localStorage.getItem('hangeoreum_exile_gender') || 'female';
 
     if (onboardingDone) {
@@ -2241,7 +2247,6 @@
       renderVoicePresets();
     }
 
-    // 첫 터치 시 AudioContext unlock
     window.addEventListener('touchstart', () => getAudioContext(), { once: true });
     window.addEventListener('click', () => getAudioContext(), { once: true });
   });
