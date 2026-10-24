@@ -2483,7 +2483,55 @@
     }
   }
 
-  function renderCurrentRoundUI() {
+/* =========================================================
+     4-2. 사용자 이름 및 온보딩 퀵 키 / 아바타 상호작용 함수
+     ========================================================= */
+  function setAndSaveUserName(name) {
+    const trimmed = (name || '').trim();
+    userName = trimmed || "옵빠야";
+    try {
+      localStorage.setItem('hangeoreum_user_name', userName);
+    } catch(e) {}
+    const input = document.getElementById('obUserNameInput');
+    if (input && input.value !== name) {
+      input.value = name;
+    }
+  }
+
+  function selectQuickName(name) {
+    soundTap();
+    setAndSaveUserName(name);
+    const input = document.getElementById('obUserNameInput');
+    if (input) {
+      input.value = name;
+      input.focus();
+    }
+  }
+
+  function replayCurrentTutorSpeech() {
+    soundTap();
+    const tutorEl = document.getElementById('obTutorSpeech');
+    if (tutorEl) {
+      const text = tutorEl.textContent || tutorEl.innerText;
+      if (text) {
+        speakExileTutor(text.trim(), 'ko');
+      }
+    }
+  }
+
+  function speakExileIntroStory() {
+    soundTap();
+    const msg = `안녕, ${userName}! 나는 안드로메다 은하에서 지구로 유배 온 AI 엑자일이야. 네가 외국어 회화를 마스터하면 난 사면을 받아 고향으로 돌아갈 수 있어! 우리 함께 열심히 달려보자!`;
+    speakExileTutor(msg, 'ko');
+  }
+
+  function previewVoice(voiceId) {
+    if (window.VoiceEngine20 && typeof VoiceEngine20.previewVoice === 'function') {
+      VoiceEngine20.previewVoice(voiceId);
+    }
+  }
+
+    function renderCurrentRoundUI() {
     const data = getCurrentRoundData();
     if (!data) return;
 
@@ -3776,8 +3824,8 @@
       if (!isPointerDown) return;
       isPointerDown = false;
 
-      // input, textarea, range slider 위에서의 스와이프는 원래 폼 조작을 위해 무시
-      if (target && target.closest && target.closest('input, textarea, select, range, .choice-card, .btn-3d, button')) {
+      // input, textarea, 버튼, 카드 등 인터랙션 요소 위에서의 조작은 스와이프가 가로채지 않음!
+      if (target && target.closest && target.closest('input, textarea, select, range, .choice-card, .btn-3d, button, [onclick], .round-pill, .tutor-avatar-wrap, .voice-card')) {
         return;
       }
 
@@ -3944,12 +3992,95 @@
     // 어플 실행 시 마이크 권한 즉시 요청
     requestMicrophonePermissionOnLaunch();
 
-    // 초기화면 단축키 및 Escape 감지 (Home, Ctrl+H, Alt+Home, Escape)
+    // =========================================================
+    // 키보드 키 (단축키 & 네비게이션) 전면 활성화
+    // [← / →]: 이전/다음 단계 (진행된 범위까지만 가드)
+    // [Space]: 마이크 녹음 토글 / 원어민 소리
+    // [Enter]: 다음 단계 / 확인
+    // [R]: 원어민 듣고 마이크 재시작
+    // [1~5]: 퀵 호칭 선택 또는 퀵 티어 점프
+    // [Home / Ctrl+H]: 처음으로 복귀
+    // [Escape]: 모달 닫기 / 뒤로가기
+    // =========================================================
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Home' || (e.ctrlKey && (e.key === 'h' || e.key === 'H')) || (e.altKey && e.key === 'Home')) {
+      const activeEl = document.activeElement;
+      const isInputFocused = activeEl && (
+        activeEl.tagName === 'INPUT' || 
+        activeEl.tagName === 'TEXTAREA' || 
+        activeEl.isContentEditable
+      );
+
+      // 1. input이나 textarea에 타이핑 중일 때
+      if (isInputFocused) {
+        if (e.key === 'Escape') {
+          activeEl.blur();
+        } else if (e.key === 'Enter' && activeEl.id === 'obUserNameInput') {
+          e.preventDefault();
+          goToNextObStep();
+        }
+        return; // 일반 글자 타이핑 키는 100% 정상 작동하도록 바로 반환!
+      }
+
+      // 2. 전역 키보드 네비게이션 키
+      if (e.key === 'ArrowRight') {
+        // 👉 우측 화살표: 다음 단계로 전진
+        e.preventDefault();
+        const isCanvasActive = !document.getElementById('viewCanvas').classList.contains('hidden');
+        if (isCanvasActive) {
+          proceedNextRoundOrLevel();
+        } else {
+          goToNextObStep();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        // 👈 좌측 화살표: 이전 단계로 후퇴
+        e.preventDefault();
+        const isCanvasActive = !document.getElementById('viewCanvas').classList.contains('hidden');
+        if (isCanvasActive) {
+          goToPrevRoundOrLevel();
+        } else {
+          goToPrevObStep();
+        }
+      } else if (e.key === ' ' || e.code === 'Space') {
+        // 🎙️ 스페이스바: 마이크 녹음 시작/중지
+        e.preventDefault();
+        const isCanvasActive = !document.getElementById('viewCanvas').classList.contains('hidden');
+        if (isCanvasActive) {
+          startVoiceRecognition();
+        } else {
+          replayCurrentTutorSpeech();
+        }
+      } else if (e.key === 'Enter') {
+        // ↵ 엔터: 다음 단계 진행
+        e.preventDefault();
+        const isCanvasActive = !document.getElementById('viewCanvas').classList.contains('hidden');
+        if (isCanvasActive) {
+          proceedNextRoundOrLevel();
+        } else {
+          goToNextObStep();
+        }
+      } else if (e.key === 'r' || e.key === 'R' || e.key === 'ㄱ') {
+        // 🔄 R키: 원어민 듣고 마이크 재시작
+        e.preventDefault();
+        restartCurrentRoundWithTTS();
+      } else if (e.key >= '1' && e.key <= '5') {
+        // 1~5 숫자키: 온보딩 호칭 또는 퀵 티어 점프
+        e.preventDefault();
+        const num = parseInt(e.key, 10);
+        const isCanvasActive = !document.getElementById('viewCanvas').classList.contains('hidden');
+        if (!isCanvasActive && obStep === 1) {
+          const names = ['학습자', '사령관', '캡틴', '마스터', '친구'];
+          selectQuickName(names[num - 1]);
+        } else if (isCanvasActive) {
+          const levels = [1, 11, 21, 31, 41];
+          jumpLevel(levels[num - 1]);
+        }
+      } else if (e.key === 'Home' || (e.ctrlKey && (e.key === 'h' || e.key === 'H')) || (e.altKey && e.key === 'Home')) {
+        // 🏠 홈 키: 처음으로 복귀
         e.preventDefault();
         goToInitialScreen();
       } else if (e.key === 'Escape') {
+        // 🔙 ESC: 뒤로가기
+        e.preventDefault();
         window.onAndroidBackPressed();
       }
     });
