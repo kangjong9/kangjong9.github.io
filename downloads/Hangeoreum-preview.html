@@ -935,7 +935,7 @@ let routine = 5, seconds = 0, running = false, timeNotified = false, sessionEpoc
 let state = {admin:false,hasKey:false,hasPassword:false,progress:{fr:{stage:1,practiced:[],reviews:{}},zh:{stage:1,practiced:[],reviews:{}},ja:{stage:1,practiced:[],reviews:{}}}};
 let phraseIndex = 0, topic = '', history = [], messages = [], feedback = null, pending = false, recording = false, audioReady = false;
 let round = 1, answerDraft = '';
-let renderedScreen = '';
+let renderedScreen = '', checkpointKey = '', reviewMode = false;
 const rounds = {1:1,5:2,15:4};
 const plans = {1:'핵심 표현 1개 · 듣기 20초 → 따라 말하기 30초 → 복습 10초',5:'핵심 표현 2개 · 듣기 1분 → 발음 연습 2분 → 짧은 회화 1분 30초 → 복습 30초',15:'표현 비교 3분 → 발음 반복 6분 → 주제 회화 5분 → 복습 1분'};
 function bridge(command,payload={}) {
@@ -995,13 +995,14 @@ function render() {
     const records=state.progress[language].reviews;
     html=`<div class="eyebrow">${data[language].name} 복습 노트</div><h1>다시 말하면,<br>내 것이 돼요.</h1><p class="muted">이 언어에서 연습한 표현만 모았어요.</p>`;
     if(!Object.keys(records).length) html+='<div class="empty">아직 연습 기록이 없어요.<br>첫 단원을 연습하고 이곳에서 다시 만나세요.</div>'+button('start','첫 표현 만나기','primary wide');
-    else for(const key of Object.keys(records)) html+=`<div class="section"><h2>${data[language].units[Number(key)-1].title}</h2><p class="muted">${records[key]<=Date.now()?'오늘 다시 연습할 표현':'다음 복습: '+new Date(records[key]).toLocaleDateString('ko-KR')}</p>${button('unit','다시 연습하기','wide',`data-index="${Number(key)-1}"`)}</div>`;
+    else for(const key of Object.keys(records)) html+=`<div class="section"><h2>${data[language].units[Number(key)-1].title}</h2><p class="muted">${(typeof records[key]==='number'?records[key]:records[key].due)<=Date.now()?'오늘 다시 연습할 표현':'다음 복습: '+new Date(typeof records[key]==='number'?records[key]:records[key].due).toLocaleDateString('ko-KR')}</p>${button('reviewUnit','꺼내 말하며 복습하기','wide',`data-index="${Number(key)-1}"`)}</div>`;
   } else if(screen==='unit') html=renderUnit();
+  else if(screen==='evidence') html=renderEvidence();
   else if(screen==='summary') html=`<div class="eyebrow">오늘의 한걸음</div><h1>연습을 마쳤어요.</h1>${illustration('park')}<p>${data[language].name} · ${unit().title}</p><p class="muted">${state.admin?'테스트 기록은 일반 학습에 저장하지 않았어요.':'연습한 표현을 복습 노트에 남겼어요.'}<br>연습 완료는 단계 통과가 아닙니다.</p><div class="buttonStack">${button('home','오늘 화면으로','primary')}${button('startAgain','같은 표현 다시 연습하기')}</div>`;
   $('main').innerHTML=html;
   const renderKey=`${screen}:${language}:${unitIndex}:${step}`;
   if(renderKey!==renderedScreen) window.scrollTo(0,0);
-  renderedScreen=renderKey; updateTimer();
+  renderedScreen=renderKey; updateTimer(); saveCheckpoint();
 }
 function renderUnit() {
   const u=unit(), p=u.phrases[phraseIndex], labels=['듣고 익히기','따라 말하기','주제 정하기','AI 회화'];
@@ -1013,41 +1014,47 @@ function renderUnit() {
   } else if(step===2) {
     html+=`<h1>오늘은 어떤 이야기를<br>해 볼까요?</h1><p class="muted">Gemini와 주제를 맞춘 뒤 이 단원 수준의 짧은 대화를 시작해요.</p><div class="chips">${u.topics.map(t=>button('topic',escapeHTML(t),'',`data-topic="${escapeHTML(t)}"`)).join('')}</div><label for="topic">선택하거나 직접 적어 주세요</label><textarea id="topic" class="field" maxlength="300" placeholder="예: 처음 만난 이웃과 인사하기">${escapeHTML(topic)}</textarea><p class="muted">현재 연결: ${state.hasKey?'저장한 Gemini API 키 사용':'API 키 없음 · 오른쪽 위 설정에서 추가'}</p>${button('beginChat','주제 제안하고 회화 시작','primary wide',pending?'disabled':'')}`;
   } else {
-    html+=`<span class="tag">${escapeHTML(topic)}</span><h1>한 문장씩, 나답게.</h1><p class="muted">${escapeHTML(data[language].name)}로 답해 보세요. 글로 답한 내용은 발음 평가에 사용하지 않아요.</p><div id="conversation">${messages.map(m=>`<div class="bubble ${m.role==='user'?'user':''}">${m.role==='model'?'<small>Gemini 3.8 Flash</small>':''}<p>${escapeHTML(m.text)}</p>${m.meaning?`<small>${escapeHTML(m.meaning)}</small>`:''}${m.feedback?`<div class="hint">${escapeHTML(m.feedback)}</div>`:''}</div>`).join('')}</div>${pending?'<p role="status">AI가 답변을 준비하고 있어요…</p>':''}<label for="answer">내 대답</label><textarea id="answer" class="field" maxlength="2000" placeholder="직접 쓰거나 아래에서 녹음하세요" ${pending?'disabled':''}>${escapeHTML(answerDraft)}</textarea>${recordControls()}<div class="row">${button('sendText','글로 보내기','primary',pending||recording?'disabled':'')}${button('sendAudio','녹음 보내기','',pending||!audioReady?'disabled':'')}</div><div class="section">${button('finish','오늘 회화 마치기','wide',pending||recording?'disabled':'')}</div>`;
+    html+=`<span class="tag">${escapeHTML(topic)}</span><h1>한 문장씩, 나답게.</h1><p class="muted">${escapeHTML(data[language].name)}로 답해 보세요. 글로 답한 내용은 발음 평가에 사용하지 않아요.</p><div id="conversation">${messages.map(m=>`<div class="bubble ${m.role==='user'?'user':''}">${m.role==='model'?'<small>Gemini 3.8 Flash</small>':''}<p>${escapeHTML(m.text)}</p>${m.meaning?`<small>${escapeHTML(m.meaning)}</small>`:''}${m.feedback?`<div class="hint">${escapeHTML(m.feedback)}</div>`:''}</div>`).join('')}</div>${pending?'<p role="status">AI가 답변을 준비하고 있어요…</p>':''}<label for="answer">내 대답</label><textarea id="answer" class="field" maxlength="2000" placeholder="직접 쓰거나 아래에서 녹음하세요" ${pending?'disabled':''}>${escapeHTML(answerDraft)}</textarea>${recordControls()}<div class="row">${button('sendText','글로 보내기','primary',pending||recording?'disabled':'')}${button('sendAudio','녹음 보내기','',pending||!audioReady?'disabled':'')}${button('evaluate','녹음으로 영역별 평가 연습','wide',pending||recording||!audioReady?'disabled':'')}</div><div class="section">${button('finish','오늘 회화 마치기','wide',pending||recording?'disabled':'')}</div>`;
   }
   if(step===1) html+=`<p class="muted">${round} / ${rounds[routine]}회 연습</p>${routine===1?button('topicAfterShort','조금 더: 주제 회화도 해 보기','quiet wide',pending||recording?'disabled':''):''}`;
+  if(reviewMode && step===1) html+=`<div class="section"><h3>뜻만 보고 떠올릴 수 있었나요?</h3><p class="muted">내 기억 상태를 표시합니다. 발음 합격이나 승급 판정이 아닙니다.</p><div class="row">${button('remembered','기억났어요')}${button('again','다시 연습할래요')}</div></div>`;
   if(step===2) html+=`<div class="section">${button('finish','AI 회화는 다음에 · 연습 기록 저장','wide')}<p class="muted">API 키가 없어도 듣기와 내 녹음 듣기는 연습할 수 있어요.</p></div>`;
   return html;
 }
 function recordControls() { return `<div class="buttonStack">${button(recording?'stopRecord':'record',recording?'■ 녹음 끝내기':'● 내 목소리 녹음',recording?'recording':'',pending&&!recording?'disabled':'')}</div><p class="muted" role="status">${recording?'지금 녹음 중 · 30초 후 자동으로 멈춰요':audioReady?'녹음 준비됨 · 듣거나 분석할 수 있어요':'조용한 곳에서 마이크 가까이 말해 주세요.'}</p>`; }
-function openUnit(index) {
+function openUnit(index,resume=false,review=false) {
   if(index>0&&!state.admin) { info('아직 열리지 않은 단계예요','현재 단계의 듣기·말하기 실력 검증이 먼저 필요합니다. 초안의 정식 승급 평가는 검수 중입니다. 관리자는 비밀번호 인증 후 모든 단원을 볼 수 있습니다.'); return; }
   resetSession(); const result=bridge('open',{language,stage:index+1}); if(!result.ok) return;
   unitIndex=index; sessionEpoch=result.epoch; step=0; phraseIndex=0; round=1; seconds=0; timeNotified=false; running=true;
-  topic=''; answerDraft=''; history=[]; messages=[]; feedback=null; screen='unit'; render();
+  topic=''; answerDraft=''; history=[]; messages=[]; feedback=null; reviewMode=review; checkpointKey='';
+  const saved=state.progress[language].checkpoint;
+  if(resume && !state.admin && saved && saved.stage===index+1) { step=Math.min(saved.step,2);phraseIndex=saved.phraseIndex;routine=saved.routine;round=saved.round;seconds=saved.seconds; }
+  screen='unit'; render();
 }
-function send(mode,useAudio=false,start=false) {
+function send(mode,useAudio=false,start=false,evaluate=false) {
   if(!native) { bridge('chat'); return; }
   if(recording) {toast('녹음을 끝낸 뒤 보내 주세요.');return;}
   const text=start?'이 단원에서 이 주제로 대화하고 싶어요. 먼저 주제가 적절한지 맞춰 주세요.':mode==='shadow'?'첨부한 따라 말하기 녹음을 분석해 주세요.':$('answer')?.value.trim()||'';
   if(!useAudio&&!text) { toast('내 대답을 적거나 녹음해 주세요.'); return; }
-  const result=bridge('chat',{epoch:sessionEpoch,topic:topic||unit().title,text,history,mode,useAudio,phraseIndex});
+  const result=bridge('chat',{epoch:sessionEpoch,topic:topic||unit().title,text,history,mode,useAudio,phraseIndex,evaluate});
   if(!result.ok) return;
   pending=true;
   if(mode!=='shadow') { messages.push({role:'user',text:useAudio?'내 음성 대답':text}); history.push({role:'user',text:useAudio?'[음성으로 답함]':text}); step=3; }
   render();
 }
 function updateTimer() { const element=$('timer'); if(element) { const remaining=Math.max(0,routine*60-seconds); element.textContent=`${Math.floor(remaining/60)}:${String(remaining%60).padStart(2,'0')} ${running?'Ⅱ':'▶'}`; element.setAttribute('aria-label',running?'루틴 타이머 일시정지':'루틴 타이머 계속'); } }
-setInterval(()=>{ if(screen!=='unit'||!running||document.hidden) return; seconds++; updateTimer(); if(seconds>=routine*60&&!timeNotified) { running=false; timeNotified=true; toast('선택한 루틴 시간이 지났어요. 진행 중인 연습을 마치거나 더 연습해도 괜찮아요.'); } },1000);
+setInterval(()=>{ if(screen!=='unit'||!running||document.hidden) return; seconds++; updateTimer();if(seconds%15===0)saveCheckpoint(); if(seconds>=routine*60&&!timeNotified) { running=false; timeNotified=true; toast('선택한 루틴 시간이 지났어요. 진행 중인 연습을 마치거나 더 연습해도 괜찮아요.'); } },1000);
 document.addEventListener('input',event=>{if(event.target.id==='answer') answerDraft=event.target.value; if(event.target.id==='topic') topic=event.target.value;});
 document.addEventListener('click',event=>{
   const element=event.target.closest('[data-action]'); if(!element||element.disabled) return;
   const action=element.dataset.action;
   if(action==='language') { resetSession(); language=element.dataset.lang; selected=true; screen='home'; refresh(); render(); }
   else if(action==='routine') { routine=Number(element.dataset.min); render(); }
-  else if(action==='start') openUnit(0);
+  else if(action==='start') openUnit(0,true);
   else if(action==='startAgain') openUnit(unitIndex);
   else if(action==='unit') openUnit(Number(element.dataset.index));
+  else if(action==='reviewUnit') openUnit(Number(element.dataset.index),false,true);
+  else if(action==='remembered'||action==='again') { if(bridge('review',{epoch:sessionEpoch,outcome:action}).ok) { refresh();toast('복습 일정을 저장했어요. 같은 날 반복해도 성공 간격은 늘리지 않아요.'); } }
   else if(action==='home') goHome();
   else if(action==='listen') bridge('speak',{text:unit().phrases[phraseIndex].text});
   else if(action==='phrase') { phraseIndex=phraseIndex===0?1:0; feedback=null; render(); }
@@ -1064,11 +1071,12 @@ document.addEventListener('click',event=>{
   else if(action==='beginChat') { topic=$('topic').value.trim(); if(!topic) toast('대화하고 싶은 주제를 먼저 골라 주세요.'); else send('chat',false,true); }
   else if(action==='sendText') send('chat');
   else if(action==='sendAudio') send('chat',true);
+  else if(action==='evaluate') send('chat',true,false,true);
   else if(action==='finish') {
     if(!native) { info('시안에서 연습을 마쳤어요','실제 연습 기록은 Android 앱에 저장됩니다.'); goHome(); return; }
     if(bridge('practice',{epoch:sessionEpoch}).ok) { resetSession(); refresh(); screen='summary'; render(); }
   }
-  else if(action==='gate') info('실력이 확인될 때 다음 단계로','각 언어의 듣기·의미 전달·발음·문장 구성·상호작용을 따로 확인합니다. 서로 다른 상황에서 도움 없이 말할 수 있어야 합니다. 초안은 평가 기준 검수 전이라 자동 승급을 잠가 두었습니다. 연습 횟수나 경과 시간만으로는 열리지 않습니다.');
+  else if(action==='gate') {resetSession();refresh();screen='evidence';render();}
 });
 $('brand').onclick=goHome;
 $('changeLanguage').onclick=()=>{resetSession(); screen='languages';render();};
@@ -1093,6 +1101,7 @@ window.nativeEvent=(type,result)=>{
   else if(type==='paused') { pending=false; recording=false; audioReady=false; running=false; if(screen==='unit') {screen='home';refresh();render();toast('연습을 일시 중단했어요. 다시 열어 이어서 연습할 수 있습니다.');} }
   else if(type==='answer'&&result.epoch===sessionEpoch) {
     pending=false;
+    if(result.evaluation) { refresh(); toast(result.evaluation.testOnly?'관리자 평가 연습 · 실제 기록에 저장하지 않음':'영역별 평가 연습 결과를 저장했어요. 단계 통과와는 별개입니다.'); }
     if(result.mode!=='shadow') answerDraft='';
     if(result.mode==='shadow') feedback=result;
     else {
@@ -1103,5 +1112,25 @@ window.nativeEvent=(type,result)=>{
     render();
   } else if(type==='chatError'&&result.epoch===sessionEpoch) {pending=false;toast(result.message);render();}
 };
-(window.__curriculum?Promise.resolve(window.__curriculum):fetch('curriculum.json').then(response=>{if(!response.ok)throw Error();return response.json();})).then(result=>{data=result;refresh();render();}).catch(()=>$('main').textContent='단원 자료를 불러오지 못했습니다. 앱을 다시 실행해 주세요.');
+(window.__curriculum?Promise.resolve(window.__curriculum):fetch('curriculum.json').then(response=>{if(!response.ok)throw Error();return response.json();})).then(result=>{data=result;refresh();if(['fr','zh','ja'].includes(state.selectedLanguage)){language=state.selectedLanguage;selected=true;screen='home';}render();}).catch(()=>$('main').textContent='단원 자료를 불러오지 못했습니다. 앱을 다시 실행해 주세요.');
+
+function saveCheckpoint() {
+  if(!native||screen!=='unit'||state.admin||sessionEpoch<0)return;
+  const value={epoch:sessionEpoch,step,routine,phraseIndex,round,seconds};
+  const key=JSON.stringify({...value,seconds:Math.floor(seconds/15)*15});
+  if(key===checkpointKey)return;
+  if(bridge('checkpoint',value).ok)checkpointKey=key;
+}
+function renderEvidence() {
+  const names={listening:'듣고 이해하기',message:'의미 전달',intelligibility:'발음 전달력',grammar:'문장 구성',interaction:'대화 이어가기',tone_meaning:'성조와 의미',word_order:'중국어 어순',mora_meaning:'모라·장단음',particles_forms:'조사와 활용'};
+  const rows=state.progress[language].evaluations||[];
+  let html=`<div class="eyebrow">${data[language].name} · 내 실력 기록</div><h1>무엇이 편해졌고,<br>무엇을 더 연습할까요?</h1><div class="hint">정식 승급 평가는 검수 중입니다. 아래는 연습 중 AI가 관찰한 내용이며 합격 증거로 사용하지 않습니다. 평가할 수 없던 영역은 ‘판단 보류’로 남깁니다.</div><p class="muted">실제 승급에는 서로 다른 상황의 독립된 듣기·말하기 시험이 필요합니다. 출석이나 평균 점수만으로 넘어가지 않습니다.</p>`;
+  if(!rows.length)html+='<div class="section"><p>아직 영역별 평가 연습이 없어요.</p><p class="muted">단원에서 주제를 정하고 회화한 뒤, 내 답변을 녹음하고 ‘녹음으로 영역별 평가 연습’을 눌러 보세요.</p></div>';
+  for(const row of [...rows].reverse()) {
+    html+=`<section class="section"><small>${new Date(row.when).toLocaleString('ko-KR')} · ${row.stage}단계 · 연습 평가</small>`;
+    for(const key of data[language].skills) { const value=row.scores?.[key]; html+=`<p><b>${names[key]||key}</b> — ${value===null||value===undefined?'판단 보류':escapeHTML(value)+' / 4 · 참고 의견'}</p>`; }
+    html+=`<div class="feedback">${escapeHTML(row.feedback)}</div></section>`;
+  }
+  return html+button('start','연습하러 가기','primary wide');
+}
 </script></body></html>
