@@ -1908,7 +1908,8 @@
       const v = this.getVoiceDetails(voiceId || currentSelectedVoiceId);
       const effRate = options.rate || (globalSpeechRate * v.speakingRate) || 1.0;
       const effPitch = options.pitch || v.pitch || 1.0;
-      return speakTextWithFallback(text, lang, { pitch: effPitch, rate: effRate, voiceId: v.voiceId });
+      const effGender = options.gender || v.genderPresentation || (v.voiceId.includes('_M') ? 'male' : 'female');
+      return speakTextWithFallback(text, lang, { pitch: effPitch, rate: effRate, voiceId: v.voiceId, gender: effGender });
     },
 
     // 6. 현재 재생 중인 음성 즉시 중단 (300ms Barge-in 끼어들기 연동)
@@ -2039,30 +2040,87 @@
     else if (lang === 'ja' || lang.startsWith('ja')) gLang = 'ja';
     else if (lang === 'en') gLang = 'en';
 
+    const isMale = (options.gender === 'male') || (options.voiceId && (options.voiceId.includes('_M') || options.voiceId.startsWith('ANIME_M')));
+    const voiceId = options.voiceId || '';
+
     // 발화 예상 시간 계산 (글자당 약 80ms)
     const estimatedDuration = Math.max(1200, clean.length * 85);
     startLipSyncAnimation(estimatedDuration);
 
-    // 1순위: Android Native TextToSpeech (주헌법 제20조 최우선 on-device 재생)
+    // [남성 vs 여성 피치 절대 분리]
+    let calculatedPitch = options.pitch || 1.0;
+    if (isMale) {
+      calculatedPitch = Math.min(calculatedPitch, 0.85); // 남성은 0.85 이하 중저음 강제
+    } else {
+      calculatedPitch = Math.max(calculatedPitch, 1.15); // 여성은 1.15 이상 고음 강제
+    }
+    if (voiceId.startsWith('ANIME_F')) {
+      calculatedPitch = Math.max(calculatedPitch, 1.30); // 애니 여성 요정톤
+    } else if (voiceId.startsWith('ANIME_M')) {
+      calculatedPitch = (voiceId === 'ANIME_M1' ? 1.02 : Math.min(calculatedPitch, 0.78));
+    }
+
+    // 1순위: Android Native TextToSpeech (주헌법 제20조 공인 on-device 네이티브 엔진 - 실제 남성/여성 성우 Voice 분기)
     if (window.Native && typeof window.Native.call === 'function') {
       try {
         window.Native.call("speakText", JSON.stringify({
           text: clean,
           language: gLang,
-          pitch: options.pitch || 1.0,
+          gender: isMale ? 'male' : 'female',
+          voiceId: voiceId,
+          pitch: calculatedPitch,
           rate: options.rate || 1.0
         }));
         return;
       } catch(e) {}
     }
 
-    // 2순위: HTML5 Web Speech API (브라우저 내장 음성 합성 - 오프라인 무지연)
+    // 2순위: HTML5 Web Speech API (브라우저 내장 음성 합성 - 실제 남성 성우 vs 여성 성우 음색 매칭)
     if ('speechSynthesis' in window) {
       try {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(clean);
         u.lang = gLang === 'ko' ? 'ko-KR' : (gLang === 'fr' ? 'fr-FR' : (gLang === 'zh-CN' ? 'zh-CN' : 'ja-JP'));
-        u.pitch = options.pitch || 1.0;
+
+        // 브라우저에 등록된 실제 음성들 중 남성/여성 성우 Voice 객체 탐색
+        const availableVoices = window.speechSynthesis.getVoices();
+        if (availableVoices && availableVoices.length > 0) {
+          const langPrefix = gLang === 'ko' ? 'ko' : (gLang === 'fr' ? 'fr' : (gLang === 'zh-CN' ? 'zh' : 'ja'));
+          let matchedVoice = null;
+          for (let i = 0; i < availableVoices.length; i++) {
+            const v = availableVoices[i];
+            if (v.lang && v.lang.toLowerCase().startsWith(langPrefix)) {
+              const nameLower = v.name.toLowerCase();
+              if (isMale) {
+                if (nameLower.includes('male') || nameLower.includes('injoon') || nameLower.includes('민호') || nameLower.includes('daehun') || nameLower.includes('man') || nameLower.includes('guy') || nameLower.includes('young')) {
+                  matchedVoice = v;
+                  break;
+                }
+              } else {
+                if (nameLower.includes('female') || nameLower.includes('sunhi') || nameLower.includes('yuna') || nameLower.includes('heami') || nameLower.includes('seoyeon') || nameLower.includes('woman') || nameLower.includes('girl')) {
+                  matchedVoice = v;
+                  break;
+                }
+              }
+            }
+          }
+          if (matchedVoice) u.voice = matchedVoice;
+        }
+
+        // 남성/여성/애니 음색 피치 극적 차등화
+        let effPitch = options.pitch || 1.0;
+        if (isMale) {
+          effPitch = Math.min(effPitch, 0.82); // 남성 묵직한 중저음
+        } else {
+          effPitch = Math.max(effPitch, 1.18); // 여성 화사하고 또렷한 고음
+        }
+        if (voiceId.startsWith('ANIME_F')) {
+          effPitch = Math.max(effPitch, 1.35); // 애니 요정소녀 통통 튀는 고음
+        } else if (voiceId.startsWith('ANIME_M')) {
+          effPitch = (voiceId === 'ANIME_M1' ? 1.05 : 0.78); // 소년 vs 기사대장 중후 톤
+        }
+
+        u.pitch = effPitch;
         u.rate = options.rate || 1.0;
         u.onend = () => stopLipSyncAnimation();
         u.onerror = () => stopLipSyncAnimation();
@@ -2071,7 +2129,7 @@
       } catch(e) {}
     }
 
-    // 3순위: Google Neural TTS 스트리밍 대체
+    // 3순위: Google Neural TTS 스트리밍 대체 (남성 저음 변조 / 여성 고음 변조)
     try {
       if (activeAudioPlayer) {
         activeAudioPlayer.pause();
@@ -2080,7 +2138,7 @@
       const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${gLang}&q=${encodeURIComponent(clean)}`;
       const audio = new Audio(ttsUrl);
       activeAudioPlayer = audio;
-      audio.playbackRate = options.rate || 1.0;
+      audio.playbackRate = isMale ? 0.9 : (options.rate || 1.0);
       audio.onended = () => stopLipSyncAnimation();
       audio.play().catch(err => {
         stopLipSyncAnimation();
@@ -3406,33 +3464,46 @@
     }
   }
 
-  /* 계단식 무중단 호출 파이프라인 (3.8 디폴트 -> 소진 시 자동 선택 및 무중단 전환) */
+  /* 계단식 무중단 호출 파이프라인 (Native 직접 통신 1순위 + 브라우저 CORS 프록시 우회) */
   async function callGeminiCascade(payload, startModel = null) {
     const config = getGeminiConfig();
     if (!config.apiKey) return { ok: false, error: "API Key 미설정" };
 
-    const initial = startModel || config.defaultModel || 'gemini-3.8-flash';
-    
-    // 모델 시도 큐 생성: 선택 모델 ➔ 실제 지원 모델 ➔ 하위 체인
-    let candidateModels = [];
-    if (GEMINI_REAL_MODEL_MAP[initial]) {
-      candidateModels.push(...GEMINI_REAL_MODEL_MAP[initial]);
-    } else {
-      candidateModels.push(initial);
-    }
-    // 나머지 체인 결합
-    GEMINI_FLASH_CHAIN.forEach(m => {
-      if (!candidateModels.includes(m)) candidateModels.push(m);
-    });
+    const promptText = (payload.contents && payload.contents[0] && payload.contents[0].parts && payload.contents[0].parts[0]) 
+      ? payload.contents[0].parts[0].text : 'Hello Gemini';
 
+    // 1순위: Android Native HttpsURLConnection 브릿지 (CORS 및 WebView 인터셉트 원천 차단)
+    if (window.Native && typeof window.Native.call === 'function') {
+      try {
+        const rawRes = window.Native.call("geminiGenerateContent", JSON.stringify({
+          prompt: promptText,
+          apiKey: config.apiKey
+        }));
+        const parsed = JSON.parse(rawRes);
+        if (parsed.ok) {
+          return {
+            ok: true,
+            model: parsed.model || 'gemini-1.5-flash',
+            fallbackUsed: false,
+            reply: parsed.reply || ''
+          };
+        }
+      } catch(nativeErr) {
+        console.warn("Native geminiGenerateContent error, trying web cascade:", nativeErr);
+      }
+    }
+
+    // 2순위: Web 환경(브라우저) 계단식 직접 호출 및 CORS 프록시 무중단 우회
+    const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-1.5-flash-8b'];
     let lastError = null;
 
     for (let i = 0; i < candidateModels.length; i++) {
       const currentModel = candidateModels[i];
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${config.apiKey}`;
+      const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${config.apiKey}`;
 
+      // A. 직접 fetch 시도
       try {
-        const res = await fetch(url, {
+        const res = await fetch(directUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -3441,31 +3512,28 @@
         if (res.ok) {
           const data = await res.json();
           const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          
-          // 소진되거나 모델이 바뀌어 성공 시, 자동으로 해당 모델을 다음 기본 모델로 보관
-          if (currentModel !== initial) {
-            try {
-              localStorage.setItem('hangeoreum_gemini_model', currentModel);
-            } catch(e) {}
-          }
-
-          return {
-            ok: true,
-            model: currentModel,
-            fallbackUsed: (currentModel !== initial),
-            fallbackFrom: (currentModel !== initial ? initial : null),
-            reply: replyText
-          };
+          return { ok: true, model: currentModel, fallbackUsed: (i > 0), reply: replyText };
         }
-
-        // 429 (할당량 소진), 404 (모델 미지원), 400 등 발생 시 다음 모델로 즉각 Fallback
         const errText = await res.text();
         lastError = `[${currentModel} HTTP ${res.status}] ${errText.substring(0, 100)}`;
-        console.warn(`Gemini cascade fail on ${currentModel} (${res.status}). Trying next fallback...`);
-
       } catch(netErr) {
-        lastError = `[${currentModel} Network Error] ${netErr.message}`;
-        console.warn(`Network error on ${currentModel}:`, netErr);
+        // B. CORS Failed to fetch 발생 시 공용 CORS 프록시로 즉시 자동 우회
+        console.warn(`Direct fetch failed (${netErr.message}), trying CORS proxy fallback on ${currentModel}...`);
+        try {
+          const proxyUrl = `https://corsproxy.io/?` + encodeURIComponent(directUrl);
+          const proxyRes = await fetch(proxyUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (proxyRes.ok) {
+            const data = await proxyRes.json();
+            const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            return { ok: true, model: currentModel, fallbackUsed: true, reply: replyText };
+          }
+        } catch(proxyErr) {
+          lastError = `[${currentModel} Network Error] ${netErr.message}`;
+        }
       }
     }
 
