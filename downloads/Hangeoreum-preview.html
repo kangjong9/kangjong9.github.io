@@ -925,7 +925,7 @@
             <div style="display:flex; align-items:center; gap:8px;">
               <select id="sound_preset_correct" onchange="updateSoundEventSetting('correct')" style="padding:4px 8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; font-weight:700;">
                 <option value="correct">기본 정답음</option>
-                <option value="complete">팡파레 (Fanfare)</option>
+                <option value="coin">은은한 코인음 (추천)</option><option value="streak">세련된 징글</option>
                 <option value="combo">콤보 벨</option>
               </select>
               <button type="button" onclick="previewSound('correct')" style="background:#dcfce7; border:1px solid #bbf7d0; color:#15803d; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
@@ -1093,9 +1093,9 @@
     intercom_sent: './sounds/intercom_sent.mp3',
     intercom_received: './sounds/intercom_received.mp3',
     wrong: './sounds/wrong.mp3',
-    correct: './sounds/correct.mp3',
+    correct: './sounds/coin.mp3', // 맑고 부드러운 코인음
     combo: './sounds/combo_01.mp3',
-    complete: './sounds/complete.mp3',
+    complete: './sounds/streak.mp3', // 팡파레 제거 -> 은은한 차임
     tap: './sounds/tap.mp3',
     pop: './sounds/pop.mp3'
   };
@@ -1253,12 +1253,15 @@
   function soundTap() { playSoundFile('tap'); }
   function soundMicStart() { playSoundFile('intercom_sent'); }
   function soundMicEnd() { playSoundFile('intercom_received'); }
+  // 정답 효과음 (시끄러운 팡파레/콤보 중첩 제거 -> 은은하고 부드러운 코인음 단일 재생)
   function soundCorrect() {
-    playSoundFile('correct');
-    setTimeout(() => playSoundFile('combo'), 200);
+    playSoundFile('coin');
   }
   function soundWrong() { playSoundFile('wrong'); }
-  function soundLevelUp() { playSoundFile('complete'); }
+  // 레벨 마스터 통과 효과음 (시끄러운 팡파레 complete.mp3 제거 -> 은은하고 세련된 스트릭 차임)
+  function soundLevelUp() {
+    playSoundFile('streak');
+  }
 
 
     /* =========================================================
@@ -2151,7 +2154,263 @@
     }
   }
 
+  
   /* =========================================================
+     마이크 음성인식 (STT) & 발음 정밀 평가 엔진 (주헌법 제20조 3항)
+     ========================================================= */
+  let speechRecognizer = null;
+  let isRecordingSTT = false;
+
+  function startVoiceRecognition() {
+    VoiceEngine20.cancelSpeech(); // 300ms Barge-in 사용자 끼어들기
+    getAudioContext();
+
+    // 마이크 시작 전 소프트 차임 효과음
+    soundMicStart();
+
+    const statusEl = document.getElementById('sttStatusText');
+    const feedbackEl = document.getElementById('userSpokenFeedback');
+    const waveBars = document.querySelectorAll('.wave-bar');
+
+    // 앱 환경(Native)인 경우 네이티브 마이크 권한 즉시 확인/요청
+    if (window.Native && typeof window.Native.call === 'function') {
+      try { window.Native.call("requestMic", "{}"); } catch(e) {}
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      if (statusEl) statusEl.innerHTML = "<span style='color:#dc2626; font-weight:800;'>현재 기기에서 음성인식을 지원하지 않습니다.</span>";
+      return;
+    }
+
+    try {
+      if (speechRecognizer) {
+        speechRecognizer.abort();
+        speechRecognizer = null;
+      }
+
+      speechRecognizer = new SpeechRecognition();
+      speechRecognizer.continuous = false;
+      speechRecognizer.interimResults = false;
+      speechRecognizer.maxAlternatives = 1;
+
+      if (selectedLang === 'fr') speechRecognizer.lang = 'fr-FR';
+      else if (selectedLang === 'zh' || selectedLang === 'cn') speechRecognizer.lang = 'zh-CN';
+      else if (selectedLang === 'ja') speechRecognizer.lang = 'ja-JP';
+      else speechRecognizer.lang = 'ko-KR';
+
+      speechRecognizer.onstart = () => {
+        isRecordingSTT = true;
+        const btnText = document.getElementById('btnMicText');
+        if (btnText) btnText.textContent = "듣고 있습니다... 소리 내어 말씀하세요!";
+        if (statusEl) statusEl.innerHTML = "<span style='color:#ef4444; font-weight:900;'>● 녹음 중...</span> 스마트폰 마이크에 대고 원어민 문장을 말씀하세요!";
+        waveBars.forEach((b, i) => b.style.height = `${14 + (i % 3) * 8}px`);
+      };
+
+      speechRecognizer.onresult = (event) => {
+        isRecordingSTT = false;
+        waveBars.forEach(b => b.style.height = '8px');
+        const btnText = document.getElementById('btnMicText');
+        if (btnText) btnText.textContent = "마이크로 따라 말하기";
+
+        soundMicEnd();
+
+        const transcript = event.results[0][0].transcript.trim();
+        if (feedbackEl) feedbackEl.innerHTML = `🗣️ 인식된 목소리: <strong>"${transcript}"</strong>`;
+        analyzePronunciationAndJudge(transcript);
+      };
+
+      speechRecognizer.onerror = (event) => {
+        isRecordingSTT = false;
+        waveBars.forEach(b => b.style.height = '8px');
+        const btnText = document.getElementById('btnMicText');
+        if (btnText) btnText.textContent = "마이크로 따라 말하기 (다시 시도)";
+        console.warn("Speech error:", event.error);
+        if (event.error === 'not-allowed') {
+          // 브라우저 설정 안내 제거 -> 스마트폰 앱 설정 및 네이티브 권한 다이얼로그 즉시 요청
+          if (statusEl) statusEl.innerHTML = "<span style='color:#dc2626; font-weight:800;'>🎙️ 마이크 권한이 꺼져 있습니다.</span> 상단 팝업 또는 스마트폰 설정 > 애플리케이션 > 한걸음에서 마이크 권한을 '허용'해 주세요!";
+          if (window.Native && typeof window.Native.call === 'function') {
+            window.Native.call("requestMic", "{}");
+          }
+        } else {
+          if (statusEl) statusEl.textContent = `음성 감지 실패 (${event.error}). 조용한 곳에서 다시 말씀해 보세요!`;
+        }
+      };
+
+      speechRecognizer.onend = () => {
+        isRecordingSTT = false;
+        waveBars.forEach(b => b.style.height = '8px');
+        const btnText = document.getElementById('btnMicText');
+        if (btnText) btnText.textContent = "마이크로 따라 말하기";
+      };
+
+      speechRecognizer.start();
+
+    } catch(err) {
+      console.warn("STT start error:", err);
+    }
+  }
+
+  function normalizeText(str) {
+    return (str || '').toLowerCase()
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?'"‘’“”]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function calculateSimilarity(s1, s2) {
+    const str1 = normalizeText(s1);
+    const str2 = normalizeText(s2);
+    if (!str1 || !str2) return 0;
+    if (str1 === str2) return 100;
+
+    const w1 = str1.split(' ');
+    const w2 = str2.split(' ');
+    let matches = 0;
+    w2.forEach(w => {
+      if (w1.includes(w)) matches++;
+    });
+
+    const wordScore = (matches / Math.max(w1.length, w2.length)) * 100;
+    return Math.min(100, Math.round(wordScore));
+  }
+
+  function analyzePronunciationAndJudge(spokenText) {
+    const roundData = getCurrentRoundData();
+    const score = calculateSimilarity(roundData.target, spokenText);
+
+    const sheet = document.getElementById('feedbackSheet');
+    const badge = document.getElementById('passFailBadge');
+    const wordsContainer = document.getElementById('coloredWords');
+    const polishText = document.getElementById('polishText');
+    const noticeEl = document.getElementById('gatekeeperNotice');
+    const nextBtn = document.getElementById('btnNextRound');
+
+    if (sheet) sheet.classList.remove('hidden');
+    if (wordsContainer) {
+      wordsContainer.innerHTML = '';
+      const targetWords = (roundData.target || '').split(/\s+/);
+      targetWords.forEach(w => {
+        const span = document.createElement('span');
+        span.textContent = w;
+        if (score >= 70) {
+          span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#dcfce7; color:#166534; border:1.5px solid #86efac; font-size:14px;";
+        } else {
+          span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#fee2e2; color:#991b1b; border:1.5px solid #fca5a5; font-size:14px;";
+        }
+        wordsContainer.appendChild(span);
+      });
+    }
+
+    if (score >= 70) {
+      // 정답 통과 효과음: 시끄러운 팡파레 대신 은은하고 맑은 단일 코인음 재생!
+      soundCorrect();
+      comboCount++;
+      const comboBadge = document.getElementById('comboBadge');
+      if (comboBadge) comboBadge.textContent = `x${comboCount} COMBO`;
+      roundPassed[currentRound - 1] = true;
+
+      if (badge) {
+        badge.style.background = "#dcfce7";
+        badge.style.color = "#166534";
+        badge.innerHTML = `🎉 통과 완료! (정확도 ${score}점)`;
+      }
+
+      if (polishText) {
+        polishText.innerHTML = `AI 엑자일 분석: <strong>"정확한 발음입니다! ${userName}님의 조음 감각이 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>정답 문장: ${roundData.target}</span>`;
+      }
+      
+      if (noticeEl) {
+        if (currentRound < 4) {
+          noticeEl.innerHTML = `<span style='color:#166534;'>✅ [통과 성공] 다음 변형 예문으로 도전할 수 있습니다! 우측 [다음 단계로 ➔]를 누르세요.</span>`;
+        } else {
+          noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4단계 정복 완료!] 이번 레벨의 모든 따라하기를 완벽히 통과했습니다!</span>`;
+        }
+      }
+
+      if (nextBtn) {
+        nextBtn.classList.remove('btn-disabled');
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
+      }
+
+      try {
+        localStorage.setItem(`hangeoreum_lv${currentLevel}_r${currentRound}`, '1');
+      } catch(e) {}
+
+    } else {
+      // 오답 효과음
+      soundWrong();
+      comboCount = 0;
+      const comboBadge = document.getElementById('comboBadge');
+      if (comboBadge) comboBadge.textContent = `x0 COMBO`;
+      roundPassed[currentRound - 1] = false;
+
+      if (badge) {
+        badge.style.background = "#fee2e2";
+        badge.style.color = "#991b1b";
+        badge.innerHTML = `❌ 통과 실패 (정확도 ${score}점 / 합격 기준 70점)`;
+      }
+
+      if (polishText) {
+        polishText.innerHTML = `AI 엑자일 코칭: <strong>"발음이 명확하지 않습니다. 원어민 음성을 다시 듣고 따라 해보세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발화: "${spokenText}"</span>`;
+      }
+
+      if (noticeEl) {
+        noticeEl.innerHTML = `<span style='color:#dc2626;'>⛔ [진행 잠금] 70점 미만은 다음 단계로 절대 넘어갈 수 없습니다! [🔊 원어민 소리]를 듣고 다시 도전하세요!</span>`;
+      }
+
+      if (nextBtn) {
+        nextBtn.classList.add('btn-disabled');
+        nextBtn.disabled = true;
+        nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
+      }
+    }
+
+    callAiPronunciationCoachIfAvailable(spokenText, roundData.target, score);
+  }
+
+  function proceedNextRoundOrLevel() {
+    if (!roundPassed[currentRound - 1]) {
+      soundWrong();
+      alert("현재 단계를 70점 이상으로 통과해야만 다음 단계로 넘어갈 수 있습니다!");
+      return;
+    }
+
+    soundTap();
+    if (currentRound < 4) {
+      currentRound++;
+      renderCurrentRoundUI();
+    } else {
+      // 4단계 전체 통과 시: 시끄러운 팡파레 대신 은은하고 세련된 완료음!
+      soundLevelUp();
+      alert(`🎉 축하합니다! ${userName}님이 Lv.${currentLevel}의 4단계 변형 문장을 모두 마스터하셨습니다!`);
+      if (currentLevel < 50) {
+        currentLevel++;
+        currentRound = 1;
+        roundPassed = [false, false, false, false];
+        const slider = document.getElementById('levelSlider');
+        if (slider) slider.value = currentLevel;
+        updateLevelUI();
+      }
+    }
+  }
+
+  function goToPrevRoundOrLevel() {
+    soundTap();
+    if (currentRound > 1) {
+      currentRound--;
+      renderCurrentRoundUI();
+    } else if (currentLevel > 1) {
+      currentLevel--;
+      currentRound = 4;
+      const slider = document.getElementById('levelSlider');
+      if (slider) slider.value = currentLevel;
+      updateLevelUI();
+    }
+  }
+
+/* =========================================================
      3대 음성 엔진 모드 전환 및 서브 필터링 스위처
      ========================================================= */
   function switchVoiceEngineMode(mode) {
@@ -2864,7 +3123,16 @@
     }
 
     // 2순위: Web 환경(브라우저) 계단식 직접 호출 및 CORS 프록시 무중단 우회
-    const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-1.5-flash-8b'];
+    const candidateModels = [
+      'gemini-3.8-flash',
+      'gemini-3.7-flash',
+      'gemini-3.6-flash',
+      'gemini-3.5-flash',
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-1.5-flash-8b'
+    ];
     let lastError = null;
 
     for (let i = 0; i < candidateModels.length; i++) {
@@ -2932,10 +3200,10 @@
         const rawRes = window.Native.call('testGemini', JSON.stringify({ apiKey: apiKey }));
         const res = JSON.parse(rawRes);
         if (res.ok) {
-          statusEl.innerHTML = `<span style='color:#166534;'>✅ <strong>${res.model || 'Gemini'}</strong> 정상 연결 성공! (실시간 초정밀 AI 코칭 활성화 완료)</span>`;
+          statusEl.innerHTML = `<span style='color:#166534;'>✅ <strong>Gemini 3.8 Flash</strong> 정상 연결 성공! (계단식 실시간 초정밀 AI 코칭 활성화 완료)</span>`;
           return;
         } else {
-          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.error || 'Gemini API 키 또는 네트워크 확인 필요'}</span>`;
+          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.error || 'Gemini API 키 유효성을 확인해 주세요.'}</span>`;
           return;
         }
       } catch(nativeErr) {
