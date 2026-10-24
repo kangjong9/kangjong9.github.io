@@ -105,6 +105,10 @@ if (dialog) {
 
 // Category membership and display order were supplied by the owner.
 function initProjectFolders(content) {
+  // Sites enforces owner-only access for the page and every executable URL.
+  content.querySelector('[data-game-editors]')?.addEventListener('click', () => {
+    window.location.assign('https://game-editors-owner.smartdrum2048.chatgpt.site/');
+  });
   const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
   const projects = {
     "requested": [["보컬트레이너[앱]", "vocalmate.svg"]],
