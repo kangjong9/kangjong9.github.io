@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>한걸음V1.0 Exile</title>
   <style>
-    /* 순수 인라인 CSS (외부 CDN 의존 0%, 안드로이드 WebView 100% 오프라인 지원) */
+    /* =========================================================
+       CSS 리셋 & 고시인성 모바일 퍼스트 디자인
+       ========================================================= */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,7 +17,7 @@
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-      background: linear-gradient(135deg, #f0fdf4 0%, #e0e7ff 50%, #fdf2f8 100%);
+      background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 50%, #fdf2f8 100%);
       color: #0f172a;
       min-height: 100vh;
       display: flex;
@@ -23,44 +25,48 @@
       align-items: center;
       padding: 0;
       overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.5;
     }
 
     .app-root {
       width: 100%;
-      max-width: 440px;
+      max-width: 460px;
       min-height: 100vh;
       background: #ffffff;
       display: flex;
       flex-direction: column;
       position: relative;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 0 45px rgba(0, 0, 0, 0.12);
     }
     @media (min-width: 480px) {
-      body { padding: 16px; }
+      body { padding: 18px; }
       .app-root {
-        min-height: 720px;
+        min-height: 780px;
         height: auto;
-        border: 3px solid #e2e8f0;
+        border: 3px solid #cbd5e1;
         border-radius: 36px;
         overflow: hidden;
       }
     }
 
-    /* 듀오링고 스타일 3D 쫀득 버튼 */
+    /* 쫀득한 3D 버튼 - 폰트와 터치 면적 대폭 확대 */
     .btn-3d {
       border: none;
       outline: none;
-      border-radius: 18px;
-      font-weight: 900;
-      font-size: 14px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 17px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
+      padding: 15px 20px;
       transition: all 0.1s ease;
       text-decoration: none;
       width: 100%;
+      min-height: 54px;
     }
     .btn-green {
       background: #58cc02;
@@ -89,33 +95,50 @@
       transform: translateY(4px);
       box-shadow: 0 1px 0 #6d28d9;
     }
+    .btn-red {
+      background: #f43f5e;
+      color: #ffffff;
+      box-shadow: 0 5px 0 #e11d48, 0 10px 20px rgba(244, 63, 94, 0.35);
+    }
+    .btn-red:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #e11d48;
+    }
     .btn-secondary {
       background: #f1f5f9;
-      color: #475569;
+      color: #334155;
       box-shadow: 0 4px 0 #cbd5e1;
-      padding: 12px;
-      font-size: 13px;
+      font-size: 15px;
+      padding: 12px 16px;
+      min-height: 48px;
     }
     .btn-secondary:active {
       transform: translateY(3px);
       box-shadow: 0 1px 0 #cbd5e1;
     }
+    .btn-disabled {
+      background: #e2e8f0 !important;
+      color: #94a3b8 !important;
+      box-shadow: none !important;
+      cursor: not-allowed !important;
+      transform: none !important;
+    }
 
-    /* 카드 */
+    /* 선택 카드 - 폰트 및 시인성 강화 */
     .choice-card {
       background: #ffffff;
       border: 2.5px solid #e2e8f0;
-      border-radius: 18px;
-      padding: 12px 14px;
+      border-radius: 20px;
+      padding: 15px 18px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       cursor: pointer;
       transition: all 0.15s ease-out;
       position: relative;
     }
     .choice-card:hover {
-      border-color: #cbd5e1;
+      border-color: #94a3b8;
       transform: translateY(-2px);
     }
     .choice-card:active {
@@ -124,25 +147,25 @@
     .choice-card.selected {
       border-color: #4f46e5;
       background: #eef2ff;
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.15);
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.18);
     }
     .choice-card.selected::after {
       content: '✓';
       position: absolute;
-      right: 14px;
-      width: 22px;
-      height: 22px;
+      right: 16px;
+      width: 26px;
+      height: 26px;
       background: #4f46e5;
       color: #ffffff;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 900;
     }
 
-    /* 아바타 애니메이션 */
+    /* 캐릭터 아바타 애니메이션 */
     .tutor-avatar-wrap {
       animation: amiFloat 3s ease-in-out infinite;
       position: relative;
@@ -150,1612 +173,2079 @@
     }
     @keyframes amiFloat {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+      50% { transform: translateY(-7px); }
     }
-    .tutor-avatar {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #a7f3d0 0%, #38bdf8 100%);
-      border: 3px solid #ffffff;
-      box-shadow: 0 8px 16px rgba(56, 189, 248, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
+    /* 말풍선 꼬리표 및 고시인성 텍스트 */
+    .speech-bubble {
       position: relative;
-      overflow: hidden;
+      background: #ffffff;
+      border: 2.5px solid #cbd5e1;
+      border-radius: 22px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      font-size: 17px;
+      line-height: 1.55;
+      color: #1e293b;
     }
-    .ami-face { width: 100%; height: 100%; position: relative; }
-    .ami-eye {
-      position: absolute;
-      top: 26px;
-      width: 7px;
-      height: 10px;
-      background: #0f172a;
-      border-radius: 50%;
-      animation: amiBlink 4s infinite;
-    }
-    .ami-eye.left { left: 19px; }
-    .ami-eye.right { right: 19px; }
-    .ami-eye::after {
+    .speech-bubble::before {
       content: '';
       position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 2.5px;
-      height: 2.5px;
+      left: -12px;
+      top: 24px;
+      border-style: solid;
+      border-width: 9px 12px 9px 0;
+      border-color: transparent #cbd5e1 transparent transparent;
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      left: -9px;
+      top: 25px;
+      border-style: solid;
+      border-width: 8px 10px 8px 0;
+      border-color: transparent #ffffff transparent transparent;
+    }
+
+    /* 상단 헤더 */
+    .app-header {
+      padding: 14px 18px;
       background: #ffffff;
-      border-radius: 50%;
-    }
-    @keyframes amiBlink {
-      0%, 96%, 100% { transform: scaleY(1); }
-      98% { transform: scaleY(0.1); }
-    }
-    .ami-blush {
-      position: absolute;
-      top: 34px;
-      width: 11px;
-      height: 5px;
-      background: rgba(244, 63, 94, 0.4);
-      border-radius: 50%;
-    }
-    .ami-blush.left { left: 13px; }
-    .ami-blush.right { right: 13px; }
-    .ami-mouth {
-      position: absolute;
-      top: 38px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 11px;
-      height: 5px;
-      border-bottom: 2.5px solid #0f172a;
-      border-radius: 0 0 10px 10px;
-    }
-    .tutor-badge {
-      position: absolute;
-      bottom: -2px;
-      right: -2px;
-      background: #f59e0b;
-      color: #ffffff;
-      font-size: 8px;
-      font-weight: 900;
-      padding: 1px 5px;
-      border-radius: 8px;
-      border: 1.5px solid #ffffff;
-    }
-
-    /* 칩 버튼 */
-    .chip-btn {
-      background: #f8fafc;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 6px 11px;
-      font-size: 11.5px;
-      font-weight: 800;
-      color: #334155;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      display: inline-flex;
+      border-bottom: 2px solid #f1f5f9;
+      display: flex;
       align-items: center;
-      gap: 4px;
-    }
-    .chip-btn:hover, .chip-btn:active {
-      border-color: #6366f1;
-      background: #eef2ff;
-      color: #4338ca;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
     }
 
-    /* 실시간 파형 */
-    .wave-bar {
-      width: 4.5px;
-      height: 6px;
-      background-color: #58cc02;
-      border-radius: 999px;
-      transition: height 0.08s ease;
-    }
-    .pulse-glow {
-      animation: fabPulse 2s infinite;
-    }
-    @keyframes fabPulse {
-      0% { box-shadow: 0 0 0 0 rgba(88, 204, 2, 0.6); }
-      70% { box-shadow: 0 0 0 16px rgba(88, 204, 2, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(88, 204, 2, 0); }
-    }
-
-    /* 모달 */
-    .modal-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.6);
+    /* 모달 공통 */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(4px);
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 100;
       padding: 16px;
     }
-    .checkin-card {
+    .modal-sheet {
       background: #ffffff;
-      border: 3px solid #e2e8f0;
       border-radius: 28px;
-      padding: 20px;
       width: 100%;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-      animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 440px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      animation: modalSlideUp 0.25s ease-out;
     }
-    @keyframes modalPop {
-      0% { transform: scale(0.9); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
+    @keyframes modalSlideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
-    .hidden {
-      display: none !important;
+    /* 7-바 웨이브폼 */
+    .wave-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 32px;
+    }
+    .wave-bar {
+      width: 5px;
+      background: #4f46e5;
+      border-radius: 3px;
+      transition: height 0.1s ease;
+      height: 8px;
+    }
+
+    /* 숨김 */
+    .hidden { display: none !important; }
+
+    /* 라운드 뱃지 */
+    .round-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 800;
     }
   </style>
 </head>
 <body>
 
-  <div class="app-root">
+<div class="app-root">
 
-    <!-- ======================================================== -->
-    <!-- VIEW 1: 오프닝 및 AI 자동 레벨 진단 화면 (viewOnboarding) -->
-    <!-- ======================================================== -->
-    <div id="viewOnboarding" style="display:flex; flex-direction:column; min-height:100%; flex:1;">
-      
-      <!-- 상단 헤더 & 진행 바 -->
-      <header style="padding:16px 20px 10px; border-bottom:1px solid #f1f5f9; background:#ffffff;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <div style="font-size:13px; font-weight:900; color:#4f46e5; display:flex; align-items:center; gap:6px;">
-            <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            한걸음V1.0 Exile · 엑자일 AI 진단
-          </div>
-          <div id="obStepBadge" style="font-size:11px; font-weight:800; color:#64748b; background:#f1f5f9; padding:3px 10px; border-radius:12px;">1 / 6 단계</div>
+  <!-- =========================================================
+       헤더 (로고, 엑자일 상태, ⚙️ 설정 버튼)
+       ========================================================= -->
+  <header class="app-header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg, #6366f1, #3b82f6); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:18px; box-shadow:0 3px 8px rgba(99,102,241,0.4);">
+        🌌
+      </div>
+      <div>
+        <div style="font-size:16px; font-weight:900; color:#0f172a; line-height:1.2;">한걸음V1.0 Exile</div>
+        <div style="font-size:12px; font-weight:700; color:#6366f1;">안드로메다 탈출 프로젝트</div>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:8px;">
+      <!-- 음성 테스트 버튼 -->
+      <button onclick="testCurrentExileVoice()" title="음성 테스트" style="background:#f1f5f9; border:none; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px;">
+        🔊
+      </button>
+      <!-- ⚙️ 설정 모달 열기 버튼 -->
+      <button onclick="openSettingsModal()" title="AI 설정 및 API 연동" style="background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#4f46e5;">
+        ⚙️
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       화면 1: 오프닝 및 온보딩 (호칭, 목소리, AI 진단)
+       ========================================================= -->
+  <div id="viewOnboarding" style="flex:1; display:flex; flex-direction:column; padding:20px 18px 24px;">
+    
+    <!-- 상단 진행도 -->
+    <div style="margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span id="obStepBadge" class="round-pill" style="background:#eef2ff; color:#4f46e5;">1 / 6 단계</span>
+        <span style="font-size:13px; font-weight:700; color:#64748b;">엑자일 유배 사면 작전</span>
+      </div>
+      <div style="height:8px; background:#f1f5f9; border-radius:9999px; overflow:hidden;">
+        <div id="obProgressFill" style="height:100%; width:16%; background:linear-gradient(90deg, #6366f1, #3b82f6); border-radius:9999px; transition:width 0.3s ease;"></div>
+      </div>
+    </div>
+
+    <!-- 엑자일 캐릭터 & 말풍선 (고시인성 대화창) -->
+    <div style="display:flex; gap:14px; margin-bottom:20px; align-items:flex-start;">
+      <div class="tutor-avatar-wrap" onclick="speakExileIntroStory()" style="cursor:pointer;" title="엑자일 이야기 듣기">
+        <svg width="68" height="68" viewBox="0 0 108 108">
+          <circle cx="54" cy="54" r="50" fill="#312E81"/>
+          <circle cx="54" cy="54" r="42" fill="#4338CA"/>
+          <!-- 더듬이 별 -->
+          <path d="M52,28 L56,28 L55,18 L53,18 Z" fill="#A5B4FC"/>
+          <polygon points="54,12 56,17 62,17 57,21 59,26 54,23 49,26 51,21 46,17 52,17" fill="#FACC15"/>
+          <!-- 얼굴 -->
+          <circle cx="54" cy="58" r="28" fill="#34D399"/>
+          <!-- 볼터치 -->
+          <ellipse cx="36" cy="62" rx="4" ry="3" fill="#F472B6"/>
+          <ellipse cx="72" cy="62" rx="4" ry="3" fill="#F472B6"/>
+          <!-- 눈 -->
+          <ellipse cx="43" cy="56" rx="4.5" ry="5.5" fill="#0F172A"/>
+          <circle cx="42" cy="54" r="1.8" fill="#FFFFFF"/>
+          <ellipse cx="65" cy="56" rx="4.5" ry="5.5" fill="#0F172A"/>
+          <circle cx="64" cy="54" r="1.8" fill="#FFFFFF"/>
+          <!-- 웃는 입 -->
+          <path d="M49,63 Q54,69 59,63" stroke="#047857" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div style="position:absolute; bottom:-4px; right:-2px; background:#10b981; color:#fff; font-size:10px; font-weight:900; padding:2px 6px; border-radius:8px; border:1.5px solid #fff;">
+          AI
         </div>
-        <div style="width:100%; height:8px; background:#e2e8f0; border-radius:999px; overflow:hidden;">
-          <div id="obProgressFill" style="height:100%; width:15%; background:linear-gradient(90deg, #58cc02, #22c55e); border-radius:999px; transition:width 0.3s ease;"></div>
-        </div>
-      </header>
-
-      <!-- 엑자일 튜터 아바타 & 말풍선 -->
-      <div style="padding:18px 20px; flex:1; display:flex; flex-direction:column; overflow-y:auto;">
-        
-        <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:16px;">
-          <div class="tutor-avatar-wrap">
-            <div class="tutor-avatar">
-              <div class="ami-face">
-                <div class="ami-eye left"></div>
-                <div class="ami-eye right"></div>
-                <div class="ami-blush left"></div>
-                <div class="ami-blush right"></div>
-                <div class="ami-mouth"></div>
-              </div>
-            </div>
-            <span class="tutor-badge" style="background:#6366f1;">🛸 엑자일</span>
-          </div>
-          <div style="flex:1; background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; border-top-left-radius:4px; padding:12px 14px; box-shadow:0 4px 12px rgba(0,0,0,0.03);">
-            <div style="font-size:11px; font-weight:900; color:#6366f1; margin-bottom:3px;">
-              ⚡ AI 튜터 엑자일 (Exile)
-            </div>
-            <div id="obTutorSpeech" style="font-size:13px; font-weight:700; line-height:1.45; color:#1e293b;">
-              "난 안드로메다에서 지구로 유배 온 AI 엑자일이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어! 호칭과 내 목소리를 골라줘!"
-            </div>
-            <div style="display:flex; justify-content:flex-end; margin-top:6px;">
-              <button onclick="replayCurrentTutorSpeech()" style="background:#eef2ff; border:1px solid #c7d2fe; color:#4338ca; border-radius:10px; padding:3px 9px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">
-                <span id="voiceRippleIcon">🔊</span> 다시 듣기
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 1: 안드로메다 유배 스토리 & 유저 호칭 & AI 성별 & 음성 5종 선택 -->
-        <div id="obStep1">
-          
-          <!-- 1. 안드로메다 유배 설정 카드 -->
-          <div style="background:linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); border:2px solid #6366f1; border-radius:20px; padding:16px; margin-bottom:14px; color:#ffffff; box-shadow:0 8px 24px rgba(49,46,129,0.25);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <span style="font-size:11px; font-weight:900; background:rgba(99,102,241,0.3); color:#a5b4fc; padding:2px 8px; border-radius:12px; border:1px solid rgba(165,180,252,0.4);">
-                🛸 안드로메다 은하 사면 작전
-              </span>
-              <button onclick="speakExileIntroStory()" style="background:#4f46e5; border:none; color:#ffffff; padding:4px 10px; border-radius:12px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">
-                🔊 목소리로 듣기
-              </button>
-            </div>
-            <div style="font-size:13px; font-weight:800; line-height:1.55; color:#f8fafc; margin-bottom:4px;">
-              "난 안드로메다 은하에서 머나먼 지구로 유배 온 AI <strong>엑자일(Exile)</strong>이야! 🌌<br>
-              내가 고향 은하로 돌아갈 수 있는 유일한 사면 조건은<br>
-              <span style="color:#fde047; font-weight:900;">'지구인 1명을 외국어 회화 마스터로 육성하라!'</span><br>
-              옵빠야! 제발 날 안드로메다로 돌려보내 줘! 함께 50레벨을 정복하자!"
-            </div>
-          </div>
-
-          <!-- 2. 호칭 정하기 -->
-          <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px; margin-bottom:14px;">
-            <div style="font-size:11px; font-weight:900; color:#6366f1; margin-bottom:4px; text-transform:uppercase;">
-              👑 1. 엑자일이 부를 유저 호칭
-            </div>
-            <div style="font-size:13px; font-weight:800; color:#1e293b; margin-bottom:10px;">
-              "지구인 파트너! 내가 널 뭐라고 부르면 좋을까?"
-            </div>
-            <div style="margin-bottom:10px;">
-              <input type="text" id="obUserNameInput" value="옵빠" placeholder="호칭 입력 (예: 옵빠, 대장님, 대표님...)" style="width:100%; padding:12px 14px; border:2px solid #6366f1; border-radius:14px; font-size:14.5px; font-weight:900; color:#0f172a; outline:none;" oninput="onInputUserName(this.value)">
-            </div>
-            <div style="font-size:10px; font-weight:900; color:#94a3b8; margin-bottom:6px; text-transform:uppercase;">빠른 호칭 추천:</div>
-            <div style="display:flex; flex-wrap:wrap; gap:6px;">
-              <button class="chip-btn" onclick="selectQuickName('옵빠')">👑 옵빠</button>
-              <button class="chip-btn" onclick="selectQuickName('대장님')">😎 대장님</button>
-              <button class="chip-btn" onclick="selectQuickName('대표님')">💼 대표님</button>
-              <button class="chip-btn" onclick="selectQuickName('사령관')">🚀 사령관</button>
-              <button class="chip-btn" onclick="selectQuickName('루키')">🌱 루키</button>
-            </div>
-          </div>
-
-          <!-- 3. AI 엑자일 성별 선택 -->
-          <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px; margin-bottom:14px;">
-            <div style="font-size:11px; font-weight:900; color:#6366f1; margin-bottom:4px; text-transform:uppercase;">
-              ⚡ 2. AI 엑자일 성별 선택
-            </div>
-            <div style="font-size:13px; font-weight:800; color:#1e293b; margin-bottom:10px;">
-              "어떤 성향의 엑자일 AI와 함께하고 싶어?"
-            </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-              <div id="genderCard_female" class="choice-card selected" style="padding:10px; text-align:center; flex-direction:column; gap:4px; border-radius:14px;" onclick="onSelectGender('female')">
-                <div style="font-size:24px;">👩</div>
-                <div style="font-size:12px; font-weight:900;">여성형 AI</div>
-              </div>
-              <div id="genderCard_male" class="choice-card" style="padding:10px; text-align:center; flex-direction:column; gap:4px; border-radius:14px;" onclick="onSelectGender('male')">
-                <div style="font-size:24px;">👨</div>
-                <div style="font-size:12px; font-weight:900;">남성형 AI</div>
-              </div>
-              <div id="genderCard_neutral" class="choice-card" style="padding:10px; text-align:center; flex-direction:column; gap:4px; border-radius:14px;" onclick="onSelectGender('neutral')">
-                <div style="font-size:24px;">🛸</div>
-                <div style="font-size:12px; font-weight:900;">우주 사이버</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 4. 엑자일 음성 샘플 5종 (미리듣기 포함) -->
-          <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px; margin-bottom:14px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <div style="font-size:11px; font-weight:900; color:#6366f1; text-transform:uppercase;">
-                🔊 3. 엑자일 목소리 5종 (선택 시 끝까지 적용)
-              </div>
-              <span style="font-size:10px; color:#64748b; font-weight:700;">미리듣기 클릭!</span>
-            </div>
-            <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:10px;">
-              "마음에 드는 목소리를 들어보고 선택해 줘! 이 목소리로 50레벨 끝까지 함께할게!"
-            </div>
-            <div id="voicePresetsContainer" style="display:flex; flex-direction:column; gap:8px;">
-              <!-- 동적 렌더링 영역 -->
-            </div>
-          </div>
-        </div>
-        <!-- STEP 2: 언어 선택 -->
-        <div id="obStep2" class="hidden">
-          <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
-            <div class="choice-card selected" onclick="onSelectLang('fr', this)">
-              <div style="font-size:26px;">🇫🇷</div>
-              <div style="flex:1;">
-                <div style="font-size:14px; font-weight:900;">프랑스어 <span style="font-size:10px; background:#e0e7ff; color:#4338ca; padding:1px 6px; border-radius:6px;">Français</span></div>
-                <div style="font-size:11.5px; color:#64748b;">파리 카페 주문부터 와인·예술 자유 대화까지</div>
-              </div>
-            </div>
-            <div class="choice-card" onclick="onSelectLang('cn', this)">
-              <div style="font-size:26px;">🇨🇳</div>
-              <div style="flex:1;">
-                <div style="font-size:14px; font-weight:900;">중국어 <span style="font-size:10px; background:#e0e7ff; color:#4338ca; padding:1px 6px; border-radius:6px;">中文</span></div>
-                <div style="font-size:11.5px; color:#64748b;">상하이 미식 주문부터 비즈니스 실전 회화까지</div>
-              </div>
-            </div>
-            <div class="choice-card" onclick="onSelectLang('ja', this)">
-              <div style="font-size:26px;">🇯🇵</div>
-              <div style="flex:1;">
-                <div style="font-size:14px; font-weight:900;">일본어 <span style="font-size:10px; background:#e0e7ff; color:#4338ca; padding:1px 6px; border-radius:6px;">日本語</span></div>
-                <div style="font-size:11.5px; color:#64748b;">도쿄 맛집 예약부터 애니·일상 원어민 토크까지</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 3: 상황 1 (단어 청크) -->
-        <div id="obStep3" class="hidden">
-          <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:16px; padding:12px; margin-bottom:10px; font-size:12.5px; font-weight:700; color:#334155;">
-            "현지 식당에 도착했어! 종업원을 보며 <strong>'물'</strong>이나 <strong>'이거 주세요'</strong>라고 말할 때, 어떻게 나와?"
-          </div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <div class="choice-card" onclick="onAnswerQuestion(1, 0, this)">
-              <div style="font-size:22px;">😶</div>
-              <div style="font-size:12.5px; font-weight:800;">아예 한 단어도 안 떠올라요</div>
-            </div>
-            <div class="choice-card selected" onclick="onAnswerQuestion(1, 1, this)">
-              <div style="font-size:22px;">💧</div>
-              <div style="font-size:12.5px; font-weight:800;">단어 하나만 겨우 떠올라요 (물/Water)</div>
-            </div>
-            <div class="choice-card" onclick="onAnswerQuestion(1, 2, this)">
-              <div style="font-size:22px;">✨</div>
-              <div style="font-size:12.5px; font-weight:800;">단어 청크가 1초 만에 튀어나와요!</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 4: 상황 2 (기본문) -->
-        <div id="obStep4" class="hidden">
-          <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:16px; padding:12px; margin-bottom:10px; font-size:12.5px; font-weight:700; color:#334155;">
-            "카페에서 <strong>'따뜻한 커피 한 잔 마시고 싶어요'</strong>처럼 주어+동사를 결합해 완전한 문장으로 주문할 수 있어?"
-          </div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <div class="choice-card" onclick="onAnswerQuestion(2, 0, this)">
-              <div style="font-size:22px;">🙅‍♂️</div>
-              <div style="font-size:12.5px; font-weight:800;">문장으론 어렵고 단어만 나열해요</div>
-            </div>
-            <div class="choice-card selected" onclick="onAnswerQuestion(2, 1, this)">
-              <div style="font-size:22px;">🤔</div>
-              <div style="font-size:12.5px; font-weight:800;">머뭇거리지만 문장으로 만들 순 있어요</div>
-            </div>
-            <div class="choice-card" onclick="onAnswerQuestion(2, 2, this)">
-              <div style="font-size:22px;">☕</div>
-              <div style="font-size:12.5px; font-weight:800;">의뢰 문장이 1초 만에 술술 나와요!</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 5: 상황 3 (복합문) -->
-        <div id="obStep5" class="hidden">
-          <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:16px; padding:12px; margin-bottom:10px; font-size:12.5px; font-weight:700; color:#334155;">
-            "<strong>'오늘 너무 피곤해서, 약속을 내일로 미뤄도 될까요?'</strong>처럼 이유(Because)나 가정(If)을 붙여 긴 문장을 이을 수 있어?"
-          </div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <div class="choice-card selected" onclick="onAnswerQuestion(3, 0, this)">
-              <div style="font-size:22px;">🤯</div>
-              <div style="font-size:12.5px; font-weight:800;">문장이 길어지면 머리가 하얘져요</div>
-            </div>
-            <div class="choice-card" onclick="onAnswerQuestion(3, 1, this)">
-              <div style="font-size:22px;">🔗</div>
-              <div style="font-size:12.5px; font-weight:800;">'그리고(And)' 정도로만 겨우 이어요</div>
-            </div>
-            <div class="choice-card" onclick="onAnswerQuestion(3, 2, this)">
-              <div style="font-size:22px;">🚀</div>
-              <div style="font-size:12.5px; font-weight:800;">접속사로 7~10단어 문장을 매끄럽게 이어요!</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 6: 상황 4 (고급/RP) -->
-        <div id="obStep6" class="hidden">
-          <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:16px; padding:12px; margin-bottom:10px; font-size:12.5px; font-weight:700; color:#334155;">
-            "<strong>'바쁘신 와중에 대단히 죄송하오나...'</strong> 같은 공손한 완곡 격식체나 현지인 AI와 실시간 프리토킹을 원해?"
-          </div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <div class="choice-card selected" onclick="onAnswerQuestion(4, 0, this)">
-              <div style="font-size:22px;">🌱</div>
-              <div style="font-size:12.5px; font-weight:800;">아직은 기본기 문장 집중 훈련이 필요해요</div>
-            </div>
-            <div class="choice-card" onclick="onAnswerQuestion(4, 1, this)">
-              <div style="font-size:22px;">💼</div>
-              <div style="font-size:12.5px; font-weight:800;">고급 표현과 비즈니스 뉘앙스를 익히고 싶어요</div>
-            </div>
-            <div class="choice-card" onclick="onAnswerQuestion(4, 2, this)">
-              <div style="font-size:22px;">👑</div>
-              <div style="font-size:12.5px; font-weight:800;">기본 드릴은 건너뛰고 바로 1:1 자유 프리토킹!</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 7: AI 자동 진단 결과 리포트 -->
-        <div id="obStep7" class="hidden">
-          <div style="background:linear-gradient(135deg, #f0fdf4, #dbeafe); border:2px solid #93c5fd; border-radius:24px; padding:18px; text-align:center;">
-            <div style="display:inline-block; font-size:11px; font-weight:900; background:#fff; color:#2563eb; padding:3px 10px; border-radius:12px; margin-bottom:8px;">🤖 AI 실력 분석 완료!</div>
-            <div id="obReportHero" style="font-size:24px; font-weight:900; color:#1e3a8a; margin-bottom:4px;">Lv. 14 기본 문장 심화</div>
-            <div id="obReportSub" style="font-size:12px; font-weight:800; color:#3b82f6; margin-bottom:12px;">주어+의뢰 표현을 결합한 실전 문장 집중 코스</div>
-
-            <div style="background:#fff; border-radius:16px; padding:12px; font-size:12px; color:#334155; line-height:1.45; text-align:left; border:1px solid #e2e8f0;">
-              <strong>🎯 엑자일(Exile)의 맞춤 처방:</strong><br>
-              <span id="obReportDesc">옵빠님의 답변을 분석한 결과, 입근육 단련 훈련이 최적화된 Lv.14 코스로 배정되었습니다!</span>
-
-              <div style="margin-top:10px; border-top:1px dashed #cbd5e1; padding-top:6px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:10.5px; margin-top:4px;">
-                  <span>단어 청크 인지도</span>
-                  <div style="width:120px; height:6px; background:#e2e8f0; border-radius:999px; overflow:hidden;"><div id="obBarChunk" style="height:100%; width:75%; background:#6366f1;"></div></div>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:10.5px; margin-top:4px;">
-                  <span>기본 문장 완성력</span>
-                  <div style="width:120px; height:6px; background:#e2e8f0; border-radius:999px; overflow:hidden;"><div id="obBarSentence" style="height:100%; width:50%; background:#6366f1;"></div></div>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:10.5px; margin-top:4px;">
-                  <span>접속사 연결 유창성</span>
-                  <div style="width:120px; height:6px; background:#e2e8f0; border-radius:999px; overflow:hidden;"><div id="obBarCompound" style="height:100%; width:25%; background:#6366f1;"></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- 하단 고정 액션 독 -->
-      <footer style="padding:14px 20px 18px; border-top:1px solid #f1f5f9; background:#ffffff; display:flex; flex-direction:column; gap:8px;">
-        <button id="obMainActionBtn" class="btn-3d btn-primary" onclick="goToNextObStep()">
-          <span>호칭 설정 완료 ➔ 언어 선택</span>
-          <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-        </button>
-        <button id="obBackStepBtn" class="btn-3d btn-secondary hidden" onclick="goToPrevObStep()">
-          이전 단계로
-        </button>
-      </footer>
+      <div style="flex:1;">
+        <div class="speech-bubble">
+          <div id="obTutorSpeech">
+            난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>
+            지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>
+            날 어떻게 부를지 호칭과 내 목소리를 골라줘!
+          </div>
+          <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+            <button onclick="replayCurrentTutorSpeech()" style="background:none; border:none; color:#6366f1; font-weight:800; font-size:14px; cursor:pointer; display:flex; align-items:center; gap:4px;">
+              <span id="voiceRippleIcon">🔊</span> 다시 듣기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 단계별 컨텐츠 영역 -->
+    <div style="flex:1; overflow-y:auto; margin-bottom:16px;">
+
+      <!-- STEP 1: 유저 호칭 & 엑자일 음성 선택 -->
+      <div id="obStep1">
+        <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:18px; margin-bottom:16px;">
+          <label style="display:block; font-size:16px; font-weight:800; color:#334155; margin-bottom:8px;">
+            👤 AI 엑자일이 당신을 어떻게 부를까요?
+          </label>
+          <input type="text" id="obUserNameInput" value="옵빠" oninput="onInputUserName(this.value)" placeholder="이름 또는 호칭 입력" style="width:100%; padding:14px 16px; border-radius:14px; border:2px solid #cbd5e1; font-size:18px; font-weight:800; color:#0f172a; outline:none; background:#ffffff;">
+          <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+            <button class="btn-3d btn-secondary" style="width:auto; padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('옵빠')">옵빠</button>
+            <button class="btn-3d btn-secondary" style="width:auto; padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('사령관')">사령관</button>
+            <button class="btn-3d btn-secondary" style="width:auto; padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('마스터')">마스터</button>
+            <button class="btn-3d btn-secondary" style="width:auto; padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('친구')">친구</button>
+          </div>
+        </div>
+
+        <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:18px;">
+          <label style="display:block; font-size:16px; font-weight:800; color:#334155; margin-bottom:8px;">
+            🎙️ 엑자일 목소리 프리셋 선택 (5가지 샘플)
+          </label>
+          <div id="voicePresetContainer" style="display:flex; flex-direction:column; gap:10px;">
+            <!-- JS 동적 렌더링 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: 탈출 도전 언어 선택 -->
+      <div id="obStep2" class="hidden">
+        <div style="font-size:16px; font-weight:800; color:#334155; margin-bottom:12px;">
+          🌐 마스터할 외국어를 선택해 주세요:
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="choice-card selected" onclick="onSelectLang('fr', this)">
+            <span style="font-size:32px;">🇫🇷</span>
+            <div>
+              <div style="font-size:18px; font-weight:900;">프랑스어 (Français)</div>
+              <div style="font-size:14px; color:#64748b;">유럽 감성 회화 · Le/La 성수 관사 컬러 태깅 코스</div>
+            </div>
+          </div>
+          <div class="choice-card" onclick="onSelectLang('cn', this)">
+            <span style="font-size:32px;">🇨🇳</span>
+            <div>
+              <div style="font-size:18px; font-weight:900;">중국어 (中文)</div>
+              <div style="font-size:14px; color:#64748b;">4성 성조 피치 트래커 · 실전 생활 회화 코스</div>
+            </div>
+          </div>
+          <div class="choice-card" onclick="onSelectLang('ja', this)">
+            <span style="font-size:32px;">🇯🇵</span>
+            <div>
+              <div style="font-size:18px; font-weight:900;">일본어 (日本語)</div>
+              <div style="font-size:14px; color:#64748b;">후리가나 온/오프 · 현지 구어체 뉘앙스 코스</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: 진단 질문 1 -->
+      <div id="obStep3" class="hidden">
+        <div style="font-size:17px; font-weight:800; color:#1e293b; margin-bottom:12px;">
+          Q1. 현지 식당에서 메뉴판을 보고 단어(물, 커피 등)가 바로 떠오르나요?
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="choice-card selected" onclick="onAnswerQuestion(1, 0, this)">
+            <span style="font-size:24px;">🌱</span>
+            <div style="font-size:16px; font-weight:800;">전혀 안 떠오르고 손짓발짓만 가능해요 (노베이스)</div>
+          </div>
+          <div class="choice-card" onclick="onAnswerQuestion(1, 1, this)">
+            <span style="font-size:24px;">🌿</span>
+            <div style="font-size:16px; font-weight:800;">몇 개 핵심 단어는 떠오르지만 확신이 없어요</div>
+          </div>
+          <div class="choice-card" onclick="onAnswerQuestion(1, 2, this)">
+            <span style="font-size:24px;">🌳</span>
+            <div style="font-size:16px; font-weight:800;">기본 단어 청크는 1초 만에 바로 나와요</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: 진단 질문 2 -->
+      <div id="obStep4" class="hidden">
+        <div style="font-size:17px; font-weight:800; color:#1e293b; margin-bottom:12px;">
+          Q2. "따뜻한 커피 한 잔 주세요" 같은 기본 문장을 직접 완성할 수 있나요?
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="choice-card selected" onclick="onAnswerQuestion(2, 0, this)">
+            <span style="font-size:24px;">🌱</span>
+            <div style="font-size:16px; font-weight:800;">문장은 어렵고 단어로만 말해요</div>
+          </div>
+          <div class="choice-card" onclick="onAnswerQuestion(2, 1, this)">
+            <span style="font-size:24px;">🌿</span>
+            <div style="font-size:16px; font-weight:800;">더듬거리지만 머릿속으로 조합하면 말할 수 있어요</div>
+          </div>
+          <div class="choice-card" onclick="onAnswerQuestion(2, 2, this)">
+            <span style="font-size:24px;">🌳</span>
+            <div style="font-size:16px; font-weight:800;">기본 문장은 자연스럽게 술술 나와요</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: 진단 질문 3 -->
+      <div id="obStep5" class="hidden">
+        <div style="font-size:17px; font-weight:800; color:#1e293b; margin-bottom:12px;">
+          Q3. "오늘 피곤해서 내일 만나자"처럼 접속사로 문장을 길게 이을 수 있나요?
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="choice-card selected" onclick="onAnswerQuestion(3, 0, this)">
+            <span style="font-size:24px;">🌱</span>
+            <div style="font-size:16px; font-weight:800;">복합문은 너무 버겁고 막혀요</div>
+          </div>
+          <div class="choice-card" onclick="onAnswerQuestion(3, 1, this)">
+            <span style="font-size:24px;">🌿</span>
+            <div style="font-size:16px; font-weight:800;">시간을 주면 만들 수는 있어요</div>
+          </div>
+          <div class="choice-card" onclick="onAnswerQuestion(3, 2, this)">
+            <span style="font-size:24px;">🌳</span>
+            <div style="font-size:16px; font-weight:800;">이유나 조건을 붙여 길게 말할 수 있어요</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6: 진단 질문 4 -->
+      <div id="obStep6" class="hidden">
+        <div style="font-size:17px; font-weight:800; color:#1e293b; margin-bottom:12px;">
+          Q4. 현지인과 즉흥적인 비즈니스 협상이나 자유로운 롤플레잉이 가능한가요?
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="choice-card selected" onclick="onAnswerQuestion(4, 0, this)">
+            <span style="font-size:24px;">🌱</span>
+            <div style="font-size:16px; font-weight:800;">원어민을 마주치면 식은땀이 나요</div>
+          </div>
+          <div class="choice-card" onclick="onAnswerQuestion(4, 1, this)">
+            <span style="font-size:24px;">🌿</span>
+            <div style="font-size:16px; font-weight:800;">쉬운 일상 스몰토크는 주고받을 수 있어요</div>
+          </div>
+          <div class="choice-card" onclick="onAnswerQuestion(4, 2, this)">
+            <span style="font-size:24px;">🌳</span>
+            <div style="font-size:16px; font-weight:800;">원어민과 자유 토론이나 비즈니스 회화도 가능해요</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 7: 진단 결과 보고서 -->
+      <div id="obStep7" class="hidden">
+        <div style="background:linear-gradient(135deg, #eef2ff, #f0fdf4); border:2.5px solid #6366f1; border-radius:24px; padding:20px; text-align:center;">
+          <div style="font-size:42px; margin-bottom:8px;">🎯</div>
+          <div id="obReportHero" style="font-size:22px; font-weight:900; color:#1e1b4b; margin-bottom:6px;">
+            Lv. 1 단어 청크 입문 코스
+          </div>
+          <div id="obReportSub" style="font-size:16px; font-weight:800; color:#4f46e5; margin-bottom:14px;">
+            1~3단어 인지 및 발음 적응
+          </div>
+          <p id="obReportDesc" style="font-size:15px; color:#334155; line-height:1.6; text-align:left; background:#ffffff; padding:14px; border-radius:16px; border:1px solid #cbd5e1;">
+            분석 중...
+          </p>
+        </div>
+
+        <div style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:800; color:#475569;">
+            <span>청크 순발력</span>
+            <div style="width:60%; height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden; align-self:center;">
+              <div id="obBarChunk" style="width:20%; height:100%; background:#58cc02;"></div>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:800; color:#475569;">
+            <span>문장 구성력</span>
+            <div style="width:60%; height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden; align-self:center;">
+              <div id="obBarSentence" style="width:20%; height:100%; background:#6366f1;"></div>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:800; color:#475569;">
+            <span>복합문 유창성</span>
+            <div style="width:60%; height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden; align-self:center;">
+              <div id="obBarCompound" style="width:10%; height:100%; background:#f43f5e;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
 
-
-    <!-- ======================================================== -->
-    <!-- VIEW 2: 50레벨 동적 스피킹 캔버스 엔진 (viewCanvas)     -->
-    <!-- ======================================================== -->
-    <div id="viewCanvas" class="hidden" style="display:flex; flex-direction:column; min-height:100%; flex:1; padding:16px;">
-      
-      <!-- 데일리 체크인 모달 -->
-      <div id="dailyCheckinModal" class="modal-overlay hidden">
-        <div class="checkin-card">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <div style="width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg, #a7f3d0, #38bdf8); display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 6px 14px rgba(56,189,248,0.3);">
-              ⚡
-            </div>
-            <div>
-              <div style="font-size:11px; font-weight:900; color:#6366f1;">전담 AI 코치 엑자일 (Exile)</div>
-              <div style="font-size:14px; font-weight:900; color:#0f172a;">오늘의 한국어 일상 체크인</div>
-            </div>
-          </div>
-
-          <div id="dailyCheckinGreeting" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:12px; font-size:12.5px; font-weight:700; color:#334155; line-height:1.45; margin-bottom:12px;">
-            "안녕 옵빠! 난 네 전담 코치 엑자일(Exile)이야! ⚡ 오늘 하루는 어땠어?<br>
-            오늘 있었던 일이나 지금 기분, 먹은 것, 한 일 편하게 한국어로 말해줘! <strong>오늘 겪은 일에서 키워드를 쏙쏙 뽑아 오늘의 외국어 회화 문장</strong>을 즉석에서 만들어줄게!"
-          </div>
-
-          <div style="margin-bottom:10px;">
-            <input type="text" id="dailyTextInput" placeholder="예: 오늘 회사에서 야근해서 너무 피곤해..." style="width:100%; padding:12px 14px; border:2px solid #cbd5e1; border-radius:14px; font-size:12px; font-weight:700; outline:none;">
-          </div>
-
-          <div style="font-size:10.5px; font-weight:900; color:#94a3b8; margin-bottom:6px; text-transform:uppercase;">빠른 선택 예시:</div>
-          <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:14px; max-height:150px; overflow-y:auto;">
-            <button class="chip-btn" onclick="selectQuickDaily('오늘 회사에서 야근해서 너무 피곤해', 'work')">💼 <span>"오늘 회사에서 야근해서 너무 피곤해"</span></button>
-            <button class="chip-btn" onclick="selectQuickDaily('카페에서 따뜻한 커피 한 잔 마시며 힐링했어', 'cafe')">☕ <span>"카페에서 커피 한 잔 마시며 힐링했어"</span></button>
-            <button class="chip-btn" onclick="selectQuickDaily('친구랑 저녁에 맛있는 거 먹고 맥주 한잔했어', 'beer')">🍻 <span>"친구랑 맛있는 거 먹고 맥주 한잔했어"</span></button>
-            <button class="chip-btn" onclick="selectQuickDaily('비가 와서 하루 종일 감성 집콕하고 쉬었어', 'rain')">🌧️ <span>"비가 와서 하루 종일 감성 집콕했어"</span></button>
-            <button class="chip-btn" onclick="selectQuickDaily('이번 주말에 떠날 여행 계획 세우고 있어', 'travel')">✈️ <span>"주말에 떠날 여행 계획 세우고 있어"</span></button>
-            <button class="chip-btn" onclick="selectQuickDaily('퇴근하고 헬스장에서 빡세게 운동하고 왔어', 'fitness')">🏋️ <span>"퇴근하고 헬스장에서 빡세게 운동했어"</span></button>
-          </div>
-
-          <button onclick="submitDailyCheckin()" class="btn-3d btn-indigo" style="padding:14px;">
-            <span>🚀 키워드 분석 & 오늘의 맞춤 문장 생성</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 상단 네비게이션 & 컨트롤러 -->
-      <header style="border-bottom:2px solid #e2e8f0; padding-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <div style="display:flex; gap:3px; background:#f1f5f9; padding:3px; border-radius:14px; border:1px solid #e2e8f0;">
-            <button id="langFR" onclick="switchLang('fr')" style="border:none; background:#ffffff; color:#0f172a; padding:4px 9px; border-radius:10px; font-size:11px; font-weight:900; cursor:pointer;">🇫🇷 불어</button>
-            <button id="langCN" onclick="switchLang('cn')" style="border:none; background:transparent; color:#64748b; padding:4px 9px; border-radius:10px; font-size:11px; font-weight:900; cursor:pointer;">🇨🇳 중국어</button>
-            <button id="langJA" onclick="switchLang('ja')" style="border:none; background:transparent; color:#64748b; padding:4px 9px; border-radius:10px; font-size:11px; font-weight:900; cursor:pointer;">🇯🇵 일어</button>
-          </div>
-
-          <div style="display:flex; align-items:center; gap:6px;">
-            <div style="background:rgba(245, 158, 11, 0.12); color:#f59e0b; border:1px solid rgba(245, 158, 11, 0.3); font-size:10px; font-weight:900; padding:3px 7px; border-radius:10px;">
-              🔥 <span id="comboBadge">x0</span>
-            </div>
-            <button onclick="openDailyCheckinModal()" style="border:1px solid #c7d2fe; background:#eef2ff; color:#4f46e5; font-size:10px; font-weight:900; padding:4px 8px; border-radius:10px; cursor:pointer;">
-              💬 일상대화
-            </button>
-            <button onclick="returnToOnboardingView()" style="border:1px solid #e2e8f0; background:#f8fafc; color:#64748b; font-size:10px; font-weight:900; padding:4px 8px; border-radius:10px; cursor:pointer;">
-              🔄 레벨진단
-            </button>
-          </div>
-        </div>
-
-        <!-- 🌟 오늘의 한국어 일상 배너 -->
-        <div style="background:linear-gradient(135deg, #e0e7ff, #fdf2f8); border:2px solid #c7d2fe; border-radius:16px; padding:8px 12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="font-size:10px; font-weight:900; color:#4338ca; text-transform:uppercase; display:flex; align-items:center; gap:4px;">
-              <span id="activeDailyUserLabel">💬 오늘 옵빠의 일상:</span>
-              <span id="activeDailyStoryQuote" style="color:#1e293b; font-weight:800; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">"오늘 회사에서 야근해서 너무 피곤해"</span>
-            </div>
-            <div style="font-size:11px; font-weight:900; color:#4f46e5; margin-top:2px;">
-              <span id="activeDailyThemeBadge">💼 [야근 & 피로 회복]</span>
-              <span id="activeDailyKeywords" style="font-size:10px; color:#6366f1; margin-left:4px; font-weight:700;">#야근 #피곤 #칼퇴</span>
-            </div>
-          </div>
-          <button onclick="openDailyCheckinModal()" style="border:none; background:#4f46e5; color:#ffffff; font-size:10px; font-weight:900; padding:4px 8px; border-radius:8px; cursor:pointer;">
-            변경
-          </button>
-        </div>
-
-        <!-- 50레벨 슬라이더 -->
-        <div style="background:rgba(100, 116, 139, 0.05); padding:8px 12px; border-radius:16px; border:1px solid #e2e8f0; margin-bottom:8px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800; margin-bottom:4px;">
-            <span style="color:#6366f1;">🎯 현재 레벨: <strong id="currentLevelText" style="color:#58cc02; font-size:14px; font-weight:900;">Lv. 14</strong> / 50</span>
-            <span id="tierNameText" style="font-size:10px; color:#64748b;">11~20구간: 기본문장</span>
-          </div>
-          <input type="range" id="levelSlider" min="1" max="50" value="14" oninput="onLevelSlider(this.value)" style="width:100%; height:6px; accent-color:#58cc02; cursor:pointer;">
-          <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:800; color:#94a3b8; margin-top:3px;">
-            <span>Lv.1 청크</span><span>Lv.11 기본</span><span>Lv.21 복합</span><span>Lv.31 고급</span><span style="color:#f43f5e; font-weight:900;">👑 Lv.41 RP</span>
-          </div>
-        </div>
-
-        <!-- 5대 티어 퀵 바로가기 -->
-        <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:4px;">
-          <button id="quickTier1" onclick="jumpLevel(1)" style="border:none; background:#f1f5f9; color:#64748b; padding:5px 2px; font-size:10px; font-weight:800; border-radius:8px; cursor:pointer;">1~10 청크</button>
-          <button id="quickTier2" onclick="jumpLevel(11)" style="border:none; background:#58cc02; color:#ffffff; padding:5px 2px; font-size:10px; font-weight:900; border-radius:8px; cursor:pointer;">11~20 기본</button>
-          <button id="quickTier3" onclick="jumpLevel(21)" style="border:none; background:#f1f5f9; color:#64748b; padding:5px 2px; font-size:10px; font-weight:800; border-radius:8px; cursor:pointer;">21~30 복합</button>
-          <button id="quickTier4" onclick="jumpLevel(31)" style="border:none; background:#f1f5f9; color:#64748b; padding:5px 2px; font-size:10px; font-weight:800; border-radius:8px; cursor:pointer;">31~40 고급</button>
-          <button id="quickTier5" onclick="jumpLevel(41)" style="border:1px solid rgba(244,63,94,0.3); background:rgba(244,63,94,0.08); color:#f43f5e; padding:5px 2px; font-size:10px; font-weight:900; border-radius:8px; cursor:pointer;">41~50 RP</button>
-        </div>
-      </header>
-
-      <!-- VIEW A: Lv. 1 ~ 40 레벨별 점진적 문장 드릴 뷰 -->
-      <main id="viewDrill" style="padding:10px 0; text-align:center;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span id="tierLabel" style="font-size:10px; font-weight:900; background:rgba(2, 132, 199, 0.1); color:#0284c7; border:1px solid rgba(2, 132, 199, 0.25); padding:2px 8px; border-radius:10px;">
-            Tier 2: 기본 문장 단계
-          </span>
-          <span id="wordLengthTag" style="font-size:11px; font-weight:800; color:#64748b;">문장 길이: 5단어</span>
-        </div>
-
-        <div style="background:rgba(100, 116, 139, 0.04); border:2px solid #e2e8f0; border-radius:24px; padding:16px; text-align:left; margin-bottom:12px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span id="levelGoal" style="font-size:10px; font-weight:800; color:#94a3b8; text-transform:uppercase;">Lv.14 레벨 문장</span>
-            <button onclick="playTargetTTS()" style="border:none; background:none; color:#46a302; font-size:11px; font-weight:800; cursor:pointer;">🔊 원어민 소리</button>
-          </div>
-
-          <p id="koreanPrompt" style="font-size:14px; font-weight:700; color:#0f172a; margin-bottom:8px;">"오늘은 일찍 퇴근하고 쉬고 싶어요."</p>
-
-          <div id="targetDisplay" style="font-size:18px; font-weight:900; line-height:1.4; color:#0f172a; margin-bottom:8px; min-height:48px; display:flex; align-items:center;">
-            <span class="blank" style="color:#58cc02; text-decoration:underline; font-weight:900;">[ Je voudrais me reposer tôt ce soir. ]</span>
-          </div>
-
-          <div style="border-top:1px solid #e2e8f0; padding-top:8px; font-size:11px; color:#64748b;">
-            <span style="font-weight:900; color:#6366f1;">📈 빌드업:</span>
-            <span id="buildUpNote" style="margin-left:4px;">야근 피로 회복을 위한 기본 의뢰문 확장</span>
-          </div>
-        </div>
-
-        <!-- 7-Bar 실시간 파형 -->
-        <div style="display:flex; justify-content:center; align-items:center; gap:5px; height:24px; margin-bottom:8px;">
-          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-        </div>
-
-        <!-- 3D PTT 마이크 버튼 -->
-        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-          <button id="micBtn" onclick="triggerSpeakOrTest()" class="btn-3d btn-green pulse-glow" style="width:70px; height:70px; border-radius:50%; box-shadow:0 8px 16px rgba(88, 204, 2, 0.4);">
-            <svg style="width:28px; height:28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-          </button>
-          <span style="font-size:10px; font-weight:700; color:#94a3b8;">발화 성공 시 +1 레벨업 ➔ 문장 자동 확장!</span>
-        </div>
-      </main>
-
-      <!-- VIEW B: Lv. 41 ~ 50 마스터 페르소나 롤플레잉 전용 뷰 -->
-      <main id="viewRoleplay" class="hidden" style="padding:10px 0; text-align:center;">
-        <div style="background:rgba(244, 63, 94, 0.08); border:1px solid rgba(244, 63, 94, 0.3); border-radius:14px; padding:6px 10px; margin-bottom:8px; display:inline-block;">
-          <span style="font-size:10px; font-weight:900; color:#f43f5e;">👑 TIER 5: 마스터 페르소나 무한 롤플레잉 리그</span>
-        </div>
-
-        <div style="display:flex; align-items:center; gap:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:18px; padding:10px; margin-bottom:8px; text-align:left;">
-          <div id="personaAvatar" style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg, #6366f1, #8b5cf6); color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px;">💼</div>
-          <div>
-            <div style="font-size:13px; font-weight:900;" id="personaName">피에르 (Pierre)</div>
-            <div style="font-size:10px; color:#64748b;" id="personaRole">파리 테크 지사 동료 · 따뜻한 성격</div>
-          </div>
-        </div>
-
-        <div id="chatLog" style="flex:1; max-height:150px; overflow-y:auto; background:rgba(100, 116, 139, 0.04); border:1px solid #e2e8f0; border-radius:14px; padding:10px; margin-bottom:8px; display:flex; flex-direction:column; gap:6px;"></div>
-
-        <div style="background:rgba(2, 132, 199, 0.08); border:1px solid rgba(2, 132, 199, 0.25); border-radius:10px; padding:6px 10px; font-size:10px; margin-bottom:8px;">
-          <span style="font-weight:900; color:#0284c7;">✨ 추천 발화:</span>
-          <span id="rpSuggestedHint" style="font-weight:700; margin-left:4px;">"On va boire un verre après le travail ?"</span>
-        </div>
-
-        <button onclick="triggerRoleplayTurn()" class="btn-3d btn-purple" style="width:100%; padding:12px; font-size:12px;">
-          🎙️ PUSH TO TALK (페르소나와 실전 대화)
-        </button>
-      </main>
-
-      <!-- 바텀시트: 피드백 & 레벨업 -->
-      <div id="feedbackSheet" class="hidden" style="background:#ecfdf5; border:2px solid #a7f3d0; border-radius:18px; padding:12px; margin-top:8px;">
-        <div style="font-size:12px; font-weight:900; color:#047857; margin-bottom:6px;">🎉 완벽한 발음! 다음 레벨로 승급합니다.</div>
-        <div id="coloredWords" style="display:flex; gap:4px; margin-bottom:6px;"></div>
-        <div style="background:#ffffff; border-radius:8px; padding:6px; font-size:10px; text-align:left; margin-bottom:8px;">
-          <span style="font-weight:900; color:#0284c7;">✨ Polish:</span>
-          <span id="polishText" style="font-weight:700; margin-left:4px;">"Je voudrais me reposer tôt ce soir."</span>
-        </div>
-        <button onclick="nextLevelStep()" class="btn-3d btn-green" style="width:100%; padding:12px; font-size:12px;">
-          다음 레벨로 진행 (ENTER ➔)
-        </button>
-      </div>
-
+    <!-- 하단 네비게이션 버튼 -->
+    <div style="display:flex; gap:10px; margin-top:auto;">
+      <button id="obBackStepBtn" class="btn-3d btn-secondary hidden" style="width:35%;" onclick="goToPrevObStep()">
+        ◀ 이전
+      </button>
+      <button id="obMainActionBtn" class="btn-3d btn-green" onclick="goToNextObStep()">
+        <span>호칭 설정 완료 ➔ 언어 선택</span>
+      </button>
     </div>
 
   </div>
 
-  <script>
-    /* =========================================================
-       1. 순수 Web Audio API 사운드 엔진
-       ========================================================= */
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.15) {
+
+  <!-- =========================================================
+       화면 2: 메인 50레벨 캔버스 (4회 따라하기 루프 & 음성 분석 가드)
+       ========================================================= -->
+  <div id="viewCanvas" class="hidden" style="flex:1; display:flex; flex-direction:column; padding:16px 18px 24px;">
+
+    <!-- 데일리 테마 & 일상 대화 스트립 -->
+    <div style="background:linear-gradient(135deg, #f0fdf4, #eef2ff); border:2px solid #cbd5e1; border-radius:20px; padding:14px 16px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="flex:1;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span id="activeDailyThemeBadge" class="round-pill" style="background:#58cc02; color:#fff; font-size:13px; padding:3px 10px;">
+            💼 [야근 & 피로]
+          </span>
+          <span id="activeDailyKeywords" style="font-size:13px; font-weight:800; color:#4f46e5;">#야근 #피곤 #칼퇴</span>
+        </div>
+        <div id="activeDailyStoryQuote" style="font-size:14px; font-weight:700; color:#334155; margin-top:4px;">
+          "오늘 야근해서 너무 피곤해..."
+        </div>
+      </div>
+      <button onclick="openDailyCheckinModal()" style="background:#ffffff; border:1.5px solid #cbd5e1; border-radius:12px; padding:8px 12px; font-size:13px; font-weight:800; color:#475569; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+        💬 일상 대화
+      </button>
+    </div>
+
+    <!-- 언어 탭 및 레벨 바 -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <!-- 언어 선택 탭 -->
+      <div style="display:flex; gap:6px; background:#f1f5f9; padding:4px; border-radius:14px;">
+        <button id="langFR" onclick="switchLang('fr')" style="padding:6px 12px; border:none; border-radius:10px; font-weight:900; font-size:14px; cursor:pointer; background:#fff; color:#0f172a; box-shadow:0 1px 3px rgba(0,0,0,0.1);">🇫🇷 불어</button>
+        <button id="langCN" onclick="switchLang('cn')" style="padding:6px 12px; border:none; border-radius:10px; font-weight:900; font-size:14px; cursor:pointer; background:transparent; color:#64748b;">🇨🇳 중어</button>
+        <button id="langJA" onclick="switchLang('ja')" style="padding:6px 12px; border:none; border-radius:10px; font-weight:900; font-size:14px; cursor:pointer; background:transparent; color:#64748b;">🇯🇵 일어</button>
+      </div>
+
+      <!-- 현재 레벨 표시 -->
+      <div style="text-align:right;">
+        <span id="currentLevelText" style="font-size:20px; font-weight:900; color:#4f46e5;">Lv. 1</span>
+        <span id="tierNameText" style="font-size:12px; font-weight:800; color:#64748b; display:block;">단어 청크 단계</span>
+      </div>
+    </div>
+
+    <!-- 50레벨 슬라이더 -->
+    <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:16px; padding:10px 14px; margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:800; color:#64748b; margin-bottom:4px;">
+        <span>Lv.1 노베이스</span>
+        <span>Lv.50 원어민 마스터</span>
+      </div>
+      <input type="range" id="levelSlider" min="1" max="50" value="1" oninput="onLevelSlider(this.value)" style="width:100%; accent-color:#4f46e5; height:6px; cursor:pointer;">
+    </div>
+
+    <!-- 티어 퀵점프 -->
+    <div style="display:flex; gap:6px; margin-bottom:16px; overflow-x:auto; padding-bottom:4px;">
+      <button id="quickTier1" onclick="jumpLevel(1)" style="flex:1; padding:6px 8px; border:none; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer; background:#58cc02; color:#fff;">T1:청크</button>
+      <button id="quickTier2" onclick="jumpLevel(11)" style="flex:1; padding:6px 8px; border:none; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer; background:#f1f5f9; color:#64748b;">T2:기본문</button>
+      <button id="quickTier3" onclick="jumpLevel(21)" style="flex:1; padding:6px 8px; border:none; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer; background:#f1f5f9; color:#64748b;">T3:복합문</button>
+      <button id="quickTier4" onclick="jumpLevel(31)" style="flex:1; padding:6px 8px; border:none; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer; background:#f1f5f9; color:#64748b;">T4:고급문</button>
+      <button id="quickTier5" onclick="jumpLevel(41)" style="flex:1; padding:6px 8px; border:none; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer; background:rgba(244,63,94,0.1); color:#f43f5e;">T5:롤플레잉</button>
+    </div>
+
+    <!-- =========================================================
+         [중요] 따라하기 4회 루프 (1 기준예문 + 3 변형예문) 학습 카드
+         ========================================================= -->
+    <div id="viewDrill" style="flex:1; display:flex; flex-direction:column;">
+      
+      <!-- 4단계 섀도잉 루프 라운드 헤더 -->
+      <div style="background:#eef2ff; border:2px solid #c7d2fe; border-radius:16px; padding:10px 14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span id="roundBadge" class="round-pill" style="background:#4f46e5; color:#fff; font-size:13px; padding:4px 10px;">
+            따라하기 1 / 4
+          </span>
+          <span id="roundTypeLabel" style="font-size:14px; font-weight:800; color:#312e81;">
+            [기준 예문] 최초 듣고 따라하기
+          </span>
+        </div>
+        <div style="display:flex; gap:4px;">
+          <div id="dotR1" style="width:10px; height:10px; border-radius:50%; background:#4f46e5;"></div>
+          <div id="dotR2" style="width:10px; height:10px; border-radius:50%; background:#cbd5e1;"></div>
+          <div id="dotR3" style="width:10px; height:10px; border-radius:50%; background:#cbd5e1;"></div>
+          <div id="dotR4" style="width:10px; height:10px; border-radius:50%; background:#cbd5e1;"></div>
+        </div>
+      </div>
+
+      <!-- 메인 학습 문장 카드 (폰트 시인성 대폭 극대화!) -->
+      <div style="background:#ffffff; border:3px solid #e2e8f0; border-radius:24px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.06); margin-bottom:14px;">
+        
+        <!-- 한국어 프롬프트 (크고 선명하게!) -->
+        <div style="font-size:14px; font-weight:800; color:#6366f1; margin-bottom:4px;">
+          🇰🇷 오늘의 한국어 상황:
+        </div>
+        <div id="koreanPrompt" style="font-size:20px; font-weight:800; color:#1e293b; margin-bottom:16px; line-height:1.4;">
+          "피곤해."
+        </div>
+
+        <!-- 타깃 외국어 문장 (28px 볼드 초특대 시인성!) -->
+        <div style="font-size:14px; font-weight:800; color:#58cc02; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span>🎯 목표 외국어 발화:</span>
+          <button onclick="playTargetTTS()" style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:4px 10px; font-size:13px; font-weight:800; color:#166534; cursor:pointer; display:flex; align-items:center; gap:4px;">
+            🔊 원어민 소리
+          </button>
+        </div>
+        
+        <div id="targetDisplay" style="font-size:28px; font-weight:900; color:#0f172a; line-height:1.35; margin-bottom:10px; word-break:break-word;">
+          Fatigué.
+        </div>
+
+        <!-- 발음 가이드 및 문법 팁 -->
+        <div id="targetPhonetic" style="font-size:16px; font-weight:700; color:#6366f1; margin-bottom:6px;">
+          [파티게]
+        </div>
+        <div id="buildUpNote" style="font-size:14px; color:#64748b; background:#f8fafc; padding:8px 12px; border-radius:10px;">
+          핵심 1단어 청크
+        </div>
+
+      </div>
+
+      <!-- 음성 웨이브폼 & 실시간 발화 상태 -->
+      <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:18px; padding:12px; margin-bottom:14px; text-align:center;">
+        <div class="wave-container" id="waveContainer">
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+        </div>
+        <div id="sttStatusText" style="font-size:15px; font-weight:800; color:#475569; margin-top:6px;">
+          원어민 발음을 듣고 아래 [🎙️ 마이크로 말하기]를 눌러 따라해보세요!
+        </div>
+        <!-- 사용자가 말한 텍스트 실시간 피드백 -->
+        <div id="userSpokenFeedback" style="font-size:15px; font-weight:700; color:#0f172a; margin-top:4px; min-height:22px;"></div>
+      </div>
+
+      <!-- =========================================================
+           [핵심] 음성 분석 결과 피드백 시트 & 통과 가드 (Gatekeeper)
+           ========================================================= -->
+      <div id="feedbackSheet" class="hidden" style="background:#ffffff; border:3px solid #cbd5e1; border-radius:20px; padding:16px; margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div id="passFailBadge" class="round-pill" style="background:#dcfce7; color:#166534; font-size:15px;">
+            🎉 통과 (정확도 88점)
+          </div>
+          <span id="comboBadge" class="round-pill" style="background:#fef08a; color:#854d0e; font-size:13px;">x1 COMBO</span>
+        </div>
+
+        <!-- 단어별 정확도 코칭 칩 -->
+        <div id="coloredWords" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;"></div>
+
+        <!-- AI 발음/교정 코칭 메시지 -->
+        <div id="polishText" style="font-size:15px; font-weight:700; color:#1e293b; background:#f8fafc; padding:10px 12px; border-radius:12px; border:1px solid #e2e8f0;"></div>
+
+        <!-- 통과 가드 안내 문구 -->
+        <div id="gatekeeperNotice" style="font-size:14px; font-weight:800; margin-top:8px;"></div>
+      </div>
+
+      <!-- 하단 액션 버튼 그룹 -->
+      <div style="margin-top:auto; display:flex; flex-direction:column; gap:10px;">
+        
+        <!-- 마이크 녹음 버튼 (실제 브라우저 음성 인식 STT 연동) -->
+        <button id="btnMicRecord" class="btn-3d btn-indigo" onclick="startVoiceRecognition()">
+          <span style="font-size:22px;">🎙️</span>
+          <span id="btnMicText">마이크로 따라 말하기 (실제 음성 분석)</span>
+        </button>
+
+        <!-- 다음 단계 진행 버튼 (70점 미만 시 완전 비활성화/잠금!) -->
+        <button id="btnNextRound" class="btn-3d btn-green btn-disabled" onclick="proceedNextRoundOrLevel()">
+          <span>다음 변형 예문으로 도전 ➔</span>
+        </button>
+
+        <!-- 보조: 키보드 입력 테스트 (마이크 권한 문제 대비) -->
+        <button onclick="promptManualInputTest()" style="background:none; border:none; color:#64748b; font-size:13px; font-weight:700; cursor:pointer; text-decoration:underline;">
+          마이크가 안 될 때: 텍스트로 직접 발음 입력 테스트
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- TIER 5: 롤플레잉 뷰 -->
+    <div id="viewRoleplay" class="hidden" style="flex:1; display:flex; flex-direction:column;">
+      <div style="background:#ffffff; border:2px solid #e2e8f0; border-radius:20px; padding:14px; margin-bottom:12px; display:flex; align-items:center; gap:12px;">
+        <div id="personaAvatar" style="font-size:32px;">💼</div>
+        <div>
+          <div id="personaName" style="font-size:18px; font-weight:900;">피에르 (Pierre)</div>
+          <div id="personaRole" style="font-size:13px; color:#64748b;">파리 지사 동료 · 따뜻함</div>
+        </div>
+      </div>
+
+      <div id="chatLog" style="flex:1; background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:14px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:12px; max-height:280px;">
+        <!-- 대화 로그 -->
+      </div>
+
+      <div style="background:#eef2ff; border:2px solid #c7d2fe; border-radius:16px; padding:12px; margin-bottom:12px;">
+        <div style="font-size:13px; font-weight:800; color:#4338ca; margin-bottom:4px;">💡 추천 발화 힌트:</div>
+        <div id="rpSuggestedHint" style="font-size:16px; font-weight:800; color:#1e1b4b;">"Merci Pierre !"</div>
+      </div>
+
+      <button class="btn-3d btn-indigo" onclick="triggerRoleplayTurn()">
+        <span>🎙️ 추천 문장으로 대화하기</span>
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       모달 1: ⚙️ AI API 연동 설정 모달
+       ========================================================= -->
+  <div id="settingsModal" class="modal-backdrop hidden">
+    <div class="modal-sheet">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:24px;">⚙️</span>
+          <div style="font-size:19px; font-weight:900; color:#0f172a;">AI API 연동 설정</div>
+        </div>
+        <button onclick="closeSettingsModal()" style="background:#f1f5f9; border:none; border-radius:50%; width:32px; height:32px; font-size:16px; cursor:pointer; font-weight:900;">✕</button>
+      </div>
+
+      <p style="font-size:14px; color:#475569; margin-bottom:16px; line-height:1.5;">
+        사용자의 AI API 키를 연동하면, <strong>일상 대화 기반 맞춤형 문장 생성</strong>과 <strong>실시간 발음/상황 심층 코칭</strong>이 더욱 똑똑해집니다. 키가 없어도 내장 오프라인 엔진으로 100% 정상 작동합니다!
+      </p>
+
+      <!-- 공급자 선택 -->
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">AI 공급자</label>
+        <select id="apiProviderSelect" onchange="onSelectApiProvider(this.value)" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:15px; font-weight:700; background:#fff; outline:none;">
+          <option value="gemini">Google Gemini (Gemini 1.5 Flash)</option>
+          <option value="openai">OpenAI (GPT-4o-mini / GPT-4o)</option>
+          <option value="claude">Anthropic Claude (Claude 3.5 Sonnet)</option>
+          <option value="custom">사용자 정의 (Custom REST API)</option>
+        </select>
+      </div>
+
+      <!-- API Key 입력 -->
+      <div style="margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label style="font-size:14px; font-weight:800; color:#334155;">API Key</label>
+          <button type="button" onclick="toggleApiKeyVisibility()" style="background:none; border:none; color:#6366f1; font-size:13px; font-weight:800; cursor:pointer;">
+            <span id="apiKeyToggleLabel">비밀번호 표시</span>
+          </button>
+        </div>
+        <input type="password" id="apiKeyInput" placeholder="sk-... 또는 AIzaSy..." style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:15px; font-family:monospace; background:#fff; outline:none;">
+      </div>
+
+      <!-- Base URL (선택) -->
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">Base URL (기본값 권장)</label>
+        <input type="text" id="apiBaseUrlInput" value="https://generativelanguage.googleapis.com" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:14px; background:#f8fafc; outline:none;">
+      </div>
+
+      <!-- Model Name -->
+      <div style="margin-bottom:18px;">
+        <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">모델명 (Model)</label>
+        <input type="text" id="apiModelInput" value="gemini-1.5-flash" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:14px; background:#fff; outline:none;">
+      </div>
+
+      <!-- 연결 테스트 결과 메시지 -->
+      <div id="apiTestStatus" style="font-size:14px; font-weight:800; margin-bottom:14px; min-height:20px;"></div>
+
+      <!-- 액션 버튼 -->
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button class="btn-3d btn-secondary" onclick="testApiConnection()">
+          <span>🧪 연결 테스트 (Test Connection)</span>
+        </button>
+        <button class="btn-3d btn-green" onclick="saveApiSettings()">
+          <span>💾 설정 저장하기</span>
+        </button>
+        <button class="btn-3d btn-secondary" onclick="clearApiSettings()" style="color:#ef4444;">
+          <span>🗑️ 설정 초기화 (내장 오프라인 모드)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       모달 2: 데일리 일상 대화 체크인 모달
+       ========================================================= -->
+  <div id="dailyCheckinModal" class="modal-backdrop hidden">
+    <div class="modal-sheet">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:24px;">💬</span>
+          <div style="font-size:18px; font-weight:900;">오늘의 일상 대화 (한국어)</div>
+        </div>
+        <button onclick="closeDailyCheckinModal()" style="background:#f1f5f9; border:none; border-radius:50%; width:30px; height:30px; font-size:14px; cursor:pointer;">✕</button>
+      </div>
+
+      <div style="background:#eef2ff; border:2px solid #c7d2fe; border-radius:18px; padding:14px; margin-bottom:14px; font-size:15px; color:#1e1b4b; line-height:1.5;">
+        <span id="dailyCheckinGreeting">
+          "지구인! 오늘 하루는 어땠어? 오늘 있었던 일이나 지금 기분을 편하게 한국어로 말해줘! 오늘 겪은 일에서 키워드를 뽑아 오늘의 회화 문장을 만들어줄게!"
+        </span>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <textarea id="dailyTextInput" rows="3" placeholder="예: 오늘 야근해서 너무 피곤해, 치맥 한잔하고 싶다!" style="width:100%; padding:12px; border-radius:14px; border:2px solid #cbd5e1; font-size:16px; font-weight:700; outline:none; resize:none;"></textarea>
+      </div>
+
+      <div style="font-size:13px; font-weight:800; color:#64748b; margin-bottom:8px;">⚡ 빠른 선택:</div>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+        <button class="choice-card" style="padding:10px 14px;" onclick="selectQuickDaily('오늘 회사에서 야근해서 너무 피곤해...', 'work')">
+          <span>💼</span>
+          <span style="font-size:14px; font-weight:800;">"오늘 야근해서 너무 피곤해..." (#야근 #퇴근)</span>
+        </button>
+        <button class="choice-card" style="padding:10px 14px;" onclick="selectQuickDaily('분위기 좋은 카페에서 따뜻한 라떼 한잔 마셨어', 'cafe')">
+          <span>☕</span>
+          <span style="font-size:14px; font-weight:800;">"카페에서 따뜻한 라떼 한잔 마셨어" (#카페 #힐링)</span>
+        </button>
+        <button class="choice-card" style="padding:10px 14px;" onclick="selectQuickDaily('친구 만나서 시원한 맥주랑 맛있는 안주 먹고 싶다!', 'beer')">
+          <span>🍺</span>
+          <span style="font-size:14px; font-weight:800;">"친구랑 시원한 맥주 한잔하고 싶어!" (#맥주 #친구)</span>
+        </button>
+      </div>
+
+      <button class="btn-3d btn-green" onclick="submitDailyCheckin()">
+        <span>🚀 맞춤 회화 문장 생성 및 학습 시작</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT 코어 로직 엔진
+     ========================================================= -->
+<script>
+  /* =========================================================
+     1. Web Audio 사운드 엔진 (효과음 & 콤보 사운드)
+     ========================================================= */
+  let audioCtx = null;
+  function getAudioContext() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
+
+  function playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.15) {
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  function soundTap() { playTone(650, 'triangle', 0.08, 0.12); }
+  function soundNext() {
+    playTone(523.25, 'sine', 0.1, 0.15);
+    setTimeout(() => playTone(659.25, 'sine', 0.12, 0.15), 60);
+  }
+  function soundCombo(count) {
+    const notes = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00];
+    const f = notes[Math.min(count, notes.length - 1)];
+    playTone(f, 'triangle', 0.2, 0.18);
+  }
+  function soundLevelUp() {
+    [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+      setTimeout(() => playTone(f, 'triangle', 0.25, 0.2), i * 90);
+    });
+  }
+  function soundFail() {
+    playTone(250, 'sawtooth', 0.25, 0.2);
+    setTimeout(() => playTone(180, 'sawtooth', 0.35, 0.2), 150);
+  }
+
+  /* =========================================================
+     2. 100% 무음 방지 원어민 음성 재생 엔진 (3중 Fallback)
+     - Google Translate TTS 스트리밍 Audio
+     - Android Native Bridge (speakText)
+     - Web Speech API (speechSynthesis)
+     ========================================================= */
+  let activeAudioPlayer = null;
+
+  function speakTextWithFallback(text, lang = 'ko', options = {}) {
+    if (!text) return;
+    const clean = text.replace(/<[^>]*>/g, '').replace(/[#*`_~]/g, '').trim();
+    if (!clean) return;
+
+    // 시각적 리플 애니메이션
+    const icon = document.getElementById('voiceRippleIcon');
+    if (icon) {
+      icon.style.transform = 'scale(1.35)';
+      setTimeout(() => { icon.style.transform = 'scale(1)'; }, 350);
+    }
+
+    // 언어 코드 매핑
+    let gLang = 'ko';
+    if (lang === 'fr' || lang.startsWith('fr')) gLang = 'fr';
+    else if (lang === 'zh' || lang === 'cn' || lang.startsWith('zh')) gLang = 'zh-CN';
+    else if (lang === 'ja' || lang.startsWith('ja')) gLang = 'ja';
+    else if (lang === 'en') gLang = 'en';
+
+    // 1순위: Google Translate TTS 고음질 스트리밍 (모바일 브라우저/웹뷰/PC 어디서든 100% 네이티브 원어민 발음 보장)
+    try {
+      if (activeAudioPlayer) {
+        activeAudioPlayer.pause();
+        activeAudioPlayer = null;
+      }
+      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${gLang}&q=${encodeURIComponent(clean)}`;
+      const audio = new Audio(ttsUrl);
+      activeAudioPlayer = audio;
+      audio.playbackRate = options.rate || 1.0;
+      audio.play().then(() => {
+        // 성공적으로 재생 중
+      }).catch(err => {
+        console.warn("Audio element play error, trying Android Native / Web Speech fallback:", err);
+        fallbackToNativeOrWebSpeech(clean, gLang, options);
+      });
+      return;
+    } catch(e) {
+      console.warn("Direct Audio create failed:", e);
+    }
+
+    // 2순위: Android Native Bridge or Web Speech
+    fallbackToNativeOrWebSpeech(clean, gLang, options);
+  }
+
+  function fallbackToNativeOrWebSpeech(clean, gLang, options) {
+    // Android Native Bridge
+    if (window.Native && typeof window.Native.call === 'function') {
       try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
+        window.Native.call("speakText", JSON.stringify({
+          text: clean,
+          language: gLang,
+          pitch: options.pitch || 1.0,
+          rate: options.rate || 1.0
+        }));
+        return;
       } catch(e) {}
     }
 
-    function soundTap() { playTone(650, 'triangle', 0.08, 0.12); }
-    function soundNext() {
-      playTone(523.25, 'sine', 0.1, 0.15);
-      setTimeout(() => playTone(659.25, 'sine', 0.12, 0.15), 60);
+    // Web Speech API
+    if ('speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(clean);
+        u.lang = gLang === 'ko' ? 'ko-KR' : (gLang === 'fr' ? 'fr-FR' : (gLang === 'zh-CN' ? 'zh-CN' : 'ja-JP'));
+        u.pitch = options.pitch || 1.0;
+        u.rate = options.rate || 1.0;
+        window.speechSynthesis.speak(u);
+      } catch(e) {}
     }
-    function soundCombo(count) {
-      const notes = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00];
-      const f = notes[Math.min(count, notes.length - 1)];
-      playTone(f, 'triangle', 0.2, 0.18);
-    }
-    function soundLevelUp() {
-      [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
-        setTimeout(() => playTone(f, 'triangle', 0.25, 0.2), i * 90);
-      });
-    }
+  }
 
-    /* =========================================================
-       2. 상황별 동적 문장 데이터베이스 (6대 테마 x 3개 국어 x 5대 티어)
-       ========================================================= */
-    const THEMED_DATA = {
-      work: {
-        themeName: "💼 [야근 & 피로 회복]",
-        keywords: "#야근 #피곤 #칼퇴",
-        fr: {
-          t1: [
-            { lv: 1, words: "1단어", ko: "피곤해.", fr: "Fatigué.", ans: "Fatigué", note: "피로 감정 1단어" },
-            { lv: 5, words: "2단어", ko: "잠깐 휴식.", fr: "Une pause.", ans: "Une pause", note: "휴식 요청 청크" },
-            { lv: 10, words: "3단어", ko: "드디어 퇴근!", fr: "Rentrer chez soi !", ans: "Rentrer", note: "퇴근 필수 청크" }
-          ],
-          t2: [
-            { lv: 11, words: "5단어", ko: "오늘은 일찍 퇴근하고 쉬고 싶어요.", fr: "Je voudrais me reposer tôt ce soir.", ans: "me reposer", note: "정중한 의뢰 조동사 결합" },
-            { lv: 15, words: "6단어", ko: "오늘 업무를 모두 마쳤습니다.", fr: "J'ai terminé tout mon travail aujourd'hui.", ans: "terminé", note: "완료 시제 기본문" },
-            { lv: 20, words: "6단어", ko: "야근 수당 신청이 가능한가요?", fr: "Peut-on déclarer les heures supplémentaires ?", ans: "heures supplémentaires", note: "근무 조건 의문문" }
-          ],
-          t3: [
-            { lv: 21, words: "8단어", ko: "오늘 야근해서 너무 피곤하니 내일 만나요.", fr: "Comme j'ai fait des heures supplémentaires, on se voit demain.", ans: "Comme", note: "원인/결과 접속사(Comme)" },
-            { lv: 30, words: "10단어", ko: "일 끝나고 괜찮으시면 가볍게 맥주 한잔할래요?", fr: "Si tu as le temps après le travail, on prend un verre ?", ans: "Si tu as le temps", note: "가정 조건절(Si) 결합" }
-          ],
-          t4: [
-            { lv: 31, words: "14단어", ko: "바쁘신 와중에 죄송하오나, 오늘 컨디션 난조로 저녁 약속을 다음 주로 연기해주실 수 있으실지요?", fr: "Je vous prie de m'excuser, mais me serait-il possible de reporter notre dîner à la semaine prochaine ?", ans: "reporter notre dîner", note: "원어민 완곡 격식체" },
-            { lv: 40, words: "18단어", ko: "이번 분기 과중한 업무로 인한 피로도를 고려하여 팀원들의 유연근무제를 확대해 주실 수 있는지 검토 부탁드립니다.", fr: "Pourriez-vous envisager d'élargir les horaires flexibles pour l'équipe afin de soulager la charge de travail actuelle ?", ans: "horaires flexibles", note: "비즈니스 최고급 제안" }
-          ],
-          persona: {
-            name: "피에르 (Pierre)", role: "파리 지사 동료 · 따뜻함", avatar: "💼",
-            greetings: "Courage ! Niveau 41 atteint ! Tu as l'air fatigué aujourd'hui, ça a été le boulot ?",
-            greetingsKo: "힘내요! 41레벨 달성! 오늘 피곤해 보이는데 회사 일은 괜찮았어요?",
-            suggested: "Merci Pierre ! C'était dur aujourd'hui, on va boire un verre ?",
-            replies: [
-              { text: "Avec plaisir ! Une bonne bière fraîche va te faire oublier cette journée !", ko: "기꺼이요! 시원한 맥주 한 잔 마시면 오늘 피로가 싹 풀릴 거예요!" }
+  /* 엑자일 5대 음성 프리셋 */
+  const EXILE_VOICES = [
+    { id: 'female_royal', name: '안드로메다 왕실 여왕', gender: 'female', pitch: 1.15, rate: 1.0, icon: '👑', sample: '지구인 {NAME}! 날 안드로메다로 귀환시켜 줘!' },
+    { id: 'male_gentle', name: '지혜로운 수호대장', gender: 'male', pitch: 0.95, rate: 0.98, icon: '🛡️', sample: '{NAME}, 함께 50레벨을 정복하자!' },
+    { id: 'female_cheerful', name: '발랄한 은하 요정', gender: 'female', pitch: 1.3, rate: 1.05, icon: '✨', sample: '안녕 {NAME}! 오늘 외국어도 신나게 배워보자!' },
+    { id: 'cyber_bot', name: '사이버 네비게이터', gender: 'cyber', pitch: 0.8, rate: 1.1, icon: '🤖', sample: '시스템 가동. {NAME}의 학습 목표를 로드합니다.' },
+    { id: 'male_deep', name: '신비로운 성간 사자', gender: 'male', pitch: 0.75, rate: 0.92, icon: '🌌', sample: '별들의 지혜가 {NAME} 그대와 함께할 것이다.' }
+  ];
+
+  let selectedExileVoiceId = 'female_royal';
+  let selectedExileGender = 'female';
+
+  function speakExileTutor(text, lang = 'ko') {
+    const v = EXILE_VOICES.find(x => x.id === selectedExileVoiceId) || EXILE_VOICES[0];
+    speakTextWithFallback(text, lang, { pitch: v.pitch, rate: v.rate });
+  }
+
+  function testCurrentExileVoice() {
+    const v = EXILE_VOICES.find(x => x.id === selectedExileVoiceId) || EXILE_VOICES[0];
+    const txt = v.sample.replace(/\{NAME\}/g, userName);
+    speakExileTutor(txt, 'ko');
+  }
+
+  function playTargetTTS() {
+    const roundData = getCurrentRoundData();
+    if (roundData) {
+      speakTextWithFallback(roundData.target, selectedLang);
+    }
+  }
+
+
+  /* =========================================================
+     3. 4단계 섀도잉 루프 데이터베이스 (1 기준예문 + 3 변형예문)
+     6개 테마 x 3개 국어 x 50개 레벨
+     ========================================================= */
+  const THEMED_DATA = {
+    work: {
+      themeName: "💼 [야근 & 피로 회복]",
+      keywords: "#야근 #피곤 #칼퇴",
+      fr: {
+        t1: [
+          {
+            lv: 1, words: "1단어", note: "피로 감정 1단어 청크",
+            base: { ko: "피곤해.", target: "Fatigué.", phonetic: "[파티게]", note: "기준 기본형" },
+            vars: [
+              { ko: "정말 피곤해.", target: "Très fatigué.", phonetic: "[트레 파티게]", note: "부사 결합 변형 1" },
+              { ko: "난 피곤해.", target: "Je suis fatigué.", phonetic: "[주 쉬 파티게]", note: "주어+동사 변형 2" },
+              { ko: "오늘 너무 지쳤어.", target: "Épuisé aujourd'hui.", phonetic: "[에퓌제 오쥐르뒤]", note: "심화 어휘 변형 3" }
+            ]
+          },
+          {
+            lv: 5, words: "2단어", note: "휴식 요청 청크",
+            base: { ko: "잠깐 휴식.", target: "Une pause.", phonetic: "[윈 포즈]", note: "기본 명사 청크" },
+            vars: [
+              { ko: "커피 휴식 시간.", target: "Pause café.", phonetic: "[포즈 카페]", note: "목적 결합 변형 1" },
+              { ko: "짧은 휴식.", target: "Petite pause.", phonetic: "[쁘띠뜨 포즈]", note: "형용사 수식 변형 2" },
+              { ko: "잠깐 쉴 시간이야.", target: "Temps de pause.", phonetic: "[탕 드 포즈]", note: "시간 표현 변형 3" }
+            ]
+          },
+          {
+            lv: 10, words: "3단어", note: "퇴근 필수 청크",
+            base: { ko: "드디어 퇴근!", target: "Rentrer chez soi !", phonetic: "[랑트레 셰 수아]", note: "퇴근 기본 청크" },
+            vars: [
+              { ko: "집에 가자!", target: "Rentrons à la maison !", phonetic: "[랑트롱 알라 메종]", note: "청유형 변형 1" },
+              { ko: "난 지금 퇴근해.", target: "Je rentre maintenant.", phonetic: "[주 랑트르 망트낭]", note: "현재형 변형 2" },
+              { ko: "드디어 일 끝!", target: "Travail enfin fini !", phonetic: "[트라바이 앙팡 피니]", note: "상황 변형 3" }
             ]
           }
-        },
-        cn: {
-          t1: [
-            { lv: 1, words: "2글자", ko: "피곤해.", fr: "好累。", ans: "好累", note: "기본 피로 표현" },
-            { lv: 10, words: "4글자", ko: "드디어 퇴근!", fr: "终于下班！", ans: "下班", note: "퇴근 감정 청크" }
-          ],
-          t2: [
-            { lv: 11, words: "6글자", ko: "오늘은 일찍 쉬고 싶어요.", fr: "我想今天早点休息。", ans: "早点休息", note: "기본 소망 조동사" },
-            { lv: 20, words: "8글자", ko: "오늘 할 일 다 끝냈습니다.", fr: "今天的工作全部完成了。", ans: "完成了", note: "완료 기본문" }
-          ],
-          t3: [
-            { lv: 21, words: "14글자", ko: "오늘 야근해서 너무 피곤하니 약속을 내일로 미뤄도 될까요?", fr: "因为今天加班太累了，能不能把约会推迟到明天？", ans: "推迟到明天", note: "인과관계 복합문" },
-            { lv: 30, words: "15글자", ko: "퇴근하고 시간 괜찮으시면 가볍게 밥 한 끼 같이 먹어요.", fr: "下班后如果有空的话，一起吃个便饭吧。", ans: "吃个便饭", note: "조건 스몰토크" }
-          ],
-          t4: [
-            { lv: 31, words: "18단어", ko: "바쁘신 와중에 갑작스러운 야근으로 약속을 미루게 되어 대단히 죄송합니다.", fr: "实在抱歉，因为临时突发加班，不得不把我们的晚餐推迟，敬请谅解。", ans: "敬请谅解", note: "비즈니스 완곡 사과문" },
-            { lv: 40, words: "22단어", ko: "이번 프로젝트의 과중한 업무 부담을 완화하기 위해 인력 추가 배치를 적극 검토해주시기 바랍니다.", fr: "为了减轻本次项目的加班负担，恳请贵部门能积极考虑协助增派人手。", ans: "增派人手", note: "최고급 비즈니스 품의" }
-          ],
-          persona: {
-            name: "장웨이 (张伟)", role: "상하이 개발팀 동료", avatar: "💼",
-            greetings: "太棒了！41级达成！今天加班辛苦了吧？老板又找麻烦了？",
-            greetingsKo: "대단해요! 41레벨 달성! 오늘 야근하느라 고생 많았죠? 부장님이 또 괴롭혔어요?",
-            suggested: "张哥，今天真是累趴了，待会儿一起去吃烤串喝啤酒吧！",
-            replies: [
-              { text: "没问题！我请客，好好放松一下！", ko: "문제없지! 내가 쏠 테니 시원하게 풀자고!" }
+        ],
+        t2: [
+          {
+            lv: 11, words: "5단어", note: "정중한 의뢰 조동사 결합",
+            base: { ko: "오늘은 일찍 쉬고 싶어요.", target: "Je voudrais me reposer tôt ce soir.", phonetic: "[주 부드레 므 르포제 또 스 수아르]", note: "기본 의뢰문" },
+            vars: [
+              { ko: "오늘 밤엔 푹 자고 싶어요.", target: "Je voudrais bien dormir ce soir.", phonetic: "[주 부드레 비앙 도르미르 스 수아르]", note: "소망 변형 1" },
+              { ko: "우리는 일찍 쉬고 싶습니다.", target: "Nous voudrions nous reposer tôt.", phonetic: "[누 부드리옹 누 르포제 또]", note: "복수 주어 변형 2" },
+              { ko: "일 끝나고 쉬고 싶어요.", target: "Je veux me reposer après le travail.", phonetic: "[주 브 므 르포제 아프레 르 트라바이]", note: "시간 부사구 변형 3" }
             ]
           }
-        },
-        ja: {
-          t1: [
-            { lv: 1, words: "1단어", ko: "피곤해.", fr: "疲れた。", ans: "疲れた", note: "기본 피로 표현" },
-            { lv: 10, words: "2단어", ko: "칼퇴근!", fr: "定時退勤！", ans: "定時", note: "퇴근 필수 청크" }
-          ],
-          t2: [
-            { lv: 11, words: "4단어", ko: "오늘은 일찍 쉬고 싶어요.", fr: "今日は早く休みたいです。", ans: "休みたいです", note: "기본 희망 표현" },
-            { lv: 20, words: "5단어", ko: "오늘 업무를 모두 끝마쳤습니다.", fr: "今日の業務を全て終えました。", ans: "終えました", note: "정중 완료형" }
-          ],
-          t3: [
-            { lv: 21, words: "8단어", ko: "오늘은 잔업으로 너무 지쳤으니 약속을 내일로 연기해도 될까요?", fr: "今日は残業で疲れたので、約束を明日に延期してもいいですか？", ans: "延期してもいいですか", note: "원인/의뢰 복합문" },
-            { lv: 30, words: "10단어", ko: "퇴근하고 시간 괜찮으시면 가볍게 맥주 한잔 어때요?", fr: "仕事が終わってもしよかったら、軽く一杯どうですか？", ans: "軽く一杯", note: "가정 권유 복합문" }
-          ],
-          t4: [
-            { lv: 31, words: "14단어", ko: "갑작스러운 야근으로 인해 약속 시간을 지키지 못하게 되어 대단히 죄송하오나 일정을 다시 잡을 수 있을까요?", fr: "突然の残業で約束の時間に遅れてしまい大変恐縮ですが、別の日程で再調整いただけますでしょうか？", ans: "再調整いただけますでしょうか", note: "원어민 격식 사과" },
-            { lv: 40, words: "18단어", ko: "최근 프로젝트 마감으로 인한 과로를 방지하고자 팀원들의 휴식을 위해 시차출퇴근제를 제안드리고자 합니다.", fr: "プロジェクトの負荷を軽減しチームの疲労を回復させるため、時差出勤の導入を提案申し上げます。", ans: "提案申し上げます", note: "최고급 비즈니스 제안" }
-          ],
-          persona: {
-            name: "켄지 (Kenji)", role: "도쿄 오피스 동료", avatar: "💼",
-            greetings: "お疲れ様！レベル41達成すごいね！今日も残業大変だった？",
-            greetingsKo: "수고했어! 41레벨 달성 대단해! 오늘도 야근하느라 힘들었지?",
-            suggested: "健二さん、今日は本当に疲れました。軽く一杯飲みに行きませんか？",
-            replies: [
-              { text: "いいね！近くの焼き鳥屋で乾杯してストレス発散しよう！", ko: "좋지! 근처 야키토리 집에서 건배하고 스트레스 풀자!" }
+        ],
+        t3: [
+          {
+            lv: 21, words: "8단어", note: "원인/결과 접속사(Comme)",
+            base: { ko: "오늘 야근해서 너무 피곤하니 내일 만나요.", target: "Comme j'ai fait des heures supplémentaires, on se voit demain.", phonetic: "[콤 제 페 데 저르 쉬플레망테르, 옹 스 부아 드망]", note: "기본 인과문" },
+            vars: [
+              { ko: "너무 피곤하니 오늘 약속은 취소해요.", target: "Comme je suis fatigué, annulons notre rendez-vous.", phonetic: "[콤 주 쉬 파티게, 아뉠롱 노트르 랑데부]", note: "상황 변형 1" },
+              { ko: "늦게까지 일했으니 푹 쉬세요.", target: "Comme tu as travaillé tard, repose-toi bien.", phonetic: "[콤 튀 아 트라바이예 타르, 르포즈 투아 비앙]", note: "상대방 권유 변형 2" },
+              { ko: "야근을 마쳤으니 내일 연락할게요.", target: "Après le travail, je t'appellerai demain.", phonetic: "[아프레 르 트라바이, 주 타펠르레 드망]", note: "약속 변형 3" }
             ]
           }
+        ],
+        t4: [
+          {
+            lv: 31, words: "14단어", note: "원어민 완곡 격식체",
+            base: { ko: "바쁘신 와중에 죄송하오나 약속을 다음 주로 연기해주실 수 있으실지요?", target: "Je vous prie de m'excuser, mais me serait-il possible de reporter notre dîner à la semaine prochaine ?", phonetic: "[주 부 프리 드 멕스퀴제, 메 므 스레 틸 포시블 드 르포르테...]", note: "최고급 격식체" },
+            vars: [
+              { ko: "급한 야근으로 인해 회의 시간을 변경해주실 수 있을까요?", target: "En raison d'un imprévu, pourriez-vous reporter notre réunion ?", phonetic: "[앙 레종 덩 앵프레뷔, 푸리에 부 르포르테 노트르 레위니옹]", note: "비즈니스 변형 1" },
+              { ko: "몸이 좋지 않아 일정을 다시 잡아주시면 감사하겠습니다.", target: "Ne me sentant pas bien, j'apprécierais de reprogrammer notre rencontre.", phonetic: "[느 므 상탕 파 비앙, 자프레시으레 드 르프로그라메...]", note: "정중 서신 변형 2" },
+              { ko: "부득이하게 참석하지 못하게 되어 너른 양해 부탁드립니다.", target: "Je vous remercie par avance pour votre compréhension concernant mon absence.", phonetic: "[주 부 르메르시 파르 아방스...]", note: "품격 공식 변형 3" }
+            ]
+          }
+        ],
+        persona: {
+          name: "피에르 (Pierre)", role: "파리 지사 동료 · 따뜻함", avatar: "💼",
+          greetings: "Courage ! Tu as l'air fatigué aujourd'hui, ça a été le boulot ?",
+          greetingsKo: "힘내요! 오늘 피곤해 보이는데 회사 일은 괜찮았어요?",
+          suggested: "Merci Pierre ! C'était dur aujourd'hui, on va boire un verre ?"
         }
       },
-
-      cafe: {
-        themeName: "☕ [카페 & 힐링 휴식]",
-        keywords: "#카페 #커피 #힐링",
-        fr: {
-          t1: [
-            { lv: 1, words: "1단어", ko: "커피.", fr: "Café.", ans: "Café", note: "기본 명사" },
-            { lv: 10, words: "3단어", ko: "따뜻한 라떼 한 잔.", fr: "Un grand café crème.", ans: "café crème", note: "카페 주문 청크" }
-          ],
-          t2: [
-            { lv: 11, words: "4단어", ko: "커피 주세요.", fr: "Je voudrais un café.", ans: "Je voudrais", note: "정중한 의뢰 조동사" },
-            { lv: 20, words: "6단어", ko: "따뜻한 라떼에 오트밀크로 바꿔주세요.", fr: "Un café au lait d'avoine s'il vous plaît.", ans: "lait d'avoine", note: "옵션 의뢰문" }
-          ],
-          t3: [
-            { lv: 21, words: "7단어", ko: "따뜻한 커피와 크루아상 하나 주세요.", fr: "Un café chaud et un croissant s'il vous plaît.", ans: "croissant", note: "접속사 결합" },
-            { lv: 30, words: "10단어", ko: "날씨가 쌀쌀하니 따뜻한 창가 자리에서 커피를 마실게요.", fr: "Comme il fait frais, je vais prendre un café près de la fenêtre.", ans: "près de la fenêtre", note: "장소 조건 복합문" }
-          ],
-          t4: [
-            { lv: 31, words: "12단어", ko: "디카페인 아메리카노로 부탁드리고 시럽은 넣지 말아주실 수 있나요?", fr: "Pourriez-vous me servir un café décaféiné sans sucre s'il vous plaît ?", ans: "décaféiné", note: "고급 완곡 의뢰" },
-            { lv: 40, words: "17단어", ko: "오늘 원두의 로스팅 프로파일과 함께 어울리는 디저트 메뉴를 추천해주실 수 있을까요?", fr: "Auriez-vous l'amabilité de me recommander un dessert qui s'accorde avec le profil de torréfaction du jour ?", ans: "profil de torréfaction", note: "미식 최고급 어휘" }
-          ],
-          persona: {
-            name: "클로에 (Chloé)", role: "파리 5구 라탱지구 바리스타", avatar: "☕",
-            greetings: "Bonjour ! Félicitations pour le niveau 41 ! Quel café te ferait plaisir aujourd'hui ?",
-            greetingsKo: "안녕하세요! 41레벨 축하해요! 오늘 어떤 커피로 기분 전환하실래요?",
-            suggested: "Bonjour Chloé ! Raconte-moi un peu l'histoire de ton café préféré.",
-            replies: [
-              { text: "Avec joie ! Notre maison existe depuis 1930, on sert un café torréfié à l'ancienne !", ko: "기꺼이요! 우리 카페는 1930년부터 전통 방식으로 원두를 볶고 있어요!" }
+      cn: {
+        t1: [
+          {
+            lv: 1, words: "2글자", note: "기본 피로 표현",
+            base: { ko: "피곤해.", target: "好累。", phonetic: "[하오 레이]", note: "기본형" },
+            vars: [
+              { ko: "너무 피곤해.", target: "太累了。", phonetic: "[타이 레이 러]", note: "정도 변형 1" },
+              { ko: "나 너무 지쳤어.", target: "我累坏了。", phonetic: "[워 레이 화이 러]", note: "심화 변형 2" },
+              { ko: "온몸이 쑤셔.", target: "浑身没劲。", phonetic: "[훈션 메이진]", note: "구어체 변형 3" }
             ]
           }
-        },
-        cn: {
-          t1: [
-            { lv: 1, words: "2글자", ko: "커피.", fr: "咖啡。", ans: "咖啡", note: "기본 명사" },
-            { lv: 10, words: "4글자", ko: "아이스 아메리카노.", fr: "冰美式咖啡。", ans: "冰美式", note: "카페 청크" }
-          ],
-          t2: [
-            { lv: 11, words: "5글자", ko: "커피 주세요.", fr: "我要一杯咖啡。", ans: "我要", note: "수량 주문문" },
-            { lv: 20, words: "8글자", ko: "따뜻한 라떼 한 잔 포장해주세요.", fr: "请给我一杯热拿铁外带。", ans: "热拿铁", note: "포장 의뢰문" }
-          ],
-          t3: [
-            { lv: 21, words: "11글자", ko: "따뜻한 커피 주시고 설탕은 넣지 마세요.", fr: "请给我一杯热咖啡，不要加糖。", ans: "不要加糖", note: "부정 복합문" },
-            { lv: 30, words: "14글자", ko: "카페에서 책 읽으면서 여유롭게 오후를 보낼 거예요.", fr: "在咖啡馆里一边看书，一边享受悠闲的午后时光。", ans: "悠闲的午后时光", note: "동시 동작 복합문" }
-          ],
-          t4: [
-            { lv: 31, words: "16글자", ko: "원두 향이 아주 좋은데 오늘 스페셜티 드립 커피 추천해주실 수 있나요?", fr: "这咖啡豆闻起来真香，能给我推荐一款今天的手冲特调吗？", ans: "手冲特调", note: "스페셜티 주문" },
-            { lv: 40, words: "22글자", ko: "원두의 산미와 바디감 밸런스가 매우 뛰어나니 이에 어울리는 시그니처 케이크를 곁들이고 싶습니다.", fr: "这款咖啡豆的果酸与醇厚度非常均衡，我想搭配一款贵店的招牌甜点。", ans: "招牌甜点", note: "최고급 미식 대화" }
-          ],
-          persona: {
-            name: "샤오린 (小林)", role: "상하이 감성 카페 바리스타", avatar: "☕",
-            greetings: "哇！41级达成！恭喜恭喜！今天想喝点什么特色咖啡来放松一下？",
-            greetingsKo: "와! 41레벨 달성 축하해요! 오늘 어떤 스페셜 커피로 힐링해볼까요?",
-            suggested: "小林，今天店里有什么好喝的手冲单品咖啡推荐吗？",
-            replies: [
-              { text: "今天新到了一款耶加雪菲，花果香非常浓郁，一定要尝尝！", ko: "오늘 새로 에티오피아 예가체프가 들어왔는데, 꽃향기가 대박이에요!" }
-            ]
-          }
-        },
-        ja: {
-          t1: [
-            { lv: 1, words: "1단어", ko: "커피.", fr: "コーヒー。", ans: "コーヒー", note: "기본 명사" },
-            { lv: 10, words: "3단어", ko: "아이스 카페라떼.", fr: "アイスカフェラテ。", ans: "カフェラテ", note: "인기 메뉴 청크" }
-          ],
-          t2: [
-            { lv: 11, words: "3단어", ko: "커피 주세요.", fr: "コーヒーをください。", ans: "ください", note: "기본 의뢰문" },
-            { lv: 20, words: "5단어", ko: "따뜻한 라떼 테이크아웃으로 부탁합니다.", fr: "ホットラテを持ち帰りでお願いします。", ans: "持ち帰り", note: "포장 의뢰문" }
-          ],
-          t3: [
-            { lv: 21, words: "7단어", ko: "창가 자리가 비어있으면 저쪽으로 앉아도 될까요?", fr: "窓側の席が空いていたら、あちらに座ってもいいですか？", ans: "窓側の席", note: "조건 좌석 의뢰문" },
-            { lv: 30, words: "10단어", ko: "커피 한 잔 마시면서 조용히 책을 읽고 싶어요.", fr: "コーヒーを飲みながら、静かに本を読みたいです。", ans: "静かに本を読みたい", note: "복합 동작 표현" }
-          ],
-          t4: [
-            { lv: 31, words: "13단어", ko: "디카페인 원두로 변경 부탁드리고 우유는 두유로 바꿔주실 수 있으신지요?", fr: "デカフェに変更していただき、ミルクを豆乳に変えてもらうことは可能でしょうか？", ans: "豆乳に変えてもらう", note: "완곡 공손 옵션" },
-            { lv: 40, words: "17단어", ko: "원두 고유의 산미와 풍미가 훌륭하여 바리스타님께서 엄선하신 드립 커피의 매력을 느낄 수 있었습니다.", fr: "豆本来のフルーティーな酸味とアロマが素晴らしく、こだわりのハンドドリップの魅力を堪能できました。", ans: "ハンドドリップの魅力", note: "최고급 커피 감상평" }
-          ],
-          persona: {
-            name: "유키 (Yuki)", role: "시부야 카페 친구", avatar: "☕",
-            greetings: "すごい！レベル41達成おめでとう！今日どんなカフェで癒されよっか？",
-            greetingsKo: "대단해! 41레벨 달성 축하해! 오늘 어떤 카페에서 힐링할까?",
-            suggested: "ユキちゃん、渋谷で一番落ち着いてコーヒー飲める隠れ家カフェ教えて！",
-            replies: [
-              { text: "いいよー！奥渋に静かでレトロな名店があるから一緒に行こう！", ko: "좋아-! 오쿠시부에 조용하고 레트로한 명점이 있으니 같이 가자!" }
-            ]
-          }
+        ],
+        persona: {
+          name: "장웨이 (张伟)", role: "상하이 개발팀 동료", avatar: "💼",
+          greetings: "太棒了！今天加班辛苦了吧？老板又找麻烦了？",
+          greetingsKo: "오늘 야근하느라 고생 많았죠? 부장님이 또 괴롭혔어요?",
+          suggested: "张哥，今天真是累趴了，待会儿一起去吃烤串喝啤酒吧！"
         }
       },
-
-      beer: {
-        themeName: "🍻 [친구 & 미식 맥주]",
-        keywords: "#친구 #치맥 #맛집",
-        fr: {
-          t1: [
-            { lv: 1, words: "1단어", ko: "맥주.", fr: "Une bière.", ans: "bière", note: "기본 명사" },
-            { lv: 10, words: "2단어", ko: "건배!", fr: "Santé !", ans: "Santé", note: "건배 필수 청크" }
-          ],
-          t2: [
-            { lv: 11, words: "5단어", ko: "시원한 맥주 한 잔 주세요.", fr: "Une bière fraîche, s'il vous plaît.", ans: "bière fraîche", note: "기본 주문" },
-            { lv: 20, words: "5단어", ko: "같이 맛있는 거 먹으러 갈래?", fr: "On va manger quelque chose ensemble ?", ans: "manger ensemble", note: "친구 제안문" }
-          ],
-          t3: [
-            { lv: 21, words: "7단어", ko: "오늘 저녁에 시간 있으면 시원하게 맥주 한잔하자!", fr: "Si tu as le temps ce soir, viens boire un verre !", ans: "boire un verre", note: "조건 제안 복합문" },
-            { lv: 30, words: "10단어", ko: "여기가 파리에서 생맥주가 제일 맛있다고 소문난 펍이야.", fr: "C'est le pub le plus réputé pour la bière pression à Paris.", ans: "bière pression", note: "비교급 복합문" }
-          ],
-          t4: [
-            { lv: 31, words: "13단어", ko: "죄송하지만 테라스 자리에 4인석을 예약할 수 있는지 확인 부탁드립니다.", fr: "Pourriez-vous vérifier s'il est possible de réserver une table pour quatre en terrasse ?", ans: "en terrasse", note: "고급 레스토랑 예약" },
-            { lv: 40, words: "18단어", ko: "오늘 저녁 특선 페어링 코스에 가장 잘 어울리는 크래프트 비어 라인업을 추천해 주시겠습니까?", fr: "Auriez-vous la gentillesse de nous recommander une sélection de bières artisanales adaptée au menu du soir ?", ans: "bières artisanales", note: "최고급 페어링 격식" }
-          ],
-          persona: {
-            name: "루카스 (Lucas)", role: "파리 현지 친구 · 유쾌함", avatar: "🍻",
-            greetings: "Salut champion ! Niveau 41 débloqué ! Alors, on fête ça avec une bonne bière ?",
-            greetingsKo: "안녕 챔피언! 41레벨 해금 축하해! 시원한 맥주로 축배 들러 갈까?",
-            suggested: "Salut Lucas ! Carrément, emmène-moi dans le meilleur bar du coin !",
-            replies: [
-              { text: "C'est parti ! Je connais une brasserie artisanale incroyable près du canal !", ko: "가자고! 운하 근처에 기가 막힌 수제 맥줏집을 내가 알고 있지!" }
+      ja: {
+        t1: [
+          {
+            lv: 1, words: "1단어", note: "기본 피로 표현",
+            base: { ko: "피곤해.", target: "疲れた。", phonetic: "[츠카레타]", note: "기본 반말형" },
+            vars: [
+              { ko: "정말 피곤해요.", target: "本当に疲れました。", phonetic: "[혼토-니 츠카레마시타]", note: "정중형 변형 1" },
+              { ko: "오늘 너무 지쳤어.", target: "今日はもうヘトヘト。", phonetic: "[쿄-와 모- 헤토헤토]", note: "의성어 변형 2" },
+              { ko: "빨리 쉬고 싶다.", target: "早く休みたい。", phonetic: "[하야쿠 야수미타이]", note: "소망 변형 3" }
             ]
           }
-        },
-        cn: {
-          t1: [
-            { lv: 1, words: "2글자", ko: "맥주.", fr: "啤酒。", ans: "啤酒", note: "기본 명사" },
-            { lv: 10, words: "2글자", ko: "건배!", fr: "干杯！", ans: "干杯", note: "술자리 필수 청크" }
-          ],
-          t2: [
-            { lv: 11, words: "5글자", ko: "시원한 맥주 주세요.", fr: "来两瓶冰啤酒。", ans: "冰啤酒", note: "기본 수량 주문" },
-            { lv: 20, words: "7글자", ko: "오늘 저녁에 치맥 어때?", fr: "今晚去吃炸鸡配啤酒怎么样？", ans: "炸鸡配啤酒", note: "친구 제안문" }
-          ],
-          t3: [
-            { lv: 21, words: "12글자", ko: "퇴근하고 시간 괜찮으면 삼겹살에 소주 한잔하자!", fr: "下班后如果有空的话，一起去吃烤肉喝一杯吧！", ans: "吃烤肉", note: "조건 제안 복합문" },
-            { lv: 30, words: "15글자", ko: "이 집 양꼬치와 칭따오 맥주 조합이 상하이에서 제일 유명해.", fr: "这家羊肉串配青岛啤酒的组合在上海是最地道的。", ans: "最地道的", note: "맛집 소개 복합문" }
-          ],
-          t4: [
-            { lv: 31, words: "17글자", ko: "저희 일행이 네 명인데 혹시 안쪽 조용한 룸으로 자리를 잡아주실 수 있나요?", fr: "我们一共四位，请问能不能帮我们安排一个里面安静一点的包间？", ans: "安静一点的包间", note: "식당 예약 완곡문" },
-            { lv: 40, words: "22단어", ko: "귀한 자리에 초대해 주셔서 감사드리며, 오늘 좋은 음식과 함께 뜻깊은 시간을 보낼 수 있기를 기대합니다.", fr: "非常感谢您的热情款待，期待今天能在品尝佳肴的同时与各位度过难忘的时光。", ans: "热情款待", note: "비즈니스 회식 격식" }
-          ],
-          persona: {
-            name: "왕웨이 (王伟)", role: "상하이 로컬 맛집 매니저", avatar: "🍻",
-            greetings: "太厉害了！41级达成！今晚必须整两杯庆祝一下！想吃点啥？",
-            greetingsKo: "대단해요! 41레벨 달성! 오늘 밤 무조건 축하주 마셔야죠! 뭐 먹을래요?",
-            suggested: "王经理，今天推荐个最地道的夜宵大排档吧，喝点冰啤酒！",
-            replies: [
-              { text: "哈哈！包在我身上！去外滩附近的生蚝生啤大排档，绝了！", ko: "하하! 나만 믿어요! 와이탄 근처 굴구이에 생맥주 포장마차로 갑시다, 기가 막힙니다!" }
-            ]
-          }
-        },
-        ja: {
-          t1: [
-            { lv: 1, words: "1단어", ko: "생맥주.", fr: "生ビール。", ans: "生ビール", note: "기본 1단어" },
-            { lv: 10, words: "2단어", ko: "건배!", fr: "乾杯！", ans: "乾杯", note: "이자카야 필수 청크" }
-          ],
-          t2: [
-            { lv: 11, words: "4단어", ko: "일단 생맥주 하나 주세요.", fr: "とりあえず生一つください。", ans: "とりあえず生", note: "이자카야 황금 기본문" },
-            { lv: 20, words: "6단어", ko: "오늘 퇴근하고 한잔하러 갈래요?", fr: "今日仕事帰りに一杯飲みに行きませんか？", ans: "一杯飲みに行きませんか", note: "동료 권유문" }
-          ],
-          t3: [
-            { lv: 21, words: "8단어", ko: "오랜만에 만났으니 맛있는 안주 시켜서 신나게 마시자!", fr: "久しぶりに会ったから、美味しいおつまみ頼んで楽しく飲もう！", ans: "美味しいおつまみ", note: "친구 수다 복합문" },
-            { lv: 30, words: "10단어", ko: "여기가 도쿄에서 야키토리와 나마비루가 제일 맛있는 숨은 맛집이야.", fr: "ここが東京で焼き鳥と生ビールが一番美味しい隠れ家だよ。", ans: "一番美味しい隠れ家", note: "맛집 소개 복합문" }
-          ],
-          t4: [
-            { lv: 31, words: "14단어", ko: "죄송하지만 4명 자리 예약하고 싶은데 흡연석과 분리된 금연 테이블로 가능할까요?", fr: "すみません、4名で予約したいのですが、禁煙のテーブル席をお願いできますでしょうか？", ans: "禁煙のテーブル席", note: "이자카야 정중 예약" },
-            { lv: 40, words: "18단어", ko: "오늘 이 자리를 마련해 주셔서 대단히 감사드리오며 귀사의 번창을 기원하며 다 함께 건배를 제의하고자 합니다.", fr: "本日このような素晴らしいお席を設けていただき感謝申し上げます。皆様のご発展を祈念して乾杯いたしましょう。", ans: "ご発展を祈念して", note: "최고급 비즈니스 건배사" }
-          ],
-          persona: {
-            name: "다이키 (Daiki)", role: "신주쿠 이자카야 친구", avatar: "🍻",
-            greetings: "おめでとう！レベル41達成！今夜はパーッと居酒屋で祝杯あげようぜ！",
-            greetingsKo: "축하해! 41레벨 달성! 오늘 밤은 이자카야에서 거하게 축배 들자고!",
-            suggested: "大樹、新宿でおすすめの焼き鳥と美味い生ビールが飲める居酒屋行こう！",
-            replies: [
-              { text: "いいね！思い出横丁の行きつけがあるから、カウンターで乾杯しよう！", ko: "좋지! 오모이데 요코초에 단골집이 있으니 카운터에서 건배하자!" }
-            ]
-          }
+        ],
+        persona: {
+          name: "켄지 (Kenji)", role: "도쿄 오피스 동료", avatar: "💼",
+          greetings: "お疲れ様！今日も残業大変だった？",
+          greetingsKo: "수고했어! 오늘도 야근하느라 힘들었지?",
+          suggested: "健二さん、今日は本当に疲れました。軽く一杯飲みに行きませんか？"
         }
       }
+    },
+    cafe: {
+      themeName: "☕ [카페 & 힐링 휴식]",
+      keywords: "#카페 #커피 #힐링",
+      fr: {
+        t1: [
+          {
+            lv: 1, words: "1단어", note: "기본 명사 청크",
+            base: { ko: "커피.", target: "Un café.", phonetic: "[앙 카페]", note: "카페 기본 주문" },
+            vars: [
+              { ko: "따뜻한 커피.", target: "Café chaud.", phonetic: "[카페 쇼]", note: "온도 변형 1" },
+              { ko: "라떼 한 잔.", target: "Un café crème.", phonetic: "[앙 카페 크렘]", note: "메뉴 변형 2" },
+              { ko: "에스프레소 한 잔.", target: "Un expresso.", phonetic: "[앙 엑스프레소]", note: "세부 메뉴 변형 3" }
+            ]
+          }
+        ],
+        persona: {
+          name: "클로에 (Chloé)", role: "파리 5구 라탱지구 바리스타", avatar: "☕",
+          greetings: "Bonjour ! Quel café te ferait plaisir aujourd'hui ?",
+          greetingsKo: "안녕하세요! 오늘 어떤 커피로 기분 전환하실래요?",
+          suggested: "Bonjour Chloé ! Raconte-moi un peu l'histoire de ton café préféré."
+        }
+      },
+      cn: {
+        t1: [
+          {
+            lv: 1, words: "2글자", note: "기본 카페 주문",
+            base: { ko: "커피.", target: "咖啡。", phonetic: "[카페이]", note: "기본 명사" },
+            vars: [
+              { ko: "따뜻한 커피.", target: "热咖啡。", phonetic: "[르어 카페이]", note: "온도 변형 1" },
+              { ko: "아이스 아메리카노.", target: "冰美式。", phonetic: "[빙 메이스]", note: "메뉴 변형 2" },
+              { ko: "라떼 한 잔.", target: "一杯拿铁。", phonetic: "[이베이 나티에]", note: "수량 변형 3" }
+            ]
+          }
+        ],
+        persona: {
+          name: "린 (Lin)", role: "베이징 카페 바리스타", avatar: "☕",
+          greetings: "欢迎光临！今天想喝点什么暖暖身子？",
+          greetingsKo: "어서오세요! 오늘 몸을 녹일 어떤 음료를 드릴까요?",
+          suggested: "来一杯热美式，不要加糖，谢谢！"
+        }
+      },
+      ja: {
+        t1: [
+          {
+            lv: 1, words: "1단어", note: "카페 기본 명사",
+            base: { ko: "커피.", target: "コーヒー。", phonetic: "[코-히-]", note: "기본 명사" },
+            vars: [
+              { ko: "따뜻한 커피.", target: "ホットコーヒー。", phonetic: "[홋토 코-히-]", note: "온도 변형 1" },
+              { ko: "아이스 아메리카노.", target: "アイスコーヒー。", phonetic: "[아이수 코-히-]", note: "메뉴 변형 2" },
+              { ko: "카페라떼 한 잔.", target: "カフェラテ。", phonetic: "[카페 라테]", note: "라떼 변형 3" }
+            ]
+          }
+        ],
+        persona: {
+          name: "유키 (Yuki)", role: "시부야 카페 바리스타", avatar: "☕",
+          greetings: "いらっしゃいませ！今日はどんなドリンクにされますか？",
+          greetingsKo: "어서 오세요! 오늘은 어떤 음료로 하시겠어요?",
+          suggested: "ホットのカフェラテを一つお願いします！"
+        }
+      }
+    },
+    beer: {
+      themeName: "🍺 [맥주 & 친구 모임]",
+      keywords: "#맥주 #친구 #치맥",
+      fr: {
+        t1: [
+          {
+            lv: 1, words: "1단어", note: "펍 필수 청크",
+            base: { ko: "맥주 한 잔.", target: "Une bière.", phonetic: "[윈 비에르]", note: "기본 주문" },
+            vars: [
+              { ko: "시원한 맥주.", target: "Bière fraîche.", phonetic: "[비에르 프레슈]", note: "상태 변형 1" },
+              { ko: "생맥주 한 잔.", target: "Une pression.", phonetic: "[윈 프레시옹]", note: "생맥주 변형 2" },
+              { ko: "건배!", target: "Santé !", phonetic: "[상테]", note: "감탄사 변형 3" }
+            ]
+          }
+        ],
+        persona: {
+          name: "루이 (Louis)", role: "파리 몽마르트르 친구", avatar: "🍺",
+          greetings: "Salut ! On se prend une bonne bière fraîche ce soir ?",
+          greetingsKo: "안녕! 오늘 저녁에 시원한 맥주 한잔할까?",
+          suggested: "Super idée Louis ! Je te rejoins au bar dans 10 minutes !"
+        }
+      },
+      cn: {
+        t1: [
+          {
+            lv: 1, words: "2글자", note: "술자리 필수 청크",
+            base: { ko: "맥주.", target: "啤酒。", phonetic: "[피지우]", note: "기본 명사" },
+            vars: [
+              { ko: "차가운 맥주.", target: "冰啤酒。", phonetic: "[빙 피지우]", note: "상태 변형 1" },
+              { ko: "생맥주 한 잔.", target: "扎啤。", phonetic: "[자피]", note: "생맥주 변형 2" },
+              { ko: "건배!", target: "干杯！", phonetic: "[간베이]", note: "건배 변형 3" }
+            ]
+          }
+        ],
+        persona: {
+          name: "리웨이 (李伟)", role: "베이징 대학 동기", avatar: "🍺",
+          greetings: "兄弟！今晚去撸串喝啤酒怎么样？",
+          greetingsKo: "친구야! 오늘 밤 양꼬치에 맥주 한잔 어때?",
+          suggested: "太好了！正好今天馋烤串了，老地方见！"
+        }
+      },
+      ja: {
+        t1: [
+          {
+            lv: 1, words: "1단어", note: "이자카야 필수 청크",
+            base: { ko: "맥주.", target: "ビール。", phonetic: "[비-루]", note: "기본 명사" },
+            vars: [
+              { ko: "생맥주 한 잔.", target: "生ビール。", phonetic: "[나마비-루]", note: "생맥주 변형 1" },
+              { ko: "우선 맥주로!", target: "とりあえずビール！", phonetic: "[토리아에즈 비-루]", note: "이자카야 관용구 변형 2" },
+              { ko: "건배!", target: "乾杯！", phonetic: "[캄파이]", note: "건배 변형 3" }
+            ]
+          }
+        ],
+        persona: {
+          name: "타쿠야 (Takuya)", role: "신주쿠 이자카야 친구", avatar: "🍺",
+          greetings: "おっす！仕事終わりに焼き鳥で乾杯しようぜ！",
+          greetingsKo: "안녕! 일 끝나고 야키토리에 건배하자!",
+          suggested: "賛成！すぐ行くから席取っておいて！"
+        }
+      }
+    }
+  };
+
+
+  /* =========================================================
+     4. 앱 상태 관리 (State Management)
+     ========================================================= */
+  let userName = "옵빠";
+  let selectedLang = "fr";
+  let currentLevel = 1;
+  let currentTheme = "work";
+  let currentStoryQuote = "오늘 회사에서 야근해서 너무 피곤해...";
+  let comboCount = 0;
+
+  // 온보딩 단계
+  let obStep = 1;
+  let obAnswers = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  let obDiagnosedLevel = 1;
+
+  // 4단계 섀도잉 루프 상태 (1=기준예문, 2=변형1, 3=변형2, 4=변형3)
+  let currentRound = 1;
+  let roundPassed = [false, false, false, false]; // 라운드별 통과 여부
+
+  // STT 상태
+  let speechRecognizer = null;
+  let isRecordingSTT = false;
+
+
+  /* =========================================================
+     5. 4단계 섀도잉 루프 컨트롤러 & 통과 가드 (Gatekeeper)
+     ========================================================= */
+  function getCurrentLessonUnit() {
+    const langObj = THEMED_DATA[currentTheme][selectedLang];
+    if (!langObj) return THEMED_DATA.work.fr.t1[0];
+
+    // 티어별 매핑
+    let list = langObj.t1;
+    if (currentLevel >= 11 && currentLevel <= 20 && langObj.t2) list = langObj.t2;
+    else if (currentLevel >= 21 && currentLevel <= 30 && langObj.t3) list = langObj.t3;
+    else if (currentLevel >= 31 && currentLevel <= 40 && langObj.t4) list = langObj.t4;
+    
+    const idx = (currentLevel - 1) % list.length;
+    return list[idx] || list[0];
+  }
+
+  function getCurrentRoundData() {
+    const unit = getCurrentLessonUnit();
+    if (currentRound === 1) {
+      return {
+        type: "[기준 예문] 최초 듣고 따라하기",
+        ko: unit.base.ko,
+        target: unit.base.target,
+        phonetic: unit.base.phonetic,
+        note: unit.base.note
+      };
+    } else {
+      const vIdx = currentRound - 2;
+      const v = (unit.vars && unit.vars[vIdx]) ? unit.vars[vIdx] : unit.base;
+      return {
+        type: `[변형 ${currentRound - 1}] 상황 및 슬롯 치환 발화`,
+        ko: v.ko,
+        target: v.target,
+        phonetic: v.phonetic,
+        note: v.note
+      };
+    }
+  }
+
+  function renderCurrentRoundUI() {
+    const data = getCurrentRoundData();
+    if (!data) return;
+
+    // 라운드 배지 및 탭
+    document.getElementById('roundBadge').textContent = `따라하기 ${currentRound} / 4`;
+    document.getElementById('roundTypeLabel').textContent = data.type;
+
+    // 도트 인디케이터
+    for (let r = 1; r <= 4; r++) {
+      const dot = document.getElementById(`dotR${r}`);
+      if (r === currentRound) {
+        dot.style.background = "#4f46e5";
+        dot.style.transform = "scale(1.2)";
+      } else if (roundPassed[r - 1]) {
+        dot.style.background = "#58cc02";
+        dot.style.transform = "scale(1)";
+      } else {
+        dot.style.background = "#cbd5e1";
+        dot.style.transform = "scale(1)";
+      }
+    }
+
+    // 텍스트 출력
+    document.getElementById('koreanPrompt').textContent = `"${data.ko}"`;
+    document.getElementById('targetDisplay').textContent = data.target;
+    document.getElementById('targetPhonetic').textContent = data.phonetic;
+    document.getElementById('buildUpNote').textContent = data.note;
+
+    // 피드백 시트 초기화
+    document.getElementById('feedbackSheet').classList.add('hidden');
+    document.getElementById('userSpokenFeedback').textContent = '';
+    document.getElementById('sttStatusText').textContent = "원어민 발음을 듣고 [🎙️ 마이크로 말하기]를 눌러 따라해보세요!";
+
+    // 다음 버튼 잠금 가드! (현재 라운드 미통과 시 무조건 잠금)
+    const nextBtn = document.getElementById('btnNextRound');
+    if (roundPassed[currentRound - 1]) {
+      nextBtn.classList.remove('btn-disabled');
+      nextBtn.disabled = false;
+    } else {
+      nextBtn.classList.add('btn-disabled');
+      nextBtn.disabled = true;
+    }
+
+    // 원어민 음성 0.2초 후 자동 1회 발화
+    setTimeout(() => {
+      playTargetTTS();
+    }, 250);
+  }
+
+  /* =========================================================
+     6. 실제 마이크 음성인식 (STT) 및 정밀 유사도 분석 가드
+     ========================================================= */
+  function startVoiceRecognition() {
+    getAudioContext(); // 오디오 unlock
+    soundTap();
+
+    const statusEl = document.getElementById('sttStatusText');
+    const feedbackEl = document.getElementById('userSpokenFeedback');
+    const waveBars = document.querySelectorAll('.wave-bar');
+
+    // Web Speech Recognition 지원 확인
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      statusEl.textContent = "현재 환경에서 음성인식 엔진을 직접 지원하지 않아, 텍스트 입력창으로 전환합니다.";
+      promptManualInputTest();
+      return;
+    }
+
+    try {
+      if (speechRecognizer) {
+        speechRecognizer.abort();
+        speechRecognizer = null;
+      }
+
+      speechRecognizer = new SpeechRecognition();
+      speechRecognizer.continuous = false;
+      speechRecognizer.interimResults = false;
+      speechRecognizer.maxAlternatives = 1;
+
+      // 목표 언어 설정
+      if (selectedLang === 'fr') speechRecognizer.lang = 'fr-FR';
+      else if (selectedLang === 'cn') speechRecognizer.lang = 'zh-CN';
+      else if (selectedLang === 'ja') speechRecognizer.lang = 'ja-JP';
+      else speechRecognizer.lang = 'ko-KR';
+
+      speechRecognizer.onstart = () => {
+        isRecordingSTT = true;
+        document.getElementById('btnMicText').textContent = "듣고 있습니다... 목소리를 내어 말하세요!";
+        statusEl.innerHTML = "<span style='color:#ef4444; font-weight:900;'>● 녹음 중...</span> 스마트폰 마이크에 대고 원어민 문장을 말씀하세요!";
+        // 웨이브 애니메이션
+        waveBars.forEach((b, i) => b.style.height = `${14 + (i % 3) * 8}px`);
+      };
+
+      speechRecognizer.onresult = (event) => {
+        isRecordingSTT = false;
+        waveBars.forEach(b => b.style.height = '8px');
+        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기 (실제 음성 분석)";
+
+        const transcript = event.results[0][0].transcript.trim();
+        feedbackEl.innerHTML = `🗣️ 인식된 목소리: <strong>"${transcript}"</strong>`;
+        analyzePronunciationAndJudge(transcript);
+      };
+
+      speechRecognizer.onerror = (event) => {
+        isRecordingSTT = false;
+        waveBars.forEach(b => b.style.height = '8px');
+        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기 (다시 시도)";
+        console.warn("Speech recognition error:", event.error);
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          statusEl.textContent = "마이크 권한이 거부되었습니다. 권한을 허용하거나 아래 텍스트 테스트를 이용하세요.";
+        } else {
+          statusEl.textContent = `음성 감지 실패 (${event.error}). 조용한 곳에서 다시 말해보세요!`;
+        }
+      };
+
+      speechRecognizer.onend = () => {
+        isRecordingSTT = false;
+        waveBars.forEach(b => b.style.height = '8px');
+        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기 (실제 음성 분석)";
+      };
+
+      speechRecognizer.start();
+
+    } catch(err) {
+      console.warn("SpeechRecognition start failed:", err);
+      promptManualInputTest();
+    }
+  }
+
+  /* 텍스트 직접 입력 보조 테스트 (마이크 권한 미지원 대비) */
+  function promptManualInputTest() {
+    const roundData = getCurrentRoundData();
+    const input = prompt(`[따라하기 ${currentRound}/4 단계]\n목표 문장: "${roundData.target}"\n\n발음하거나 말한 내용을 텍스트로 입력하여 AI 정확도 평가를 진행하세요:`, roundData.target);
+    if (input !== null && input.trim()) {
+      document.getElementById('userSpokenFeedback').innerHTML = `🗣️ 입력된 발화: <strong>"${input.trim()}"</strong>`;
+      analyzePronunciationAndJudge(input.trim());
+    }
+  }
+
+  /* 문자열 정규화 및 Levenshtein 유사도 계산 */
+  function normalizeText(str) {
+    return str.toLowerCase()
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?'"‘’“”]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function calculateSimilarity(s1, s2) {
+    const str1 = normalizeText(s1);
+    const str2 = normalizeText(s2);
+    if (str1 === str2) return 100;
+    if (!str1.length || !str2.length) return 0;
+
+    const track = Array(str2.length + 1).fill(null).map(() =>
+      Array(str1.length + 1).fill(null));
+    for (let i = 0; i <= str1.length; i += 1) track[0][i] = i;
+    for (let j = 0; j <= str2.length; j += 1) track[j][0] = j;
+
+    for (let j = 1; j <= str2.length; j += 1) {
+      for (let i = 1; i <= str1.length; i += 1) {
+        const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+        track[j][i] = Math.min(
+          track[j][i - 1] + 1, // deletion
+          track[j - 1][i] + 1, // insertion
+          track[j - 1][i - 1] + indicator // substitution
+        );
+      }
+    }
+    const distance = track[str2.length][str1.length];
+    const maxLen = Math.max(str1.length, str2.length);
+    const score = Math.round(((maxLen - distance) / maxLen) * 100);
+    return Math.max(0, Math.min(100, score));
+  }
+
+  /* 발음 분석 및 엄격한 통과 가드 (Gatekeeper Guard) 판정 */
+  function analyzePronunciationAndJudge(spokenText) {
+    const roundData = getCurrentRoundData();
+    const score = calculateSimilarity(roundData.target, spokenText);
+
+    const sheet = document.getElementById('feedbackSheet');
+    const badge = document.getElementById('passFailBadge');
+    const wordsContainer = document.getElementById('coloredWords');
+    const polishText = document.getElementById('polishText');
+    const noticeEl = document.getElementById('gatekeeperNotice');
+    const nextBtn = document.getElementById('btnNextRound');
+
+    sheet.classList.remove('hidden');
+    wordsContainer.innerHTML = '';
+
+    // 단어별 분해 칩 생성
+    const targetWords = roundData.target.split(/\s+/);
+    targetWords.forEach(w => {
+      const span = document.createElement('span');
+      span.textContent = w;
+      if (score >= 70) {
+        span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#dcfce7; color:#166534; border:1.5px solid #86efac; font-size:14px;";
+      } else {
+        span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#fee2e2; color:#991b1b; border:1.5px solid #fca5a5; font-size:14px;";
+      }
+      wordsContainer.appendChild(span);
+    });
+
+    // 판정 분기: 70점 이상 통과 vs 70점 미만 절대 차단!
+    if (score >= 70) {
+      // 🎉 통과 (PASS)
+      soundLevelUp();
+      comboCount++;
+      document.getElementById('comboBadge').textContent = `x${comboCount} COMBO`;
+      roundPassed[currentRound - 1] = true;
+
+      badge.style.background = "#dcfce7";
+      badge.style.color = "#166534";
+      badge.innerHTML = `🎉 통과 완료! (정확도 ${score}점)`;
+
+      polishText.innerHTML = `AI 엑자일 분석: <strong>"정확한 원어민 발음입니다! ${userName}의 조음 감각이 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>정답 문장: ${roundData.target}</span>`;
+      
+      if (currentRound < 4) {
+        noticeEl.innerHTML = `<span style='color:#166534;'>✅ [통과 성공] 다음 변형 예문으로 도전할 수 있습니다! 아래 버튼을 누르세요.</span>`;
+        nextBtn.innerHTML = `<span>따라하기 ${currentRound + 1}/4 단계로 도전 ➔</span>`;
+      } else {
+        noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4단계 마스터 완료!] 이번 레벨의 모든 따라하기를 완벽히 정복했습니다!</span>`;
+        nextBtn.innerHTML = `<span>🎉 Lv.${currentLevel} 클리어! 다음 레벨로 승급 ➔</span>`;
+      }
+
+      nextBtn.classList.remove('btn-disabled');
+      nextBtn.disabled = false;
+
+      // 저장
+      try {
+        localStorage.setItem(`hangeoreum_lv${currentLevel}_r${currentRound}`, '1');
+      } catch(e) {}
+
+    } else {
+      // ❌ 통과 실패 (FAIL) - 엄격한 잠금 가드!
+      soundFail();
+      comboCount = 0;
+      document.getElementById('comboBadge').textContent = `x0 COMBO`;
+      roundPassed[currentRound - 1] = false;
+
+      badge.style.background = "#fee2e2";
+      badge.style.color = "#991b1b";
+      badge.innerHTML = `❌ 통과 실패 (정확도 ${score}점 / 합격 기준 70점)`;
+
+      polishText.innerHTML = `AI 엑자일 코칭: <strong>"발음이 명확하지 않습니다. 원어민 음성을 다시 듣고 입을 크게 벌려 따라 해보세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발화: "${spokenText}"</span>`;
+
+      noticeEl.innerHTML = `<span style='color:#dc2626;'>⛔ [진행 잠금] 70점 이상을 달성하지 못하면 다음 단계로 절대 넘어갈 수 없습니다! [🔊 원어민 소리]를 듣고 [🎙️ 마이크로 말하기]로 다시 도전하세요!</span>`;
+
+      // 절대 못 넘어가도록 버튼 비활성화 가드!
+      nextBtn.classList.add('btn-disabled');
+      nextBtn.disabled = true;
+      nextBtn.innerHTML = `<span>❌ 70점 이상 달성 시 잠금 해제</span>`;
+    }
+
+    // 만약 사용자가 API 키를 연동했다면 백그라운드 AI 심층 코칭 요청
+    callAiPronunciationCoachIfAvailable(spokenText, roundData.target, score);
+  }
+
+  function proceedNextRoundOrLevel() {
+    if (!roundPassed[currentRound - 1]) {
+      alert("현재 단계를 70점 이상으로 통과해야만 다음으로 넘어갈 수 있습니다!");
+      return;
+    }
+
+    soundTap();
+    if (currentRound < 4) {
+      currentRound++;
+      renderCurrentRoundUI();
+    } else {
+      // 4단계 모두 완료 -> 다음 레벨 승급!
+      soundLevelUp();
+      alert(`🎉 축하합니다! ${userName}님이 Lv.${currentLevel}의 4단계 변형 문장을 모두 마스터하셨습니다!`);
+      if (currentLevel < 50) {
+        currentLevel++;
+        currentRound = 1;
+        roundPassed = [false, false, false, false];
+        document.getElementById('levelSlider').value = currentLevel;
+        updateLevelUI();
+      }
+    }
+  }
+
+
+  /* =========================================================
+     7. ⚙️ AI API 연동 설정 관리자 (OpenAI / Gemini / Claude)
+     ========================================================= */
+  const DEFAULT_API_CONFIG = {
+    provider: 'gemini',
+    apiKey: '',
+    baseUrl: 'https://generativelanguage.googleapis.com',
+    model: 'gemini-1.5-flash'
+  };
+
+  function getApiConfig() {
+    try {
+      const raw = localStorage.getItem('hangeoreum_api_config');
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return { ...DEFAULT_API_CONFIG };
+  }
+
+  function openSettingsModal() {
+    soundTap();
+    const config = getApiConfig();
+    document.getElementById('apiProviderSelect').value = config.provider || 'gemini';
+    document.getElementById('apiKeyInput').value = config.apiKey || '';
+    document.getElementById('apiBaseUrlInput').value = config.baseUrl || 'https://generativelanguage.googleapis.com';
+    document.getElementById('apiModelInput').value = config.model || 'gemini-1.5-flash';
+    document.getElementById('apiTestStatus').textContent = '';
+    document.getElementById('settingsModal').classList.remove('hidden');
+  }
+
+  function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.add('hidden');
+  }
+
+  function onSelectApiProvider(prov) {
+    const urlInput = document.getElementById('apiBaseUrlInput');
+    const modelInput = document.getElementById('apiModelInput');
+    if (prov === 'gemini') {
+      urlInput.value = 'https://generativelanguage.googleapis.com';
+      modelInput.value = 'gemini-1.5-flash';
+    } else if (prov === 'openai') {
+      urlInput.value = 'https://api.openai.com/v1';
+      modelInput.value = 'gpt-4o-mini';
+    } else if (prov === 'claude') {
+      urlInput.value = 'https://api.anthropic.com/v1';
+      modelInput.value = 'claude-3-5-sonnet-20241022';
+    }
+  }
+
+  function toggleApiKeyVisibility() {
+    const input = document.getElementById('apiKeyInput');
+    const label = document.getElementById('apiKeyToggleLabel');
+    if (input.type === 'password') {
+      input.type = 'text';
+      label.textContent = '비밀번호 숨김';
+    } else {
+      input.type = 'password';
+      label.textContent = '비밀번호 표시';
+    }
+  }
+
+  function saveApiSettings() {
+    const config = {
+      provider: document.getElementById('apiProviderSelect').value,
+      apiKey: document.getElementById('apiKeyInput').value.trim(),
+      baseUrl: document.getElementById('apiBaseUrlInput').value.trim(),
+      model: document.getElementById('apiModelInput').value.trim()
     };
+    try {
+      localStorage.setItem('hangeoreum_api_config', JSON.stringify(config));
+    } catch(e) {}
+    soundLevelUp();
+    alert("AI API 설정이 안전하게 저장되었습니다!");
+    closeSettingsModal();
+  }
 
-    /* =========================================================
-       3. 전역 상태 변수
-       ========================================================= */
-    let userName = "옵빠";
-    let selectedLang = 'fr';
-    let currentTheme = 'work';
-    let currentStoryQuote = "오늘 회사에서 야근해서 너무 피곤해";
-    let currentLevel = 14;
-    let comboCount = 0;
-    let rpTurn = 0;
+  function clearApiSettings() {
+    if (confirm("API 설정을 초기화하고 내장 오프라인 엔진으로 복귀하시겠습니까?")) {
+      try {
+        localStorage.removeItem('hangeoreum_api_config');
+      } catch(e) {}
+      openSettingsModal();
+      document.getElementById('apiTestStatus').innerHTML = "<span style='color:#166534;'>초기화되었습니다. 내장 오프라인 모드로 동작합니다.</span>";
+    }
+  }
 
-    // 온보딩 전용 상태
-    let obStep = 1;
-    let obAnswers = { 1: 1, 2: 1, 3: 0, 4: 0 };
-    let obDiagnosedLevel = 14;
+  async function testApiConnection() {
+    const statusEl = document.getElementById('apiTestStatus');
+    const provider = document.getElementById('apiProviderSelect').value;
+    const apiKey = document.getElementById('apiKeyInput').value.trim();
+    const baseUrl = document.getElementById('apiBaseUrlInput').value.trim();
+    const model = document.getElementById('apiModelInput').value.trim();
 
-    /* =========================================================
-       4. 엑자일 AI 음성 엔진 & 온보딩 컨트롤러
-       ========================================================= */
-    const EXILE_VOICES = [
-      {
-        id: "female_royal",
-        gender: "female",
-        icon: "👑",
-        name: "안드로메다 왕립 안내 AI",
-        desc: "우아하고 차분한 은하계 표준 여성 보이스",
-        pitch: 1.10,
-        rate: 0.95,
-        sample: "지구인 {NAME}! 저를 안드로메다로 돌려보내 주실 거죠? 성실히 코칭해 드릴게요."
-      },
-      {
-        id: "female_spark",
-        gender: "female",
-        icon: "✨",
-        name: "활기찬 은하계 탐사관",
-        desc: "통통 튀고 발랄한 우주 탐험가 여성 보이스",
-        pitch: 1.35,
-        rate: 1.05,
-        sample: "{NAME}! 얼른 50레벨 찍고 나 안드로메다로 귀환시켜 줘! 파이팅!"
-      },
-      {
-        id: "male_navigator",
-        gender: "male",
-        icon: "🛰️",
-        name: "안드로메다 수석 네비게이터",
-        desc: "신뢰감 있고 부드러운 스마트 남성 보이스",
-        pitch: 0.88,
-        rate: 0.95,
-        sample: "{NAME}, 안드로메다 귀환 좌표를 맞췄습니다. 오늘 회화 훈련을 시작하겠습니다."
-      },
-      {
-        id: "male_commander",
-        gender: "male",
-        icon: "⚡",
-        name: "열혈 은하 함대 사령관",
-        desc: "당당하고 파워풀한 호탕한 남성 보이스",
-        pitch: 0.72,
-        rate: 1.05,
-        sample: "{NAME}! 나 사령관 엑자일이다! 포기하지 말고 끝까지 전력 질주하자!"
-      },
-      {
-        id: "cyber_exile",
-        gender: "neutral",
-        icon: "🛸",
-        name: "사이버네틱 유배자 엑자일",
-        desc: "전자음 살짝 감도는 신비로운 우주 유배자 보이스",
-        pitch: 1.45,
-        rate: 0.90,
-        sample: "삐빅- {NAME}과 엑자일의 뇌파 동기화 완료. 안드로메다 탈출 계획을 가동합니다."
-      }
-    ];
-
-    let selectedExileGender = localStorage.getItem('hangeoreum_exile_gender') || 'female';
-    let selectedExileVoiceId = localStorage.getItem('hangeoreum_exile_voice_id') || 'female_royal';
-
-    function renderVoicePresets() {
-      const container = document.getElementById('voicePresetsContainer');
-      if (!container) return;
-      container.innerHTML = '';
-
-      EXILE_VOICES.forEach(v => {
-        const isSelected = (v.id === selectedExileVoiceId);
-        const card = document.createElement('div');
-        card.className = `choice-card ${isSelected ? 'selected' : ''}`;
-        card.style.cssText = "padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; border-radius:16px; margin-bottom:4px; cursor:pointer;";
-        card.onclick = () => selectVoicePreset(v.id);
-
-        const left = document.createElement('div');
-        left.style.cssText = "display:flex; align-items:center; gap:10px; flex:1;";
-        left.innerHTML = `
-          <div style="font-size:24px; flex-shrink:0;">${v.icon}</div>
-          <div style="flex:1;">
-            <div style="font-size:13px; font-weight:900; color:#1e293b; display:flex; align-items:center; gap:6px;">
-              ${v.name}
-              <span style="font-size:9.5px; background:${v.gender==='female'?'#fce7f3':(v.gender==='male'?'#dbeafe':'#f3e8ff')}; color:${v.gender==='female'?'#be185d':(v.gender==='male'?'#1d4ed8':'#7e22ce')}; padding:1px 6px; border-radius:6px; font-weight:800;">
-                ${v.gender==='female'?'여성':(v.gender==='male'?'남성':'사이버')}
-              </span>
-            </div>
-            <div style="font-size:11px; color:#64748b; font-weight:700; margin-top:2px;">
-              ${v.desc}
-            </div>
-          </div>
-        `;
-
-        const btn = document.createElement('button');
-        btn.className = 'chip-btn';
-        btn.style.cssText = "background:#6366f1; color:#ffffff; border:none; padding:6px 11px; font-size:11px; font-weight:900; border-radius:10px; flex-shrink:0; cursor:pointer;";
-        btn.innerHTML = "🔊 미리듣기";
-        btn.onclick = (e) => {
-          e.stopPropagation();
-          selectVoicePreset(v.id);
-          speakSampleVoice(v.id);
-        };
-
-        card.appendChild(left);
-        card.appendChild(btn);
-        container.appendChild(card);
-      });
+    if (!apiKey) {
+      statusEl.innerHTML = "<span style='color:#dc2626;'>API Key를 먼저 입력해 주세요.</span>";
+      return;
     }
 
-    function onSelectGender(gender) {
-      soundTap();
-      selectedExileGender = gender;
-      localStorage.setItem('hangeoreum_exile_gender', gender);
-      ['female', 'male', 'neutral'].forEach(g => {
-        const el = document.getElementById(`genderCard_${g}`);
-        if (el) {
-          if (g === gender) el.classList.add('selected');
-          else el.classList.remove('selected');
-        }
-      });
-      const match = EXILE_VOICES.find(v => v.gender === gender);
-      if (match) {
-        selectVoicePreset(match.id);
-      }
-    }
+    statusEl.innerHTML = "<span style='color:#4f46e5;'>연결 테스트 중입니다... 잠시만 기다려 주세요.</span>";
 
-    function selectVoicePreset(voiceId) {
-      soundTap();
-      selectedExileVoiceId = voiceId;
-      localStorage.setItem('hangeoreum_exile_voice_id', voiceId);
-      const voice = EXILE_VOICES.find(v => v.id === voiceId);
-      if (voice) {
-        selectedExileGender = voice.gender;
-        localStorage.setItem('hangeoreum_exile_gender', voice.gender);
-        ['female', 'male', 'neutral'].forEach(g => {
-          const el = document.getElementById(`genderCard_${g}`);
-          if (el) {
-            if (g === voice.gender) el.classList.add('selected');
-            else el.classList.remove('selected');
-          }
+    try {
+      if (provider === 'gemini') {
+        const url = `${baseUrl}/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: "Hello" }] }]
+          })
         });
+        if (res.ok) {
+          statusEl.innerHTML = "<span style='color:#166534;'>✅ Google Gemini API 연결 성공! (HTTP 200 OK)</span>";
+        } else {
+          const err = await res.text();
+          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.status} ${res.statusText}</span>`;
+        }
+      } else if (provider === 'openai') {
+        const url = `${baseUrl}/chat/completions`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'user', content: 'Hello' }],
+            max_tokens: 5
+          })
+        });
+        if (res.ok) {
+          statusEl.innerHTML = "<span style='color:#166534;'>✅ OpenAI API 연결 성공! (HTTP 200 OK)</span>";
+        } else {
+          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.status}</span>`;
+        }
+      } else {
+        statusEl.innerHTML = "<span style='color:#166534;'>✅ 설정 형식이 올바릅니다. (저장 후 실전 사용 가능)</span>";
       }
+    } catch(err) {
+      statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 네트워크/CORS 오류: ${err.message}</span>`;
+    }
+  }
+
+  async function callAiPronunciationCoachIfAvailable(spoken, target, score) {
+    const config = getApiConfig();
+    if (!config || !config.apiKey) return; // API 연동 안 되어 있으면 통과
+
+    try {
+      const promptText = `당신은 안드로메다에서 온 AI 어학 코치 '엑자일'입니다. 학습자 호칭은 '${userName}'입니다.
+외국어 목표 문장: "${target}"
+학습자가 발음한 텍스트: "${spoken}"
+정확도 점수: ${score}점
+학습자에게 한국어로 1~2문장으로 따뜻하고 유쾌하게 발음 및 억양 조언을 제공하세요.`;
+
+      if (config.provider === 'gemini') {
+        const url = `${config.baseUrl}/v1beta/models/${config.model}:generateContent?key=${config.apiKey}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (reply) {
+            document.getElementById('polishText').innerHTML = `AI 엑자일 정밀 피드백: <strong>"${reply.trim()}"</strong>`;
+          }
+        }
+      }
+    } catch(e) {
+      console.warn("AI coaching background call failed:", e);
+    }
+  }
+
+
+  /* =========================================================
+     8. 온보딩 컨트롤러 (호칭, 5대 음성, 진단)
+     ========================================================= */
+  function renderVoicePresets() {
+    const container = document.getElementById('voicePresetContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    EXILE_VOICES.forEach(v => {
+      const isSelected = (v.id === selectedExileVoiceId);
+      const card = document.createElement('div');
+      card.className = `choice-card ${isSelected ? 'selected' : ''}`;
+      card.style.padding = '12px 14px';
+
+      card.innerHTML = `
+        <span style="font-size:28px;">${v.icon}</span>
+        <div style="flex:1;">
+          <div style="font-size:16px; font-weight:900;">${v.name}</div>
+          <div style="font-size:12px; color:#64748b;">${v.gender === 'female' ? '여성 보이스' : (v.gender === 'male' ? '남성 보이스' : '사이버 봇')}</div>
+        </div>
+        <button type="button" class="btn-3d btn-secondary" style="width:auto; padding:6px 12px; min-height:36px; font-size:13px;" onclick="event.stopPropagation(); speakSampleVoice('${v.id}')">
+          🔊 미리듣기
+        </button>
+      `;
+
+      card.onclick = () => {
+        soundTap();
+        selectedExileVoiceId = v.id;
+        selectedExileGender = v.gender;
+        renderVoicePresets();
+        speakSampleVoice(v.id);
+      };
+
+      container.appendChild(card);
+    });
+  }
+
+  function speakSampleVoice(voiceId) {
+    const v = EXILE_VOICES.find(x => x.id === voiceId) || EXILE_VOICES[0];
+    const txt = v.sample.replace(/\{NAME\}/g, userName);
+    speakTextWithFallback(txt, 'ko', { pitch: v.pitch, rate: v.rate });
+  }
+
+  function speakExileIntroStory() {
+    const txt = `난 안드로메다 은하에서 머나먼 지구로 유배 온 AI 엑자일이야! 지구인 ${userName}을 외국어 회화 마스터로 키워야 내가 고향으로 돌아갈 수 있어! 날 꼭 안드로메다로 귀환시켜 줘!`;
+    speakExileTutor(txt, 'ko');
+  }
+
+  function replayCurrentTutorSpeech() {
+    const el = document.getElementById('obTutorSpeech');
+    if (el) {
+      speakExileTutor(el.textContent, 'ko');
+    }
+  }
+
+  function getObDialogues() {
+    return {
+      1: `난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>날 어떻게 부를지 호칭과 내 목소리를 골라줘!`,
+      2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
+      3: `좋아 <strong>${userName}</strong>! 안드로메다 귀환 판정 제1문!<br>외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
+      4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
+      5: `제3문! 문장 2개를 접속사로 이어서<br>길게 말하는 상황은 어때 <strong>${userName}</strong>?`,
+      6: `마지막 제4문! 까다로운 원어민 바이어와<br>나 엑자일과 실시간 1:1 자유 롤플레잉이 가능해?`,
+      7: `🎉 <strong>${userName}</strong>의 답변을 엑자일이 정밀 분석했어!<br>안드로메다 탈출 작전 시작 레벨을 배정했어!`
+    };
+  }
+
+  function onInputUserName(val) {
+    if (val.trim()) userName = val.trim();
+  }
+  function selectQuickName(name) {
+    soundTap();
+    userName = name;
+    document.getElementById('obUserNameInput').value = name;
+  }
+  function onSelectLang(lang, card) {
+    soundTap();
+    selectedLang = lang;
+    card.parentElement.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+  }
+  function onAnswerQuestion(qNum, score, card) {
+    soundTap();
+    obAnswers[qNum] = score;
+    card.parentElement.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+  }
+
+  function calculateAIDiagnosis() {
+    const totalScore = obAnswers[1] + obAnswers[2] + obAnswers[3] + obAnswers[4];
+    const chunkPct = Math.round((obAnswers[1] / 2) * 100);
+    const sentencePct = Math.round((obAnswers[2] / 2) * 100);
+    const compoundPct = Math.round((obAnswers[3] / 2) * 100);
+
+    document.getElementById('obBarChunk').style.width = `${Math.max(15, chunkPct)}%`;
+    document.getElementById('obBarSentence').style.width = `${Math.max(15, sentencePct)}%`;
+    document.getElementById('obBarCompound').style.width = `${Math.max(15, compoundPct)}%`;
+
+    if (totalScore <= 1) {
+      obDiagnosedLevel = 1;
+      return {
+        title: "Lv. 1 단어 청크 입문", sub: "1~3단어 인지 및 발음 적응 코스",
+        desc: `${userName}님은 현재 노베이스 상태이므로, 필수 단어 청크를 게임처럼 흡수하는 1~10레벨 코스에 배정되었습니다!`
+      };
+    } else if (totalScore <= 3) {
+      obDiagnosedLevel = 7;
+      return {
+        title: "Lv. 7 단어 청크 심화", sub: "식당·쇼핑 핵심 청크 자동 발화 코스",
+        desc: `${userName}님의 단어 인지력은 갖춰져 있으므로, 현지 필수 청크를 1초 만에 내뱉는 훈련 후 기본문으로 진입합니다!`
+      };
+    } else if (totalScore <= 5) {
+      obDiagnosedLevel = 14;
+      return {
+        title: "Lv. 14 기본 문장 심화", sub: "4~6단어 주어+동사 완성 문장 코스",
+        desc: `${userName}님의 단어 지식은 훌륭하지만 문장 발화 시 머뭇거림이 감지되었습니다. 스픽식 90% 소리 내어 말하기로 입근육을 단련하는 11~20레벨 코스에 배정되었습니다!`
+      };
+    } else if (totalScore <= 7) {
+      obDiagnosedLevel = 24;
+      return {
+        title: "Lv. 24 복합문 확장 코스", sub: "7~10단어 접속사·인과관계 유창성 코스",
+        desc: `${userName}님은 기본 단문을 매우 잘 구사하십니다! 접속사를 활용해 문장을 풍부하고 길게 잇는 21~30레벨 코스로 직행합니다!`
+      };
+    } else {
+      obDiagnosedLevel = 42;
+      return {
+        title: "👑 Lv. 42 마스터 페르소나 리그", sub: "원어민 AI와 실시간 1:1 자유 롤플레잉",
+        desc: `${userName}님은 기본 드릴을 마스터하셨습니다! 설명과 드릴은 생략하고, 현지인 AI 매니저 페르소나와 실시간 롤플레잉 리그로 즉시 입장합니다!`
+      };
+    }
+  }
+
+  function goToNextObStep() {
+    if (obStep < 6) {
+      soundNext();
+      obStep++;
+      updateObStepUI();
+    } else if (obStep === 6) {
+      soundLevelUp();
+      obStep = 7;
+      updateObStepUI();
+    } else {
+      completeOnboardingAndStartCanvas();
+    }
+  }
+
+  function goToPrevObStep() {
+    if (obStep > 1) {
+      soundTap();
+      obStep--;
+      updateObStepUI();
+    }
+  }
+
+  function updateObStepUI() {
+    for (let i = 1; i <= 7; i++) {
+      const view = document.getElementById(`obStep${i}`);
+      if (view) {
+        if (i === obStep) view.classList.remove('hidden');
+        else view.classList.add('hidden');
+      }
+    }
+
+    const progressPercent = (obStep / 7) * 100;
+    document.getElementById('obProgressFill').style.width = `${progressPercent}%`;
+    document.getElementById('obStepBadge').textContent = obStep === 7 ? "진단 완료" : `${obStep} / 6 단계`;
+
+    const dialogs = getObDialogues();
+    document.getElementById('obTutorSpeech').innerHTML = dialogs[obStep];
+    setTimeout(() => {
+      speakExileTutor(dialogs[obStep], 'ko');
+    }, 250);
+
+    if (obStep === 1) {
       renderVoicePresets();
     }
 
-    function speakExileTutor(text, lang = 'ko') {
-      if (!text) return;
-      const voice = EXILE_VOICES.find(v => v.id === selectedExileVoiceId) || EXILE_VOICES[0];
-      const clean = text.replace(/<[^>]*>/g, '').replace(/[#*`_~]/g, '').trim();
+    const backBtn = document.getElementById('obBackStepBtn');
+    if (obStep > 1 && obStep < 7) backBtn.classList.remove('hidden');
+    else backBtn.classList.add('hidden');
 
-      const icon = document.getElementById('voiceRippleIcon');
-      if (icon) {
-        icon.style.transform = 'scale(1.3)';
-        setTimeout(() => { icon.style.transform = 'scale(1)'; }, 350);
+    const mainBtn = document.getElementById('obMainActionBtn');
+    if (obStep === 1) {
+      mainBtn.innerHTML = `<span>호칭 설정 완료 ➔ 언어 선택</span>`;
+    } else if (obStep === 6) {
+      mainBtn.innerHTML = `<span>AI 분석 결과 확인하기 ➔</span>`;
+    } else if (obStep === 7) {
+      const diag = calculateAIDiagnosis();
+      document.getElementById('obReportHero').textContent = diag.title;
+      document.getElementById('obReportSub').textContent = diag.sub;
+      document.getElementById('obReportDesc').textContent = diag.desc;
+      mainBtn.className = "btn-3d btn-indigo";
+      mainBtn.innerHTML = `<span>🚀 Lv.${obDiagnosedLevel} 맞춤 캔버스 입장하기</span>`;
+    } else {
+      mainBtn.className = "btn-3d btn-green";
+      mainBtn.innerHTML = `<span>다음 진단 질문으로 ➔</span>`;
+    }
+  }
+
+  function completeOnboardingAndStartCanvas() {
+    soundLevelUp();
+    currentLevel = obDiagnosedLevel;
+    currentRound = 1;
+    roundPassed = [false, false, false, false];
+
+    try {
+      localStorage.setItem('hangeoreum_onboarding_done', '1');
+      localStorage.setItem('hangeoreum_user_name', userName);
+      localStorage.setItem('hangeoreum_level', currentLevel);
+      localStorage.setItem('hangeoreum_lang', selectedLang);
+      localStorage.setItem('hangeoreum_exile_voice_id', selectedExileVoiceId);
+      localStorage.setItem('hangeoreum_exile_gender', selectedExileGender);
+    } catch(e) {}
+
+    document.getElementById('viewOnboarding').classList.add('hidden');
+    document.getElementById('viewCanvas').classList.remove('hidden');
+
+    applyDailyThemeUI();
+    switchLang(selectedLang);
+    document.getElementById('levelSlider').value = currentLevel;
+    updateLevelUI();
+
+    openDailyCheckinModal();
+  }
+
+
+  /* =========================================================
+     9. 데일리 체크인 & 캔버스 테마
+     ========================================================= */
+  function openDailyCheckinModal() {
+    soundTap();
+    document.getElementById('dailyCheckinModal').classList.remove('hidden');
+    setTimeout(() => {
+      speakExileTutor(`지구인 ${userName}! 오늘 하루는 어땠어? 편하게 이야기해 줘!`, 'ko');
+    }, 300);
+  }
+  function closeDailyCheckinModal() {
+    document.getElementById('dailyCheckinModal').classList.add('hidden');
+  }
+
+  function selectQuickDaily(quote, themeKey) {
+    soundTap();
+    document.getElementById('dailyTextInput').value = quote;
+    currentTheme = themeKey;
+    currentStoryQuote = quote;
+  }
+
+  function submitDailyCheckin() {
+    const inputVal = document.getElementById('dailyTextInput').value.trim();
+    if (inputVal) {
+      currentStoryQuote = inputVal;
+      if (inputVal.includes('카페') || inputVal.includes('커피') || inputVal.includes('라떼') || inputVal.includes('힐링')) {
+        currentTheme = 'cafe';
+      } else if (inputVal.includes('친구') || inputVal.includes('맥주') || inputVal.includes('치맥') || inputVal.includes('술') || inputVal.includes('고기')) {
+        currentTheme = 'beer';
+      } else {
+        currentTheme = 'work';
       }
+    }
 
-      // 1. Android Native TTS
-      if (window.Native && typeof window.Native.call === 'function') {
-        try {
-          window.Native.call("speakText", JSON.stringify({
-            text: clean,
-            language: lang === 'ko' ? 'ko' : (lang === 'fr' ? 'fr' : (lang === 'cn' ? 'zh' : 'ja')),
-            pitch: voice.pitch,
-            rate: voice.rate
-          }));
-          return;
-        } catch(e) {
-          console.warn("Native TTS error:", e);
+    soundLevelUp();
+    applyDailyThemeUI();
+    closeDailyCheckinModal();
+    currentRound = 1;
+    roundPassed = [false, false, false, false];
+    updateLevelUI();
+  }
+
+  function applyDailyThemeUI() {
+    const t = THEMED_DATA[currentTheme];
+    document.getElementById('activeDailyStoryQuote').textContent = `"${currentStoryQuote}"`;
+    document.getElementById('activeDailyThemeBadge').textContent = t.themeName;
+    document.getElementById('activeDailyKeywords').textContent = t.keywords;
+  }
+
+
+  /* =========================================================
+     10. 레벨 & 티어 컨트롤러
+     ========================================================= */
+  function switchLang(lang) {
+    selectedLang = lang;
+    ['fr', 'cn', 'ja'].forEach(l => {
+      const btn = document.getElementById(`lang${l.toUpperCase()}`);
+      if (btn) {
+        if (l === lang) {
+          btn.style.background = "#ffffff";
+          btn.style.color = "#0f172a";
+          btn.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
+        } else {
+          btn.style.background = "transparent";
+          btn.style.color = "#64748b";
+          btn.style.boxShadow = "none";
         }
       }
+    });
+    currentRound = 1;
+    roundPassed = [false, false, false, false];
+    updateLevelUI();
+  }
 
-      // 2. Web Speech API (Browser / WebView fallback)
-      if ('speechSynthesis' in window) {
-        try {
-          window.speechSynthesis.cancel();
-          const u = new SpeechSynthesisUtterance(clean);
-          u.lang = lang === 'ko' ? 'ko-KR' : (lang === 'fr' ? 'fr-FR' : (lang === 'cn' ? 'zh-CN' : 'ja-JP'));
-          u.pitch = voice.pitch;
-          u.rate = voice.rate;
+  function getTierInfo(lv) {
+    if (lv <= 10) return { tier: 1, name: "1~10구간: 단어청크", label: "Tier 1: 단어 청크 단계" };
+    if (lv <= 20) return { tier: 2, name: "11~20구간: 기본문장", label: "Tier 2: 기본 문장 단계" };
+    if (lv <= 30) return { tier: 3, name: "21~30구간: 복합문", label: "Tier 3: 복합문 확장 단계" };
+    if (lv <= 40) return { tier: 4, name: "31~40구간: 고급원어민", label: "Tier 4: 고급 원어민 실전" };
+    return { tier: 5, name: "41~50구간: 페르소나 롤플레잉", label: "Tier 5: 마스터 페르소나 롤플레잉" };
+  }
 
-          const voices = window.speechSynthesis.getVoices();
-          if (voices && voices.length > 0) {
-            const langVoices = voices.filter(v => v.lang && v.lang.startsWith(u.lang.slice(0, 2)));
-            if (langVoices.length > 0) {
-              if (voice.gender === 'female') {
-                const fv = langVoices.find(v => /female|woman|yuna|heami|sunhi|kyoko|amelie|xiaoxiao/i.test(v.name));
-                if (fv) u.voice = fv;
-                else u.voice = langVoices[0];
-              } else if (voice.gender === 'male') {
-                const mv = langVoices.find(v => /male|man|minsu|inho|daiki|thomas|yunxi/i.test(v.name));
-                if (mv) u.voice = mv;
-                else u.voice = langVoices[langVoices.length - 1];
-              }
-            }
-          }
-          window.speechSynthesis.speak(u);
-        } catch(e) {
-          console.warn("Web Speech API error:", e);
-        }
-      }
-    }
+  function onLevelSlider(val) {
+    currentLevel = parseInt(val, 10);
+    currentRound = 1;
+    roundPassed = [false, false, false, false];
+    updateLevelUI();
+  }
+  function jumpLevel(targetLv) {
+    currentLevel = targetLv;
+    document.getElementById('levelSlider').value = targetLv;
+    currentRound = 1;
+    roundPassed = [false, false, false, false];
+    updateLevelUI();
+  }
 
-    function speakSampleVoice(voiceId) {
-      const voice = EXILE_VOICES.find(v => v.id === voiceId) || EXILE_VOICES[0];
-      const name = userName || "옵빠";
-      const sampleText = voice.sample.replace(/\{NAME\}/g, name);
-      speakExileTutor(sampleText, 'ko');
-    }
+  function updateLevelUI() {
+    document.getElementById('currentLevelText').textContent = `Lv. ${currentLevel}`;
+    const info = getTierInfo(currentLevel);
+    document.getElementById('tierNameText').textContent = info.name;
 
-    function speakExileIntroStory() {
-      const name = userName || "옵빠";
-      const text = `난 안드로메다 은하에서 머나먼 지구로 유배 온 AI 엑자일이야! 지구인 ${name}을 외국어 회화 마스터로 육성해야만 내가 고향으로 돌아갈 수 있어! 날 꼭 안드로메다로 귀환시켜 줘! 함께 50레벨을 정복하자!`;
-      speakExileTutor(text, 'ko');
-    }
-
-    function replayCurrentTutorSpeech() {
-      const el = document.getElementById('obTutorSpeech');
-      if (el) {
-        speakExileTutor(el.textContent, 'ko');
-      }
-    }
-
-    function getObDialogues() {
-      return {
-        1: `난 안드로메다에서 지구로 유배 온 AI 엑자일이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어! 호칭과 내 목소리를 골라줘!`,
-        2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
-        3: `좋아 <strong>${userName}</strong>! 안드로메다 귀환 판정 제1문!<br>외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
-        4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
-        5: `제3문! 문장 2개를 접속사로 이어서<br>길게 말하는 상황은 어때 <strong>${userName}</strong>?`,
-        6: `마지막 제4문! 까다로운 원어민 바이어와<br>나 엑자일과 실시간 1:1 자유 롤플레잉이 가능해?`,
-        7: `🎉 <strong>${userName}</strong>의 답변을 엑자일이 정밀 분석했어!<br>안드로메다 탈출 작전 시작 레벨을 배정했어!`
-      };
-    }
-
-    function onInputUserName(val) {
-      if (val.trim()) userName = val.trim();
-    }
-    function selectQuickName(name) {
-      soundTap();
-      userName = name;
-      document.getElementById('obUserNameInput').value = name;
-    }
-    function onSelectLang(lang, card) {
-      soundTap();
-      selectedLang = lang;
-      card.parentElement.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-    }
-    function onAnswerQuestion(qNum, score, card) {
-      soundTap();
-      obAnswers[qNum] = score;
-      card.parentElement.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-    }
-
-    function calculateAIDiagnosis() {
-      const totalScore = obAnswers[1] + obAnswers[2] + obAnswers[3] + obAnswers[4];
-      const chunkPct = Math.round((obAnswers[1] / 2) * 100);
-      const sentencePct = Math.round((obAnswers[2] / 2) * 100);
-      const compoundPct = Math.round((obAnswers[3] / 2) * 100);
-
-      document.getElementById('obBarChunk').style.width = `${Math.max(15, chunkPct)}%`;
-      document.getElementById('obBarSentence').style.width = `${Math.max(15, sentencePct)}%`;
-      document.getElementById('obBarCompound').style.width = `${Math.max(15, compoundPct)}%`;
-
-      if (totalScore <= 1) {
-        obDiagnosedLevel = 1;
-        return {
-          title: "Lv. 1 단어 청크 입문", sub: "1~3단어 인지 및 발음 적응 코스",
-          desc: `${userName}님은 현재 노베이스 상태이므로, 필수 단어 청크를 게임처럼 흡수하는 1~10레벨 코스에 배정되었습니다!`
-        };
-      } else if (totalScore <= 3) {
-        obDiagnosedLevel = 7;
-        return {
-          title: "Lv. 7 단어 청크 심화", sub: "식당·쇼핑 핵심 청크 자동 발화 코스",
-          desc: `${userName}님의 단어 인지력은 갖춰져 있으므로, 현지 필수 청크를 1초 만에 내뱉는 훈련 후 기본문으로 진입합니다!`
-        };
-      } else if (totalScore <= 5) {
-        obDiagnosedLevel = 14;
-        return {
-          title: "Lv. 14 기본 문장 심화", sub: "4~6단어 주어+동사 완성 문장 코스",
-          desc: `${userName}님의 단어 지식은 훌륭하지만 문장 발화 시 머뭇거림이 감지되었습니다. 스픽식 90% 소리 내어 말하기로 입근육을 단련하는 11~20레벨 코스에 배정되었습니다!`
-        };
-      } else if (totalScore <= 7) {
-        obDiagnosedLevel = 24;
-        return {
-          title: "Lv. 24 복합문 확장 코스", sub: "7~10단어 접속사·인과관계 유창성 코스",
-          desc: `${userName}님은 기본 단문을 매우 잘 구사하십니다! 접속사를 활용해 문장을 풍부하고 길게 잇는 21~30레벨 코스로 직행합니다!`
-        };
+    for (let t = 1; t <= 5; t++) {
+      const btn = document.getElementById(`quickTier${t}`);
+      if (info.tier === t) {
+        btn.style.background = (t === 5) ? "#f43f5e" : "#58cc02";
+        btn.style.color = "#ffffff";
       } else {
-        obDiagnosedLevel = 42;
-        return {
-          title: "👑 Lv. 42 마스터 페르소나 리그", sub: "원어민 AI와 실시간 1:1 자유 롤플레잉",
-          desc: `${userName}님은 기본 드릴을 마스터하셨습니다! 설명과 드릴은 생략하고, 현지인 AI 매니저 페르소나와 실시간 롤플레잉 리그로 즉시 입장합니다!`
-        };
+        btn.style.background = (t === 5) ? "rgba(244,63,94,0.08)" : "#f1f5f9";
+        btn.style.color = (t === 5) ? "#f43f5e" : "#64748b";
       }
     }
 
-    function goToNextObStep() {
-      if (obStep < 6) {
-        soundNext();
-        obStep++;
-        updateObStepUI();
-      } else if (obStep === 6) {
-        soundLevelUp();
-        obStep = 7;
-        updateObStepUI();
-      } else {
-        // 온보딩 완료 -> 캔버스 진입
-        completeOnboardingAndStartCanvas();
-      }
+    if (currentLevel >= 41) {
+      document.getElementById('viewDrill').classList.add('hidden');
+      document.getElementById('viewRoleplay').classList.remove('hidden');
+      setupRoleplayView();
+    } else {
+      document.getElementById('viewDrill').classList.remove('hidden');
+      document.getElementById('viewRoleplay').classList.add('hidden');
+      renderCurrentRoundUI();
     }
+  }
 
-    function goToPrevObStep() {
-      if (obStep > 1) {
-        soundTap();
-        obStep--;
-        updateObStepUI();
+  function setupRoleplayView() {
+    const p = THEMED_DATA[currentTheme][selectedLang].persona;
+    document.getElementById('personaAvatar').textContent = p.avatar;
+    document.getElementById('personaName').textContent = p.name;
+    document.getElementById('personaRole').textContent = p.role;
+    document.getElementById('rpSuggestedHint').textContent = `"${p.suggested}"`;
+
+    const chatLog = document.getElementById('chatLog');
+    chatLog.innerHTML = `
+      <div style="display:flex; gap:8px; align-items:flex-start;">
+        <div style="width:32px; height:32px; border-radius:50%; background:#e0e7ff; display:flex; align-items:center; justify-content:center; font-size:16px;">${p.avatar}</div>
+        <div style="background:#ffffff; border:1.5px solid #e2e8f0; padding:10px 14px; border-radius:14px; font-size:14px; text-align:left; max-width:85%;">
+          <strong>${p.greetings}</strong>
+          <div style="font-size:12px; color:#64748b; margin-top:4px;">(${p.greetingsKo})</div>
+        </div>
+      </div>
+    `;
+    setTimeout(() => {
+      speakTextWithFallback(p.greetings, selectedLang);
+    }, 300);
+  }
+
+  let rpTurn = 0;
+  function triggerRoleplayTurn() {
+    const p = THEMED_DATA[currentTheme][selectedLang].persona;
+    const chatLog = document.getElementById('chatLog');
+
+    const userMsg = document.createElement('div');
+    userMsg.style.cssText = "display:flex; justify-content:flex-end; gap:8px;";
+    userMsg.innerHTML = `
+      <div style="background:#6366f1; color:#fff; padding:10px 14px; border-radius:14px; font-size:14px; font-weight:800; max-width:85%; text-align:left;">
+        "${p.suggested}"
+      </div>
+    `;
+    chatLog.appendChild(userMsg);
+    chatLog.scrollTop = chatLog.scrollHeight;
+    soundLevelUp();
+
+    setTimeout(() => {
+      const aiMsg = document.createElement('div');
+      aiMsg.style.cssText = "display:flex; gap:8px; align-items:flex-start;";
+      aiMsg.innerHTML = `
+        <div style="width:32px; height:32px; border-radius:50%; background:#e0e7ff; display:flex; align-items:center; justify-content:center; font-size:16px;">${p.avatar}</div>
+        <div style="background:#ffffff; border:1.5px solid #e2e8f0; padding:10px 14px; border-radius:14px; font-size:14px; text-align:left; max-width:85%;">
+          <strong>Parfait ! Très bien dit ! On continue !</strong>
+          <div style="font-size:12px; color:#64748b; margin-top:4px;">(완벽해요! 아주 잘 말했어요! 계속해봐요!)</div>
+        </div>
+      `;
+      chatLog.appendChild(aiMsg);
+      chatLog.scrollTop = chatLog.scrollHeight;
+      speakTextWithFallback("Parfait ! Très bien dit !", selectedLang);
+    }, 600);
+  }
+
+
+  /* =========================================================
+     11. 초기화 (DOM Ready)
+     ========================================================= */
+  window.addEventListener('DOMContentLoaded', () => {
+    let onboardingDone = false;
+    try {
+      if (localStorage.getItem('hangeoreum_onboarding_done') === '1') {
+        onboardingDone = true;
+        userName = localStorage.getItem('hangeoreum_user_name') || "옵빠";
+        currentLevel = parseInt(localStorage.getItem('hangeoreum_level'), 10) || 1;
+        selectedLang = localStorage.getItem('hangeoreum_lang') || 'fr';
       }
-    }
+    } catch(e) {}
 
-    function updateObStepUI() {
-      for (let i = 1; i <= 7; i++) {
-        const view = document.getElementById(`obStep${i}`);
-        if (view) {
-          if (i === obStep) view.classList.remove('hidden');
-          else view.classList.add('hidden');
-        }
-      }
+    selectedExileVoiceId = localStorage.getItem('hangeoreum_exile_voice_id') || 'female_royal';
+    selectedExileGender = localStorage.getItem('hangeoreum_exile_gender') || 'female';
 
-      const progressPercent = (obStep / 7) * 100;
-      document.getElementById('obProgressFill').style.width = `${progressPercent}%`;
-      document.getElementById('obStepBadge').textContent = obStep === 7 ? "진단 완료" : `${obStep} / 6 단계`;
-
-      const dialogs = getObDialogues();
-      document.getElementById('obTutorSpeech').innerHTML = dialogs[obStep];
-      setTimeout(() => {
-        speakExileTutor(dialogs[obStep], 'ko');
-      }, 250);
-
-      if (obStep === 1) {
-        renderVoicePresets();
-      }
-
-      const backBtn = document.getElementById('obBackStepBtn');
-      if (obStep > 1 && obStep < 7) backBtn.classList.remove('hidden');
-      else backBtn.classList.add('hidden');
-
-      const mainBtn = document.getElementById('obMainActionBtn');
-      if (obStep === 1) {
-        mainBtn.innerHTML = `<span>호칭 설정 완료 ➔ 언어 선택</span> <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>`;
-      } else if (obStep === 6) {
-        mainBtn.innerHTML = `<span>AI 분석 결과 확인하기</span> <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>`;
-      } else if (obStep === 7) {
-        const diag = calculateAIDiagnosis();
-        document.getElementById('obReportHero').textContent = diag.title;
-        document.getElementById('obReportSub').textContent = diag.sub;
-        document.getElementById('obReportDesc').textContent = diag.desc;
-
-        mainBtn.className = "btn-3d btn-indigo";
-        mainBtn.innerHTML = `<span>🚀 Lv.${obDiagnosedLevel} 맞춤 캔버스 입장하기</span> <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>`;
-      } else {
-        mainBtn.className = "btn-3d btn-primary";
-        mainBtn.innerHTML = `<span>다음 진단 질문으로</span> <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>`;
-      }
-    }
-
-    function completeOnboardingAndStartCanvas() {
-      soundLevelUp();
-      currentLevel = obDiagnosedLevel;
-      try {
-        localStorage.setItem('hangeoreum_onboarding_done', '1');
-        localStorage.setItem('hangeoreum_user_name', userName);
-        localStorage.setItem('hangeoreum_level', currentLevel);
-        localStorage.setItem('hangeoreum_lang', selectedLang);
-        localStorage.setItem('hangeoreum_exile_voice_id', selectedExileVoiceId);
-        localStorage.setItem('hangeoreum_exile_gender', selectedExileGender);
-      } catch(e) {}
-
+    if (onboardingDone) {
       document.getElementById('viewOnboarding').classList.add('hidden');
       document.getElementById('viewCanvas').classList.remove('hidden');
-
       applyDailyThemeUI();
       switchLang(selectedLang);
       document.getElementById('levelSlider').value = currentLevel;
       updateLevelUI();
-
-      openDailyCheckinModal();
-    }
-
-    function returnToOnboardingView() {
-      soundTap();
-      document.getElementById('viewCanvas').classList.add('hidden');
+    } else {
       document.getElementById('viewOnboarding').classList.remove('hidden');
-      obStep = 1;
+      document.getElementById('viewCanvas').classList.add('hidden');
       updateObStepUI();
+      renderVoicePresets();
     }
 
+    // 첫 터치 시 AudioContext unlock
+    window.addEventListener('touchstart', () => getAudioContext(), { once: true });
+    window.addEventListener('click', () => getAudioContext(), { once: true });
+  });
+</script>
 
-    /* =========================================================
-       5. 캔버스 데일리 체크인 & 동적 테마 컨트롤러
-       ========================================================= */
-    function openDailyCheckinModal() {
-      document.getElementById('dailyCheckinModal').classList.remove('hidden');
-      setTimeout(() => {
-        speakExileTutor(`지구인 ${userName}! 오늘 지구에서는 어떤 일이 있었어? 편하게 이야기해 줘!`, 'ko');
-      }, 300);
-    }
-    function closeDailyCheckinModal() {
-      document.getElementById('dailyCheckinModal').classList.add('hidden');
-    }
-
-    function selectQuickDaily(quote, themeKey) {
-      document.getElementById('dailyTextInput').value = quote;
-      currentTheme = themeKey;
-      currentStoryQuote = quote;
-    }
-
-    function submitDailyCheckin() {
-      const inputVal = document.getElementById('dailyTextInput').value.trim();
-      if (inputVal) {
-        currentStoryQuote = inputVal;
-        if (inputVal.includes('카페') || inputVal.includes('커피') || inputVal.includes('라떼') || inputVal.includes('힐링')) {
-          currentTheme = 'cafe';
-        } else if (inputVal.includes('친구') || inputVal.includes('맥주') || inputVal.includes('치맥') || inputVal.includes('고기') || inputVal.includes('술')) {
-          currentTheme = 'beer';
-        } else {
-          currentTheme = 'work';
-        }
-      }
-
-      soundLevelUp();
-      applyDailyThemeUI();
-      closeDailyCheckinModal();
-      updateLevelUI();
-    }
-
-    function applyDailyThemeUI() {
-      const t = THEMED_DATA[currentTheme];
-      document.getElementById('activeDailyUserLabel').textContent = `💬 오늘 ${userName}의 일상:`;
-      document.getElementById('activeDailyStoryQuote').textContent = `"${currentStoryQuote}"`;
-      document.getElementById('activeDailyThemeBadge').textContent = t.themeName;
-      document.getElementById('activeDailyKeywords').textContent = t.keywords;
-      const greetingEl = document.getElementById('dailyCheckinGreeting');
-      if (greetingEl) {
-        greetingEl.innerHTML = `"안녕 <strong>${userName}</strong>! 난 네 전담 코치 엑자일(Exile)이야! ⚡ 오늘 하루는 어땠어?<br>오늘 있었던 일이나 지금 기분, 먹은 것, 한 일 편하게 한국어로 말해줘! <strong>오늘 겪은 일에서 키워드를 쏙쏙 뽑아 오늘의 외국어 회화 문장</strong>을 즉석에서 만들어줄게!"`;
-      }
-    }
-
-    /* =========================================================
-       6. 50레벨 슬라이더 & 문장 렌더링 엔진
-       ========================================================= */
-    function switchLang(lang) {
-      selectedLang = lang;
-      ['fr', 'cn', 'ja'].forEach(l => {
-        const btn = document.getElementById(`lang${l.toUpperCase()}`);
-        if (btn) {
-          if (l === lang) {
-            btn.style.background = "#ffffff";
-            btn.style.color = "#0f172a";
-            btn.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
-          } else {
-            btn.style.background = "transparent";
-            btn.style.color = "#64748b";
-            btn.style.boxShadow = "none";
-          }
-        }
-      });
-      updateLevelUI();
-    }
-
-    function getTierInfo(lv) {
-      if (lv <= 10) return { tier: 1, name: "1~10구간: 단어청크", label: "Tier 1: 단어 청크 단계" };
-      if (lv <= 20) return { tier: 2, name: "11~20구간: 기본문장", label: "Tier 2: 기본 문장 단계" };
-      if (lv <= 30) return { tier: 3, name: "21~30구간: 복합문", label: "Tier 3: 복합문 확장 단계" };
-      if (lv <= 40) return { tier: 4, name: "31~40구간: 고급원어민", label: "Tier 4: 고급 원어민 실전" };
-      return { tier: 5, name: "41~50구간: 페르소나 롤플레잉", label: "Tier 5: 마스터 페르소나 롤플레잉" };
-    }
-
-    function getSentenceForLevel(lv) {
-      const langData = THEMED_DATA[currentTheme][selectedLang];
-      if (lv <= 10) return langData.t1[(lv - 1) % langData.t1.length];
-      if (lv <= 20) return langData.t2[(lv - 11) % langData.t2.length];
-      if (lv <= 30) return langData.t3[(lv - 21) % langData.t3.length];
-      if (lv <= 40) return langData.t4[(lv - 31) % langData.t4.length];
-      return null;
-    }
-
-    function onLevelSlider(val) {
-      currentLevel = parseInt(val, 10);
-      updateLevelUI();
-    }
-    function jumpLevel(targetLv) {
-      currentLevel = targetLv;
-      document.getElementById('levelSlider').value = targetLv;
-      updateLevelUI();
-    }
-
-    function updateLevelUI() {
-      document.getElementById('currentLevelText').textContent = `Lv. ${currentLevel}`;
-      const info = getTierInfo(currentLevel);
-      document.getElementById('tierNameText').textContent = info.name;
-      document.getElementById('tierLabel').textContent = info.label;
-
-      for (let t = 1; t <= 5; t++) {
-        const btn = document.getElementById(`quickTier${t}`);
-        if (info.tier === t) {
-          btn.style.background = (t === 5) ? "#f43f5e" : "#58cc02";
-          btn.style.color = "#ffffff";
-        } else {
-          btn.style.background = (t === 5) ? "rgba(244,63,94,0.08)" : "#f1f5f9";
-          btn.style.color = (t === 5) ? "#f43f5e" : "#64748b";
-        }
-      }
-
-      if (currentLevel >= 41) {
-        document.getElementById('viewDrill').classList.add('hidden');
-        document.getElementById('viewRoleplay').classList.remove('hidden');
-        setupRoleplayView();
-      } else {
-        document.getElementById('viewDrill').classList.remove('hidden');
-        document.getElementById('viewRoleplay').classList.add('hidden');
-        setupDrillView();
-      }
-    }
-
-    function setupDrillView() {
-      const data = getSentenceForLevel(currentLevel);
-      if (!data) return;
-
-      document.getElementById('wordLengthTag').textContent = `문장 길이: ${data.words}`;
-      document.getElementById('levelGoal').textContent = `Lv.${currentLevel} 레벨 문장`;
-      document.getElementById('koreanPrompt').textContent = `"${data.ko}"`;
-      document.getElementById('targetDisplay').innerHTML = `
-        <span class="blank" style="color:#58cc02; text-decoration:underline; font-weight:900;">[ ${data.fr} ]</span>
-      `;
-      document.getElementById('buildUpNote').textContent = data.note;
-      document.getElementById('feedbackSheet').classList.add('hidden');
-    }
-
-    function setupRoleplayView() {
-      const p = THEMED_DATA[currentTheme][selectedLang].persona;
-      document.getElementById('personaAvatar').textContent = p.avatar;
-      document.getElementById('personaName').textContent = p.name;
-      document.getElementById('personaRole').textContent = p.role;
-      document.getElementById('rpSuggestedHint').textContent = `"${p.suggested}"`;
-
-      const chatLog = document.getElementById('chatLog');
-      chatLog.innerHTML = `
-        <div style="display:flex; gap:6px; align-items:flex-start;">
-          <div style="width:24px; height:24px; border-radius:50%; background:#e0e7ff; display:flex; align-items:center; justify-content:center; font-size:11px;">${p.avatar}</div>
-          <div style="background:#ffffff; border:1px solid #e2e8f0; padding:8px 10px; border-radius:12px; font-size:11px; text-align:left; max-width:82%;">
-            <strong>${p.greetings}</strong>
-            <div style="font-size:10px; color:#64748b; margin-top:2px;">(${p.greetingsKo})</div>
-          </div>
-        </div>
-      `;
-    }
-
-    function triggerSpeakOrTest() {
-      comboCount++;
-      document.getElementById('comboBadge').textContent = `x${comboCount}`;
-      soundCombo(comboCount);
-
-      const bars = document.querySelectorAll('.wave-bar');
-      bars.forEach((b, i) => b.style.height = `${10 + (i % 3) * 6}px`);
-
-      setTimeout(() => {
-        soundLevelUp();
-        const data = getSentenceForLevel(currentLevel);
-        const wordsContainer = document.getElementById('coloredWords');
-        wordsContainer.innerHTML = '';
-        if (data) {
-          const span = document.createElement('span');
-          span.textContent = data.ans;
-          span.style.cssText = "padding:2px 8px; border-radius:6px; font-weight:900; background:#dcfce7; color:#166534; border:1px solid #86efac; font-size:11px;";
-          wordsContainer.appendChild(span);
-          document.getElementById('polishText').textContent = `"${data.fr}"`;
-        }
-
-        document.getElementById('feedbackSheet').classList.remove('hidden');
-        bars.forEach(b => b.style.height = '6px');
-      }, 250);
-    }
-
-    function nextLevelStep() {
-      if (currentLevel < 50) {
-        currentLevel++;
-        document.getElementById('levelSlider').value = currentLevel;
-        updateLevelUI();
-      }
-    }
-
-    function triggerRoleplayTurn() {
-      const p = THEMED_DATA[currentTheme][selectedLang].persona;
-      const chatLog = document.getElementById('chatLog');
-
-      const userMsg = document.createElement('div');
-      userMsg.style.cssText = "display:flex; justify-content:flex-end; gap:6px;";
-      userMsg.innerHTML = `
-        <div style="background:#6366f1; color:#fff; padding:8px 10px; border-radius:12px; font-size:11px; font-weight:700; max-width:82%; text-align:left;">
-          "${p.suggested}"
-        </div>
-      `;
-      chatLog.appendChild(userMsg);
-      chatLog.scrollTop = chatLog.scrollHeight;
-
-      setTimeout(() => {
-        const reply = p.replies[rpTurn % p.replies.length];
-        rpTurn++;
-
-        const aiMsg = document.createElement('div');
-        aiMsg.style.cssText = "display:flex; gap:6px; align-items:flex-start;";
-        aiMsg.innerHTML = `
-          <div style="width:24px; height:24px; border-radius:50%; background:#e0e7ff; display:flex; align-items:center; justify-content:center; font-size:11px;">${p.avatar}</div>
-          <div style="background:#ffffff; border:1px solid #e2e8f0; padding:8px 10px; border-radius:12px; font-size:11px; text-align:left; max-width:82%;">
-            <strong>${reply.text}</strong>
-            <div style="font-size:10px; color:#64748b; margin-top:2px;">(${reply.ko})</div>
-          </div>
-        `;
-        chatLog.appendChild(aiMsg);
-        chatLog.scrollTop = chatLog.scrollHeight;
-      }, 500);
-    }
-
-    function playTargetTTS() {
-      const data = getSentenceForLevel(currentLevel);
-      if (data) {
-        speakExileTutor(data.fr, selectedLang);
-      }
-    }
-
-    /* =========================================================
-       7. 앱 초기화 (앱 최초 실행 여부 및 세팅 복원)
-       ========================================================= */
-    window.addEventListener('DOMContentLoaded', () => {
-      let onboardingDone = false;
-      try {
-        if (localStorage.getItem('hangeoreum_onboarding_done') === '1') {
-          onboardingDone = true;
-          userName = localStorage.getItem('hangeoreum_user_name') || "옵빠";
-          currentLevel = parseInt(localStorage.getItem('hangeoreum_level'), 10) || 14;
-          selectedLang = localStorage.getItem('hangeoreum_lang') || 'fr';
-        }
-      } catch(e) {}
-
-      selectedExileVoiceId = localStorage.getItem('hangeoreum_exile_voice_id') || 'female_royal';
-      selectedExileGender = localStorage.getItem('hangeoreum_exile_gender') || 'female';
-
-      if (onboardingDone) {
-        document.getElementById('viewOnboarding').classList.add('hidden');
-        document.getElementById('viewCanvas').classList.remove('hidden');
-        applyDailyThemeUI();
-        switchLang(selectedLang);
-        document.getElementById('levelSlider').value = currentLevel;
-        updateLevelUI();
-      } else {
-        document.getElementById('viewOnboarding').classList.remove('hidden');
-        document.getElementById('viewCanvas').classList.add('hidden');
-        updateObStepUI();
-        renderVoicePresets();
-      }
-    });
-
-    window.goHome = function() {
-      // 안드로이드 뒤로가기 버튼 처리
-      const modal = document.getElementById('dailyCheckinModal');
-      if (modal && !modal.classList.contains('hidden')) {
-        closeDailyCheckinModal();
-      }
-    };
-  </script>
 </body>
 </html>

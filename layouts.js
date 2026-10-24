@@ -132,7 +132,7 @@ function initProjectFolders(content) {
     "한걸음V1.0 Exile": {
       tag: "한걸음V1.0 Exile · 안드로메다 유배 AI의 50레벨 탈출 프로젝트 · Android 8 이상",
       links: [
-        { label: "한걸음V1.0 Exile APK (409KB) · Android 8 이상", url: "./downloads/Hangeoreum-V1.0-Exile.apk", download: "Hangeoreum-V1.0-Exile.apk", primary: true },
+        { label: "한걸음V1.0 Exile APK (475KB) · Android 8 이상", url: "./downloads/Hangeoreum-V1.0-Exile.apk", download: "Hangeoreum-V1.0-Exile.apk", primary: true },
         { label: "화면 시안 체험 · 엑자일 음성 5종 & 50레벨 캔버스", url: "./downloads/Hangeoreum-preview.html", external: true },
         { label: "사용 안내 · 안드로메다 유배 스토리 및 음성 코칭", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
       ]
@@ -233,6 +233,15 @@ function initProjectFolders(content) {
               window.open(item.url, '_blank', 'noopener,noreferrer');
               return;
             }
+            if (name.includes('한걸음')) {
+              const a = document.createElement('a');
+              a.href = item.url;
+              a.download = item.download || '';
+              document.body.appendChild(a);
+              a.click();
+              setTimeout(() => a.remove(), 200);
+              return;
+            }
             const targetName = item.download || item.label;
             const ok = window.confirm(`[${name}]\n'${targetName}' 파일을 다운로드하시겠습니까?`);
             if (!ok) return;
@@ -282,8 +291,12 @@ function initProjectFolders(content) {
             }
             btn.style.cssText = style;
             btn.addEventListener('click', (e) => {
-              e.preventDefault();
               e.stopPropagation();
+              if (name.includes('한걸음')) {
+                // 브라우저 기본 a[download] / a[target=_blank] 동작 100% 보장 (먹통 방지)
+                return;
+              }
+              e.preventDefault();
               triggerDownload(item);
             });
             actionRow.appendChild(btn);
