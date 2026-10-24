@@ -810,9 +810,7 @@
           </button>
         </div>
 
-        <button onclick="promptManualInputTest()" style="background:none; border:none; color:#64748b; font-size:13px; font-weight:700; cursor:pointer; text-decoration:underline;">
-          마이크가 안 될 때: 텍스트로 직접 발음 입력 테스트
-        </button>
+
       </div>
 
     </div>
@@ -872,20 +870,112 @@
         <input type="password" id="apiKeyInput" placeholder="AIzaSy... 로 시작하는 키 붙여넣기" style="width:100%; padding:14px 16px; border-radius:14px; border:2px solid #cbd5e1; font-size:15px; font-family:monospace; background:#fff; outline:none;">
       </div>
 
-      <!-- Gemini Flash 계단식 모델 선택 (3.8 Flash 디폴트) -->
-      <div style="margin-bottom:16px; background:#f8fafc; border:2px solid #e2e8f0; border-radius:18px; padding:14px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <label style="font-size:14px; font-weight:800; color:#334155;">Flash 시작 모델 (디폴트: 3.8)</label>
-          <span style="font-size:12px; font-weight:800; color:#166534; background:#dcfce7; padding:2px 8px; border-radius:8px;">계단식 무중단 Fallback</span>
+      <!-- 🎵 효과음 맞춤 지정 메뉴 -->
+      <div style="margin-bottom:18px; background:#f8fafc; border:2px solid #e2e8f0; border-radius:18px; padding:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid #e2e8f0;">
+          <div style="font-size:15px; font-weight:900; color:#0f172a; display:flex; align-items:center; gap:6px;">
+            <span>🎵</span> 효과음 맞춤 설정
+          </div>
+          <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:800; color:#475569; cursor:pointer;">
+            <input type="checkbox" id="soundMasterSwitch" onchange="toggleMasterSound(this.checked)" checked style="accent-color:#4f46e5; width:16px; height:16px;">
+            <span>효과음 켜기</span>
+          </label>
         </div>
-        <select id="geminiModelSelect" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:15px; font-weight:800; background:#fff; outline:none; color:#0f172a;">
-          <option value="gemini-3.8-flash">Gemini 3.8 Flash (기본 권장 · 최신 초고속)</option>
-          <option value="gemini-3.7-flash">Gemini 3.7 Flash (2순위 대체)</option>
-          <option value="gemini-3.6-flash">Gemini 3.6 Flash (3순위 대체)</option>
-          <option value="gemini-3.5-flash">Gemini 3.5 Flash (4순위 대체)</option>
-        </select>
-        <div style="font-size:12.5px; color:#64748b; margin-top:8px; line-height:1.45;">
-          ⚡ <strong>계단식 자동 전환 파이프라인</strong>: 선택된 모델(3.8 Flash 기본)을 1차 호출하며, 사용량 소진(429)이나 오류 발생 시 <strong>3.7 ➔ 3.6 ➔ 3.5 Flash</strong> 순으로 끊김 없이 자동 전환됩니다.
+
+        <!-- 5대 효과음 개별 설정 목록 -->
+        <div id="soundEventsList" style="display:flex; flex-direction:column; gap:10px;">
+          <!-- 음성 입력 시작 -->
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:8px 12px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:800; color:#1e293b; cursor:pointer;">
+              <input type="checkbox" id="sound_ev_micStart" onchange="updateSoundEventSetting('micStart')" checked style="accent-color:#4f46e5; width:15px; height:15px;">
+              <span>🎙️ 음성 입력 시작</span>
+            </label>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <select id="sound_preset_micStart" onchange="updateSoundEventSetting('micStart')" style="padding:4px 8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; font-weight:700;">
+                <option value="intercom_sent">무전 시작음 (기본)</option>
+                <option value="pop">톡 (Pop)</option>
+                <option value="tap">클릭 (Tap)</option>
+              </select>
+              <button type="button" onclick="previewSound('micStart')" style="background:#eef2ff; border:1px solid #c7d2fe; color:#4338ca; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
+            </div>
+          </div>
+
+          <!-- 음성 입력 완료 -->
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:8px 12px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:800; color:#1e293b; cursor:pointer;">
+              <input type="checkbox" id="sound_ev_micEnd" onchange="updateSoundEventSetting('micEnd')" checked style="accent-color:#4f46e5; width:15px; height:15px;">
+              <span>🎧 음성 입력 완료</span>
+            </label>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <select id="sound_preset_micEnd" onchange="updateSoundEventSetting('micEnd')" style="padding:4px 8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; font-weight:700;">
+                <option value="intercom_received">무전 수신음 (기본)</option>
+                <option value="combo">차임 (Chime)</option>
+                <option value="pop">톡 (Pop)</option>
+              </select>
+              <button type="button" onclick="previewSound('micEnd')" style="background:#eef2ff; border:1px solid #c7d2fe; color:#4338ca; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
+            </div>
+          </div>
+
+          <!-- 정답 · 통과 -->
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:8px 12px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:800; color:#1e293b; cursor:pointer;">
+              <input type="checkbox" id="sound_ev_correct" onchange="updateSoundEventSetting('correct')" checked style="accent-color:#16a34a; width:15px; height:15px;">
+              <span>✨ 정답 · 통과</span>
+            </label>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <select id="sound_preset_correct" onchange="updateSoundEventSetting('correct')" style="padding:4px 8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; font-weight:700;">
+                <option value="correct">기본 정답음</option>
+                <option value="complete">팡파레 (Fanfare)</option>
+                <option value="combo">콤보 벨</option>
+              </select>
+              <button type="button" onclick="previewSound('correct')" style="background:#dcfce7; border:1px solid #bbf7d0; color:#15803d; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
+            </div>
+          </div>
+
+          <!-- 오답 · 재도전 -->
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:8px 12px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:800; color:#1e293b; cursor:pointer;">
+              <input type="checkbox" id="sound_ev_wrong" onchange="updateSoundEventSetting('wrong')" checked style="accent-color:#dc2626; width:15px; height:15px;">
+              <span>❌ 오답 · 재도전</span>
+            </label>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <select id="sound_preset_wrong" onchange="updateSoundEventSetting('wrong')" style="padding:4px 8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; font-weight:700;">
+                <option value="wrong">부저 (기본)</option>
+                <option value="pop">낮은 단음</option>
+              </select>
+              <button type="button" onclick="previewSound('wrong')" style="background:#fee2e2; border:1px solid #fecaca; color:#b91c1c; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
+            </div>
+          </div>
+
+          <!-- 버튼 터치 -->
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:8px 12px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:800; color:#1e293b; cursor:pointer;">
+              <input type="checkbox" id="sound_ev_tap" onchange="updateSoundEventSetting('tap')" checked style="accent-color:#4f46e5; width:15px; height:15px;">
+              <span>👆 버튼 터치</span>
+            </label>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <select id="sound_preset_tap" onchange="updateSoundEventSetting('tap')" style="padding:4px 8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; font-weight:700;">
+                <option value="tap">가벼운 클릭 (기본)</option>
+                <option value="pop">톡 (Pop)</option>
+              </select>
+              <button type="button" onclick="previewSound('tap')" style="background:#eef2ff; border:1px solid #c7d2fe; color:#4338ca; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px; display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:12.5px; font-weight:800; color:#64748b;">효과음 전체 볼륨</span>
+          <input type="range" id="soundMasterVolume" min="0" max="100" value="80" oninput="updateMasterVolume(this.value)" style="width:140px; accent-color:#4f46e5;">
+        </div>
+      </div>
+
+      <!-- 모델 자동 Fallback 안내 문구 (모델 선택창은 불필요하므로 삭제) -->
+      <div style="margin-bottom:16px; background:#f0fdf4; border:1.5px solid #bbf7d0; border-radius:14px; padding:12px;">
+        <div style="font-size:13px; font-weight:800; color:#166534; display:flex; align-items:center; gap:6px;">
+          <span>⚡</span> Gemini 3.8 Flash 디폴트 및 무중단 자동 Fallback 탑재
+        </div>
+        <div style="font-size:12px; color:#15803d; margin-top:4px; line-height:1.45;">
+          별도의 복잡한 모델 선택 없이 최신 <strong>Gemini 3.8 Flash</strong>로 자동 동작하며, 사용량 소진(429) 시 3.7 ➔ 3.6 ➔ 3.5 ➔ 2.5 ➔ 2.0으로 끊김 없이 자동 전환됩니다.
         </div>
       </div>
 
@@ -1004,12 +1094,122 @@
     pop: './sounds/pop.mp3'
   };
 
+  /* =========================================================
+     효과음 맞춤 설정 관리 (Sound Configuration & Customization)
+     ========================================================= */
+  const DEFAULT_SOUND_CONFIG = {
+    masterEnabled: true,
+    masterVolume: 80,
+    events: {
+      micStart: { enabled: true, sound: 'intercom_sent', volume: 85 },
+      micEnd: { enabled: true, sound: 'intercom_received', volume: 85 },
+      correct: { enabled: true, sound: 'correct', volume: 90 },
+      wrong: { enabled: true, sound: 'wrong', volume: 80 },
+      tap: { enabled: true, sound: 'tap', volume: 70 }
+    }
+  };
+
+  function getSoundConfig() {
+    try {
+      const raw = localStorage.getItem('hangeoreum_sound_config');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return Object.assign({}, DEFAULT_SOUND_CONFIG, parsed, {
+          events: Object.assign({}, DEFAULT_SOUND_CONFIG.events, (parsed && parsed.events) || {})
+        });
+      }
+    } catch(e) {}
+    return JSON.parse(JSON.stringify(DEFAULT_SOUND_CONFIG));
+  }
+
+  function saveSoundConfig(cfg) {
+    try {
+      localStorage.setItem('hangeoreum_sound_config', JSON.stringify(cfg));
+    } catch(e) {}
+  }
+
+  function toggleMasterSound(enabled) {
+    const cfg = getSoundConfig();
+    cfg.masterEnabled = enabled;
+    saveSoundConfig(cfg);
+  }
+
+  function updateMasterVolume(val) {
+    const cfg = getSoundConfig();
+    cfg.masterVolume = parseInt(val, 10) || 80;
+    saveSoundConfig(cfg);
+  }
+
+  function updateSoundEventSetting(evKey) {
+    const cfg = getSoundConfig();
+    const chk = document.getElementById('sound_ev_' + evKey);
+    const sel = document.getElementById('sound_preset_' + evKey);
+    if (!cfg.events[evKey]) cfg.events[evKey] = {};
+    if (chk) cfg.events[evKey].enabled = chk.checked;
+    if (sel) cfg.events[evKey].sound = sel.value;
+    saveSoundConfig(cfg);
+  }
+
+  function previewSound(evKey) {
+    const cfg = getSoundConfig();
+    const sel = document.getElementById('sound_preset_' + evKey);
+    const soundKey = sel ? sel.value : (cfg.events[evKey] ? cfg.events[evKey].sound : null);
+    if (!soundKey) return;
+    const vol = (cfg.masterVolume / 100) * 0.85;
+    try {
+      const src = SOUND_PATHS[soundKey];
+      if (src) {
+        const audio = new Audio(src);
+        audio.volume = Math.max(0, Math.min(1, vol));
+        audio.play().catch(() => {
+          playTone(evKey === 'wrong' ? 220 : 660, 'sine', 0.15, 0.15);
+        });
+      }
+    } catch(e) {}
+  }
+
+  function initSoundSettingsUI() {
+    const cfg = getSoundConfig();
+    const masterChk = document.getElementById('soundMasterSwitch');
+    if (masterChk) masterChk.checked = cfg.masterEnabled;
+    const masterVol = document.getElementById('soundMasterVolume');
+    if (masterVol) masterVol.value = cfg.masterVolume;
+
+    ['micStart', 'micEnd', 'correct', 'wrong', 'tap'].forEach(k => {
+      const ev = cfg.events[k];
+      if (!ev) return;
+      const chk = document.getElementById('sound_ev_' + k);
+      if (chk) chk.checked = ev.enabled;
+      const sel = document.getElementById('sound_preset_' + k);
+      if (sel && ev.sound) sel.value = ev.sound;
+    });
+  }
+
   function playSoundFile(key) {
     try {
+      const cfg = getSoundConfig();
+      if (!cfg.masterEnabled) return;
+
+      let evKey = null;
+      if (key === 'intercom_sent') evKey = 'micStart';
+      else if (key === 'intercom_received') evKey = 'micEnd';
+      else if (key === 'correct' || key === 'combo' || key === 'complete') evKey = 'correct';
+      else if (key === 'wrong') evKey = 'wrong';
+      else if (key === 'tap' || key === 'pop') evKey = 'tap';
+
+      if (evKey && cfg.events[evKey]) {
+        if (!cfg.events[evKey].enabled) return;
+        // 사용자가 선택한 프리셋 사운드가 있으면 우선 적용
+        if (cfg.events[evKey].sound && key !== 'combo' && key !== 'complete') {
+          key = cfg.events[evKey].sound;
+        }
+      }
+
       const src = SOUND_PATHS[key];
       if (!src) return;
       const audio = new Audio(src);
-      audio.volume = 0.85;
+      const vol = (cfg.masterVolume / 100) * 0.85;
+      audio.volume = Math.max(0, Math.min(1, vol));
       audio.play().catch(e => {
         // Fallback Web Audio beep
         playTone(key === 'wrong' ? 220 : 660, 'sine', 0.15, 0.1);
@@ -2299,8 +2499,7 @@
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      statusEl.textContent = "음성인식 미지원 환경입니다. 텍스트 입력 테스트로 전환합니다.";
-      promptManualInputTest();
+      statusEl.textContent = "🎙️ 스마트폰 마이크 권한을 허용하고 다시 말씀해 주세요. (음성 학습 전용)";
       return;
     }
 
@@ -2361,17 +2560,8 @@
       speechRecognizer.start();
 
     } catch(err) {
-      promptManualInputTest();
-    }
-  }
-
-  function promptManualInputTest() {
-    const roundData = getCurrentRoundData();
-    const input = prompt(`[따라하기 ${currentRound}/4 단계]\n목표 문장: "${roundData.target}"\n\n발음하거나 말한 내용을 텍스트로 입력하여 정확도 평가를 진행하세요:`, roundData.target);
-    if (input !== null && input.trim()) {
-      soundMicEnd();
-      document.getElementById('userSpokenFeedback').innerHTML = `🗣️ 입력된 발화: <strong>"${input.trim()}"</strong>`;
-      analyzePronunciationAndJudge(input.trim());
+      console.warn("Speech recognition error:", err);
+      statusEl.textContent = "🎙️ 마이크 권한을 허용하고 다시 시도해 주세요.";
     }
   }
 
@@ -3154,7 +3344,7 @@
   function getGeminiConfig() {
     return {
       apiKey: localStorage.getItem('hangeoreum_gemini_key') || '',
-      defaultModel: localStorage.getItem('hangeoreum_gemini_model') || 'gemini-3.8-flash'
+      defaultModel: 'gemini-3.8-flash'
     };
   }
 
@@ -3162,8 +3352,8 @@
     soundTap();
     const config = getGeminiConfig();
     document.getElementById('apiKeyInput').value = config.apiKey;
-    document.getElementById('geminiModelSelect').value = config.defaultModel;
     document.getElementById('apiTestStatus').textContent = '';
+    initSoundSettingsUI();
     document.getElementById('settingsModal').classList.remove('hidden');
   }
 
@@ -3185,13 +3375,19 @@
 
   function saveApiSettings() {
     const apiKey = document.getElementById('apiKeyInput').value.trim();
-    const model = document.getElementById('geminiModelSelect').value;
     try {
       localStorage.setItem('hangeoreum_gemini_key', apiKey);
-      localStorage.setItem('hangeoreum_gemini_model', model);
     } catch(e) {}
+
+    // Android Native 보안 저장소에도 암호화 저장
+    if (window.Native && typeof window.Native.call === 'function' && apiKey) {
+      try {
+        window.Native.call('saveApiKey', JSON.stringify({ apiKey: apiKey }));
+      } catch(e) {}
+    }
+
     soundLevelUp();
-    alert("Gemini API 키 및 계단식 모델 설정이 기기에 안전하게 저장되었습니다!");
+    alert("Gemini API 설정 및 효과음 설정이 기기에 안전하게 저장되었습니다!");
     closeSettingsModal();
   }
 
@@ -3199,8 +3395,12 @@
     if (confirm("Gemini API 키를 삭제하고 내장 오프라인 분석 모드로 복귀하시겠습니까?")) {
       try {
         localStorage.removeItem('hangeoreum_gemini_key');
-        localStorage.removeItem('hangeoreum_gemini_model');
       } catch(e) {}
+      if (window.Native && typeof window.Native.call === 'function') {
+        try {
+          window.Native.call('deleteApiKey', '{}');
+        } catch(e) {}
+      }
       openSettingsModal();
       document.getElementById('apiTestStatus').innerHTML = "<span style='color:#166534;'>키가 삭제되었습니다. 내장 오프라인 모드로 안전하게 동작합니다.</span>";
     }
@@ -3242,22 +3442,10 @@
           const data = await res.json();
           const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
           
-          // 사용자의 요청 규칙: 소진되거나 모델이 바뀌어 성공 시, 자동으로 해당 모델을 다음 기본 모델로 선택 및 저장!
+          // 소진되거나 모델이 바뀌어 성공 시, 자동으로 해당 모델을 다음 기본 모델로 보관
           if (currentModel !== initial) {
             try {
               localStorage.setItem('hangeoreum_gemini_model', currentModel);
-              const selectEl = document.getElementById('geminiModelSelect');
-              if (selectEl) {
-                // 옵션에 있으면 선택, 없으면 추가 후 선택
-                let opt = selectEl.querySelector(`option[value="${currentModel}"]`);
-                if (!opt) {
-                  opt = document.createElement('option');
-                  opt.value = currentModel;
-                  opt.textContent = `${currentModel} (자동 전환 활성)`;
-                  selectEl.appendChild(opt);
-                }
-                selectEl.value = currentModel;
-              }
             } catch(e) {}
           }
 
@@ -3287,7 +3475,6 @@
   async function testApiConnection() {
     const statusEl = document.getElementById('apiTestStatus');
     const apiKey = document.getElementById('apiKeyInput').value.trim();
-    const model = document.getElementById('geminiModelSelect').value;
 
     if (!apiKey) {
       statusEl.innerHTML = "<span style='color:#dc2626;'>Gemini API Key를 먼저 입력해 주세요.</span>";
@@ -3297,14 +3484,31 @@
     // 임시 저장 후 테스트
     try {
       localStorage.setItem('hangeoreum_gemini_key', apiKey);
-      localStorage.setItem('hangeoreum_gemini_model', model);
     } catch(e) {}
 
-    statusEl.innerHTML = `<span style='color:#4f46e5;'>[${model}] 계단식 Fallback 연결 테스트 중...</span>`;
+    statusEl.innerHTML = `<span style='color:#4f46e5;'>🧪 [Gemini] 연결 테스트 중... (Native 직접 연결 검증)</span>`;
 
+    // 1순위: Android Native HttpsURLConnection 브릿지 (CORS 및 WebView 인터셉트 원천 차단)
+    if (window.Native && typeof window.Native.call === 'function') {
+      try {
+        const rawRes = window.Native.call('testGemini', JSON.stringify({ apiKey: apiKey }));
+        const res = JSON.parse(rawRes);
+        if (res.ok) {
+          statusEl.innerHTML = `<span style='color:#166534;'>✅ <strong>${res.model || 'Gemini'}</strong> 정상 연결 성공! (실시간 초정밀 AI 코칭 활성화 완료)</span>`;
+          return;
+        } else {
+          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.error || 'Gemini API 키 또는 네트워크 확인 필요'}</span>`;
+          return;
+        }
+      } catch(nativeErr) {
+        console.warn("Native testGemini error, fallback to web:", nativeErr);
+      }
+    }
+
+    // 2순위: Web 환경(브라우저 등) 직접 Cascade 호출
     const result = await callGeminiCascade({
       contents: [{ parts: [{ text: "안녕! 엑자일 테스트야." }] }]
-    }, model);
+    });
 
     if (result.ok) {
       if (result.fallbackUsed) {
