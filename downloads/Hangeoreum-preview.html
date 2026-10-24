@@ -365,24 +365,49 @@
     <!-- 엑자일 캐릭터 & 말풍선 -->
     <div style="display:flex; gap:14px; margin-bottom:18px; align-items:flex-start;">
       <div class="tutor-avatar-wrap" onclick="speakExileIntroStory()" style="cursor:pointer;" title="엑자일 이야기 듣기">
-        <svg id="exileAvatarSvg" width="68" height="68" viewBox="0 0 108 108">
-          <circle cx="54" cy="54" r="50" fill="#312E81"/>
-          <circle cx="54" cy="54" r="42" fill="#4338CA"/>
-          <path d="M52,28 L56,28 L55,18 L53,18 Z" fill="#A5B4FC"/>
-          <polygon points="54,12 56,17 62,17 57,21 59,26 54,23 49,26 51,21 46,17 52,17" fill="#FACC15"/>
-          <circle cx="54" cy="58" r="28" fill="#34D399"/>
-          <ellipse cx="36" cy="62" rx="4" ry="3" fill="#F472B6"/>
-          <ellipse cx="72" cy="62" rx="4" ry="3" fill="#F472B6"/>
-          <!-- 눈 깜빡임 타이머 연동 (2.5s~4.5s) -->
-          <ellipse id="avatarEyeL" cx="43" cy="56" rx="4.5" ry="5.5" fill="#0F172A"/>
-          <circle id="avatarPupilL" cx="42" cy="54" r="1.8" fill="#FFFFFF"/>
-          <ellipse id="avatarEyeR" cx="65" cy="56" rx="4.5" ry="5.5" fill="#0F172A"/>
-          <circle id="avatarPupilR" cx="64" cy="54" r="1.8" fill="#FFFFFF"/>
+        <svg id="exileAvatarSvg" width="76" height="76" viewBox="0 0 108 108">
+          <!-- 배경 원 & 글로우 -->
+          <circle cx="54" cy="54" r="50" fill="#4F46E5"/>
+          <circle cx="54" cy="54" r="42" fill="#6366F1"/>
+          <!-- 반짝이 별 장식 -->
+          <polygon points="20,24 22,19 24,24 29,26 24,28 22,33 20,28 15,26" fill="#FDE047"/>
+          <polygon points="86,22 87.5,18 89,22 93,23.5 89,25 87.5,29 86,25 82,23.5" fill="#F472B6"/>
+          <!-- 아미코 풍 벚꽃 핑크 트윈테일 (뒷머리) -->
+          <path d="M26,44 C18,56 18,78 30,84 C38,88 40,70 34,54 Z" fill="#F472B6"/>
+          <path d="M82,44 C90,56 90,78 78,84 C70,88 68,70 74,54 Z" fill="#F472B6"/>
+          <circle cx="28" cy="46" r="4.5" fill="#A855F7"/>
+          <circle cx="80" cy="46" r="4.5" fill="#A855F7"/>
+          <!-- 목 & 스쿨룩 카라 -->
+          <rect x="49" y="70" width="10" height="9" fill="#FFE0D0"/>
+          <polygon points="36,102 46,76 62,76 72,102" fill="#312E81"/>
+          <polygon points="48,76 54,86 60,76" fill="#FFFFFF"/>
+          <polygon points="52,78 56,78 58,90 54,93 50,90" fill="#EC4899"/>
+          <!-- 뽀얀 얼굴형 -->
+          <path d="M54,36 C39,36 35,48 35,60 C35,74 46,82 54,82 C62,82 73,74 73,60 C73,48 69,36 54,36 Z" fill="#FFF0E6"/>
+          <!-- 사랑스러운 핑크 볼터치 -->
+          <ellipse cx="43" cy="65" rx="5.5" ry="3.5" fill="#FF99AA" opacity="0.85"/>
+          <ellipse cx="65" cy="65" rx="5.5" ry="3.5" fill="#FF99AA" opacity="0.85"/>
+          <!-- 초롱초롱 애니 눈 & 깜빡임 연동 -->
+          <ellipse id="avatarEyeL" cx="44" cy="54" rx="4.5" ry="5.5" fill="#1E1B4B"/>
+          <ellipse cx="44" cy="55" rx="3.5" ry="4.5" fill="#7C3AED"/>
+          <circle id="avatarPupilL" cx="43" cy="52" r="1.8" fill="#FFFFFF"/>
+          <ellipse id="avatarEyeR" cx="64" cy="54" rx="4.5" ry="5.5" fill="#1E1B4B"/>
+          <ellipse cx="64" cy="55" rx="3.5" ry="4.5" fill="#7C3AED"/>
+          <circle id="avatarPupilR" cx="63" cy="52" r="1.8" fill="#FFFFFF"/>
           <!-- 실시간 4단계 립싱크 (Lip Sync) 연동 입모양 -->
-          <path id="avatarMouth" d="M49,64 Q54,64 59,64" stroke="#047857" stroke-width="3" fill="#047857" stroke-linecap="round"/>
+          <path id="avatarMouth" d="M50,70 Q54,73 58,70" stroke="#E11D48" stroke-width="2.5" fill="#E11D48" stroke-linecap="round"/>
+          <!-- 앞머리 뱅 -->
+          <path d="M54,26 C37,26 33,36 33,46 L37,54 L41,44 L47,52 L51,42 L54,54 L57,42 L63,52 L67,44 L71,54 L75,46 C75,36 71,26 54,26 Z" fill="#F472B6"/>
+          <path d="M43,32 C47,30 61,30 65,32" stroke="#FBCFE8" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <!-- 튜터 스마트 헤드셋 -->
+          <path d="M31,44 C31,24 77,24 77,44" stroke="#F59E0B" stroke-width="4" fill="none"/>
+          <ellipse cx="28" cy="52" rx="4" ry="7" fill="#FACC15"/>
+          <ellipse cx="80" cy="52" rx="4" ry="7" fill="#FACC15"/>
+          <path d="M30,55 C34,66 43,71 49,70" stroke="#475569" stroke-width="2" fill="none"/>
+          <circle cx="49" cy="70" r="2" fill="#EA580C"/>
         </svg>
-        <div style="position:absolute; bottom:-4px; right:-2px; background:#10b981; color:#fff; font-size:10px; font-weight:900; padding:2px 6px; border-radius:8px; border:1.5px solid #fff;">
-          AI
+        <div id="avatarBadgeText" style="position:absolute; bottom:-4px; right:-2px; background:#4f46e5; color:#fff; font-size:10px; font-weight:900; padding:2px 6px; border-radius:8px; border:1.5px solid #fff;">
+          3. 애니
         </div>
       </div>
 
@@ -391,7 +416,7 @@
           <div id="obTutorSpeech">
             난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>
             지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>
-            호칭과 마음에 드는 <strong>9가지 목소리</strong>를 골라줘!
+            호칭과 마음에 드는 <strong>3대 음성엔진(12대 목소리: 인간 남3·여3, 애니 남3·여3)</strong>를 골라줘!
           </div>
           <div style="display:flex; justify-content:flex-end; margin-top:8px;">
             <button onclick="replayCurrentTutorSpeech()" style="background:none; border:none; color:#6366f1; font-weight:800; font-size:14px; cursor:pointer; display:flex; align-items:center; gap:4px;">
@@ -424,19 +449,26 @@
         <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
             <label style="font-size:16px; font-weight:800; color:#334155;">
-              🎙️ 주헌법 제20조 공인 2대 음성엔진
+              🎙️ 3대 음성 엔진 & 12대 보이스 프리셋
             </label>
-            <span id="currentEngineBadge" style="font-size:12px; font-weight:800; color:#4f46e5; background:#eef2ff; padding:2px 8px; border-radius:8px;">애니메이션 캐릭터 모드</span>
+            <span id="currentEngineBadge" style="font-size:12px; font-weight:800; color:#4f46e5; background:#eef2ff; padding:3px 8px; border-radius:8px;">✨ 3. 양방향 애니메이션 엔진</span>
           </div>
 
-          <!-- 2대 음성 엔진 상호 전환 토글 탭 -->
-          <div style="display:flex; gap:6px; margin-bottom:12px; background:#e2e8f0; padding:4px; border-radius:14px;">
-            <button type="button" id="tabEngineAnime" class="btn-3d" style="flex:1; min-height:40px; padding:6px 10px; font-size:14px; background:#4f46e5; color:#fff;" onclick="switchVoiceEngineMode('anime')">
-              ✨ 애니 캐릭터 모드 (6종)
+          <!-- 3대 음성 엔진 상호 전환 토글 탭 -->
+          <div style="display:flex; gap:5px; margin-bottom:10px; background:#e2e8f0; padding:4px; border-radius:14px;">
+            <button type="button" id="tabEngineAi" class="btn-3d" style="flex:1; min-height:42px; padding:6px 4px; font-size:13px; font-weight:800; background:#f8fafc; color:#475569;" onclick="switchVoiceEngineMode('ai')">
+              🤖 1. AI 엔진
             </button>
-            <button type="button" id="tabEngineHuman" class="btn-3d" style="flex:1; min-height:40px; padding:6px 10px; font-size:14px; background:#f8fafc; color:#475569;" onclick="switchVoiceEngineMode('human')">
-              👤 인간 음성 모드 (4종)
+            <button type="button" id="tabEngineHuman" class="btn-3d" style="flex:1; min-height:42px; padding:6px 4px; font-size:13px; font-weight:800; background:#f8fafc; color:#475569;" onclick="switchVoiceEngineMode('human')">
+              🗣️ 2. 사람 음성 (6종)
             </button>
+            <button type="button" id="tabEngineAnime" class="btn-3d" style="flex:1; min-height:42px; padding:6px 4px; font-size:13px; font-weight:800; background:#4f46e5; color:#fff;" onclick="switchVoiceEngineMode('anime')">
+              ✨ 3. 애니 음성 (6종)
+            </button>
+          </div>
+          
+          <div id="voiceEngineSubdesc" style="font-size:13px; color:#64748b; margin-bottom:10px; font-weight:600; padding:0 4px;">
+            ✨ 2D 캐릭터 8대 상태 머신 & 실시간 립싱크 <strong>애니메이션 6대 프리셋</strong> (여성 3종 / 남성 3종)
           </div>
 
           <div id="voicePresetContainer" style="display:flex; flex-direction:column; gap:8px;">
@@ -1008,33 +1040,44 @@
   function soundLevelUp() { playSoundFile('complete'); }
 
 
-  /* =========================================================
-     2. 주헌법 제20조 제5항 공인 2대 표준 음성 엔진
-     - 인간 음성엔진 (Human Voice Engine): 실제 사람 대화 4대 프리셋
-     - 애니메이션 캐릭터 음성엔진 (Anime Character Voice Engine): 6대 공식 프리셋
+    /* =========================================================
+     2. 주헌법 제20조 공인 3대 음성 엔진 및 12대 음성 프리셋
+     - 1. AI 엔진 (온디바이스 Supertonic 3 + Fallback 신경망 코칭)
+     - 2. 양방향 사람 음성 엔진 (인간 원어민 6종: 여성 3종, 남성 3종)
+     - 3. 양방향 애니메이션 엔진 (2D 캐릭터 6종: 여성 3종, 남성 3종)
      ========================================================= */
-  let activeVoiceEngineMode = 'anime'; // 'anime' | 'human'
+  let activeVoiceEngineMode = 'anime'; // 'ai' | 'human' | 'anime'
 
-  // 애니메이션 캐릭터 음성엔진 (주헌법 제20조 제5항 6대 공식 규격)
+  // 애니메이션 캐릭터 음성엔진 (여성 3종, 남성 3종)
   const ANIME_VOICE_PRESETS = [
-    { code: 'ANIME_F_CUTE', name: '귀엽고 발랄한 요정 루나', gender: 'female', pitch: 1.35, rate: 1.08, icon: '✨', style: '깜찍·경쾌 감탄사', sample: '안녕 {NAME}! 오늘 외국어도 신나게 부숴보자!' },
-    { code: 'ANIME_F_SOFT', name: '차분하고 다정한 멘토 세라', gender: 'female', pitch: 1.15, rate: 0.95, icon: '🍵', style: '다정·힐링 배려 톤', sample: '수고 많았어요 {NAME}. 차 한잔 마시며 천천히 연습해요.' },
-    { code: 'ANIME_F_BRIGHT', name: '밝고 활기찬 아이돌 밍크', gender: 'female', pitch: 1.45, rate: 1.12, icon: '🌸', style: '긍정 비타민 리액션', sample: '{NAME}! 오늘도 100점 맞고 나랑 하이파이브!' },
-    { code: 'ANIME_M_YOUTH', name: '경쾌하고 활기찬 소년 카이', gender: 'male', pitch: 1.10, rate: 1.10, icon: '⚡', style: '시원시원 소년만화 주인공', sample: '포기하지 마 {NAME}! 우리의 한계는 우주 너머라고!' },
-    { code: 'ANIME_M_CALM', name: '부드럽고 차분한 연구원 레오', gender: 'male', pitch: 0.90, rate: 0.95, icon: '🎧', style: '신뢰감 있는 따뜻한 중저음', sample: '{NAME}, 부담 갖지 말고 편안하게 원어민 소리를 따라 해봐.' },
-    { code: 'ANIME_M_DEEP', name: '낮고 진중한 수호대장 바론', gender: 'male', pitch: 0.75, rate: 0.90, icon: '🛡️', style: '묵직하고 든든한 바리톤', sample: '{NAME}, 50레벨 탈출 작전의 성공을 내 명예를 걸고 약속한다.' }
+    // 여성 3종
+    { code: 'ANIME_F_CUTE', name: '루나 (귀엽고 발랄한 요정)', gender: 'female', pitch: 1.35, rate: 1.08, icon: '🧚', style: '깜찍·경쾌 감탄사', sample: '안녕 {NAME}! 오늘 외국어도 신나게 부숴보자!' },
+    { code: 'ANIME_F_SOFT', name: '세라 (차분하고 다정한 멘토)', gender: 'female', pitch: 1.15, rate: 0.95, icon: '🍵', style: '다정·힐링 배려 톤', sample: '수고 많았어요 {NAME}. 차 한잔 마시며 천천히 연습해요.' },
+    { code: 'ANIME_F_BRIGHT', name: '밍크 (밝고 활기찬 아이돌)', gender: 'female', pitch: 1.45, rate: 1.12, icon: '🌸', style: '긍정 비타민 리액션', sample: '{NAME}! 오늘도 100점 맞고 나랑 하이파이브!' },
+    // 남성 3종
+    { code: 'ANIME_M_YOUTH', name: '카이 (경쾌하고 활기찬 소년)', gender: 'male', pitch: 1.10, rate: 1.10, icon: '⚡', style: '시원시원 소년만화 주인공', sample: '포기하지 마 {NAME}! 우리의 한계는 우주 너머라고!' },
+    { code: 'ANIME_M_CALM', name: '레오 (부드럽고 차분한 연구원)', gender: 'male', pitch: 0.90, rate: 0.95, icon: '🎧', style: '신뢰감 있는 따뜻한 중저음', sample: '{NAME}, 부담 갖지 말고 편안하게 원어민 소리를 따라 해봐.' },
+    { code: 'ANIME_M_DEEP', name: '바론 (낮고 진중한 수호대장)', gender: 'male', pitch: 0.75, rate: 0.90, icon: '🛡️', style: '묵직하고 든든한 바리톤', sample: '{NAME}, 50레벨 탈출 작전의 성공을 내 명예를 걸고 약속한다.' }
   ];
 
-  // 인간 음성엔진 (실제 사람처럼 자연스러운 원어민 한국어 4대 규격)
+  // 인간 음성엔진 (여성 3종, 남성 3종)
   const HUMAN_VOICE_PRESETS = [
-    { code: 'HUMAN_M_NATURAL', name: '자연스러운 20대 청년 원어민', gender: 'male', pitch: 1.0, rate: 1.0, icon: '🗣️', style: '실제 사람 자연 대화', sample: '안녕하세요 {NAME}님, 오늘도 자연스럽게 귀가 트이는 연습을 해볼까요?' },
-    { code: 'HUMAN_F_WARM', name: '친절하고 따뜻한 튜터', gender: 'female', pitch: 1.05, rate: 0.98, icon: '👩‍🏫', style: '명확하고 다정한 코칭', sample: '반가워요 {NAME}님! 조급해하지 말고 한 단어씩 호흡을 맞춰봐요.' },
-    { code: 'HUMAN_M_DEEP', name: '신뢰감 넘치는 남성 멘토', gender: 'male', pitch: 0.88, rate: 0.95, icon: '🎙️', style: '깊고 안정적인 발성', sample: '{NAME}님, 실전 비즈니스 회화까지 확실하게 서포트하겠습니다.' },
-    { code: 'HUMAN_F_CLEAR', name: '또렷하고 명확한 아나운서', gender: 'female', pitch: 1.12, rate: 1.02, icon: '📰', style: '정확한 딕션과 억양', sample: '안녕하십니까 {NAME}님. 표준 원어민 발음 교정 코칭을 시작합니다.' }
+    // 여성 3종
+    { code: 'HUMAN_F_WARM', name: '서연 (다정하고 따뜻한 튜터)', gender: 'female', pitch: 1.05, rate: 0.98, icon: '👩‍🏫', style: '명확하고 다정한 코칭', sample: '반가워요 {NAME}님! 조급해하지 말고 한 단어씩 호흡을 맞춰봐요.' },
+    { code: 'HUMAN_F_CLEAR', name: '민서 (또렷하고 명확한 아나운서)', gender: 'female', pitch: 1.12, rate: 1.02, icon: '📰', style: '정확한 딕션과 표준 억양', sample: '안녕하십니까 {NAME}님. 표준 원어민 발음 교정 코칭을 시작합니다.' },
+    { code: 'HUMAN_F_YOUTH', name: '지우 (밝고 친근한 20대 청년)', gender: 'female', pitch: 1.18, rate: 1.05, icon: '✨', style: '생기 있고 편안한 대화', sample: '{NAME}님 안녕! 오늘 배울 회화도 정말 쉬우니까 편하게 따라해 봐요!' },
+    // 남성 3종
+    { code: 'HUMAN_M_NATURAL', name: '도윤 (자연스러운 20대 청년 원어민)', gender: 'male', pitch: 1.00, rate: 1.00, icon: '🗣️', style: '실제 사람 자연 대화', sample: '안녕하세요 {NAME}님, 오늘도 자연스럽게 귀가 트이는 연습을 해볼까요?' },
+    { code: 'HUMAN_M_CALM', name: '시우 (지적이고 차분한 튜터)', gender: 'male', pitch: 0.95, rate: 0.98, icon: '☕', style: '차분하고 정돈된 설명', sample: '{NAME}님, 문장의 강세를 느끼며 차분하게 한 걸음씩 완성해 봅시다.' },
+    { code: 'HUMAN_M_DEEP', name: '준혁 (신뢰감 넘치는 남성 멘토)', gender: 'male', pitch: 0.85, rate: 0.92, icon: '🎙️', style: '깊고 안정적인 발성', sample: '{NAME}님, 실전 비즈니스 회화까지 확실하게 서포트하겠습니다.' }
   ];
+
+  // 전체 12종 결합 목록
+  const ALL_VOICE_PRESETS = [...ANIME_VOICE_PRESETS, ...HUMAN_VOICE_PRESETS];
 
   let selectedAnimeCode = 'ANIME_F_CUTE';
-  let selectedHumanCode = 'HUMAN_M_NATURAL';
+  let selectedHumanCode = 'HUMAN_F_WARM';
+  let selectedAiVoiceCode = 'ANIME_F_CUTE';
   let activeAudioPlayer = null;
   let lipSyncInterval = null;
   let blinkTimer = null;
@@ -1125,32 +1168,11 @@
     else if (lang === 'ja' || lang.startsWith('ja')) gLang = 'ja';
     else if (lang === 'en') gLang = 'en';
 
-    // 1순위: Supertonic 3 / Google Neural TTS 스트리밍
-    try {
-      if (activeAudioPlayer) {
-        activeAudioPlayer.pause();
-        activeAudioPlayer = null;
-      }
-      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${gLang}&q=${encodeURIComponent(clean)}`;
-      const audio = new Audio(ttsUrl);
-      activeAudioPlayer = audio;
-      audio.playbackRate = options.rate || 1.0;
-      // 발화 예상 시간 계산 (글자당 약 80ms)
-      const estimatedDuration = Math.max(1200, clean.length * 85);
-      startLipSyncAnimation(estimatedDuration);
-      audio.onended = () => stopLipSyncAnimation();
-      audio.play().catch(err => {
-        stopLipSyncAnimation();
-        fallbackToAndroidNativeTTS(clean, gLang, options);
-      });
-      return;
-    } catch(e) {
-      fallbackToAndroidNativeTTS(clean, gLang, options);
-    }
-  }
+    // 발화 예상 시간 계산 (글자당 약 80ms)
+    const estimatedDuration = Math.max(1200, clean.length * 85);
+    startLipSyncAnimation(estimatedDuration);
 
-  // 2순위: Android Native Bridge (Android 기본 TTS Fallback - 헌법 제20조)
-  function fallbackToAndroidNativeTTS(clean, gLang, options) {
+    // 1순위: Android Native TextToSpeech (주헌법 제20조 최우선 on-device 재생)
     if (window.Native && typeof window.Native.call === 'function') {
       try {
         window.Native.call("speakText", JSON.stringify({
@@ -1163,7 +1185,7 @@
       } catch(e) {}
     }
 
-    // 3순위: HTML5 Web Speech API
+    // 2순위: HTML5 Web Speech API (브라우저 내장 음성 합성 - 오프라인 무지연)
     if ('speechSynthesis' in window) {
       try {
         window.speechSynthesis.cancel();
@@ -1171,20 +1193,30 @@
         u.lang = gLang === 'ko' ? 'ko-KR' : (gLang === 'fr' ? 'fr-FR' : (gLang === 'zh-CN' ? 'zh-CN' : 'ja-JP'));
         u.pitch = options.pitch || 1.0;
         u.rate = options.rate || 1.0;
+        u.onend = () => stopLipSyncAnimation();
+        u.onerror = () => stopLipSyncAnimation();
         window.speechSynthesis.speak(u);
+        return;
       } catch(e) {}
     }
-  }
 
-  function speakExileTutor(text, lang = 'ko') {
-    const v = EXILE_VOICES.find(x => x.id === selectedExileVoiceId) || EXILE_VOICES[2];
-    speakTextWithFallback(text, lang, { pitch: v.pitch, rate: v.rate });
-  }
-
-  function testCurrentExileVoice() {
-    const v = EXILE_VOICES.find(x => x.id === selectedExileVoiceId) || EXILE_VOICES[2];
-    const txt = v.sample.replace(/\{NAME\}/g, userName);
-    speakExileTutor(txt, 'ko');
+    // 3순위: Google Neural TTS 스트리밍 대체
+    try {
+      if (activeAudioPlayer) {
+        activeAudioPlayer.pause();
+        activeAudioPlayer = null;
+      }
+      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${gLang}&q=${encodeURIComponent(clean)}`;
+      const audio = new Audio(ttsUrl);
+      activeAudioPlayer = audio;
+      audio.playbackRate = options.rate || 1.0;
+      audio.onended = () => stopLipSyncAnimation();
+      audio.play().catch(err => {
+        stopLipSyncAnimation();
+      });
+    } catch(e) {
+      stopLipSyncAnimation();
+    }
   }
 
   function playTargetTTS() {
@@ -1832,28 +1864,38 @@
      7. 2대 음성엔진 모드 전환 & 프리셋 렌더러
      ========================================================= */
   function switchVoiceEngineMode(mode) {
-    soundTap();
     activeVoiceEngineMode = mode;
-    try {
-      localStorage.setItem('hangeoreum_voice_engine_mode', mode);
-    } catch(e) {}
+    try { localStorage.setItem('hangeoreum_voice_engine_mode', mode); } catch(e) {}
 
-    const tabAnime = document.getElementById('tabEngineAnime');
+    const tabAi = document.getElementById('tabEngineAi');
     const tabHuman = document.getElementById('tabEngineHuman');
+    const tabAnime = document.getElementById('tabEngineAnime');
     const badge = document.getElementById('currentEngineBadge');
+    const subdesc = document.getElementById('voiceEngineSubdesc');
+    const avatarBadge = document.getElementById('avatarBadgeText');
 
-    if (mode === 'anime') {
-      tabAnime.style.background = '#4f46e5';
-      tabAnime.style.color = '#ffffff';
-      tabHuman.style.background = '#f8fafc';
-      tabHuman.style.color = '#475569';
-      if (badge) badge.textContent = '애니메이션 캐릭터 모드';
+    [tabAi, tabHuman, tabAnime].forEach(btn => {
+      if (btn) {
+        btn.style.background = '#f8fafc';
+        btn.style.color = '#475569';
+      }
+    });
+
+    if (mode === 'ai') {
+      if (tabAi) { tabAi.style.background = '#4f46e5'; tabAi.style.color = '#ffffff'; }
+      if (badge) badge.textContent = '🤖 1. AI 코칭 엔진';
+      if (avatarBadge) { avatarBadge.textContent = '1. AI'; avatarBadge.style.background = '#10b981'; }
+      if (subdesc) subdesc.innerHTML = '⚡ <strong>온디바이스 Supertonic 3 + Fallback</strong> 신경망 코칭 파이프라인 (아래 12종 중 원하는 AI 페르소나 선택)';
+    } else if (mode === 'human') {
+      if (tabHuman) { tabHuman.style.background = '#4f46e5'; tabHuman.style.color = '#ffffff'; }
+      if (badge) badge.textContent = '🗣️ 2. 사람 음성 (남3·여3)';
+      if (avatarBadge) { avatarBadge.textContent = '2. 사람'; avatarBadge.style.background = '#0284c7'; }
+      if (subdesc) subdesc.innerHTML = '🗣️ 실제 사람처럼 자연스러운 <strong>인간 원어민 6대 프리셋</strong> (여성 3종 / 남성 3종)';
     } else {
-      tabHuman.style.background = '#4f46e5';
-      tabHuman.style.color = '#ffffff';
-      tabAnime.style.background = '#f8fafc';
-      tabAnime.style.color = '#475569';
-      if (badge) badge.textContent = '인간 음성 모드';
+      if (tabAnime) { tabAnime.style.background = '#4f46e5'; tabAnime.style.color = '#ffffff'; }
+      if (badge) badge.textContent = '✨ 3. 애니 음성 (남3·여3)';
+      if (avatarBadge) { avatarBadge.textContent = '3. 애니'; avatarBadge.style.background = '#ec4899'; }
+      if (subdesc) subdesc.innerHTML = '✨ 2D 캐릭터 8대 상태 머신 & 실시간 립싱크 <strong>애니메이션 6대 프리셋</strong> (여성 3종 / 남성 3종)';
     }
 
     renderVoicePresets();
@@ -1865,22 +1907,43 @@
     if (!container) return;
     container.innerHTML = '';
 
-    const list = (activeVoiceEngineMode === 'anime') ? ANIME_VOICE_PRESETS : HUMAN_VOICE_PRESETS;
-    const currentCode = (activeVoiceEngineMode === 'anime') ? selectedAnimeCode : selectedHumanCode;
+    let list = [];
+    let currentCode = '';
+
+    if (activeVoiceEngineMode === 'anime') {
+      list = ANIME_VOICE_PRESETS;
+      currentCode = selectedAnimeCode;
+    } else if (activeVoiceEngineMode === 'human') {
+      list = HUMAN_VOICE_PRESETS;
+      currentCode = selectedHumanCode;
+    } else {
+      list = ALL_VOICE_PRESETS;
+      currentCode = selectedAiVoiceCode || selectedAnimeCode;
+    }
+
+    let lastGender = null;
 
     list.forEach(v => {
+      if (v.gender !== lastGender) {
+        lastGender = v.gender;
+        const sectionHeader = document.createElement('div');
+        sectionHeader.style.cssText = 'font-size:12px; font-weight:800; color:#4f46e5; padding:6px 6px 2px; text-transform:uppercase; letter-spacing:0.5px;';
+        sectionHeader.innerHTML = (v.gender === 'female') ? '🌸 여성 음성 (3종)' : '⚡ 남성 음성 (3종)';
+        container.appendChild(sectionHeader);
+      }
+
       const isSelected = (v.code === currentCode);
       const card = document.createElement('div');
       card.className = `choice-card ${isSelected ? 'selected' : ''}`;
-      card.style.padding = '10px 14px';
+      card.style.cssText = `padding:10px 14px; margin-bottom:2px; display:flex; align-items:center; gap:12px; border-radius:14px; cursor:pointer; background:${isSelected ? '#eef2ff' : '#ffffff'}; border:2px solid ${isSelected ? '#4f46e5' : '#e2e8f0'};`;
 
       card.innerHTML = `
         <span style="font-size:26px;">${v.icon}</span>
         <div style="flex:1;">
-          <div style="font-size:15px; font-weight:900;">${v.name}</div>
+          <div style="font-size:15px; font-weight:900; color:#0f172a;">${v.name}</div>
           <div style="font-size:12px; color:#64748b;">${v.style} · ${v.gender === 'female' ? '여성' : '남성'} (피치 ${v.pitch} / 속도 ${v.rate})</div>
         </div>
-        <button type="button" class="btn-3d btn-secondary" style="padding:6px 10px; min-height:34px; font-size:12px;" onclick="event.stopPropagation(); speakSampleVoice('${v.code}')">
+        <button type="button" class="btn-3d btn-secondary" style="padding:6px 12px; min-height:34px; font-size:12px; white-space:nowrap;" onclick="event.stopPropagation(); speakSampleVoice('${v.code}')">
           🔊 미리듣기
         </button>
       `;
@@ -1890,9 +1953,12 @@
         if (activeVoiceEngineMode === 'anime') {
           selectedAnimeCode = v.code;
           try { localStorage.setItem('hangeoreum_anime_voice_code', v.code); } catch(e) {}
-        } else {
+        } else if (activeVoiceEngineMode === 'human') {
           selectedHumanCode = v.code;
           try { localStorage.setItem('hangeoreum_human_voice_code', v.code); } catch(e) {}
+        } else {
+          selectedAiVoiceCode = v.code;
+          try { localStorage.setItem('hangeoreum_ai_voice_code', v.code); } catch(e) {}
         }
         renderVoicePresets();
         speakSampleVoice(v.code);
@@ -1905,18 +1971,16 @@
   function getActiveVoiceConfig() {
     if (activeVoiceEngineMode === 'anime') {
       return ANIME_VOICE_PRESETS.find(x => x.code === selectedAnimeCode) || ANIME_VOICE_PRESETS[0];
-    } else {
+    } else if (activeVoiceEngineMode === 'human') {
       return HUMAN_VOICE_PRESETS.find(x => x.code === selectedHumanCode) || HUMAN_VOICE_PRESETS[0];
+    } else {
+      const code = selectedAiVoiceCode || selectedAnimeCode || 'ANIME_F_CUTE';
+      return ALL_VOICE_PRESETS.find(x => x.code === code) || ANIME_VOICE_PRESETS[0];
     }
   }
 
   function speakSampleVoice(code) {
-    let v = null;
-    if (activeVoiceEngineMode === 'anime') {
-      v = ANIME_VOICE_PRESETS.find(x => x.code === code) || ANIME_VOICE_PRESETS[0];
-    } else {
-      v = HUMAN_VOICE_PRESETS.find(x => x.code === code) || HUMAN_VOICE_PRESETS[0];
-    }
+    const v = ALL_VOICE_PRESETS.find(x => x.code === code) || ALL_VOICE_PRESETS[0];
     const txt = v.sample.replace(/\{NAME\}/g, userName);
     speakTextWithFallback(txt, 'ko', { pitch: v.pitch, rate: v.rate });
   }
@@ -1930,12 +1994,6 @@
     const v = getActiveVoiceConfig();
     const txt = v.sample.replace(/\{NAME\}/g, userName);
     speakExileTutor(txt, 'ko');
-  }
-
-  function speakSampleVoice(voiceId) {
-    const v = EXILE_VOICES.find(x => x.id === voiceId) || EXILE_VOICES[2];
-    const txt = v.sample.replace(/\{NAME\}/g, userName);
-    speakTextWithFallback(txt, 'ko', { pitch: v.pitch, rate: v.rate });
   }
 
   function speakExileIntroStory() {
@@ -1952,7 +2010,7 @@
 
   function getObDialogues() {
     return {
-      1: `난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>호칭과 마음에 드는 <strong>9가지 목소리</strong>를 골라줘!`,
+      1: `난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>호칭과 마음에 드는 <strong>3대 음성엔진(12대 목소리: 인간 남3·여3, 애니 남3·여3)</strong>를 골라줘!`,
       2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
       3: `좋아 <strong>${userName}</strong>! 안드로메다 귀환 판정 제1문!<br>외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
       4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
@@ -1963,11 +2021,6 @@
   }
 
   function onInputUserName(val) { setAndSaveUserName(val); }
-  function selectQuickName(name) {
-    soundTap();
-    userName = name;
-    document.getElementById('obUserNameInput').value = name;
-  }
   function onSelectLang(lang, card) {
     soundTap();
     selectedLang = lang;
@@ -2108,8 +2161,10 @@
       localStorage.setItem('hangeoreum_user_name', userName);
       localStorage.setItem('hangeoreum_level', currentLevel);
       localStorage.setItem('hangeoreum_lang', selectedLang);
-      localStorage.setItem('hangeoreum_exile_voice_id', selectedExileVoiceId);
-      localStorage.setItem('hangeoreum_exile_gender', selectedExileGender);
+      localStorage.setItem('hangeoreum_voice_engine_mode', activeVoiceEngineMode);
+      localStorage.setItem('hangeoreum_anime_voice_code', selectedAnimeCode);
+      localStorage.setItem('hangeoreum_human_voice_code', selectedHumanCode);
+      localStorage.setItem('hangeoreum_ai_voice_code', selectedAiVoiceCode);
     } catch(e) {}
 
     document.getElementById('viewOnboarding').classList.add('hidden');
@@ -2779,8 +2834,10 @@
       }
     } catch(e) {}
 
-    selectedExileVoiceId = localStorage.getItem('hangeoreum_exile_voice_id') || 'female_anime_lulu';
-    selectedExileGender = localStorage.getItem('hangeoreum_exile_gender') || 'female';
+    activeVoiceEngineMode = localStorage.getItem('hangeoreum_voice_engine_mode') || 'anime';
+    selectedAnimeCode = localStorage.getItem('hangeoreum_anime_voice_code') || 'ANIME_F_CUTE';
+    selectedHumanCode = localStorage.getItem('hangeoreum_human_voice_code') || 'HUMAN_F_WARM';
+    selectedAiVoiceCode = localStorage.getItem('hangeoreum_ai_voice_code') || 'ANIME_F_CUTE';
 
     // 요청 수칙 준수: 어플 실행 시 항상 초기화면(온보딩)으로 먼저 나오게 함!
     document.getElementById('viewOnboarding').classList.remove('hidden');
