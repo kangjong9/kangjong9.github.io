@@ -1074,6 +1074,12 @@
      JAVASCRIPT 코어 로직 엔진
      ========================================================= -->
 <script>
+  // 글로벌 사용자 호칭 (기본값: '옵빠야' - law.md 제2조 5항)
+  var userName = '옵빠야';
+  try {
+    var storedName = localStorage.getItem('hangeoreum_user_name');
+    if (storedName && storedName.trim()) userName = storedName.trim();
+  } catch(e) {}
   /* =========================================================
      1. 실제 MP3 효과음 사운드 엔진 (내장 sounds/*.mp3 활용)
      - 음성 입력 전: intercom_sent.mp3 (차징 챠임)
@@ -1311,8 +1317,8 @@
       modelId: "supertonic-3-onnx",
       styleId: "f2-clear",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 1.02,
-      pitch: 1.12,
+      speakingRate: 1.04,
+      pitch: 1.18,
       rate: 1.02,
       icon: "📰",
       style: "또렷하고 신뢰감 넘치는 표준 아나운서 톤",
@@ -1338,8 +1344,8 @@
       modelId: "supertonic-3-onnx",
       styleId: "f3-bright",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 1.05,
-      pitch: 1.18,
+      speakingRate: 1.10,
+      pitch: 1.28,
       rate: 1.05,
       icon: "✨",
       style: "밝고 활기찬 20대 원어민 청년 일상 톤",
@@ -1365,8 +1371,8 @@
       modelId: "supertonic-3-onnx",
       styleId: "f4-calm",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 0.95,
-      pitch: 1.00,
+      speakingRate: 0.92,
+      pitch: 0.95,
       rate: 0.95,
       icon: "🍵",
       style: "차분하고 정돈된 내레이션 톤",
@@ -1392,8 +1398,8 @@
       modelId: "supertonic-3-onnx",
       styleId: "f5-deep",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 0.92,
-      pitch: 0.92,
+      speakingRate: 0.88,
+      pitch: 0.88,
       rate: 0.92,
       icon: "🍷",
       style: "우아하고 안정적인 중저음 톤",
@@ -1422,7 +1428,7 @@
       styleId: "m1-natural",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
       speakingRate: 1.00,
-      pitch: 1.00,
+      pitch: 0.85,
       rate: 1.00,
       icon: "🗣️",
       style: "자연스러운 20대 청년 원어민 표준 대화 톤",
@@ -1448,8 +1454,8 @@
       modelId: "supertonic-3-onnx",
       styleId: "m2-calm",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 0.98,
-      pitch: 0.95,
+      speakingRate: 0.95,
+      pitch: 0.92,
       rate: 0.98,
       icon: "☕",
       style: "지적이고 차분한 설명 중심 튜터 톤",
@@ -1475,8 +1481,8 @@
       modelId: "supertonic-3-onnx",
       styleId: "m3-deep",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 0.92,
-      pitch: 0.85,
+      speakingRate: 0.90,
+      pitch: 0.72,
       rate: 0.92,
       icon: "🎙️",
       style: "깊고 신뢰감 있는 비즈니스 멘토 톤",
@@ -1502,8 +1508,8 @@
       modelId: "supertonic-3-onnx",
       styleId: "m4-energy",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 1.04,
-      pitch: 1.08,
+      speakingRate: 1.08,
+      pitch: 0.98,
       rate: 1.04,
       icon: "⚡",
       style: "경쾌하고 에너지 넘치는 남성 청년 톤",
@@ -1529,8 +1535,8 @@
       modelId: "supertonic-3-onnx",
       styleId: "m5-heavy",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 0.88,
-      pitch: 0.78,
+      speakingRate: 0.82,
+      pitch: 0.65,
       rate: 0.88,
       icon: "🛡️",
       style: "묵직하고 든든한 안정적 중저음 톤",
@@ -1561,8 +1567,8 @@
       modelId: "anime-core-onnx",
       styleId: "luna-cute",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 1.08,
-      pitch: 1.35,
+      speakingRate: 1.12,
+      pitch: 1.45,
       rate: 1.08,
       icon: "🧚",
       style: "밝고 귀여운 높은 음색 · 요정풍 소녀",
@@ -1588,8 +1594,8 @@
       modelId: "anime-core-onnx",
       styleId: "sera-soft",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 0.95,
-      pitch: 1.15,
+      speakingRate: 0.92,
+      pitch: 1.20,
       rate: 0.95,
       icon: "🍵",
       style: "부드럽고 따뜻한 음색 · 마법소녀 멘토",
@@ -1615,8 +1621,8 @@
       modelId: "anime-core-onnx",
       styleId: "mink-idol",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 1.12,
-      pitch: 1.45,
+      speakingRate: 1.18,
+      pitch: 1.55,
       rate: 1.12,
       icon: "🌸",
       style: "경쾌하고 활기찬 음색 · 아이돌 소녀",
@@ -1642,8 +1648,8 @@
       modelId: "anime-core-onnx",
       styleId: "shion-quiet",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 0.92,
-      pitch: 1.10,
+      speakingRate: 0.86,
+      pitch: 1.08,
       rate: 0.92,
       icon: "📚",
       style: "조용하고 또렷한 음색 · 도서관 사서",
@@ -1670,7 +1676,7 @@
       styleId: "yuria-mystic",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
       speakingRate: 0.98,
-      pitch: 1.25,
+      pitch: 1.35,
       rate: 0.98,
       icon: "✨",
       style: "맑고 부드러운 음색 · 치유의 정령",
@@ -1698,8 +1704,8 @@
       modelId: "anime-core-onnx",
       styleId: "kai-hero",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 1.10,
-      pitch: 1.10,
+      speakingRate: 1.15,
+      pitch: 1.12,
       rate: 1.10,
       icon: "⚡",
       style: "밝고 경쾌한 음색 · 소년만화 주인공",
@@ -1725,8 +1731,8 @@
       modelId: "anime-core-onnx",
       styleId: "leo-gentle",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 0.95,
-      pitch: 0.90,
+      speakingRate: 0.94,
+      pitch: 0.88,
       rate: 0.95,
       icon: "🎧",
       style: "부드럽고 친근한 음색 · 미소년 연구원",
@@ -1752,8 +1758,8 @@
       modelId: "anime-core-onnx",
       styleId: "ray-cool",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 0.92,
-      pitch: 0.80,
+      speakingRate: 1.02,
+      pitch: 0.75,
       rate: 0.92,
       icon: "❄️",
       style: "차분하고 낮은 음색 · 쿨한 천재 라이벌",
@@ -1779,8 +1785,8 @@
       modelId: "anime-core-onnx",
       styleId: "ren-passion",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 1.15,
-      pitch: 1.18,
+      speakingRate: 1.22,
+      pitch: 1.00,
       rate: 1.15,
       icon: "🔥",
       style: "힘 있고 활기찬 음색 · 열혈 도전자",
@@ -1806,8 +1812,8 @@
       modelId: "anime-core-onnx",
       styleId: "baron-knight",
       supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
-      speakingRate: 0.90,
-      pitch: 0.75,
+      speakingRate: 0.82,
+      pitch: 0.60,
       rate: 0.90,
       icon: "🛡️",
       style: "안정감 있고 깊은 음색 · 수호 기사대장",
@@ -2040,25 +2046,22 @@
     else if (lang === 'ja' || lang.startsWith('ja')) gLang = 'ja';
     else if (lang === 'en') gLang = 'en';
 
-    const isMale = (options.gender === 'male') || (options.voiceId && (options.voiceId.includes('_M') || options.voiceId.startsWith('ANIME_M')));
-    const voiceId = options.voiceId || '';
+    // 현재 선택된 음성 세부 정보 자동 연동
+    const activeConfig = (typeof getActiveVoiceConfig === 'function') ? getActiveVoiceConfig() : null;
+    const voiceId = options.voiceId || (activeConfig ? activeConfig.voiceId : currentSelectedVoiceId) || 'ANIME_F1';
+    const vDetail = (typeof VoiceEngine20 !== 'undefined' && VoiceEngine20.getVoiceDetails) ? VoiceEngine20.getVoiceDetails(voiceId) : null;
+
+    // 성별 엄격 판정: _M / ANIME_M 은 100% 남성, _F / ANIME_F 는 100% 여성
+    const isMale = (options.gender === 'male') || (vDetail && vDetail.genderPresentation === 'male') || (voiceId.includes('_M') || voiceId.startsWith('ANIME_M'));
 
     // 발화 예상 시간 계산 (글자당 약 80ms)
     const estimatedDuration = Math.max(1200, clean.length * 85);
     startLipSyncAnimation(estimatedDuration);
 
-    // [남성 vs 여성 피치 절대 분리]
-    let calculatedPitch = options.pitch || 1.0;
-    if (isMale) {
-      calculatedPitch = Math.min(calculatedPitch, 0.85); // 남성은 0.85 이하 중저음 강제
-    } else {
-      calculatedPitch = Math.max(calculatedPitch, 1.15); // 여성은 1.15 이상 고음 강제
-    }
-    if (voiceId.startsWith('ANIME_F')) {
-      calculatedPitch = Math.max(calculatedPitch, 1.30); // 애니 여성 요정톤
-    } else if (voiceId.startsWith('ANIME_M')) {
-      calculatedPitch = (voiceId === 'ANIME_M1' ? 1.02 : Math.min(calculatedPitch, 0.78));
-    }
+    // [20종 고유 독립 음색 매트릭스 1:1 보존: 인위적 클램핑 절대 금지]
+    // 20종 각각의 고유 피치와 레이트를 그대로 전달하여 20명이 전부 다르게 들리도록 보장
+    const effPitch = (typeof options.pitch === 'number' && options.pitch > 0) ? options.pitch : (vDetail ? vDetail.pitch : (isMale ? 0.85 : 1.15));
+    const effRate = (typeof options.rate === 'number' && options.rate > 0) ? options.rate : (vDetail ? (vDetail.speakingRate * (globalSpeechRate || 1.0)) : 1.0);
 
     // 1순위: Android Native TextToSpeech (주헌법 제20조 공인 on-device 네이티브 엔진 - 실제 남성/여성 성우 Voice 분기)
     if (window.Native && typeof window.Native.call === 'function') {
@@ -2068,8 +2071,8 @@
           language: gLang,
           gender: isMale ? 'male' : 'female',
           voiceId: voiceId,
-          pitch: calculatedPitch,
-          rate: options.rate || 1.0
+          pitch: effPitch,
+          rate: effRate
         }));
         return;
       } catch(e) {}
@@ -2082,46 +2085,46 @@
         const u = new SpeechSynthesisUtterance(clean);
         u.lang = gLang === 'ko' ? 'ko-KR' : (gLang === 'fr' ? 'fr-FR' : (gLang === 'zh-CN' ? 'zh-CN' : 'ja-JP'));
 
-        // 브라우저에 등록된 실제 음성들 중 남성/여성 성우 Voice 객체 탐색
+        // 브라우저에 등록된 실제 음성들 중 남성/여성 성우 Voice 객체 풀 구축
         const availableVoices = window.speechSynthesis.getVoices();
         if (availableVoices && availableVoices.length > 0) {
           const langPrefix = gLang === 'ko' ? 'ko' : (gLang === 'fr' ? 'fr' : (gLang === 'zh-CN' ? 'zh' : 'ja'));
-          let matchedVoice = null;
+          const malePool = [];
+          const femalePool = [];
+
           for (let i = 0; i < availableVoices.length; i++) {
             const v = availableVoices[i];
             if (v.lang && v.lang.toLowerCase().startsWith(langPrefix)) {
-              const nameLower = v.name.toLowerCase();
-              if (isMale) {
-                if (nameLower.includes('male') || nameLower.includes('injoon') || nameLower.includes('민호') || nameLower.includes('daehun') || nameLower.includes('man') || nameLower.includes('guy') || nameLower.includes('young')) {
-                  matchedVoice = v;
-                  break;
-                }
-              } else {
-                if (nameLower.includes('female') || nameLower.includes('sunhi') || nameLower.includes('yuna') || nameLower.includes('heami') || nameLower.includes('seoyeon') || nameLower.includes('woman') || nameLower.includes('girl')) {
-                  matchedVoice = v;
-                  break;
-                }
-              }
+              const nl = v.name.toLowerCase();
+              const isVoiceMale = nl.includes('koc') || nl.includes('kod') || nl.includes('koe')
+                || nl.includes('smg') || nl.includes('-sm-') || nl.includes('_sm_') || nl.includes('m00')
+                || nl.includes('frb') || nl.includes('frd') || nl.includes('jac') || nl.includes('jad') || nl.includes('ccb') || nl.includes('ccd')
+                || nl.includes('male') || nl.includes('man') || nl.includes('guy') || nl.includes('민호') || nl.includes('daehun') || nl.includes('injoon');
+
+              const isVoiceFemale = nl.includes('ism') || nl.includes('kob') || nl.includes('kof')
+                || nl.includes('sfg') || nl.includes('-sf-') || nl.includes('_sf_') || nl.includes('f00')
+                || nl.includes('fra') || nl.includes('frc') || nl.includes('jaa') || nl.includes('jab') || nl.includes('cca') || nl.includes('ccc')
+                || nl.includes('female') || nl.includes('woman') || nl.includes('girl') || nl.includes('sunhi') || nl.includes('yuna') || nl.includes('heami') || nl.includes('seoyeon');
+
+              if (isVoiceMale && !isVoiceFemale) malePool.push(v);
+              else if (isVoiceFemale && !isVoiceMale) femalePool.push(v);
             }
           }
+
+          // Voice A / Voice B 교차 매핑
+          const subIdx = (voiceId.endsWith('2') || voiceId.endsWith('4') || voiceId.includes('M1') || voiceId.includes('F1') || voiceId.includes('F3')) ? 1 : 0;
+          let matchedVoice = null;
+          if (isMale && malePool.length > 0) {
+            matchedVoice = malePool[subIdx % malePool.length];
+          } else if (!isMale && femalePool.length > 0) {
+            matchedVoice = femalePool[subIdx % femalePool.length];
+          }
+
           if (matchedVoice) u.voice = matchedVoice;
         }
 
-        // 남성/여성/애니 음색 피치 극적 차등화
-        let effPitch = options.pitch || 1.0;
-        if (isMale) {
-          effPitch = Math.min(effPitch, 0.82); // 남성 묵직한 중저음
-        } else {
-          effPitch = Math.max(effPitch, 1.18); // 여성 화사하고 또렷한 고음
-        }
-        if (voiceId.startsWith('ANIME_F')) {
-          effPitch = Math.max(effPitch, 1.35); // 애니 요정소녀 통통 튀는 고음
-        } else if (voiceId.startsWith('ANIME_M')) {
-          effPitch = (voiceId === 'ANIME_M1' ? 1.05 : 0.78); // 소년 vs 기사대장 중후 톤
-        }
-
         u.pitch = effPitch;
-        u.rate = options.rate || 1.0;
+        u.rate = effRate;
         u.onend = () => stopLipSyncAnimation();
         u.onerror = () => stopLipSyncAnimation();
         window.speechSynthesis.speak(u);
@@ -2129,7 +2132,7 @@
       } catch(e) {}
     }
 
-    // 3순위: Google Neural TTS 스트리밍 대체 (남성 저음 변조 / 여성 고음 변조)
+    // 3순위: Google Neural TTS 스트리밍 대체
     try {
       if (activeAudioPlayer) {
         activeAudioPlayer.pause();
@@ -2138,7 +2141,7 @@
       const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${gLang}&q=${encodeURIComponent(clean)}`;
       const audio = new Audio(ttsUrl);
       activeAudioPlayer = audio;
-      audio.playbackRate = isMale ? 0.9 : (options.rate || 1.0);
+      audio.playbackRate = isMale ? Math.max(0.7, effRate * 0.95) : Math.min(1.3, effRate * 1.05);
       audio.onended = () => stopLipSyncAnimation();
       audio.play().catch(err => {
         stopLipSyncAnimation();
@@ -2148,641 +2151,8 @@
     }
   }
 
-  function playTargetTTS(slow = false) {
-    const roundData = getCurrentRoundData();
-    if (roundData) {
-      const rate = slow ? 0.8 : (globalSpeechRate || 1.0);
-      VoiceEngine20.synthesizeSpeech(roundData.target, selectedLang, currentSelectedVoiceId, { rate });
-    }
-  }
-
-
   /* =========================================================
-     3. 4단계 섀도잉 루프 데이터베이스
-     ========================================================= */
-  const THEMED_DATA = {
-    work: {
-      themeName: "💼 [야근 & 피로 회복]",
-      keywords: "#야근 #피곤 #칼퇴",
-      fr: {
-        t1: [
-          {
-            lv: 1, words: "1단어", note: "피로 감정 1단어 청크",
-            base: { ko: "피곤해.", target: "Fatigué.", phonetic: "[파티게]", note: "기준 기본형" },
-            vars: [
-              { ko: "정말 피곤해.", target: "Très fatigué.", phonetic: "[트레 파티게]", note: "부사 결합 변형 1" },
-              { ko: "난 피곤해.", target: "Je suis fatigué.", phonetic: "[주 쉬 파티게]", note: "주어+동사 변형 2" },
-              { ko: "오늘 너무 지쳤어.", target: "Épuisé aujourd'hui.", phonetic: "[에퓌제 오쥐르뒤]", note: "심화 어휘 변형 3" }
-            ]
-          },
-          {
-            lv: 5, words: "2단어", note: "휴식 요청 청크",
-            base: { ko: "잠깐 휴식.", target: "Une pause.", phonetic: "[윈 포즈]", note: "기본 명사 청크" },
-            vars: [
-              { ko: "커피 휴식 시간.", target: "Pause café.", phonetic: "[포즈 카페]", note: "목적 결합 변형 1" },
-              { ko: "짧은 휴식.", target: "Petite pause.", phonetic: "[쁘띠뜨 포즈]", note: "형용사 수식 변형 2" },
-              { ko: "잠깐 쉴 시간이야.", target: "Temps de pause.", phonetic: "[탕 드 포즈]", note: "시간 표현 변형 3" }
-            ]
-          },
-          {
-            lv: 10, words: "3단어", note: "퇴근 필수 청크",
-            base: { ko: "드디어 퇴근!", target: "Rentrer chez soi !", phonetic: "[랑트레 셰 수아]", note: "퇴근 기본 청크" },
-            vars: [
-              { ko: "집에 가자!", target: "Rentrons à la maison !", phonetic: "[랑트롱 알라 메종]", note: "청유형 변형 1" },
-              { ko: "난 지금 퇴근해.", target: "Je rentre maintenant.", phonetic: "[주 랑트르 망트낭]", note: "현재형 변형 2" },
-              { ko: "드디어 일 끝!", target: "Travail enfin fini !", phonetic: "[트라바이 앙팡 피니]", note: "상황 변형 3" }
-            ]
-          }
-        ],
-        t2: [
-          {
-            lv: 11, words: "5단어", note: "정중한 의뢰 조동사 결합",
-            base: { ko: "오늘은 일찍 쉬고 싶어요.", target: "Je voudrais me reposer tôt ce soir.", phonetic: "[주 부드레 므 르포제 또 스 수아르]", note: "기본 의뢰문" },
-            vars: [
-              { ko: "오늘 밤엔 푹 자고 싶어요.", target: "Je voudrais bien dormir ce soir.", phonetic: "[주 부드레 비앙 도르미르 스 수아르]", note: "소망 변형 1" },
-              { ko: "우리는 일찍 쉬고 싶습니다.", target: "Nous voudrions nous reposer tôt.", phonetic: "[누 부드리옹 누 르포제 또]", note: "복수 주어 변형 2" },
-              { ko: "일 끝나고 쉬고 싶어요.", target: "Je veux me reposer après le travail.", phonetic: "[주 브 므 르포제 아프레 르 트라바이]", note: "시간 부사구 변형 3" }
-            ]
-          }
-        ],
-        t3: [
-          {
-            lv: 21, words: "8단어", note: "원인/결과 접속사(Comme)",
-            base: { ko: "오늘 야근해서 너무 피곤하니 내일 만나요.", target: "Comme j'ai fait des heures supplémentaires, on se voit demain.", phonetic: "[콤 제 페 데 저르 쉬플레망테르...]", note: "기본 인과문" },
-            vars: [
-              { ko: "너무 피곤하니 오늘 약속은 취소해요.", target: "Comme je suis fatigué, annulons notre rendez-vous.", phonetic: "[콤 주 쉬 파티게...]", note: "상황 변형 1" },
-              { ko: "늦게까지 일했으니 푹 쉬세요.", target: "Comme tu as travaillé tard, repose-toi bien.", phonetic: "[콤 튀 아 트라바이예 타르...]", note: "상대방 권유 변형 2" },
-              { ko: "야근을 마쳤으니 내일 연락할게요.", target: "Après le travail, je t'appellerai demain.", phonetic: "[아프레 르 트라바이...]", note: "약속 변형 3" }
-            ]
-          }
-        ],
-        t4: [
-          {
-            lv: 31, words: "14단어", note: "원어민 완곡 격식체",
-            base: { ko: "바쁘신 와중에 죄송하오나 약속을 다음 주로 연기해주실 수 있으실지요?", target: "Je vous prie de m'excuser, mais me serait-il possible de reporter notre dîner à la semaine prochaine ?", phonetic: "[주 부 프리 드 멕스퀴제...]", note: "최고급 격식체" },
-            vars: [
-              { ko: "급한 야근으로 인해 회의 시간을 변경해주실 수 있을까요?", target: "En raison d'un imprévu, pourriez-vous reporter notre réunion ?", phonetic: "[앙 레종 덩 앵프레뷔...]", note: "비즈니스 변형 1" },
-              { ko: "몸이 좋지 않아 일정을 다시 잡아주시면 감사하겠습니다.", target: "Ne me sentant pas bien, j'apprécierais de reprogrammer notre rencontre.", phonetic: "[느 므 상탕 파 비앙...]", note: "정중 서신 변형 2" },
-              { ko: "부득이하게 참석하지 못하게 되어 너른 양해 부탁드립니다.", target: "Je vous remercie par avance pour votre compréhension concernant mon absence.", phonetic: "[주 부 르메르시...]", note: "품격 공식 변형 3" }
-            ]
-          }
-        ],
-        persona: {
-          name: "피에르 (Pierre)", role: "파리 지사 동료 · 따뜻함", avatar: "💼",
-          greetings: "Courage ! Tu as l'air fatigué aujourd'hui, ça a été le boulot ?",
-          greetingsKo: "힘내요! 오늘 피곤해 보이는데 회사 일은 괜찮았어요?",
-          suggested: "Merci Pierre ! C'était dur aujourd'hui, on va boire un verre ?"
-        }
-      },
-      cn: {
-        t1: [
-          {
-            lv: 1, words: "2글자", note: "기본 피로 표현",
-            base: { ko: "피곤해.", target: "好累。", phonetic: "[하오 레이]", note: "기본형" },
-            vars: [
-              { ko: "너무 피곤해.", target: "太累了。", phonetic: "[타이 레이 러]", note: "정도 변형 1" },
-              { ko: "나 너무 지쳤어.", target: "我累坏了。", phonetic: "[워 레이 화이 러]", note: "심화 변형 2" },
-              { ko: "온몸이 쑤셔.", target: "浑身没劲。", phonetic: "[훈션 메이진]", note: "구어체 변형 3" }
-            ]
-          }
-        ],
-        persona: {
-          name: "장웨이 (张伟)", role: "상하이 개발팀 동료", avatar: "💼",
-          greetings: "太棒了！今天加班辛苦了吧？老板又找麻烦了？",
-          greetingsKo: "오늘 야근하느라 고생 많았죠? 부장님이 또 괴롭혔어요?",
-          suggested: "张哥，今天真是累趴了，待会儿一起去吃烤串喝啤酒吧！"
-        }
-      },
-      ja: {
-        t1: [
-          {
-            lv: 1, words: "1단어", note: "기본 피로 표현",
-            base: { ko: "피곤해.", target: "疲れた。", phonetic: "[츠카레타]", note: "기본 반말형" },
-            vars: [
-              { ko: "정말 피곤해요.", target: "本当に疲れました。", phonetic: "[혼토-니 츠카레마시타]", note: "정중형 변형 1" },
-              { ko: "오늘 너무 지쳤어.", target: "今日はもうヘトヘト。", phonetic: "[쿄-와 모- 헤토헤토]", note: "의성어 변형 2" },
-              { ko: "빨리 쉬고 싶다.", target: "早く休みたい。", phonetic: "[하야쿠 야수미타이]", note: "소망 변형 3" }
-            ]
-          }
-        ],
-        persona: {
-          name: "켄지 (Kenji)", role: "도쿄 오피스 동료", avatar: "💼",
-          greetings: "お疲れ様！今日も残業大変だった？",
-          greetingsKo: "수고했어! 오늘도 야근하느라 힘들었지?",
-          suggested: "健二さん、今日は本当に疲れました。軽く一杯飲みに行きませんか？"
-        }
-      }
-    },
-    cafe: {
-      themeName: "☕ [카페 & 힐링 휴식]",
-      keywords: "#카페 #커피 #힐링",
-      fr: {
-        t1: [
-          {
-            lv: 1, words: "1단어", note: "기본 명사 청크",
-            base: { ko: "커피.", target: "Un café.", phonetic: "[앙 카페]", note: "카페 기본 주문" },
-            vars: [
-              { ko: "따뜻한 커피.", target: "Café chaud.", phonetic: "[카페 쇼]", note: "온도 변형 1" },
-              { ko: "라떼 한 잔.", target: "Un café crème.", phonetic: "[앙 카페 크렘]", note: "메뉴 변형 2" },
-              { ko: "에스프레소 한 잔.", target: "Un expresso.", phonetic: "[앙 엑스프레소]", note: "세부 메뉴 변형 3" }
-            ]
-          }
-        ],
-        persona: {
-          name: "클로에 (Chloé)", role: "파리 5구 라탱지구 바리스타", avatar: "☕",
-          greetings: "Bonjour ! Quel café te ferait plaisir aujourd'hui ?",
-          greetingsKo: "안녕하세요! 오늘 어떤 커피로 기분 전환하실래요?",
-          suggested: "Bonjour Chloé ! Raconte-moi un peu l'histoire de ton café préféré."
-        }
-      },
-      cn: {
-        t1: [
-          {
-            lv: 1, words: "2글자", note: "기본 카페 주문",
-            base: { ko: "커피.", target: "咖啡。", phonetic: "[카페이]", note: "기본 명사" },
-            vars: [
-              { ko: "따뜻한 커피.", target: "热咖啡。", phonetic: "[르어 카페이]", note: "온도 변형 1" },
-              { ko: "아이스 아메리카노.", target: "冰美式。", phonetic: "[빙 메이스]", note: "메뉴 변형 2" },
-              { ko: "라떼 한 잔.", target: "一杯拿铁。", phonetic: "[이베이 나티에]", note: "수량 변형 3" }
-            ]
-          }
-        ],
-        persona: {
-          name: "린 (Lin)", role: "베이징 카페 바리스타", avatar: "☕",
-          greetings: "欢迎光临！今天想喝点什么暖暖身子？",
-          greetingsKo: "어서오세요! 오늘 몸을 녹일 어떤 음료를 드릴까요?",
-          suggested: "来一杯热美式，不要加糖，谢谢！"
-        }
-      },
-      ja: {
-        t1: [
-          {
-            lv: 1, words: "1단어", note: "카페 기본 명사",
-            base: { ko: "커피.", target: "コーヒー。", phonetic: "[코-히-]", note: "기본 명사" },
-            vars: [
-              { ko: "따뜻한 커피.", target: "ホットコーヒー。", phonetic: "[홋토 코-히-]", note: "온도 변형 1" },
-              { ko: "아이스 아메리카노.", target: "アイスコーヒー。", phonetic: "[아이수 코-히-]", note: "메뉴 변형 2" },
-              { ko: "카페라떼 한 잔.", target: "カフェラテ。", phonetic: "[카페 라테]", note: "라떼 변형 3" }
-            ]
-          }
-        ],
-        persona: {
-          name: "유키 (Yuki)", role: "시부야 카페 바리스타", avatar: "☕",
-          greetings: "いらっしゃいませ！今日はどんなドリンクにされますか？",
-          greetingsKo: "어서 오세요! 오늘은 어떤 음료로 하시겠어요?",
-          suggested: "ホットのカフェラテを一つお願いします！"
-        }
-      }
-    },
-    beer: {
-      themeName: "🍺 [맥주 & 친구 모임]",
-      keywords: "#맥주 #친구 #치맥",
-      fr: {
-        t1: [
-          {
-            lv: 1, words: "1단어", note: "펍 필수 청크",
-            base: { ko: "맥주 한 잔.", target: "Une bière.", phonetic: "[윈 비에르]", note: "기본 주문" },
-            vars: [
-              { ko: "시원한 맥주.", target: "Bière fraîche.", phonetic: "[비에르 프레슈]", note: "상태 변형 1" },
-              { ko: "생맥주 한 잔.", target: "Une pression.", phonetic: "[윈 프레시옹]", note: "생맥주 변형 2" },
-              { ko: "건배!", target: "Santé !", phonetic: "[상테]", note: "감탄사 변형 3" }
-            ]
-          }
-        ],
-        persona: {
-          name: "루이 (Louis)", role: "파리 몽마르트르 친구", avatar: "🍺",
-          greetings: "Salut ! On se prend une bonne bière fraîche ce soir ?",
-          greetingsKo: "안녕! 오늘 저녁에 시원한 맥주 한잔할까?",
-          suggested: "Super idée Louis ! Je te rejoins au bar dans 10 minutes !"
-        }
-      },
-      cn: {
-        t1: [
-          {
-            lv: 1, words: "2글자", note: "술자리 필수 청크",
-            base: { ko: "맥주.", target: "啤酒。", phonetic: "[피지우]", note: "기본 명사" },
-            vars: [
-              { ko: "차가운 맥주.", target: "冰啤酒。", phonetic: "[빙 피지우]", note: "상태 변형 1" },
-              { ko: "생맥주 한 잔.", target: "扎啤。", phonetic: "[자피]", note: "생맥주 변형 2" },
-              { ko: "건배!", target: "干杯！", phonetic: "[간베이]", note: "건배 변형 3" }
-            ]
-          }
-        ],
-        persona: {
-          name: "리웨이 (李伟)", role: "베이징 대학 동기", avatar: "🍺",
-          greetings: "兄弟！今晚去撸串喝啤酒怎么样？",
-          greetingsKo: "친구야! 오늘 밤 양꼬치에 맥주 한잔 어때?",
-          suggested: "太好了！正好今天馋烤串了，老地方见！"
-        }
-      },
-      ja: {
-        t1: [
-          {
-            lv: 1, words: "1단어", note: "이자카야 필수 청크",
-            base: { ko: "맥주.", target: "ビール。", phonetic: "[비-루]", note: "기본 명사" },
-            vars: [
-              { ko: "생맥주 한 잔.", target: "生ビール。", phonetic: "[나마비-루]", note: "생맥주 변형 1" },
-              { ko: "우선 맥주로!", target: "とりあえずビール！", phonetic: "[토리아에즈 비-루]", note: "이자카야 관용구 변형 2" },
-              { ko: "건배!", target: "乾杯！", phonetic: "[캄파이]", note: "건배 변형 3" }
-            ]
-          }
-        ],
-        persona: {
-          name: "타쿠야 (Takuya)", role: "신주쿠 이자카야 친구", avatar: "🍺",
-          greetings: "おっす！仕事終わりに焼き鳥で乾杯しようぜ！",
-          greetingsKo: "안녕! 일 끝나고 야키토리에 건배하자!",
-          suggested: "賛成！すぐ行くから席取っておいて！"
-        }
-      }
-    }
-  };
-
-
-  /* =========================================================
-     4. 사용자 호칭 완전 고정 엔진 (무조건 저장된 사용자 이름으로 일관 고정)
-     ========================================================= */
-  function getSavedUserName() {
-    try {
-      const saved = localStorage.getItem('hangeoreum_user_name');
-      if (saved && saved.trim()) return saved.trim();
-    } catch(e) {}
-    return "학습자";
-  }
-
-  let userName = getSavedUserName();
-
-  function setAndSaveUserName(val) {
-    const trimmed = (val || '').trim();
-    if (trimmed) {
-      userName = trimmed;
-      try {
-        localStorage.setItem('hangeoreum_user_name', userName);
-      } catch(e) {}
-      refreshAllUserNameInUI();
-    }
-  }
-
-  function selectQuickName(name) {
-    soundTap();
-    setAndSaveUserName(name);
-    const input = document.getElementById('obUserNameInput');
-    if (input) input.value = name;
-  }
-
-  function refreshAllUserNameInUI() {
-    // 다이얼로그 텍스트 동적 동기화
-    const speechEl = document.getElementById('obTutorSpeech');
-    if (speechEl) {
-      const dialogs = getObDialogues();
-      speechEl.innerHTML = dialogs[obStep] || speechEl.innerHTML;
-    }
-  }
-  let selectedLang = "fr";
-  let currentLevel = 1;
-  let currentTheme = "work";
-  let currentStoryQuote = "오늘 회사에서 야근해서 너무 피곤해...";
-  let comboCount = 0;
-
-  let obStep = 1;
-  let obAnswers = { 1: 0, 2: 0, 3: 0, 4: 0 };
-  let obDiagnosedLevel = 1;
-
-  let currentRound = 1;
-  let roundPassed = [false, false, false, false];
-
-  let speechRecognizer = null;
-  let isRecordingSTT = false;
-
-
-  /* =========================================================
-     5. 4단계 섀도잉 루프 컨트롤러 & 통과 가드
-     ========================================================= */
-  function getCurrentLessonUnit() {
-    const langObj = THEMED_DATA[currentTheme][selectedLang];
-    if (!langObj) return THEMED_DATA.work.fr.t1[0];
-
-    let list = langObj.t1;
-    if (currentLevel >= 11 && currentLevel <= 20 && langObj.t2) list = langObj.t2;
-    else if (currentLevel >= 21 && currentLevel <= 30 && langObj.t3) list = langObj.t3;
-    else if (currentLevel >= 31 && currentLevel <= 40 && langObj.t4) list = langObj.t4;
-    
-    const idx = (currentLevel - 1) % list.length;
-    return list[idx] || list[0];
-  }
-
-  function getCurrentRoundData() {
-    const unit = getCurrentLessonUnit();
-    if (currentRound === 1) {
-      return {
-        type: "[기준 예문] 최초 듣고 따라하기",
-        ko: unit.base.ko,
-        target: unit.base.target,
-        phonetic: unit.base.phonetic,
-        note: unit.base.note
-      };
-    } else {
-      const vIdx = currentRound - 2;
-      const v = (unit.vars && unit.vars[vIdx]) ? unit.vars[vIdx] : unit.base;
-      return {
-        type: `[변형 ${currentRound - 1}] 상황 및 슬롯 치환 발화`,
-        ko: v.ko,
-        target: v.target,
-        phonetic: v.phonetic,
-        note: v.note
-      };
-    }
-  }
-
-  function renderCurrentRoundUI() {
-    const data = getCurrentRoundData();
-    if (!data) return;
-
-    document.getElementById('roundBadge').textContent = `따라하기 ${currentRound} / 4`;
-    document.getElementById('roundTypeLabel').textContent = data.type;
-
-    for (let r = 1; r <= 4; r++) {
-      const dot = document.getElementById(`dotR${r}`);
-      if (r === currentRound) {
-        dot.style.background = "#4f46e5";
-        dot.style.transform = "scale(1.2)";
-      } else if (roundPassed[r - 1]) {
-        dot.style.background = "#58cc02";
-        dot.style.transform = "scale(1)";
-      } else {
-        dot.style.background = "#cbd5e1";
-        dot.style.transform = "scale(1)";
-      }
-    }
-
-    document.getElementById('koreanPrompt').textContent = `"${data.ko}"`;
-    document.getElementById('targetDisplay').textContent = data.target;
-    document.getElementById('targetPhonetic').textContent = data.phonetic;
-    document.getElementById('buildUpNote').textContent = data.note;
-
-    document.getElementById('feedbackSheet').classList.add('hidden');
-    document.getElementById('userSpokenFeedback').textContent = '';
-    document.getElementById('sttStatusText').textContent = "원어민 발음을 듣고 [🎙️ 마이크로 말하기]를 눌러 따라해보세요!";
-
-    // 다음 단계로 버튼 잠금 가드!
-    const nextBtn = document.getElementById('btnNextRound');
-    if (roundPassed[currentRound - 1]) {
-      nextBtn.classList.remove('btn-disabled');
-      nextBtn.disabled = false;
-      nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
-    } else {
-      nextBtn.classList.add('btn-disabled');
-      nextBtn.disabled = true;
-      nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
-    }
-
-    setTimeout(() => {
-      playTargetTTS();
-    }, 250);
-  }
-
-
-  /* =========================================================
-     6. 음성인식 & 효과음 연동 & 유사도 판정
-     ========================================================= */
-  function startVoiceRecognition() {
-    VoiceEngine20.cancelSpeech(); // 300ms Barge-in 즉시 중단 연동
-    getAudioContext();
-
-    // 입력받기 전 효과음 (intercom_sent.mp3)
-    soundMicStart();
-
-    const statusEl = document.getElementById('sttStatusText');
-    const feedbackEl = document.getElementById('userSpokenFeedback');
-    const waveBars = document.querySelectorAll('.wave-bar');
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      statusEl.textContent = "🎙️ 스마트폰 마이크 권한을 허용하고 다시 말씀해 주세요. (음성 학습 전용)";
-      return;
-    }
-
-    try {
-      if (speechRecognizer) {
-        speechRecognizer.abort();
-        speechRecognizer = null;
-      }
-
-      speechRecognizer = new SpeechRecognition();
-      speechRecognizer.continuous = false;
-      speechRecognizer.interimResults = false;
-      speechRecognizer.maxAlternatives = 1;
-
-      if (selectedLang === 'fr') speechRecognizer.lang = 'fr-FR';
-      else if (selectedLang === 'cn') speechRecognizer.lang = 'zh-CN';
-      else if (selectedLang === 'ja') speechRecognizer.lang = 'ja-JP';
-      else speechRecognizer.lang = 'ko-KR';
-
-      speechRecognizer.onstart = () => {
-        isRecordingSTT = true;
-        document.getElementById('btnMicText').textContent = "듣고 있습니다... 목소리를 내어 말하세요!";
-        statusEl.innerHTML = "<span style='color:#ef4444; font-weight:900;'>● 녹음 중...</span> 스마트폰 마이크에 대고 원어민 문장을 말씀하세요!";
-        waveBars.forEach((b, i) => b.style.height = `${14 + (i % 3) * 8}px`);
-      };
-
-      speechRecognizer.onresult = (event) => {
-        isRecordingSTT = false;
-        waveBars.forEach(b => b.style.height = '8px');
-        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기";
-
-        // 입력 다 되면 효과음 (intercom_received.mp3)
-        soundMicEnd();
-
-        const transcript = event.results[0][0].transcript.trim();
-        feedbackEl.innerHTML = `🗣️ 인식된 목소리: <strong>"${transcript}"</strong>`;
-        analyzePronunciationAndJudge(transcript);
-      };
-
-      speechRecognizer.onerror = (event) => {
-        isRecordingSTT = false;
-        waveBars.forEach(b => b.style.height = '8px');
-        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기 (다시 시도)";
-        console.warn("Speech error:", event.error);
-        if (event.error === 'not-allowed') {
-          statusEl.textContent = "마이크 권한이 필요합니다. 브라우저 설정에서 허용해 주세요.";
-        } else {
-          statusEl.textContent = `음성 감지 실패 (${event.error}). 조용한 곳에서 다시 말씀해 보세요!`;
-        }
-      };
-
-      speechRecognizer.onend = () => {
-        isRecordingSTT = false;
-        waveBars.forEach(b => b.style.height = '8px');
-        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기";
-      };
-
-      speechRecognizer.start();
-
-    } catch(err) {
-      console.warn("Speech recognition error:", err);
-      statusEl.textContent = "🎙️ 마이크 권한을 허용하고 다시 시도해 주세요.";
-    }
-  }
-
-  function normalizeText(str) {
-    return str.toLowerCase()
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?'"‘’“”]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-  }
-
-  function calculateSimilarity(s1, s2) {
-    const str1 = normalizeText(s1);
-    const str2 = normalizeText(s2);
-    if (str1 === str2) return 100;
-    if (!str1.length || !str2.length) return 0;
-
-    const track = Array(str2.length + 1).fill(null).map(() =>
-      Array(str1.length + 1).fill(null));
-    for (let i = 0; i <= str1.length; i += 1) track[0][i] = i;
-    for (let j = 0; j <= str2.length; j += 1) track[j][0] = j;
-
-    for (let j = 1; j <= str2.length; j += 1) {
-      for (let i = 1; i <= str1.length; i += 1) {
-        const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
-        track[j][i] = Math.min(
-          track[j][i - 1] + 1,
-          track[j - 1][i] + 1,
-          track[j - 1][i - 1] + indicator
-        );
-      }
-    }
-    const distance = track[str2.length][str1.length];
-    const maxLen = Math.max(str1.length, str2.length);
-    const score = Math.round(((maxLen - distance) / maxLen) * 100);
-    return Math.max(0, Math.min(100, score));
-  }
-
-  function analyzePronunciationAndJudge(spokenText) {
-    const roundData = getCurrentRoundData();
-    const score = calculateSimilarity(roundData.target, spokenText);
-
-    const sheet = document.getElementById('feedbackSheet');
-    const badge = document.getElementById('passFailBadge');
-    const wordsContainer = document.getElementById('coloredWords');
-    const polishText = document.getElementById('polishText');
-    const noticeEl = document.getElementById('gatekeeperNotice');
-    const nextBtn = document.getElementById('btnNextRound');
-
-    sheet.classList.remove('hidden');
-    wordsContainer.innerHTML = '';
-
-    const targetWords = roundData.target.split(/\s+/);
-    targetWords.forEach(w => {
-      const span = document.createElement('span');
-      span.textContent = w;
-      if (score >= 70) {
-        span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#dcfce7; color:#166534; border:1.5px solid #86efac; font-size:14px;";
-      } else {
-        span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#fee2e2; color:#991b1b; border:1.5px solid #fca5a5; font-size:14px;";
-      }
-      wordsContainer.appendChild(span);
-    });
-
-    if (score >= 70) {
-      // 맞추면 효과음 (correct.mp3 + combo_01.mp3)
-      soundCorrect();
-      comboCount++;
-      document.getElementById('comboBadge').textContent = `x${comboCount} COMBO`;
-      roundPassed[currentRound - 1] = true;
-
-      badge.style.background = "#dcfce7";
-      badge.style.color = "#166534";
-      badge.innerHTML = `🎉 통과 완료! (정확도 ${score}점)`;
-
-      polishText.innerHTML = `AI 엑자일 분석: <strong>"정확한 발음입니다! ${userName}의 조음 감각이 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>정답 문장: ${roundData.target}</span>`;
-      
-      if (currentRound < 4) {
-        noticeEl.innerHTML = `<span style='color:#166534;'>✅ [통과 성공] 다음 변형 예문으로 도전할 수 있습니다! 우측 [다음 단계로 ➔]를 누르세요.</span>`;
-      } else {
-        noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4단계 정복 완료!] 이번 레벨의 모든 따라하기를 완벽히 통과했습니다!</span>`;
-      }
-
-      nextBtn.classList.remove('btn-disabled');
-      nextBtn.disabled = false;
-      nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
-
-      try {
-        localStorage.setItem(`hangeoreum_lv${currentLevel}_r${currentRound}`, '1');
-      } catch(e) {}
-
-    } else {
-      // 틀리면 효과음 (wrong.mp3)
-      soundWrong();
-      comboCount = 0;
-      document.getElementById('comboBadge').textContent = `x0 COMBO`;
-      roundPassed[currentRound - 1] = false;
-
-      badge.style.background = "#fee2e2";
-      badge.style.color = "#991b1b";
-      badge.innerHTML = `❌ 통과 실패 (정확도 ${score}점 / 합격 기준 70점)`;
-
-      polishText.innerHTML = `AI 엑자일 코칭: <strong>"발음이 명확하지 않습니다. 원어민 음성을 다시 듣고 입을 크게 벌려 따라 해보세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발화: "${spokenText}"</span>`;
-
-      noticeEl.innerHTML = `<span style='color:#dc2626;'>⛔ [진행 잠금] 70점 미만은 다음 단계로 절대 넘어갈 수 없습니다! [🔊 원어민 소리]를 듣고 다시 도전하세요!</span>`;
-
-      nextBtn.classList.add('btn-disabled');
-      nextBtn.disabled = true;
-      nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
-    }
-
-    callAiPronunciationCoachIfAvailable(spokenText, roundData.target, score);
-  }
-
-  function proceedNextRoundOrLevel() {
-    if (!roundPassed[currentRound - 1]) {
-      soundWrong();
-      alert("현재 단계를 70점 이상으로 통과해야만 다음 단계로 넘어갈 수 있습니다!");
-      return;
-    }
-
-    soundTap();
-    if (currentRound < 4) {
-      currentRound++;
-      renderCurrentRoundUI();
-    } else {
-      soundLevelUp();
-      alert(`🎉 축하합니다! ${userName}님이 Lv.${currentLevel}의 4단계 변형 문장을 모두 마스터하셨습니다!`);
-      if (currentLevel < 50) {
-        currentLevel++;
-        currentRound = 1;
-        roundPassed = [false, false, false, false];
-        document.getElementById('levelSlider').value = currentLevel;
-        updateLevelUI();
-      }
-    }
-  }
-
-  function goToPrevRoundOrLevel() {
-    soundTap();
-    if (currentRound > 1) {
-      currentRound--;
-      renderCurrentRoundUI();
-    } else if (currentLevel > 1) {
-      currentLevel--;
-      currentRound = 4;
-      document.getElementById('levelSlider').value = currentLevel;
-      updateLevelUI();
-    } else {
-      // 온보딩으로 돌아가기
-      returnToOnboardingView();
-    }
-  }
-
-  function returnToOnboardingView() {
-    document.getElementById('viewCanvas').classList.add('hidden');
-    document.getElementById('viewOnboarding').classList.remove('hidden');
-    obStep = 1;
-    updateObStepUI();
-  }
-
-
-  /* =========================================================
-     7. 20종 음성엔진 모드 전환, 성별 필터링 & 프리셋 렌더러
+     3대 음성 엔진 모드 전환 및 서브 필터링 스위처
      ========================================================= */
   function switchVoiceEngineMode(mode) {
     activeVoiceEngineMode = mode;
