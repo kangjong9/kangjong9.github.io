@@ -301,12 +301,18 @@
       </div>
     </div>
 
-    <div style="display:flex; align-items:center; gap:8px;">
-      <button onclick="testCurrentExileVoice()" title="음성 테스트" style="background:#f1f5f9; border:none; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px;">
+    <div style="display:flex; align-items:center; gap:6px;">
+      <button onclick="returnToOnboardingView()" title="초기화면 복귀 (단축키: Home / Ctrl+H)" style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:12px; padding:0 10px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; font-weight:800; color:#334155; gap:4px;">
+        <span>🏠</span><span style="display:inline-block;">처음으로</span>
+      </button>
+      <button onclick="testCurrentExileVoice()" title="엑자일 음성 테스트" style="background:#f1f5f9; border:none; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px;">
         🔊
       </button>
-      <button onclick="openSettingsModal()" title="AI 설정 및 API 연동" style="background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#4f46e5;">
+      <button onclick="openSettingsModal()" title="Gemini AI 설정" style="background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#4f46e5;">
         ⚙️
+      </button>
+      <button onclick="openExitConfirmModal()" title="앱 종료 (뒤로가기)" style="background:#fef2f2; border:1.5px solid #fecaca; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#dc2626;">
+        ⏻
       </button>
     </div>
   </header>
@@ -750,63 +756,83 @@
 
 
   <!-- =========================================================
-       모달 1: ⚙️ AI API 연동 설정 모달
+       모달 1: ⚙️ Google Gemini API 설정 모달 (단일 API Key + Flash 계단식 Fallback)
+       공급자 / Base URL / 모델명 수동 입력 삭제 완료
        ========================================================= -->
   <div id="settingsModal" class="modal-backdrop hidden">
     <div class="modal-sheet">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:24px;">⚙️</span>
-          <div style="font-size:19px; font-weight:900; color:#0f172a;">AI API 연동 설정</div>
+          <div style="font-size:19px; font-weight:900; color:#0f172a;">Google Gemini API 설정</div>
         </div>
         <button onclick="closeSettingsModal()" style="background:#f1f5f9; border:none; border-radius:50%; width:32px; height:32px; font-size:16px; cursor:pointer; font-weight:900;">✕</button>
       </div>
 
       <p style="font-size:14px; color:#475569; margin-bottom:16px; line-height:1.5;">
-        사용자의 AI API 키를 연동하면, <strong>일상 대화 기반 맞춤형 문장 생성</strong>과 <strong>실시간 발음/상황 심층 코칭</strong>이 더욱 똑똑해집니다. 키가 없어도 내장 오프라인 엔진으로 100% 정상 작동합니다!
+        Google AI Studio에서 발급받은 무료 <strong>Gemini API 키</strong>를 입력하면, 엑자일의 초정밀 실시간 AI 발음/상황 코칭이 활성화됩니다. 키가 없어도 내장 오프라인 분석 엔진으로 100% 정상 작동합니다!
       </p>
 
-      <div style="margin-bottom:14px;">
-        <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">AI 공급자</label>
-        <select id="apiProviderSelect" onchange="onSelectApiProvider(this.value)" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:15px; font-weight:700; background:#fff; outline:none;">
-          <option value="gemini">Google Gemini (Gemini 1.5 Flash)</option>
-          <option value="openai">OpenAI (GPT-4o-mini / GPT-4o)</option>
-          <option value="claude">Anthropic Claude (Claude 3.5 Sonnet)</option>
-          <option value="custom">사용자 정의 (Custom REST API)</option>
-        </select>
-      </div>
-
-      <div style="margin-bottom:14px;">
+      <!-- Gemini API Key 단일 입력 -->
+      <div style="margin-bottom:16px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <label style="font-size:14px; font-weight:800; color:#334155;">API Key</label>
-          <button type="button" onclick="toggleApiKeyVisibility()" style="background:none; border:none; color:#6366f1; font-size:13px; font-weight:800; cursor:pointer;">
+          <label style="font-size:15px; font-weight:800; color:#1e293b;">Gemini API Key</label>
+          <button type="button" onclick="toggleApiKeyVisibility()" style="background:none; border:none; color:#4f46e5; font-size:13px; font-weight:800; cursor:pointer;">
             <span id="apiKeyToggleLabel">비밀번호 표시</span>
           </button>
         </div>
-        <input type="password" id="apiKeyInput" placeholder="sk-... 또는 AIzaSy..." style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:15px; font-family:monospace; background:#fff; outline:none;">
+        <input type="password" id="apiKeyInput" placeholder="AIzaSy... 로 시작하는 키 붙여넣기" style="width:100%; padding:14px 16px; border-radius:14px; border:2px solid #cbd5e1; font-size:15px; font-family:monospace; background:#fff; outline:none;">
       </div>
 
-      <div style="margin-bottom:14px;">
-        <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">Base URL</label>
-        <input type="text" id="apiBaseUrlInput" value="https://generativelanguage.googleapis.com" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:14px; background:#f8fafc; outline:none;">
-      </div>
-
-      <div style="margin-bottom:18px;">
-        <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">모델명 (Model)</label>
-        <input type="text" id="apiModelInput" value="gemini-1.5-flash" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:14px; background:#fff; outline:none;">
+      <!-- Gemini Flash 계단식 모델 선택 (3.8 Flash 디폴트) -->
+      <div style="margin-bottom:16px; background:#f8fafc; border:2px solid #e2e8f0; border-radius:18px; padding:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <label style="font-size:14px; font-weight:800; color:#334155;">Flash 시작 모델 (디폴트: 3.8)</label>
+          <span style="font-size:12px; font-weight:800; color:#166534; background:#dcfce7; padding:2px 8px; border-radius:8px;">계단식 무중단 Fallback</span>
+        </div>
+        <select id="geminiModelSelect" style="width:100%; padding:12px; border-radius:12px; border:2px solid #cbd5e1; font-size:15px; font-weight:800; background:#fff; outline:none; color:#0f172a;">
+          <option value="gemini-3.8-flash">Gemini 3.8 Flash (기본 권장 · 최신 초고속)</option>
+          <option value="gemini-3.7-flash">Gemini 3.7 Flash (2순위 대체)</option>
+          <option value="gemini-3.6-flash">Gemini 3.6 Flash (3순위 대체)</option>
+          <option value="gemini-3.5-flash">Gemini 3.5 Flash (4순위 대체)</option>
+        </select>
+        <div style="font-size:12.5px; color:#64748b; margin-top:8px; line-height:1.45;">
+          ⚡ <strong>계단식 자동 전환 파이프라인</strong>: 선택된 모델(3.8 Flash 기본)을 1차 호출하며, 사용량 소진(429)이나 오류 발생 시 <strong>3.7 ➔ 3.6 ➔ 3.5 Flash</strong> 순으로 끊김 없이 자동 전환됩니다.
+        </div>
       </div>
 
       <div id="apiTestStatus" style="font-size:14px; font-weight:800; margin-bottom:14px; min-height:20px;"></div>
 
       <div style="display:flex; flex-direction:column; gap:8px;">
         <button class="btn-3d btn-secondary" onclick="testApiConnection()">
-          <span>🧪 연결 테스트 (Test Connection)</span>
+          <span>🧪 연결 테스트 (계단식 Fallback 검증)</span>
         </button>
         <button class="btn-3d btn-green" onclick="saveApiSettings()">
-          <span>💾 설정 저장하기</span>
+          <span>💾 설정 저장하기 (기기에 안전 보관)</span>
         </button>
         <button class="btn-3d btn-secondary" onclick="clearApiSettings()" style="color:#ef4444;">
-          <span>🗑️ 설정 초기화 (내장 오프라인 모드)</span>
+          <span>🗑️ 키 삭제 (내장 오프라인 모드)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       모달 3: ⏻ 앱 종료 확인 모달 (스마트폰 뒤로가기 & 헤더 종료버튼 연동)
+       ========================================================= -->
+  <div id="exitConfirmModal" class="modal-backdrop hidden">
+    <div class="modal-sheet" style="text-align:center;">
+      <div style="font-size:46px; margin-bottom:10px;">👋</div>
+      <div style="font-size:20px; font-weight:900; color:#0f172a; margin-bottom:8px;">한걸음 앱을 종료하시겠습니까?</div>
+      <p style="font-size:14px; color:#64748b; margin-bottom:20px; line-height:1.5;">
+        학습 진도와 설정은 모두 안전하게 저장되었습니다.<br>안드로메다 엑자일이 다음 학습을 기다릴게요!
+      </p>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-3d btn-secondary" style="flex:1;" onclick="closeExitConfirmModal()">
+          계속 공부하기
+        </button>
+        <button class="btn-3d" style="flex:1; background:#ef4444; color:#fff; box-shadow:0 5px 0 #b91c1c;" onclick="confirmExitApp()">
+          ⏻ 지금 종료하기
         </button>
       </div>
     </div>
@@ -2046,51 +2072,34 @@
 
 
   /* =========================================================
-     10. ⚙️ AI API 설정 관리자
+     10. ⚙️ Gemini 계단식 Fallback 엔진 (3.8 -> 3.7 -> 3.6 -> 3.5 Flash)
+     공급자/BaseURL/모델명 수동입력 배제, 순수 API Key + 자동 폴백
      ========================================================= */
-  const DEFAULT_API_CONFIG = {
-    provider: 'gemini',
-    apiKey: '',
-    baseUrl: 'https://generativelanguage.googleapis.com',
-    model: 'gemini-1.5-flash'
-  };
+  const GEMINI_FLASH_CHAIN = [
+    'gemini-3.8-flash',
+    'gemini-3.7-flash',
+    'gemini-3.6-flash',
+    'gemini-3.5-flash'
+  ];
 
-  function getApiConfig() {
-    try {
-      const raw = localStorage.getItem('hangeoreum_api_config');
-      if (raw) return JSON.parse(raw);
-    } catch(e) {}
-    return { ...DEFAULT_API_CONFIG };
+  function getGeminiConfig() {
+    return {
+      apiKey: localStorage.getItem('hangeoreum_gemini_key') || '',
+      defaultModel: localStorage.getItem('hangeoreum_gemini_model') || 'gemini-3.8-flash'
+    };
   }
 
   function openSettingsModal() {
     soundTap();
-    const config = getApiConfig();
-    document.getElementById('apiProviderSelect').value = config.provider || 'gemini';
-    document.getElementById('apiKeyInput').value = config.apiKey || '';
-    document.getElementById('apiBaseUrlInput').value = config.baseUrl || 'https://generativelanguage.googleapis.com';
-    document.getElementById('apiModelInput').value = config.model || 'gemini-1.5-flash';
+    const config = getGeminiConfig();
+    document.getElementById('apiKeyInput').value = config.apiKey;
+    document.getElementById('geminiModelSelect').value = config.defaultModel;
     document.getElementById('apiTestStatus').textContent = '';
     document.getElementById('settingsModal').classList.remove('hidden');
   }
 
   function closeSettingsModal() {
     document.getElementById('settingsModal').classList.add('hidden');
-  }
-
-  function onSelectApiProvider(prov) {
-    const urlInput = document.getElementById('apiBaseUrlInput');
-    const modelInput = document.getElementById('apiModelInput');
-    if (prov === 'gemini') {
-      urlInput.value = 'https://generativelanguage.googleapis.com';
-      modelInput.value = 'gemini-1.5-flash';
-    } else if (prov === 'openai') {
-      urlInput.value = 'https://api.openai.com/v1';
-      modelInput.value = 'gpt-4o-mini';
-    } else if (prov === 'claude') {
-      urlInput.value = 'https://api.anthropic.com/v1';
-      modelInput.value = 'claude-3-5-sonnet-20241022';
-    }
   }
 
   function toggleApiKeyVisibility() {
@@ -2106,88 +2115,111 @@
   }
 
   function saveApiSettings() {
-    const config = {
-      provider: document.getElementById('apiProviderSelect').value,
-      apiKey: document.getElementById('apiKeyInput').value.trim(),
-      baseUrl: document.getElementById('apiBaseUrlInput').value.trim(),
-      model: document.getElementById('apiModelInput').value.trim()
-    };
+    const apiKey = document.getElementById('apiKeyInput').value.trim();
+    const model = document.getElementById('geminiModelSelect').value;
     try {
-      localStorage.setItem('hangeoreum_api_config', JSON.stringify(config));
+      localStorage.setItem('hangeoreum_gemini_key', apiKey);
+      localStorage.setItem('hangeoreum_gemini_model', model);
     } catch(e) {}
     soundLevelUp();
-    alert("AI API 설정이 안전하게 저장되었습니다!");
+    alert("Gemini API 키 및 계단식 모델 설정이 기기에 안전하게 저장되었습니다!");
     closeSettingsModal();
   }
 
   function clearApiSettings() {
-    if (confirm("API 설정을 초기화하고 내장 오프라인 모드로 복귀하시겠습니까?")) {
+    if (confirm("Gemini API 키를 삭제하고 내장 오프라인 분석 모드로 복귀하시겠습니까?")) {
       try {
-        localStorage.removeItem('hangeoreum_api_config');
+        localStorage.removeItem('hangeoreum_gemini_key');
+        localStorage.removeItem('hangeoreum_gemini_model');
       } catch(e) {}
       openSettingsModal();
-      document.getElementById('apiTestStatus').innerHTML = "<span style='color:#166534;'>초기화되었습니다. 내장 오프라인 모드로 동작합니다.</span>";
+      document.getElementById('apiTestStatus').innerHTML = "<span style='color:#166534;'>키가 삭제되었습니다. 내장 오프라인 모드로 안전하게 동작합니다.</span>";
     }
+  }
+
+  /* 계단식 무중단 호출 파이프라인 (3.8 -> 3.7 -> 3.6 -> 3.5) */
+  async function callGeminiCascade(payload, startModel = null) {
+    const config = getGeminiConfig();
+    if (!config.apiKey) return { ok: false, error: "API Key 미설정" };
+
+    const initial = startModel || config.defaultModel || 'gemini-3.8-flash';
+    let startIndex = GEMINI_FLASH_CHAIN.indexOf(initial);
+    if (startIndex === -1) startIndex = 0;
+
+    let lastError = null;
+
+    for (let i = startIndex; i < GEMINI_FLASH_CHAIN.length; i++) {
+      const currentModel = GEMINI_FLASH_CHAIN[i];
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${config.apiKey}`;
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          return {
+            ok: true,
+            model: currentModel,
+            fallbackUsed: (i > startIndex),
+            fallbackFrom: (i > startIndex ? GEMINI_FLASH_CHAIN[startIndex] : null),
+            reply: replyText
+          };
+        }
+
+        // 429 (할당량 소진) 또는 5xx (서버 오류), 404 (해당 지역/버전 일시 미제공) 등 발생 시 다음 모델로 즉시 Fallback
+        const errText = await res.text();
+        lastError = `[${currentModel} HTTP ${res.status}] ${errText.substring(0, 100)}`;
+        console.warn(`Gemini cascade fail on ${currentModel}:`, res.status, "Trying next model...");
+
+      } catch(netErr) {
+        lastError = `[${currentModel} Network Error] ${netErr.message}`;
+        console.warn(`Network fail on ${currentModel}:`, netErr, "Trying next model...");
+      }
+    }
+
+    return { ok: false, error: lastError || "모든 Flash 모델(3.8/3.7/3.6/3.5) 호출 실패" };
   }
 
   async function testApiConnection() {
     const statusEl = document.getElementById('apiTestStatus');
-    const provider = document.getElementById('apiProviderSelect').value;
     const apiKey = document.getElementById('apiKeyInput').value.trim();
-    const baseUrl = document.getElementById('apiBaseUrlInput').value.trim();
-    const model = document.getElementById('apiModelInput').value.trim();
+    const model = document.getElementById('geminiModelSelect').value;
 
     if (!apiKey) {
-      statusEl.innerHTML = "<span style='color:#dc2626;'>API Key를 먼저 입력해 주세요.</span>";
+      statusEl.innerHTML = "<span style='color:#dc2626;'>Gemini API Key를 먼저 입력해 주세요.</span>";
       return;
     }
 
-    statusEl.innerHTML = "<span style='color:#4f46e5;'>연결 테스트 중입니다... 잠시만 기다려 주세요.</span>";
-
+    // 임시 저장 후 테스트
     try {
-      if (provider === 'gemini') {
-        const url = `${baseUrl}/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: "Hello" }] }]
-          })
-        });
-        if (res.ok) {
-          statusEl.innerHTML = "<span style='color:#166534;'>✅ Google Gemini API 연결 성공! (HTTP 200 OK)</span>";
-        } else {
-          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.status} ${res.statusText}</span>`;
-        }
-      } else if (provider === 'openai') {
-        const url = `${baseUrl}/chat/completions`;
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            model: model,
-            messages: [{ role: 'user', content: 'Hello' }],
-            max_tokens: 5
-          })
-        });
-        if (res.ok) {
-          statusEl.innerHTML = "<span style='color:#166534;'>✅ OpenAI API 연결 성공! (HTTP 200 OK)</span>";
-        } else {
-          statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${res.status}</span>`;
-        }
+      localStorage.setItem('hangeoreum_gemini_key', apiKey);
+      localStorage.setItem('hangeoreum_gemini_model', model);
+    } catch(e) {}
+
+    statusEl.innerHTML = `<span style='color:#4f46e5;'>[${model}] 계단식 Fallback 연결 테스트 중...</span>`;
+
+    const result = await callGeminiCascade({
+      contents: [{ parts: [{ text: "안녕! 엑자일 테스트야." }] }]
+    }, model);
+
+    if (result.ok) {
+      if (result.fallbackUsed) {
+        statusEl.innerHTML = `<span style='color:#d97706;'>⚠️ ${result.fallbackFrom} 할당량 소진으로 <strong>${result.model}</strong>로 자동 전환 성공! 무중단 동작 확인!</span>`;
       } else {
-        statusEl.innerHTML = "<span style='color:#166534;'>✅ 설정 형식이 올바릅니다. (저장 후 실전 사용 가능)</span>";
+        statusEl.innerHTML = `<span style='color:#166534;'>✅ <strong>${result.model}</strong> 정상 연결 성공! (계단식 Fallback 대기 완료)</span>`;
       }
-    } catch(err) {
-      statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 네트워크 오류: ${err.message}</span>`;
+    } else {
+      statusEl.innerHTML = `<span style='color:#dc2626;'>❌ 연결 실패: ${result.error} (오프라인 모드로 안전 동작)</span>`;
     }
   }
 
   async function callAiPronunciationCoachIfAvailable(spoken, target, score) {
-    const config = getApiConfig();
+    const config = getGeminiConfig();
     if (!config || !config.apiKey) return;
 
     try {
@@ -2197,22 +2229,73 @@
 정확도 점수: ${score}점
 학습자에게 한국어로 1~2문장으로 따뜻하고 유쾌하게 발음 및 억양 조언을 제공하세요.`;
 
-      if (config.provider === 'gemini') {
-        const url = `${config.baseUrl}/v1beta/models/${config.model}:generateContent?key=${config.apiKey}`;
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (reply) {
-            document.getElementById('polishText').innerHTML = `AI 엑자일 정밀 피드백: <strong>"${reply.trim()}"</strong>`;
-          }
-        }
+      const result = await callGeminiCascade({
+        contents: [{ parts: [{ text: promptText }] }]
+      });
+
+      if (result.ok && result.reply) {
+        let tag = result.fallbackUsed ? `<span style='font-size:11px; color:#d97706;'>[${result.model} Fallback]</span> ` : `<span style='font-size:11px; color:#4f46e5;'>[${result.model}]</span> `;
+        document.getElementById('polishText').innerHTML = `AI 엑자일 정밀 피드백: ${tag}<strong>"${result.reply.trim()}"</strong>`;
       }
     } catch(e) {}
+  }
+
+  /* =========================================================
+     10-1. 앱 종료 및 스마트폰 뒤로가기 연동 & 단축키 관리자
+     ========================================================= */
+  function openExitConfirmModal() {
+    soundTap();
+    document.getElementById('exitConfirmModal').classList.remove('hidden');
+  }
+
+  function closeExitConfirmModal() {
+    soundTap();
+    document.getElementById('exitConfirmModal').classList.add('hidden');
+  }
+
+  function confirmExitApp() {
+    if (window.Native && typeof window.Native.call === 'function') {
+      window.Native.call("exitApp", "{}");
+    } else {
+      window.close();
+    }
+  }
+
+  /* 스마트폰 뒤로가기 버튼 이벤트 브릿지 */
+  window.onAndroidBackPressed = function() {
+    const modals = ['exitConfirmModal', 'settingsModal', 'dailyCheckinModal'];
+    for (const mId of modals) {
+      const el = document.getElementById(mId);
+      if (el && !el.classList.contains('hidden')) {
+        el.classList.add('hidden');
+        return;
+      }
+    }
+    // 모달이 모두 닫힌 메인 상태이면 종료 확인 모달 표시
+    openExitConfirmModal();
+  };
+
+  /* 초기화면 이동 (처음으로) */
+  function goToInitialScreen() {
+    soundTap();
+    returnToOnboardingView();
+  }
+
+  /* 앱 실행 시 마이크 권한 선제 요청 */
+  function requestMicrophonePermissionOnLaunch() {
+    if (window.Native && typeof window.Native.call === 'function') {
+      try {
+        window.Native.call("requestMic", "{}");
+      } catch(e) {}
+    }
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        stream.getTracks().forEach(t => t.stop());
+        console.log("마이크 권한 획득 성공");
+      }).catch(err => {
+        console.log("마이크 권한 상태:", err.name);
+      });
+    }
   }
 
 
@@ -2249,6 +2332,19 @@
 
     window.addEventListener('touchstart', () => getAudioContext(), { once: true });
     window.addEventListener('click', () => getAudioContext(), { once: true });
+
+    // 어플 실행 시 마이크 권한 즉시 요청
+    requestMicrophonePermissionOnLaunch();
+
+    // 초기화면 단축키 및 Escape 감지 (Home, Ctrl+H, Alt+Home, Escape)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Home' || (e.ctrlKey && (e.key === 'h' || e.key === 'H')) || (e.altKey && e.key === 'Home')) {
+        e.preventDefault();
+        goToInitialScreen();
+      } else if (e.key === 'Escape') {
+        window.onAndroidBackPressed();
+      }
+    });
   });
 </script>
 
