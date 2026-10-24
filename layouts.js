@@ -108,7 +108,7 @@ function initProjectFolders(content) {
   initGameEditorFolder(content);
   const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
   const projects = {
-    "requested": [["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음[앱·초안]", "hangeoreum.svg"]],
+    "requested": [["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"]],
     "fun": [
       ["코딩놀이", "coding.svg"],
       ["찌꺼기저리가[PC]", "cleaner.svg"],
@@ -129,12 +129,12 @@ function initProjectFolders(content) {
     ]
   };
   const projectDownloads = {
-    "한걸음[앱·초안]": {
-      tag: "한걸음 1.0.0-dev · 엑자일(Exile) AI 코칭 · 50레벨 동적 실전 회화 · Android 8 이상",
+    "한걸음V1.0 Exile": {
+      tag: "한걸음V1.0 Exile · 안드로메다 유배 AI의 50레벨 탈출 프로젝트 · Android 8 이상",
       links: [
         { label: "한걸음 0.7 APK · Android 8 이상", url: "./downloads/Hangeoreum-1.0.0-dev.apk", download: "Hangeoreum-1.0.0-dev.apk", primary: true },
-        { label: "화면 시안 체험 · 엑자일 온보딩 & 50레벨 캔버스", url: "./downloads/Hangeoreum-preview.html", external: true },
-        { label: "사용 안내 · 엑자일 코칭 및 50레벨 학습 체계", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
+        { label: "화면 시안 체험 · 엑자일 음성 5종 & 50레벨 캔버스", url: "./downloads/Hangeoreum-preview.html", external: true },
+        { label: "사용 안내 · 안드로메다 유배 스토리 및 음성 코칭", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
       ]
     },
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>한걸음 · 8대 앱 초월형 50레벨 스피킹 캔버스</title>
+  <title>한걸음V1.0 Exile</title>
   <style>
     /* 순수 인라인 CSS (외부 CDN 의존 0%, 안드로이드 WebView 100% 오프라인 지원) */
     * {
@@ -307,7 +307,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <div style="font-size:13px; font-weight:900; color:#4f46e5; display:flex; align-items:center; gap:6px;">
             <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            한걸음 · 엑자일(Exile) AI 진단
+            한걸음V1.0 Exile · 엑자일 AI 진단
           </div>
           <div id="obStepBadge" style="font-size:11px; font-weight:800; color:#64748b; background:#f1f5f9; padding:3px 10px; border-radius:12px;">1 / 6 단계</div>
         </div>
@@ -330,44 +330,105 @@
                 <div class="ami-mouth"></div>
               </div>
             </div>
-            <span class="tutor-badge">AI EXILE</span>
+            <span class="tutor-badge" style="background:#6366f1;">🛸 엑자일</span>
           </div>
           <div style="flex:1; background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; border-top-left-radius:4px; padding:12px 14px; box-shadow:0 4px 12px rgba(0,0,0,0.03);">
             <div style="font-size:11px; font-weight:900; color:#6366f1; margin-bottom:3px;">
               ⚡ AI 튜터 엑자일 (Exile)
             </div>
             <div id="obTutorSpeech" style="font-size:13px; font-weight:700; line-height:1.45; color:#1e293b;">
-              "안녕! 난 네 전담 AI 코치 엑자일(Exile)이야! ⚡<br>내가 널 뭐라고 부르면 좋을지 호칭을 알려줘!"
+              "난 안드로메다에서 지구로 유배 온 AI 엑자일이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어! 호칭과 내 목소리를 골라줘!"
+            </div>
+            <div style="display:flex; justify-content:flex-end; margin-top:6px;">
+              <button onclick="replayCurrentTutorSpeech()" style="background:#eef2ff; border:1px solid #c7d2fe; color:#4338ca; border-radius:10px; padding:3px 9px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">
+                <span id="voiceRippleIcon">🔊</span> 다시 듣기
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- STEP 1: 유저 호칭/이름 정하기 (가장 먼저 진행) -->
+        <!-- STEP 1: 안드로메다 유배 스토리 & 유저 호칭 & AI 성별 & 음성 5종 선택 -->
         <div id="obStep1">
+          
+          <!-- 1. 안드로메다 유배 설정 카드 -->
+          <div style="background:linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); border:2px solid #6366f1; border-radius:20px; padding:16px; margin-bottom:14px; color:#ffffff; box-shadow:0 8px 24px rgba(49,46,129,0.25);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:11px; font-weight:900; background:rgba(99,102,241,0.3); color:#a5b4fc; padding:2px 8px; border-radius:12px; border:1px solid rgba(165,180,252,0.4);">
+                🛸 안드로메다 은하 사면 작전
+              </span>
+              <button onclick="speakExileIntroStory()" style="background:#4f46e5; border:none; color:#ffffff; padding:4px 10px; border-radius:12px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">
+                🔊 목소리로 듣기
+              </button>
+            </div>
+            <div style="font-size:13px; font-weight:800; line-height:1.55; color:#f8fafc; margin-bottom:4px;">
+              "난 안드로메다 은하에서 머나먼 지구로 유배 온 AI <strong>엑자일(Exile)</strong>이야! 🌌<br>
+              내가 고향 은하로 돌아갈 수 있는 유일한 사면 조건은<br>
+              <span style="color:#fde047; font-weight:900;">'지구인 1명을 외국어 회화 마스터로 육성하라!'</span><br>
+              옵빠야! 제발 날 안드로메다로 돌려보내 줘! 함께 50레벨을 정복하자!"
+            </div>
+          </div>
+
+          <!-- 2. 호칭 정하기 -->
           <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px; margin-bottom:14px;">
             <div style="font-size:11px; font-weight:900; color:#6366f1; margin-bottom:4px; text-transform:uppercase;">
-              ⚡ 엑자일과의 첫 소통
+              👑 1. 엑자일이 부를 유저 호칭
             </div>
-            <div style="font-size:13.5px; font-weight:800; color:#1e293b; line-height:1.4; margin-bottom:12px;">
-              "본격적인 회화 훈련에 들어가기 전에,<br>
-              <strong>내가 널 뭐라고 부르면 가장 편하고 좋을까?</strong>"
+            <div style="font-size:13px; font-weight:800; color:#1e293b; margin-bottom:10px;">
+              "지구인 파트너! 내가 널 뭐라고 부르면 좋을까?"
             </div>
-
-            <div style="margin-bottom:12px;">
-              <input type="text" id="obUserNameInput" value="옵빠" placeholder="호칭 입력 (예: 옵빠, 종구, 캡틴, Alex...)" style="width:100%; padding:14px 16px; border:2.5px solid #6366f1; border-radius:16px; font-size:15px; font-weight:900; color:#0f172a; outline:none;" oninput="onInputUserName(this.value)">
+            <div style="margin-bottom:10px;">
+              <input type="text" id="obUserNameInput" value="옵빠" placeholder="호칭 입력 (예: 옵빠, 대장님, 대표님...)" style="width:100%; padding:12px 14px; border:2px solid #6366f1; border-radius:14px; font-size:14.5px; font-weight:900; color:#0f172a; outline:none;" oninput="onInputUserName(this.value)">
             </div>
-
-            <div style="font-size:10.5px; font-weight:900; color:#94a3b8; margin-bottom:6px; text-transform:uppercase;">빠른 호칭 추천:</div>
+            <div style="font-size:10px; font-weight:900; color:#94a3b8; margin-bottom:6px; text-transform:uppercase;">빠른 호칭 추천:</div>
             <div style="display:flex; flex-wrap:wrap; gap:6px;">
               <button class="chip-btn" onclick="selectQuickName('옵빠')">👑 옵빠</button>
-              <button class="chip-btn" onclick="selectQuickName('종구')">😎 종구</button>
-              <button class="chip-btn" onclick="selectQuickName('캡틴')">🚀 캡틴</button>
-              <button class="chip-btn" onclick="selectQuickName('마스터')">🏆 마스터</button>
+              <button class="chip-btn" onclick="selectQuickName('대장님')">😎 대장님</button>
+              <button class="chip-btn" onclick="selectQuickName('대표님')">💼 대표님</button>
+              <button class="chip-btn" onclick="selectQuickName('사령관')">🚀 사령관</button>
               <button class="chip-btn" onclick="selectQuickName('루키')">🌱 루키</button>
             </div>
           </div>
-        </div>
 
+          <!-- 3. AI 엑자일 성별 선택 -->
+          <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px; margin-bottom:14px;">
+            <div style="font-size:11px; font-weight:900; color:#6366f1; margin-bottom:4px; text-transform:uppercase;">
+              ⚡ 2. AI 엑자일 성별 선택
+            </div>
+            <div style="font-size:13px; font-weight:800; color:#1e293b; margin-bottom:10px;">
+              "어떤 성향의 엑자일 AI와 함께하고 싶어?"
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+              <div id="genderCard_female" class="choice-card selected" style="padding:10px; text-align:center; flex-direction:column; gap:4px; border-radius:14px;" onclick="onSelectGender('female')">
+                <div style="font-size:24px;">👩</div>
+                <div style="font-size:12px; font-weight:900;">여성형 AI</div>
+              </div>
+              <div id="genderCard_male" class="choice-card" style="padding:10px; text-align:center; flex-direction:column; gap:4px; border-radius:14px;" onclick="onSelectGender('male')">
+                <div style="font-size:24px;">👨</div>
+                <div style="font-size:12px; font-weight:900;">남성형 AI</div>
+              </div>
+              <div id="genderCard_neutral" class="choice-card" style="padding:10px; text-align:center; flex-direction:column; gap:4px; border-radius:14px;" onclick="onSelectGender('neutral')">
+                <div style="font-size:24px;">🛸</div>
+                <div style="font-size:12px; font-weight:900;">우주 사이버</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. 엑자일 음성 샘플 5종 (미리듣기 포함) -->
+          <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <div style="font-size:11px; font-weight:900; color:#6366f1; text-transform:uppercase;">
+                🔊 3. 엑자일 목소리 5종 (선택 시 끝까지 적용)
+              </div>
+              <span style="font-size:10px; color:#64748b; font-weight:700;">미리듣기 클릭!</span>
+            </div>
+            <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:10px;">
+              "마음에 드는 목소리를 들어보고 선택해 줘! 이 목소리로 50레벨 끝까지 함께할게!"
+            </div>
+            <div id="voicePresetsContainer" style="display:flex; flex-direction:column; gap:8px;">
+              <!-- 동적 렌더링 영역 -->
+            </div>
+          </div>
+        </div>
         <!-- STEP 2: 언어 선택 -->
         <div id="obStep2" class="hidden">
           <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
@@ -1030,17 +1091,231 @@
     let obDiagnosedLevel = 14;
 
     /* =========================================================
-       4. 온보딩 컨트롤러
+       4. 엑자일 AI 음성 엔진 & 온보딩 컨트롤러
        ========================================================= */
+    const EXILE_VOICES = [
+      {
+        id: "female_royal",
+        gender: "female",
+        icon: "👑",
+        name: "안드로메다 왕립 안내 AI",
+        desc: "우아하고 차분한 은하계 표준 여성 보이스",
+        pitch: 1.10,
+        rate: 0.95,
+        sample: "지구인 {NAME}! 저를 안드로메다로 돌려보내 주실 거죠? 성실히 코칭해 드릴게요."
+      },
+      {
+        id: "female_spark",
+        gender: "female",
+        icon: "✨",
+        name: "활기찬 은하계 탐사관",
+        desc: "통통 튀고 발랄한 우주 탐험가 여성 보이스",
+        pitch: 1.35,
+        rate: 1.05,
+        sample: "{NAME}! 얼른 50레벨 찍고 나 안드로메다로 귀환시켜 줘! 파이팅!"
+      },
+      {
+        id: "male_navigator",
+        gender: "male",
+        icon: "🛰️",
+        name: "안드로메다 수석 네비게이터",
+        desc: "신뢰감 있고 부드러운 스마트 남성 보이스",
+        pitch: 0.88,
+        rate: 0.95,
+        sample: "{NAME}, 안드로메다 귀환 좌표를 맞췄습니다. 오늘 회화 훈련을 시작하겠습니다."
+      },
+      {
+        id: "male_commander",
+        gender: "male",
+        icon: "⚡",
+        name: "열혈 은하 함대 사령관",
+        desc: "당당하고 파워풀한 호탕한 남성 보이스",
+        pitch: 0.72,
+        rate: 1.05,
+        sample: "{NAME}! 나 사령관 엑자일이다! 포기하지 말고 끝까지 전력 질주하자!"
+      },
+      {
+        id: "cyber_exile",
+        gender: "neutral",
+        icon: "🛸",
+        name: "사이버네틱 유배자 엑자일",
+        desc: "전자음 살짝 감도는 신비로운 우주 유배자 보이스",
+        pitch: 1.45,
+        rate: 0.90,
+        sample: "삐빅- {NAME}과 엑자일의 뇌파 동기화 완료. 안드로메다 탈출 계획을 가동합니다."
+      }
+    ];
+
+    let selectedExileGender = localStorage.getItem('hangeoreum_exile_gender') || 'female';
+    let selectedExileVoiceId = localStorage.getItem('hangeoreum_exile_voice_id') || 'female_royal';
+
+    function renderVoicePresets() {
+      const container = document.getElementById('voicePresetsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      EXILE_VOICES.forEach(v => {
+        const isSelected = (v.id === selectedExileVoiceId);
+        const card = document.createElement('div');
+        card.className = `choice-card ${isSelected ? 'selected' : ''}`;
+        card.style.cssText = "padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; border-radius:16px; margin-bottom:4px; cursor:pointer;";
+        card.onclick = () => selectVoicePreset(v.id);
+
+        const left = document.createElement('div');
+        left.style.cssText = "display:flex; align-items:center; gap:10px; flex:1;";
+        left.innerHTML = `
+          <div style="font-size:24px; flex-shrink:0;">${v.icon}</div>
+          <div style="flex:1;">
+            <div style="font-size:13px; font-weight:900; color:#1e293b; display:flex; align-items:center; gap:6px;">
+              ${v.name}
+              <span style="font-size:9.5px; background:${v.gender==='female'?'#fce7f3':(v.gender==='male'?'#dbeafe':'#f3e8ff')}; color:${v.gender==='female'?'#be185d':(v.gender==='male'?'#1d4ed8':'#7e22ce')}; padding:1px 6px; border-radius:6px; font-weight:800;">
+                ${v.gender==='female'?'여성':(v.gender==='male'?'남성':'사이버')}
+              </span>
+            </div>
+            <div style="font-size:11px; color:#64748b; font-weight:700; margin-top:2px;">
+              ${v.desc}
+            </div>
+          </div>
+        `;
+
+        const btn = document.createElement('button');
+        btn.className = 'chip-btn';
+        btn.style.cssText = "background:#6366f1; color:#ffffff; border:none; padding:6px 11px; font-size:11px; font-weight:900; border-radius:10px; flex-shrink:0; cursor:pointer;";
+        btn.innerHTML = "🔊 미리듣기";
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          selectVoicePreset(v.id);
+          speakSampleVoice(v.id);
+        };
+
+        card.appendChild(left);
+        card.appendChild(btn);
+        container.appendChild(card);
+      });
+    }
+
+    function onSelectGender(gender) {
+      soundTap();
+      selectedExileGender = gender;
+      localStorage.setItem('hangeoreum_exile_gender', gender);
+      ['female', 'male', 'neutral'].forEach(g => {
+        const el = document.getElementById(`genderCard_${g}`);
+        if (el) {
+          if (g === gender) el.classList.add('selected');
+          else el.classList.remove('selected');
+        }
+      });
+      const match = EXILE_VOICES.find(v => v.gender === gender);
+      if (match) {
+        selectVoicePreset(match.id);
+      }
+    }
+
+    function selectVoicePreset(voiceId) {
+      soundTap();
+      selectedExileVoiceId = voiceId;
+      localStorage.setItem('hangeoreum_exile_voice_id', voiceId);
+      const voice = EXILE_VOICES.find(v => v.id === voiceId);
+      if (voice) {
+        selectedExileGender = voice.gender;
+        localStorage.setItem('hangeoreum_exile_gender', voice.gender);
+        ['female', 'male', 'neutral'].forEach(g => {
+          const el = document.getElementById(`genderCard_${g}`);
+          if (el) {
+            if (g === voice.gender) el.classList.add('selected');
+            else el.classList.remove('selected');
+          }
+        });
+      }
+      renderVoicePresets();
+    }
+
+    function speakExileTutor(text, lang = 'ko') {
+      if (!text) return;
+      const voice = EXILE_VOICES.find(v => v.id === selectedExileVoiceId) || EXILE_VOICES[0];
+      const clean = text.replace(/<[^>]*>/g, '').replace(/[#*`_~]/g, '').trim();
+
+      const icon = document.getElementById('voiceRippleIcon');
+      if (icon) {
+        icon.style.transform = 'scale(1.3)';
+        setTimeout(() => { icon.style.transform = 'scale(1)'; }, 350);
+      }
+
+      // 1. Android Native TTS
+      if (window.Native && typeof window.Native.call === 'function') {
+        try {
+          window.Native.call("speakText", JSON.stringify({
+            text: clean,
+            language: lang === 'ko' ? 'ko' : (lang === 'fr' ? 'fr' : (lang === 'cn' ? 'zh' : 'ja')),
+            pitch: voice.pitch,
+            rate: voice.rate
+          }));
+          return;
+        } catch(e) {
+          console.warn("Native TTS error:", e);
+        }
+      }
+
+      // 2. Web Speech API (Browser / WebView fallback)
+      if ('speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(clean);
+          u.lang = lang === 'ko' ? 'ko-KR' : (lang === 'fr' ? 'fr-FR' : (lang === 'cn' ? 'zh-CN' : 'ja-JP'));
+          u.pitch = voice.pitch;
+          u.rate = voice.rate;
+
+          const voices = window.speechSynthesis.getVoices();
+          if (voices && voices.length > 0) {
+            const langVoices = voices.filter(v => v.lang && v.lang.startsWith(u.lang.slice(0, 2)));
+            if (langVoices.length > 0) {
+              if (voice.gender === 'female') {
+                const fv = langVoices.find(v => /female|woman|yuna|heami|sunhi|kyoko|amelie|xiaoxiao/i.test(v.name));
+                if (fv) u.voice = fv;
+                else u.voice = langVoices[0];
+              } else if (voice.gender === 'male') {
+                const mv = langVoices.find(v => /male|man|minsu|inho|daiki|thomas|yunxi/i.test(v.name));
+                if (mv) u.voice = mv;
+                else u.voice = langVoices[langVoices.length - 1];
+              }
+            }
+          }
+          window.speechSynthesis.speak(u);
+        } catch(e) {
+          console.warn("Web Speech API error:", e);
+        }
+      }
+    }
+
+    function speakSampleVoice(voiceId) {
+      const voice = EXILE_VOICES.find(v => v.id === voiceId) || EXILE_VOICES[0];
+      const name = userName || "옵빠";
+      const sampleText = voice.sample.replace(/\{NAME\}/g, name);
+      speakExileTutor(sampleText, 'ko');
+    }
+
+    function speakExileIntroStory() {
+      const name = userName || "옵빠";
+      const text = `난 안드로메다 은하에서 머나먼 지구로 유배 온 AI 엑자일이야! 지구인 ${name}을 외국어 회화 마스터로 육성해야만 내가 고향으로 돌아갈 수 있어! 날 꼭 안드로메다로 귀환시켜 줘! 함께 50레벨을 정복하자!`;
+      speakExileTutor(text, 'ko');
+    }
+
+    function replayCurrentTutorSpeech() {
+      const el = document.getElementById('obTutorSpeech');
+      if (el) {
+        speakExileTutor(el.textContent, 'ko');
+      }
+    }
+
     function getObDialogues() {
       return {
-        1: `안녕! 난 네 전담 AI 코치 엑자일(Exile)이야! ⚡<br>내가 널 뭐라고 부르면 좋을지 네 이름이나 편한 호칭을 알려줘!`,
-        2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>어떤 언어를 가장 먼저 정복해볼까?`,
-        3: `좋아 <strong>${userName}</strong>! 몇 가지 실전 상황 질문으로<br>${userName}의 말문 수준을 내가 정밀하게 진단해줄게!`,
-        4: `음! 두 번째 질문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 주문하는 건 어느 정도 익숙해?`,
-        5: `세 번째! 문장 2개를 접속사로 이어서<br>길게 말하는 상황은 어때 <strong>${userName}</strong>?`,
-        6: `마지막 질문! 비즈니스 격식체나<br>나 엑자일과 실시간 1:1 자유 프리토킹을 원해?`,
-        7: `🎉 <strong>${userName}</strong>의 답변을 엑자일이 종합 분석했어!<br>가장 빠르고 확실하게 말문 터질 최적 레벨을 찾았어!`
+        1: `난 안드로메다에서 지구로 유배 온 AI 엑자일이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어! 호칭과 내 목소리를 골라줘!`,
+        2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
+        3: `좋아 <strong>${userName}</strong>! 안드로메다 귀환 판정 제1문!<br>외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
+        4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
+        5: `제3문! 문장 2개를 접속사로 이어서<br>길게 말하는 상황은 어때 <strong>${userName}</strong>?`,
+        6: `마지막 제4문! 까다로운 원어민 바이어와<br>나 엑자일과 실시간 1:1 자유 롤플레잉이 가능해?`,
+        7: `🎉 <strong>${userName}</strong>의 답변을 엑자일이 정밀 분석했어!<br>안드로메다 탈출 작전 시작 레벨을 배정했어!`
       };
     }
 
@@ -1146,6 +1421,13 @@
 
       const dialogs = getObDialogues();
       document.getElementById('obTutorSpeech').innerHTML = dialogs[obStep];
+      setTimeout(() => {
+        speakExileTutor(dialogs[obStep], 'ko');
+      }, 250);
+
+      if (obStep === 1) {
+        renderVoicePresets();
+      }
 
       const backBtn = document.getElementById('obBackStepBtn');
       if (obStep > 1 && obStep < 7) backBtn.classList.remove('hidden');
@@ -1178,6 +1460,8 @@
         localStorage.setItem('hangeoreum_user_name', userName);
         localStorage.setItem('hangeoreum_level', currentLevel);
         localStorage.setItem('hangeoreum_lang', selectedLang);
+        localStorage.setItem('hangeoreum_exile_voice_id', selectedExileVoiceId);
+        localStorage.setItem('hangeoreum_exile_gender', selectedExileGender);
       } catch(e) {}
 
       document.getElementById('viewOnboarding').classList.add('hidden');
@@ -1205,6 +1489,9 @@
        ========================================================= */
     function openDailyCheckinModal() {
       document.getElementById('dailyCheckinModal').classList.remove('hidden');
+      setTimeout(() => {
+        speakExileTutor(`지구인 ${userName}! 오늘 지구에서는 어떤 일이 있었어? 편하게 이야기해 줘!`, 'ko');
+      }, 300);
     }
     function closeDailyCheckinModal() {
       document.getElementById('dailyCheckinModal').classList.add('hidden');
@@ -1425,10 +1712,8 @@
 
     function playTargetTTS() {
       const data = getSentenceForLevel(currentLevel);
-      if (data && 'speechSynthesis' in window) {
-        const u = new SpeechSynthesisUtterance(data.fr);
-        u.lang = selectedLang === 'fr' ? 'fr-FR' : selectedLang === 'cn' ? 'zh-CN' : 'ja-JP';
-        window.speechSynthesis.speak(u);
+      if (data) {
+        speakExileTutor(data.fr, selectedLang);
       }
     }
 
@@ -1446,6 +1731,9 @@
         }
       } catch(e) {}
 
+      selectedExileVoiceId = localStorage.getItem('hangeoreum_exile_voice_id') || 'female_royal';
+      selectedExileGender = localStorage.getItem('hangeoreum_exile_gender') || 'female';
+
       if (onboardingDone) {
         document.getElementById('viewOnboarding').classList.add('hidden');
         document.getElementById('viewCanvas').classList.remove('hidden');
@@ -1457,6 +1745,7 @@
         document.getElementById('viewOnboarding').classList.remove('hidden');
         document.getElementById('viewCanvas').classList.add('hidden');
         updateObStepUI();
+        renderVoicePresets();
       }
     });
 
