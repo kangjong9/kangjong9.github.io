@@ -409,14 +409,15 @@
       <div id="obStep1">
         <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px; margin-bottom:14px;">
           <label style="display:block; font-size:16px; font-weight:800; color:#334155; margin-bottom:8px;">
-            👤 AI 엑자일이 당신을 어떻게 부를까요?
+            👤 AI 엑자일이 당신을 어떻게 부를까요? (사용자 이름 고정)
           </label>
-          <input type="text" id="obUserNameInput" value="옵빠" oninput="onInputUserName(this.value)" placeholder="이름 또는 호칭 입력" style="width:100%; padding:14px 16px; border-radius:14px; border:2px solid #cbd5e1; font-size:18px; font-weight:800; color:#0f172a; outline:none; background:#ffffff;">
+          <input type="text" id="obUserNameInput" value="" oninput="setAndSaveUserName(this.value)" placeholder="이름 또는 호칭을 입력하세요" style="width:100%; padding:14px 16px; border-radius:14px; border:2.5px solid #6366f1; font-size:18px; font-weight:800; color:#0f172a; outline:none; background:#ffffff;">
           <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
-            <button class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('옵빠')">옵빠</button>
-            <button class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('사령관')">사령관</button>
-            <button class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('마스터')">마스터</button>
-            <button class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('친구')">친구</button>
+            <button type="button" class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('학습자')">학습자</button>
+            <button type="button" class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('사령관')">사령관</button>
+            <button type="button" class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('캡틴')">캡틴</button>
+            <button type="button" class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('마스터')">마스터</button>
+            <button type="button" class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('친구')">친구</button>
           </div>
         </div>
 
@@ -1018,7 +1019,7 @@
   const ANIME_VOICE_PRESETS = [
     { code: 'ANIME_F_CUTE', name: '귀엽고 발랄한 요정 루나', gender: 'female', pitch: 1.35, rate: 1.08, icon: '✨', style: '깜찍·경쾌 감탄사', sample: '안녕 {NAME}! 오늘 외국어도 신나게 부숴보자!' },
     { code: 'ANIME_F_SOFT', name: '차분하고 다정한 멘토 세라', gender: 'female', pitch: 1.15, rate: 0.95, icon: '🍵', style: '다정·힐링 배려 톤', sample: '수고 많았어요 {NAME}. 차 한잔 마시며 천천히 연습해요.' },
-    { code: 'ANIME_F_BRIGHT', name: '밝고 활기찬 아이돌 밍크', gender: 'female', pitch: 1.45, rate: 1.12, icon: '🌸', style: '긍정 비타민 리액션', sample: '{NAME} 오빠! 오늘도 100점 맞고 나랑 하이파이브!' },
+    { code: 'ANIME_F_BRIGHT', name: '밝고 활기찬 아이돌 밍크', gender: 'female', pitch: 1.45, rate: 1.12, icon: '🌸', style: '긍정 비타민 리액션', sample: '{NAME}! 오늘도 100점 맞고 나랑 하이파이브!' },
     { code: 'ANIME_M_YOUTH', name: '경쾌하고 활기찬 소년 카이', gender: 'male', pitch: 1.10, rate: 1.10, icon: '⚡', style: '시원시원 소년만화 주인공', sample: '포기하지 마 {NAME}! 우리의 한계는 우주 너머라고!' },
     { code: 'ANIME_M_CALM', name: '부드럽고 차분한 연구원 레오', gender: 'male', pitch: 0.90, rate: 0.95, icon: '🎧', style: '신뢰감 있는 따뜻한 중저음', sample: '{NAME}, 부담 갖지 말고 편안하게 원어민 소리를 따라 해봐.' },
     { code: 'ANIME_M_DEEP', name: '낮고 진중한 수호대장 바론', gender: 'male', pitch: 0.75, rate: 0.90, icon: '🛡️', style: '묵직하고 든든한 바리톤', sample: '{NAME}, 50레벨 탈출 작전의 성공을 내 명예를 걸고 약속한다.' }
@@ -1436,9 +1437,44 @@
 
 
   /* =========================================================
-     4. 앱 상태 관리
+     4. 사용자 호칭 완전 고정 엔진 (무조건 저장된 사용자 이름으로 일관 고정)
      ========================================================= */
-  let userName = "옵빠";
+  function getSavedUserName() {
+    try {
+      const saved = localStorage.getItem('hangeoreum_user_name');
+      if (saved && saved.trim()) return saved.trim();
+    } catch(e) {}
+    return "학습자";
+  }
+
+  let userName = getSavedUserName();
+
+  function setAndSaveUserName(val) {
+    const trimmed = (val || '').trim();
+    if (trimmed) {
+      userName = trimmed;
+      try {
+        localStorage.setItem('hangeoreum_user_name', userName);
+      } catch(e) {}
+      refreshAllUserNameInUI();
+    }
+  }
+
+  function selectQuickName(name) {
+    soundTap();
+    setAndSaveUserName(name);
+    const input = document.getElementById('obUserNameInput');
+    if (input) input.value = name;
+  }
+
+  function refreshAllUserNameInUI() {
+    // 다이얼로그 텍스트 동적 동기화
+    const speechEl = document.getElementById('obTutorSpeech');
+    if (speechEl) {
+      const dialogs = getObDialogues();
+      speechEl.innerHTML = dialogs[obStep] || speechEl.innerHTML;
+    }
+  }
   let selectedLang = "fr";
   let currentLevel = 1;
   let currentTheme = "work";
@@ -1926,9 +1962,7 @@
     };
   }
 
-  function onInputUserName(val) {
-    if (val.trim()) userName = val.trim();
-  }
+  function onInputUserName(val) { setAndSaveUserName(val); }
   function selectQuickName(name) {
     soundTap();
     userName = name;
@@ -2329,12 +2363,25 @@
      10. ⚙️ Gemini 계단식 Fallback 엔진 (3.8 -> 3.7 -> 3.6 -> 3.5 Flash)
      공급자/BaseURL/모델명 수동입력 배제, 순수 API Key + 자동 폴백
      ========================================================= */
+  // Google Gemini Flash 계단식 파이프라인 (3.8 Flash 디폴트 + 3.7/3.6/3.5 + Google 공식 실체 모델 안전 연동)
   const GEMINI_FLASH_CHAIN = [
     'gemini-3.8-flash',
     'gemini-3.7-flash',
     'gemini-3.6-flash',
-    'gemini-3.5-flash'
+    'gemini-3.5-flash',
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
+    'gemini-1.5-flash-8b'
   ];
+
+  // Google 공식 API 실제 지원 모델 매핑 (가상 모델명 404 시 자동 호환)
+  const GEMINI_REAL_MODEL_MAP = {
+    'gemini-3.8-flash': ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.0-flash'],
+    'gemini-3.7-flash': ['gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'],
+    'gemini-3.6-flash': ['gemini-3.6-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'],
+    'gemini-3.5-flash': ['gemini-3.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-flash', 'gemini-2.5-flash']
+  };
 
   function getGeminiConfig() {
     return {
@@ -2391,19 +2438,29 @@
     }
   }
 
-  /* 계단식 무중단 호출 파이프라인 (3.8 -> 3.7 -> 3.6 -> 3.5) */
+  /* 계단식 무중단 호출 파이프라인 (3.8 디폴트 -> 소진 시 자동 선택 및 무중단 전환) */
   async function callGeminiCascade(payload, startModel = null) {
     const config = getGeminiConfig();
     if (!config.apiKey) return { ok: false, error: "API Key 미설정" };
 
     const initial = startModel || config.defaultModel || 'gemini-3.8-flash';
-    let startIndex = GEMINI_FLASH_CHAIN.indexOf(initial);
-    if (startIndex === -1) startIndex = 0;
+    
+    // 모델 시도 큐 생성: 선택 모델 ➔ 실제 지원 모델 ➔ 하위 체인
+    let candidateModels = [];
+    if (GEMINI_REAL_MODEL_MAP[initial]) {
+      candidateModels.push(...GEMINI_REAL_MODEL_MAP[initial]);
+    } else {
+      candidateModels.push(initial);
+    }
+    // 나머지 체인 결합
+    GEMINI_FLASH_CHAIN.forEach(m => {
+      if (!candidateModels.includes(m)) candidateModels.push(m);
+    });
 
     let lastError = null;
 
-    for (let i = startIndex; i < GEMINI_FLASH_CHAIN.length; i++) {
-      const currentModel = GEMINI_FLASH_CHAIN[i];
+    for (let i = 0; i < candidateModels.length; i++) {
+      const currentModel = candidateModels[i];
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${config.apiKey}`;
 
       try {
@@ -2416,27 +2473,47 @@
         if (res.ok) {
           const data = await res.json();
           const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          
+          // 사용자의 요청 규칙: 소진되거나 모델이 바뀌어 성공 시, 자동으로 해당 모델을 다음 기본 모델로 선택 및 저장!
+          if (currentModel !== initial) {
+            try {
+              localStorage.setItem('hangeoreum_gemini_model', currentModel);
+              const selectEl = document.getElementById('geminiModelSelect');
+              if (selectEl) {
+                // 옵션에 있으면 선택, 없으면 추가 후 선택
+                let opt = selectEl.querySelector(`option[value="${currentModel}"]`);
+                if (!opt) {
+                  opt = document.createElement('option');
+                  opt.value = currentModel;
+                  opt.textContent = `${currentModel} (자동 전환 활성)`;
+                  selectEl.appendChild(opt);
+                }
+                selectEl.value = currentModel;
+              }
+            } catch(e) {}
+          }
+
           return {
             ok: true,
             model: currentModel,
-            fallbackUsed: (i > startIndex),
-            fallbackFrom: (i > startIndex ? GEMINI_FLASH_CHAIN[startIndex] : null),
+            fallbackUsed: (currentModel !== initial),
+            fallbackFrom: (currentModel !== initial ? initial : null),
             reply: replyText
           };
         }
 
-        // 429 (할당량 소진) 또는 5xx (서버 오류), 404 (해당 지역/버전 일시 미제공) 등 발생 시 다음 모델로 즉시 Fallback
+        // 429 (할당량 소진), 404 (모델 미지원), 400 등 발생 시 다음 모델로 즉각 Fallback
         const errText = await res.text();
         lastError = `[${currentModel} HTTP ${res.status}] ${errText.substring(0, 100)}`;
-        console.warn(`Gemini cascade fail on ${currentModel}:`, res.status, "Trying next model...");
+        console.warn(`Gemini cascade fail on ${currentModel} (${res.status}). Trying next fallback...`);
 
       } catch(netErr) {
         lastError = `[${currentModel} Network Error] ${netErr.message}`;
-        console.warn(`Network fail on ${currentModel}:`, netErr, "Trying next model...");
+        console.warn(`Network error on ${currentModel}:`, netErr);
       }
     }
 
-    return { ok: false, error: lastError || "모든 Flash 모델(3.8/3.7/3.6/3.5) 호출 실패" };
+    return { ok: false, error: lastError || "Gemini Flash 모델 연결 실패. 네트워크와 API Key를 확인해 주세요." };
   }
 
   async function testApiConnection() {
@@ -2686,9 +2763,12 @@
   window.addEventListener('DOMContentLoaded', () => {
     let hasPreviousStudy = false;
     try {
+      const savedName = localStorage.getItem('hangeoreum_user_name');
+      if (savedName && savedName.trim()) {
+        userName = savedName.trim();
+      }
       if (localStorage.getItem('hangeoreum_onboarding_done') === '1') {
         hasPreviousStudy = true;
-        userName = localStorage.getItem('hangeoreum_user_name') || "옵빠";
         currentLevel = parseInt(localStorage.getItem('hangeoreum_level'), 10) || 1;
         selectedLang = localStorage.getItem('hangeoreum_lang') || 'fr';
         currentStoryQuote = localStorage.getItem('hangeoreum_daily_quote') || "오늘 회사에서 야근해서 너무 피곤해...";
@@ -2708,6 +2788,11 @@
     obStep = 1;
     updateObStepUI();
     renderVoicePresets();
+
+    const nameInput = document.getElementById('obUserNameInput');
+    if (nameInput) {
+      nameInput.value = userName;
+    }
 
     // 직전 학습 진도가 있으면 상단 '이어서 진행' 배너를 노출하여 원클릭으로 매끄럽게 연결!
     const resumeBanner = document.getElementById('resumeLearningBanner');
