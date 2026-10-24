@@ -15,6 +15,18 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
+    input, textarea {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+    .shake-anim {
+      animation: shakeHoriz 0.35s ease-in-out;
+    }
+    @keyframes shakeHoriz {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
       background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 50%, #fdf2f8 100%);
@@ -324,6 +336,21 @@
        ========================================================= -->
   <div id="viewOnboarding" style="flex:1; display:flex; flex-direction:column; padding:20px 18px 24px;">
     
+    <!-- 이어서 학습하기 스마트 배너 (앱 시작 시 직전 학습으로 매끄럽게 연결) -->
+    <div id="resumeLearningBanner" class="hidden" style="background:linear-gradient(135deg, #eef2ff, #f0fdf4); border:2.5px solid #4f46e5; border-radius:22px; padding:14px 16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 8px 20px rgba(79,70,229,0.15);">
+      <div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span style="font-size:12px; font-weight:800; color:#4f46e5; background:#fff; padding:2px 8px; border-radius:8px; border:1px solid #c7d2fe;">⚡ 직전 학습 이어서 하기</span>
+        </div>
+        <div id="resumeLevelInfo" style="font-size:16px; font-weight:900; color:#1e1b4b; margin-top:4px;">
+          Lv. 1 프랑스어 (따라하기 1/4)
+        </div>
+      </div>
+      <button class="btn-3d btn-green" style="min-height:44px; padding:8px 16px; font-size:14px;" onclick="resumePreviousLearning()">
+        <span>이어서 진행 ➔</span>
+      </button>
+    </div>
+
     <!-- 상단 진행도 -->
     <div style="margin-bottom:16px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -859,7 +886,12 @@
       </div>
 
       <div style="margin-bottom:14px;">
-        <textarea id="dailyTextInput" rows="3" placeholder="예: 오늘 야근해서 너무 피곤해, 치맥 한잔하고 싶다!" style="width:100%; padding:12px; border-radius:14px; border:2px solid #cbd5e1; font-size:16px; font-weight:700; outline:none; resize:none;"></textarea>
+        <label style="display:block; font-size:14px; font-weight:800; color:#334155; margin-bottom:6px;">
+          ✍️ 오늘 겪은 일이나 하고 싶은 말을 자유롭게 적어보세요:
+        </label>
+        <textarea id="dailyTextInput" rows="3" placeholder="예: 오늘 야근해서 너무 피곤해, 치맥 한잔하고 싶다!" 
+          style="width:100%; padding:14px 16px; border-radius:16px; border:2.5px solid #6366f1; font-size:16px; font-weight:700; color:#0f172a; background:#ffffff; outline:none; resize:none; -webkit-user-select:text !important; user-select:text !important;"
+          onclick="this.focus()" onfocus="this.style.borderColor='#4f46e5'"></textarea>
       </div>
 
       <div style="font-size:13px; font-weight:800; color:#64748b; margin-bottom:8px;">⚡ 빠른 선택:</div>
@@ -1915,17 +1947,72 @@
     currentStoryQuote = quote;
   }
 
+  /* 일상 대화 한국어 문장에서 핵심 학습 키워드 지능형 추출 */
+  function extractKeywordsFromSentence(text) {
+    if (!text) return ["#일상", "#대화", "#시작"];
+    // 불용어 목록
+    const stopWords = new Set([
+      '오늘', '너무', '진짜', '정말', '아주', '매우', '내가', '나는', '나의', '우리',
+      '하고', '해서', '했다', '했어', '있다', '있어', '하고싶다', '하고싶어', '한잔',
+      '하나', '이다', '입니다', '니다', '에서', '으로', '로써', '에게', '한테', '부터',
+      '까지', '때문에', '그냥', '같이', '함께', '조금', '약간', '지금', '어제', '내일'
+    ]);
+
+    // 한글 단어 추출 (2글자 이상)
+    const rawTokens = text.replace(/[^가-힣a-zA-Z0-9\s]/g, ' ')
+      .split(/\s+/)
+      .map(w => w.trim())
+      .filter(w => w.length >= 2 && !stopWords.has(w));
+
+    // 의미 있는 키워드 우선순위 상위 3~4개 선택
+    const uniqueTokens = Array.from(new Set(rawTokens));
+    if (uniqueTokens.length === 0) {
+      if (text.includes('피곤') || text.includes('야근')) return ["#야근", "#피곤", "#퇴근"];
+      if (text.includes('카페') || text.includes('커피')) return ["#카페", "#커피", "#힐링"];
+      if (text.includes('맥주') || text.includes('술')) return ["#맥주", "#친구", "#건배"];
+      return ["#오늘의일상", "#회화", "#실전"];
+    }
+
+    return uniqueTokens.slice(0, 4).map(w => `#${w}`);
+  }
+
+  /* 일상 대화 제출: 학습 키워드 즉시 반영 및 상황 문장 직접 연결 */
   function submitDailyCheckin() {
-    const inputVal = document.getElementById('dailyTextInput').value.trim();
+    const inputEl = document.getElementById('dailyTextInput');
+    const inputVal = inputEl.value.trim();
+
     if (inputVal) {
       currentStoryQuote = inputVal;
-      if (inputVal.includes('카페') || inputVal.includes('커피') || inputVal.includes('라떼') || inputVal.includes('힐링')) {
+
+      // 1. 학습 키워드 자동 추출 및 설정
+      const extractedKeywords = extractKeywordsFromSentence(inputVal);
+      const keywordsStr = extractedKeywords.join(' ');
+
+      // 2. 테마 판별
+      if (inputVal.includes('카페') || inputVal.includes('커피') || inputVal.includes('라떼') || inputVal.includes('디저트') || inputVal.includes('차')) {
         currentTheme = 'cafe';
-      } else if (inputVal.includes('친구') || inputVal.includes('맥주') || inputVal.includes('치맥') || inputVal.includes('술') || inputVal.includes('고기')) {
+      } else if (inputVal.includes('친구') || inputVal.includes('맥주') || inputVal.includes('치맥') || inputVal.includes('소주') || inputVal.includes('술') || inputVal.includes('고기') || inputVal.includes('밥')) {
         currentTheme = 'beer';
       } else {
         currentTheme = 'work';
       }
+
+      // 3. 현재 테마의 키워드 및 한국어 상황 덮어쓰기 (사용자 입력 적극 반영)
+      THEMED_DATA[currentTheme].keywords = keywordsStr;
+      THEMED_DATA[currentTheme].themeName = `💬 [맞춤 일상 키워드]`;
+
+      // 4. 메인 드릴의 기준 한국어 문장을 사용자 입력으로 직접 치환!
+      const unit = getCurrentLessonUnit();
+      if (unit && unit.base) {
+        unit.base.ko = inputVal;
+        unit.base.note = `오늘 입력한 일상: ${keywordsStr}`;
+      }
+
+      // 로컬 스토리지에 오늘의 일상 저장
+      try {
+        localStorage.setItem('hangeoreum_daily_quote', inputVal);
+        localStorage.setItem('hangeoreum_daily_keywords', keywordsStr);
+      } catch(e) {}
     }
 
     soundLevelUp();
@@ -1934,6 +2021,9 @@
     currentRound = 1;
     roundPassed = [false, false, false, false];
     updateLevelUI();
+
+    // 입력창 포커스 해제
+    if (inputEl) inputEl.blur();
   }
 
   function applyDailyThemeUI() {
@@ -2300,35 +2390,172 @@
 
 
   /* =========================================================
+     10-2. 좌/우 슬라이딩 제스처 엔진 (단, 진행된 부분까지만 이동!)
+     - 터치 스와이프(모바일) & 마우스 드래그(데스크톱) 완벽 지원
+     - 좌로 슬라이드 (Swipe Left): 다음 단계 (단, 현재 통과 완료된 경우만!)
+     - 우로 슬라이드 (Swipe Right): 이전 단계
+     ========================================================= */
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+  let isPointerDown = false;
+
+  function initSwipeGesture() {
+    const rootEl = document.querySelector('.app-root') || document.body;
+
+    const handleSwipeStart = (x, y) => {
+      touchStartX = x;
+      touchStartY = y;
+      touchStartTime = Date.now();
+      isPointerDown = true;
+    };
+
+    const handleSwipeEnd = (x, y, target) => {
+      if (!isPointerDown) return;
+      isPointerDown = false;
+
+      // input, textarea, range slider 위에서의 스와이프는 원래 폼 조작을 위해 무시
+      if (target && target.closest && target.closest('input, textarea, select, range, .choice-card, .btn-3d, button')) {
+        return;
+      }
+
+      const diffX = x - touchStartX;
+      const diffY = y - touchStartY;
+      const elapsed = Date.now() - touchStartTime;
+
+      // 400ms 이내에 가로 50px 이상 이동하고, 세로보다 가로 이동이 1.2배 클 때 스와이프 판정
+      if (elapsed < 600 && Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.2) {
+        if (diffX < 0) {
+          // 👈 좌로 슬라이드 (Next Step)
+          handleSwipeLeftNext();
+        } else {
+          // 👉 우로 슬라이드 (Prev Step)
+          handleSwipeRightPrev();
+        }
+      }
+    };
+
+    // 모바일 터치 이벤트
+    rootEl.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches[0]) {
+        handleSwipeStart(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    rootEl.addEventListener('touchend', (e) => {
+      if (e.changedTouches && e.changedTouches[0]) {
+        handleSwipeEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY, e.target);
+      }
+    }, { passive: true });
+
+    // 데스크톱 마우스 드래그 이벤트 지원
+    rootEl.addEventListener('mousedown', (e) => {
+      handleSwipeStart(e.clientX, e.clientY);
+    });
+
+    rootEl.addEventListener('mouseup', (e) => {
+      handleSwipeEnd(e.clientX, e.clientY, e.target);
+    });
+  }
+
+  /* 좌로 슬라이드: 다음 단계 이동 (단, 진행/통과된 부분까지만 엄격 가드!) */
+  function handleSwipeLeftNext() {
+    const isCanvasActive = !document.getElementById('viewCanvas').classList.contains('hidden');
+
+    if (isCanvasActive) {
+      // 메인 캔버스 상태: 현재 단계가 통과(70점 이상)되었는지 엄격 검사!
+      if (roundPassed[currentRound - 1]) {
+        proceedNextRoundOrLevel();
+      } else {
+        // 아직 통과하지 못한 경우 화면 쉐이크 & 안내
+        soundWrong();
+        const root = document.querySelector('.app-root');
+        if (root) {
+          root.classList.remove('shake-anim');
+          void root.offsetWidth; // re-flow
+          root.classList.add('shake-anim');
+        }
+        const notice = document.getElementById('gatekeeperNotice');
+        if (notice) {
+          notice.innerHTML = `<span style='color:#dc2626;'>⛔ [슬라이드 잠금] 현재 라운드를 70점 이상으로 통과해야 다음 단계로 슬라이드할 수 있습니다!</span>`;
+        }
+      }
+    } else {
+      // 온보딩 상태
+      if (obStep < 7) {
+        goToNextObStep();
+      }
+    }
+  }
+
+  /* 우로 슬라이드: 이전 단계 이동 */
+  function handleSwipeRightPrev() {
+    const isCanvasActive = !document.getElementById('viewCanvas').classList.contains('hidden');
+    if (isCanvasActive) {
+      goToPrevRoundOrLevel();
+    } else {
+      goToPrevObStep();
+    }
+  }
+
+  /* 지난 학습으로 매끄럽게 연결 (Resume Learning) */
+  function resumePreviousLearning() {
+    soundLevelUp();
+    document.getElementById('viewOnboarding').classList.add('hidden');
+    document.getElementById('viewCanvas').classList.remove('hidden');
+
+    applyDailyThemeUI();
+    switchLang(selectedLang);
+    document.getElementById('levelSlider').value = currentLevel;
+    updateLevelUI();
+
+    // 환영 멘트 음성 출력
+    setTimeout(() => {
+      speakExileTutor(`${userName}! 지난 학습 레벨 ${currentLevel}로 이어서 시작할게!`, 'ko');
+    }, 300);
+  }
+
+  /* =========================================================
      11. 초기화 (DOM Ready)
+     항상 초기화면(온보딩)으로 시작하되, 직전 학습 이어서 하기 지원
      ========================================================= */
   window.addEventListener('DOMContentLoaded', () => {
-    let onboardingDone = false;
+    let hasPreviousStudy = false;
     try {
       if (localStorage.getItem('hangeoreum_onboarding_done') === '1') {
-        onboardingDone = true;
+        hasPreviousStudy = true;
         userName = localStorage.getItem('hangeoreum_user_name') || "옵빠";
         currentLevel = parseInt(localStorage.getItem('hangeoreum_level'), 10) || 1;
         selectedLang = localStorage.getItem('hangeoreum_lang') || 'fr';
+        currentStoryQuote = localStorage.getItem('hangeoreum_daily_quote') || "오늘 회사에서 야근해서 너무 피곤해...";
+        const savedKeywords = localStorage.getItem('hangeoreum_daily_keywords');
+        if (savedKeywords) {
+          THEMED_DATA[currentTheme].keywords = savedKeywords;
+        }
       }
     } catch(e) {}
 
     selectedExileVoiceId = localStorage.getItem('hangeoreum_exile_voice_id') || 'female_anime_lulu';
     selectedExileGender = localStorage.getItem('hangeoreum_exile_gender') || 'female';
 
-    if (onboardingDone) {
-      document.getElementById('viewOnboarding').classList.add('hidden');
-      document.getElementById('viewCanvas').classList.remove('hidden');
-      applyDailyThemeUI();
-      switchLang(selectedLang);
-      document.getElementById('levelSlider').value = currentLevel;
-      updateLevelUI();
-    } else {
-      document.getElementById('viewOnboarding').classList.remove('hidden');
-      document.getElementById('viewCanvas').classList.add('hidden');
-      updateObStepUI();
-      renderVoicePresets();
+    // 요청 수칙 준수: 어플 실행 시 항상 초기화면(온보딩)으로 먼저 나오게 함!
+    document.getElementById('viewOnboarding').classList.remove('hidden');
+    document.getElementById('viewCanvas').classList.add('hidden');
+    obStep = 1;
+    updateObStepUI();
+    renderVoicePresets();
+
+    // 직전 학습 진도가 있으면 상단 '이어서 진행' 배너를 노출하여 원클릭으로 매끄럽게 연결!
+    const resumeBanner = document.getElementById('resumeLearningBanner');
+    const resumeInfo = document.getElementById('resumeLevelInfo');
+    if (hasPreviousStudy && resumeBanner && resumeInfo) {
+      resumeBanner.classList.remove('hidden');
+      const langName = selectedLang === 'fr' ? '프랑스어' : (selectedLang === 'cn' ? '중국어' : '일본어');
+      resumeInfo.textContent = `Lv. ${currentLevel} ${langName} · 따라하기 진행 중`;
     }
+
+    // 좌우 슬라이드(스와이프) 제스처 초기화
+    initSwipeGesture();
 
     window.addEventListener('touchstart', () => getAudioContext(), { once: true });
     window.addEventListener('click', () => getAudioContext(), { once: true });
