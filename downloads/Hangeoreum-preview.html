@@ -416,7 +416,7 @@
           <div id="obTutorSpeech">
             난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>
             지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>
-            호칭과 마음에 드는 <strong>3대 음성엔진(12대 목소리: 인간 남3·여3, 애니 남3·여3)</strong>를 골라줘!
+            호칭과 마음에 드는 <strong>3대 음성엔진(20종 목소리: 일반 남5·여5, 애니 남5·여5)</strong>를 골라줘!
           </div>
           <div style="display:flex; justify-content:flex-end; margin-top:8px;">
             <button onclick="replayCurrentTutorSpeech()" style="background:none; border:none; color:#6366f1; font-weight:800; font-size:14px; cursor:pointer; display:flex; align-items:center; gap:4px;">
@@ -449,29 +449,44 @@
         <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
             <label style="font-size:16px; font-weight:800; color:#334155;">
-              🎙️ 3대 음성 엔진 & 12대 보이스 프리셋
+              🎙️ 3대 음성 엔진 & 20종 보이스 프리셋
             </label>
-            <span id="currentEngineBadge" style="font-size:12px; font-weight:800; color:#4f46e5; background:#eef2ff; padding:3px 8px; border-radius:8px;">✨ 3. 양방향 애니메이션 엔진</span>
+            <span id="currentEngineBadge" style="font-size:12px; font-weight:800; color:#4f46e5; background:#eef2ff; padding:3px 8px; border-radius:8px;">✨ 3. 애니 음성 (10종: 남5·여5)</span>
           </div>
 
           <!-- 3대 음성 엔진 상호 전환 토글 탭 -->
           <div style="display:flex; gap:5px; margin-bottom:10px; background:#e2e8f0; padding:4px; border-radius:14px;">
             <button type="button" id="tabEngineAi" class="btn-3d" style="flex:1; min-height:42px; padding:6px 4px; font-size:13px; font-weight:800; background:#f8fafc; color:#475569;" onclick="switchVoiceEngineMode('ai')">
-              🤖 1. AI 엔진
+              🤖 1. AI 코칭 (20종)
             </button>
             <button type="button" id="tabEngineHuman" class="btn-3d" style="flex:1; min-height:42px; padding:6px 4px; font-size:13px; font-weight:800; background:#f8fafc; color:#475569;" onclick="switchVoiceEngineMode('human')">
-              🗣️ 2. 사람 음성 (6종)
+              🗣️ 2. 사람 음성 (10종)
             </button>
             <button type="button" id="tabEngineAnime" class="btn-3d" style="flex:1; min-height:42px; padding:6px 4px; font-size:13px; font-weight:800; background:#4f46e5; color:#fff;" onclick="switchVoiceEngineMode('anime')">
-              ✨ 3. 애니 음성 (6종)
+              ✨ 3. 애니 음성 (10종)
             </button>
           </div>
-          
-          <div id="voiceEngineSubdesc" style="font-size:13px; color:#64748b; margin-bottom:10px; font-weight:600; padding:0 4px;">
-            ✨ 2D 캐릭터 8대 상태 머신 & 실시간 립싱크 <strong>애니메이션 6대 프리셋</strong> (여성 3종 / 남성 3종)
+
+          <!-- 성별 서브필터 & 속도 조절 바 -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px; background:#fff; padding:8px 12px; border-radius:14px; border:1px solid #e2e8f0;">
+            <div style="display:flex; gap:4px;" id="genderFilterGroup">
+              <button type="button" id="filterGenderAll" class="btn-3d" style="padding:4px 10px; font-size:12px; font-weight:800; background:#4f46e5; color:#fff;" onclick="filterVoiceByGender('all')">전체</button>
+              <button type="button" id="filterGenderFemale" class="btn-3d" style="padding:4px 10px; font-size:12px; font-weight:800; background:#f1f5f9; color:#475569;" onclick="filterVoiceByGender('female')">🌸 여성 (5종)</button>
+              <button type="button" id="filterGenderMale" class="btn-3d" style="padding:4px 10px; font-size:12px; font-weight:800; background:#f1f5f9; color:#475569;" onclick="filterVoiceByGender('male')">⚡ 남성 (5종)</button>
+            </div>
+            <div style="display:flex; align-items:center; gap:4px;">
+              <span style="font-size:12px; font-weight:800; color:#64748b;">재생 속도:</span>
+              <button type="button" id="rateBtn08" class="btn-3d" style="padding:3px 8px; font-size:11px; font-weight:800; background:#f1f5f9; color:#475569;" onclick="setGlobalSpeechRate(0.8)">0.8x</button>
+              <button type="button" id="rateBtn10" class="btn-3d" style="padding:3px 8px; font-size:11px; font-weight:800; background:#4f46e5; color:#fff;" onclick="setGlobalSpeechRate(1.0)">1.0x</button>
+              <button type="button" id="rateBtn12" class="btn-3d" style="padding:3px 8px; font-size:11px; font-weight:800; background:#f1f5f9; color:#475569;" onclick="setGlobalSpeechRate(1.2)">1.2x</button>
+            </div>
           </div>
 
-          <div id="voicePresetContainer" style="display:flex; flex-direction:column; gap:8px;">
+          <div id="voiceEngineSubdesc" style="font-size:13px; color:#64748b; margin-bottom:10px; font-weight:600; padding:0 4px;">
+            ✨ 2D 캐릭터 8대 상태 머신 & 실시간 립싱크 <strong>애니메이션 10대 프리셋</strong> (여성 5종 / 남성 5종)
+          </div>
+
+          <div id="voicePresetContainer" class="fold-responsive-grid" style="display:flex; flex-direction:column; gap:8px;">
             <!-- JS 동적 렌더링 -->
           </div>
         </div>
@@ -1048,36 +1063,692 @@
      ========================================================= */
   let activeVoiceEngineMode = 'anime'; // 'ai' | 'human' | 'anime'
 
-  // 애니메이션 캐릭터 음성엔진 (여성 3종, 남성 3종)
-  const ANIME_VOICE_PRESETS = [
-    // 여성 3종
-    { code: 'ANIME_F_CUTE', name: '루나 (귀엽고 발랄한 요정)', gender: 'female', pitch: 1.35, rate: 1.08, icon: '🧚', style: '깜찍·경쾌 감탄사', sample: '안녕 {NAME}! 오늘 외국어도 신나게 부숴보자!' },
-    { code: 'ANIME_F_SOFT', name: '세라 (차분하고 다정한 멘토)', gender: 'female', pitch: 1.15, rate: 0.95, icon: '🍵', style: '다정·힐링 배려 톤', sample: '수고 많았어요 {NAME}. 차 한잔 마시며 천천히 연습해요.' },
-    { code: 'ANIME_F_BRIGHT', name: '밍크 (밝고 활기찬 아이돌)', gender: 'female', pitch: 1.45, rate: 1.12, icon: '🌸', style: '긍정 비타민 리액션', sample: '{NAME}! 오늘도 100점 맞고 나랑 하이파이브!' },
-    // 남성 3종
-    { code: 'ANIME_M_YOUTH', name: '카이 (경쾌하고 활기찬 소년)', gender: 'male', pitch: 1.10, rate: 1.10, icon: '⚡', style: '시원시원 소년만화 주인공', sample: '포기하지 마 {NAME}! 우리의 한계는 우주 너머라고!' },
-    { code: 'ANIME_M_CALM', name: '레오 (부드럽고 차분한 연구원)', gender: 'male', pitch: 0.90, rate: 0.95, icon: '🎧', style: '신뢰감 있는 따뜻한 중저음', sample: '{NAME}, 부담 갖지 말고 편안하게 원어민 소리를 따라 해봐.' },
-    { code: 'ANIME_M_DEEP', name: '바론 (낮고 진중한 수호대장)', gender: 'male', pitch: 0.75, rate: 0.90, icon: '🛡️', style: '묵직하고 든든한 바리톤', sample: '{NAME}, 50레벨 탈출 작전의 성공을 내 명예를 걸고 약속한다.' }
+  /* =========================================================
+     20종 AI 음성엔진 공식 매트릭스 & 9대 공통 인터페이스 (VoiceEngine20)
+     - 일반 사람 음성 10종: Supertonic 3 공식 프리셋 (F1~F5, M1~M5, OpenRAIL-M)
+     - 애니메이션풍 음성 10종: 고유 캐릭터 10대 페르소나 (Apache-2.0)
+     ========================================================= */
+  const ALL_VOICE_20 = [
+    // ---------------------------------------------------------
+    // 1. 일반 사람 음성 10종 (Supertonic 3 공식 프리셋)
+    // ---------------------------------------------------------
+    // 여성 음성 5종
+    {
+      voiceId: "HUMAN_F1",
+      code: "HUMAN_F1",
+      category: "human",
+      genderPresentation: "female",
+      displayName: "여성 음성 1 (F1)",
+      name: "여성 음성 1 (F1 표준 튜터)",
+      engineId: "supertonic3",
+      modelId: "supertonic-3-onnx",
+      styleId: "f1-warm",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.98,
+      pitch: 1.05,
+      rate: 0.98,
+      icon: "👩‍🏫",
+      style: "따뜻하고 편안한 표준 어학 튜터 톤",
+      licenseStatus: "OpenRAIL-M",
+      availabilityStatus: "ready",
+      sample: "반가워요 {NAME}님! 조급해하지 말고 한 단어씩 호흡을 맞춰봐요.",
+      samples: {
+        ko: "반가워요 {NAME}님! 조급해하지 말고 한 단어씩 호흡을 맞춰봐요.",
+        fr: "Bonjour {NAME}! Prenons notre temps pour apprendre ensemble.",
+        zh: "你好 {NAME}！别着急，我们一步一步来学习。",
+        ja: "こんにちは {NAME}さん！焦らず一歩ずつ学んでいきましょう。",
+        en: "Hello {NAME}! Let's take it step by step and learn together."
+      }
+    },
+    {
+      voiceId: "HUMAN_F2",
+      code: "HUMAN_F2",
+      category: "human",
+      genderPresentation: "female",
+      displayName: "여성 음성 2 (F2)",
+      name: "여성 음성 2 (F2 아나운서)",
+      engineId: "supertonic3",
+      modelId: "supertonic-3-onnx",
+      styleId: "f2-clear",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 1.02,
+      pitch: 1.12,
+      rate: 1.02,
+      icon: "📰",
+      style: "또렷하고 신뢰감 넘치는 표준 아나운서 톤",
+      licenseStatus: "OpenRAIL-M",
+      availabilityStatus: "ready",
+      sample: "안녕하십니까 {NAME}님. 표준 원어민 발음 교정 코칭을 시작합니다.",
+      samples: {
+        ko: "안녕하십니까 {NAME}님. 표준 원어민 발음 교정 코칭을 시작합니다.",
+        fr: "Bonjour {NAME}. Commençons le cours de prononciation standard.",
+        zh: "您好 {NAME}。我们现在开始标准发音矫正课程。",
+        ja: "こんにちは {NAME}さん。標準発音の矯正レッスンを始めます。",
+        en: "Good day {NAME}. Beginning standard pronunciation coaching."
+      }
+    },
+    {
+      voiceId: "HUMAN_F3",
+      code: "HUMAN_F3",
+      category: "human",
+      genderPresentation: "female",
+      displayName: "여성 음성 3 (F3)",
+      name: "여성 음성 3 (F3 밝은 일상)",
+      engineId: "supertonic3",
+      modelId: "supertonic-3-onnx",
+      styleId: "f3-bright",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 1.05,
+      pitch: 1.18,
+      rate: 1.05,
+      icon: "✨",
+      style: "밝고 활기찬 20대 원어민 청년 일상 톤",
+      licenseStatus: "OpenRAIL-M",
+      availabilityStatus: "ready",
+      sample: "{NAME}님 안녕! 오늘 배울 회화도 정말 쉬우니까 편하게 따라해 봐요!",
+      samples: {
+        ko: "{NAME}님 안녕! 오늘 배울 회화도 정말 쉬우니까 편하게 따라해 봐요!",
+        fr: "Salut {NAME}! La conversation d'aujourd'hui est très simple, répète après moi!",
+        zh: "嗨 {NAME}！今天的会话非常简单，轻松跟着我说吧！",
+        ja: "{NAME}さん、やっほー！今日の会話も超簡単だから気楽にリピートしてみて！",
+        en: "Hi {NAME}! Today's dialogue is so easy, just repeat after me!"
+      }
+    },
+    {
+      voiceId: "HUMAN_F4",
+      code: "HUMAN_F4",
+      category: "human",
+      genderPresentation: "female",
+      displayName: "여성 음성 4 (F4)",
+      name: "여성 음성 4 (F4 내레이션)",
+      engineId: "supertonic3",
+      modelId: "supertonic-3-onnx",
+      styleId: "f4-calm",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.95,
+      pitch: 1.00,
+      rate: 0.95,
+      icon: "🍵",
+      style: "차분하고 정돈된 내레이션 톤",
+      licenseStatus: "OpenRAIL-M",
+      availabilityStatus: "ready",
+      sample: "{NAME}님, 문장의 흐름과 억양을 차분하게 음미하며 발음해 보세요.",
+      samples: {
+        ko: "{NAME}님, 문장의 흐름과 억양을 차분하게 음미하며 발음해 보세요.",
+        fr: "{NAME}, écoute attentivement l'intonation et le rythme de la phrase.",
+        zh: "{NAME}，请静心体会句子的语调和节奏，然后发音。",
+        ja: "{NAME}さん、文の流れと抑揚を落ち着いて味わいながら発音してみてください。",
+        en: "{NAME}, please appreciate the natural rhythm and intonation."
+      }
+    },
+    {
+      voiceId: "HUMAN_F5",
+      code: "HUMAN_F5",
+      category: "human",
+      genderPresentation: "female",
+      displayName: "여성 음성 5 (F5)",
+      name: "여성 음성 5 (F5 중저음)",
+      engineId: "supertonic3",
+      modelId: "supertonic-3-onnx",
+      styleId: "f5-deep",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.92,
+      pitch: 0.92,
+      rate: 0.92,
+      icon: "🍷",
+      style: "우아하고 안정적인 중저음 톤",
+      licenseStatus: "OpenRAIL-M",
+      availabilityStatus: "ready",
+      sample: "{NAME}님, 깊이 있는 어휘와 유려한 문장 구사를 단계별로 체득해 봅시다.",
+      samples: {
+        ko: "{NAME}님, 깊이 있는 어휘와 유려한 문장 구사를 단계별로 체득해 봅시다.",
+        fr: "{NAME}, développons pas à pas un vocabulaire riche et une expression élégante.",
+        zh: "{NAME}，让我们循序渐进地掌握深度词汇和流畅表达。",
+        ja: "{NAME}さん、深みのある語彙と洗练された表現をステップごとに身につけましょう。",
+        en: "{NAME}, let us master rich vocabulary and elegant phrasing together."
+      }
+    },
+
+    // 남성 음성 5종
+    {
+      voiceId: "HUMAN_M1",
+      code: "HUMAN_M1",
+      category: "human",
+      genderPresentation: "male",
+      displayName: "남성 음성 1 (M1)",
+      name: "남성 음성 1 (M1 자연 대화)",
+      engineId: "supertonic3",
+      modelId: "supertonic-3-onnx",
+      styleId: "m1-natural",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 1.00,
+      pitch: 1.00,
+      rate: 1.00,
+      icon: "🗣️",
+      style: "자연스러운 20대 청년 원어민 표준 대화 톤",
+      licenseStatus: "OpenRAIL-M",
+      availabilityStatus: "ready",
+      sample: "안녕하세요 {NAME}님, 오늘도 자연스럽게 귀가 트이는 연습을 해볼까요?",
+      samples: {
+        ko: "안녕하세요 {NAME}님, 오늘도 자연스럽게 귀가 트이는 연습을 해볼까요?",
+        fr: "Bonjour {NAME}, prêt pour une pratique naturelle de l'écoute aujourd'hui?",
+        zh: "你好 {NAME}，今天也来轻松练习让耳朵熟悉外语吧！",
+        ja: "こんにちは {NAME}さん、今日も自然に耳を慣らす練習をしてみましょうか？",
+        en: "Hello {NAME}, ready for a natural listening session today?"
+      }
+    },
+    {
+      voiceId: "HUMAN_M2",
+      code: "HUMAN_M2",
+      category: "human",
+      genderPresentation: "male",
+      displayName: "남성 음성 2 (M2)",
+      name: "남성 음성 2 (M2 지적 튜터)",
+      engineId: "supertonic3",
+      modelId: "supertonic-3-onnx",
+      styleId: "m2-calm",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.98,
+      pitch: 0.95,
+      rate: 0.98,
+      icon: "☕",
+      style: "지적이고 차분한 설명 중심 튜터 톤",
+      licenseStatus: "OpenRAIL-M",
+      availabilityStatus: "ready",
+      sample: "{NAME}님, 문장의 핵심 구조와 문법 포인트를 짚으며 진행하겠습니다.",
+      samples: {
+        ko: "{NAME}님, 문장의 핵심 구조와 문법 포인트를 짚으며 진행하겠습니다.",
+        fr: "{NAME}, examinons ensemble la structure clé et la grammaire de cette phrase.",
+        zh: "{NAME}，我们一边梳理句子的核心结构和语法要点一边进行。",
+        ja: "{NAME}さん、文の核心的な構造と文法ポイントを押さえながら進めましょう。",
+        en: "{NAME}, let us analyze the core sentence structure clearly."
+      }
+    },
+    {
+      voiceId: "HUMAN_M3",
+      code: "HUMAN_M3",
+      category: "human",
+      genderPresentation: "male",
+      displayName: "남성 음성 3 (M3)",
+      name: "남성 음성 3 (M3 비즈니스 멘토)",
+      engineId: "supertonic3",
+      modelId: "supertonic-3-onnx",
+      styleId: "m3-deep",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.92,
+      pitch: 0.85,
+      rate: 0.92,
+      icon: "🎙️",
+      style: "깊고 신뢰감 있는 비즈니스 멘토 톤",
+      licenseStatus: "OpenRAIL-M",
+      availabilityStatus: "ready",
+      sample: "{NAME}님, 글로벌 실전 비즈니스 회화까지 확실하게 서포트하겠습니다.",
+      samples: {
+        ko: "{NAME}님, 글로벌 실전 비즈니스 회화까지 확실하게 서포트하겠습니다.",
+        fr: "{NAME}, je vous accompagne pour maîtriser la communication professionnelle.",
+        zh: "{NAME}，我会全力协助您掌握全球商务实战沟通技巧。",
+        ja: "{NAME}さん、グローバルなビジネス実戦会話まで確実にサポートいたします。",
+        en: "{NAME}, I will fully support your global business communication goals."
+      }
+    },
+    {
+      voiceId: "HUMAN_M4",
+      code: "HUMAN_M4",
+      category: "human",
+      genderPresentation: "male",
+      displayName: "남성 음성 4 (M4)",
+      name: "남성 음성 4 (M4 에너지 톤)",
+      engineId: "supertonic3",
+      modelId: "supertonic-3-onnx",
+      styleId: "m4-energy",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 1.04,
+      pitch: 1.08,
+      rate: 1.04,
+      icon: "⚡",
+      style: "경쾌하고 에너지 넘치는 남성 청년 톤",
+      licenseStatus: "OpenRAIL-M",
+      availabilityStatus: "ready",
+      sample: "힘내요 {NAME}님! 매일 10분씩 말하다 보면 어느새 유창해질 거예요!",
+      samples: {
+        ko: "힘내요 {NAME}님! 매일 10분씩 말하다 보면 어느새 유창해질 거예요!",
+        fr: "Courage {NAME}! Dix minutes par jour suffisent pour parler couramment!",
+        zh: "加油 {NAME}！每天开口练习十分钟，不知不觉就能流利交流！",
+        ja: "頑張りましょう {NAME}さん！毎日10分話せば、いつの間にかペラペラになりますよ！",
+        en: "Cheer up {NAME}! Ten minutes a day will lead to fluent conversation!"
+      }
+    },
+    {
+      voiceId: "HUMAN_M5",
+      code: "HUMAN_M5",
+      category: "human",
+      genderPresentation: "male",
+      displayName: "남성 음성 5 (M5)",
+      name: "남성 음성 5 (M5 바리톤)",
+      engineId: "supertonic3",
+      modelId: "supertonic-3-onnx",
+      styleId: "m5-heavy",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.88,
+      pitch: 0.78,
+      rate: 0.88,
+      icon: "🛡️",
+      style: "묵직하고 든든한 안정적 중저음 톤",
+      licenseStatus: "OpenRAIL-M",
+      availabilityStatus: "ready",
+      sample: "{NAME}님, 묵직하고 당당한 발성으로 원어민처럼 단단하게 말해 보세요.",
+      samples: {
+        ko: "{NAME}님, 묵직하고 당당한 발성으로 원어민처럼 단단하게 말해 보세요.",
+        fr: "{NAME}, parlez avec assurance et une voix posée comme un vrai locuteur natif.",
+        zh: "{NAME}，请用沉稳自信的气息，像母语者一样笃定地开口。",
+        ja: "{NAME}さん、重厚で堂々とした発声で、ネイティブのように力強く話してみましょう。",
+        en: "{NAME}, speak with firm resonance and steady confidence."
+      }
+    },
+
+    // ---------------------------------------------------------
+    // 2. 애니메이션풍 음성 10종 (차별화된 10대 캐릭터 프로필)
+    // ---------------------------------------------------------
+    // 여성 애니메이션 5종
+    {
+      voiceId: "ANIME_F1",
+      code: "ANIME_F1",
+      category: "anime",
+      genderPresentation: "female",
+      displayName: "루나 (귀여운 소녀)",
+      name: "루나 (귀엽고 발랄한 요정)",
+      engineId: "anime-voice",
+      modelId: "anime-core-onnx",
+      styleId: "luna-cute",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 1.08,
+      pitch: 1.35,
+      rate: 1.08,
+      icon: "🧚",
+      style: "밝고 귀여운 높은 음색 · 요정풍 소녀",
+      licenseStatus: "Apache-2.0",
+      availabilityStatus: "ready",
+      sample: "안녕 {NAME}! 오늘 외국어도 신나게 부숴보자! 뿅!",
+      samples: {
+        ko: "안녕 {NAME}! 오늘 외국어도 신나게 부숴보자! 뿅!",
+        fr: "Coucou {NAME}! On va s'amuser avec le français aujourd'hui! Youpi!",
+        zh: "嗨 {NAME}！今天也跟本仙子一起开开心心学外语吧！",
+        ja: "ヤッホー {NAME}！今日も外国語を楽しく攻略しちゃおう！えいえいおー！",
+        en: "Hi {NAME}! Let us master foreign languages with a bright smile!"
+      }
+    },
+    {
+      voiceId: "ANIME_F2",
+      code: "ANIME_F2",
+      category: "anime",
+      genderPresentation: "female",
+      displayName: "세라 (다정한 소녀)",
+      name: "세라 (차분하고 다정한 멘토)",
+      engineId: "anime-voice",
+      modelId: "anime-core-onnx",
+      styleId: "sera-soft",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.95,
+      pitch: 1.15,
+      rate: 0.95,
+      icon: "🍵",
+      style: "부드럽고 따뜻한 음색 · 마법소녀 멘토",
+      licenseStatus: "Apache-2.0",
+      availabilityStatus: "ready",
+      sample: "수고 많았어요 {NAME}. 따뜻한 차 한잔 마시며 천천히 연습해요.",
+      samples: {
+        ko: "수고 많았어요 {NAME}. 따뜻한 차 한잔 마시며 천천히 연습해요.",
+        fr: "Bravo {NAME}. Prends une tasse de thé et respirons calmement ensemble.",
+        zh: "辛苦了 {NAME}。喝杯温茶，我们静下心来慢慢练习吧。",
+        ja: "お疲れ様でした {NAME}さん。温かいお茶でも飲みながら、ゆっくり練習しましょうね。",
+        en: "Well done {NAME}. Take a warm sip of tea and practice calmly."
+      }
+    },
+    {
+      voiceId: "ANIME_F3",
+      code: "ANIME_F3",
+      category: "anime",
+      genderPresentation: "female",
+      displayName: "밍크 (활발한 소녀)",
+      name: "밍크 (밝고 활기찬 아이돌)",
+      engineId: "anime-voice",
+      modelId: "anime-core-onnx",
+      styleId: "mink-idol",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 1.12,
+      pitch: 1.45,
+      rate: 1.12,
+      icon: "🌸",
+      style: "경쾌하고 활기찬 음색 · 아이돌 소녀",
+      licenseStatus: "Apache-2.0",
+      availabilityStatus: "ready",
+      sample: "{NAME}! 오늘도 100점 맞고 나랑 멋지게 하이파이브 하자!",
+      samples: {
+        ko: "{NAME}! 오늘도 100점 맞고 나랑 멋지게 하이파이브 하자!",
+        fr: "Coucou {NAME}! Vise le sans-faute aujourd'hui et tope là avec moi!",
+        zh: "{NAME}！今天也要拿满分，然后跟我来个大大的击掌哦！",
+        ja: "{NAME}！今日も満点取って、アタシとハイタッチキメちゃお！",
+        en: "Hey {NAME}! Score full marks today and give me a high five!"
+      }
+    },
+    {
+      voiceId: "ANIME_F4",
+      code: "ANIME_F4",
+      category: "anime",
+      genderPresentation: "female",
+      displayName: "시온 (차분한 캐릭터)",
+      name: "시온 (조용하고 또렷한 사서)",
+      engineId: "anime-voice",
+      modelId: "anime-core-onnx",
+      styleId: "shion-quiet",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.92,
+      pitch: 1.10,
+      rate: 0.92,
+      icon: "📚",
+      style: "조용하고 또렷한 음색 · 도서관 사서",
+      licenseStatus: "Apache-2.0",
+      availabilityStatus: "ready",
+      sample: "조용히 집중해 보세요 {NAME}. 책 속의 언어가 곧 당신의 언어가 됩니다.",
+      samples: {
+        ko: "조용히 집중해 보세요 {NAME}. 책 속의 언어가 곧 당신의 언어가 됩니다.",
+        fr: "Concentre-toi {NAME}. Les mots des livres deviendront bientôt les tiens.",
+        zh: "请静心专注 {NAME}。书卷里的语言，终将化作你的力量。",
+        ja: "静かに集中してみて {NAME}さん。本の中の言葉はやがてあなたの言葉になります。",
+        en: "Focus gently {NAME}. The language in books will soon be yours."
+      }
+    },
+    {
+      voiceId: "ANIME_F5",
+      code: "ANIME_F5",
+      category: "anime",
+      genderPresentation: "female",
+      displayName: "유리아 (신비로운 캐릭터)",
+      name: "유리아 (맑고 부드러운 정령)",
+      engineId: "anime-voice",
+      modelId: "anime-core-onnx",
+      styleId: "yuria-mystic",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.98,
+      pitch: 1.25,
+      rate: 0.98,
+      icon: "✨",
+      style: "맑고 부드러운 음색 · 치유의 정령",
+      licenseStatus: "Apache-2.0",
+      availabilityStatus: "ready",
+      sample: "맑은 바람처럼 속삭여 보세요 {NAME}. 당신의 목소리가 빛으로 피어납니다.",
+      samples: {
+        ko: "맑은 바람처럼 속삭여 보세요 {NAME}. 당신의 목소리가 빛으로 피어납니다.",
+        fr: "Chuchote comme le vent pur {NAME}. Ta voix s'épanouit en lumière.",
+        zh: "像清风一样低语吧 {NAME}。你的声音将如光芒般悄然绽放。",
+        ja: "澄んだ風のように囁いてみて {NAME}さん。あなたの声が光となって咲き誇ります。",
+        en: "Whisper like a clear breeze {NAME}. Your voice blossoms into pure light."
+      }
+    },
+
+    // 남성 애니메이션 5종
+    {
+      voiceId: "ANIME_M1",
+      code: "ANIME_M1",
+      category: "anime",
+      genderPresentation: "male",
+      displayName: "카이 (활기찬 소년)",
+      name: "카이 (경쾌하고 활기찬 소년)",
+      engineId: "anime-voice",
+      modelId: "anime-core-onnx",
+      styleId: "kai-hero",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 1.10,
+      pitch: 1.10,
+      rate: 1.10,
+      icon: "⚡",
+      style: "밝고 경쾌한 음색 · 소년만화 주인공",
+      licenseStatus: "Apache-2.0",
+      availabilityStatus: "ready",
+      sample: "포기하지 마 {NAME}! 우리의 한계는 우주 너머라고! 가자!",
+      samples: {
+        ko: "포기하지 마 {NAME}! 우리의 한계는 우주 너머라고! 가자!",
+        fr: "N'abandonne jamais {NAME}! Notre limite est au-delà des étoiles! En avant!",
+        zh: "绝不放弃 {NAME}！我们的极限在宇宙星河之外！冲啊！",
+        ja: "諦めるなよ {NAME}！俺たちの限界は宇宙の彼方だ！行くぞー！",
+        en: "Never give up {NAME}! Our limit reaches beyond the cosmos!"
+      }
+    },
+    {
+      voiceId: "ANIME_M2",
+      code: "ANIME_M2",
+      category: "anime",
+      genderPresentation: "male",
+      displayName: "레오 (다정한 소년)",
+      name: "레오 (부드럽고 차분한 연구원)",
+      engineId: "anime-voice",
+      modelId: "anime-core-onnx",
+      styleId: "leo-gentle",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.95,
+      pitch: 0.90,
+      rate: 0.95,
+      icon: "🎧",
+      style: "부드럽고 친근한 음색 · 미소년 연구원",
+      licenseStatus: "Apache-2.0",
+      availabilityStatus: "ready",
+      sample: "{NAME}, 부담 갖지 말고 편안하게 원어민 소리를 따라 해봐. 내가 도와줄게.",
+      samples: {
+        ko: "{NAME}, 부담 갖지 말고 편안하게 원어민 소리를 따라 해봐. 내가 도와줄게.",
+        fr: "{NAME}, sois tranquille. Répète simplement après le locuteur natif, je suis là.",
+        zh: "{NAME}，不用有负担。放轻松模仿母语者的发音，我会一直在你身边。",
+        ja: "{NAME}、気負わなくていいよ。リラックスしてネイティブの音を真似してみて。僕が支えるから。",
+        en: "{NAME}, relax and shadow the native sound easily. I am right here."
+      }
+    },
+    {
+      voiceId: "ANIME_M3",
+      code: "ANIME_M3",
+      category: "anime",
+      genderPresentation: "male",
+      displayName: "레이 (냉정한 캐릭터)",
+      name: "레이 (차분하고 낮은 천재)",
+      engineId: "anime-voice",
+      modelId: "anime-core-onnx",
+      styleId: "ray-cool",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.92,
+      pitch: 0.80,
+      rate: 0.92,
+      icon: "❄️",
+      style: "차분하고 낮은 음색 · 쿨한 천재 라이벌",
+      licenseStatus: "Apache-2.0",
+      availabilityStatus: "ready",
+      sample: "흥, 제법이군 {NAME}. 하지만 완벽해지려면 발음의 디테일을 더 깎아내야 해.",
+      samples: {
+        ko: "흥, 제법이군 {NAME}. 하지만 완벽해지려면 발음의 디테일을 더 깎아내야 해.",
+        fr: "Hum, pas mal {NAME}. Mais affine encore tes détails si tu veux la perfection.",
+        zh: "哼，还算不错嘛 {NAME}。不过要追求完美，发音细节还得多雕琢雕琢。",
+        ja: "フン、悪くないな {NAME}。だが完璧を目指すなら、発音の細部をもっと磨き上げるんだな。",
+        en: "Hmph, not bad {NAME}. But refine your articulation if you seek mastery."
+      }
+    },
+    {
+      voiceId: "ANIME_M4",
+      code: "ANIME_M4",
+      category: "anime",
+      genderPresentation: "male",
+      displayName: "렌 (열혈 캐릭터)",
+      name: "렌 (힘차고 패기 넘치는 도전자)",
+      engineId: "anime-voice",
+      modelId: "anime-core-onnx",
+      styleId: "ren-passion",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 1.15,
+      pitch: 1.18,
+      rate: 1.15,
+      icon: "🔥",
+      style: "힘 있고 활기찬 음색 · 열혈 도전자",
+      licenseStatus: "Apache-2.0",
+      availabilityStatus: "ready",
+      sample: "뜨거운 열정으로 외쳐봐 {NAME}! 온몸으로 외우는 게 진짜 언어라고!",
+      samples: {
+        ko: "뜨거운 열정으로 외쳐봐 {NAME}! 온몸으로 외우는 게 진짜 언어라고!",
+        fr: "Crie avec passion {NAME}! C'est avec le cœur et les tripes qu'on apprend une langue!",
+        zh: "用滚烫的热情吼出来吧 {NAME}！全身心投入记忆才是真正掌握语言！",
+        ja: "熱いパッションで叫べ {NAME}！全身で覚えることこそが本物の言葉だ！",
+        en: "Shout with fiery passion {NAME}! Speaking with whole spirit is real learning!"
+      }
+    },
+    {
+      voiceId: "ANIME_M5",
+      code: "ANIME_M5",
+      category: "anime",
+      genderPresentation: "male",
+      displayName: "바론 (진중한 캐릭터)",
+      name: "바론 (낮고 진중한 수호대장)",
+      engineId: "anime-voice",
+      modelId: "anime-core-onnx",
+      styleId: "baron-knight",
+      supportedLanguages: ["ko", "fr", "zh", "ja", "en"],
+      speakingRate: 0.90,
+      pitch: 0.75,
+      rate: 0.90,
+      icon: "🛡️",
+      style: "안정감 있고 깊은 음색 · 수호 기사대장",
+      licenseStatus: "Apache-2.0",
+      availabilityStatus: "ready",
+      sample: "{NAME}, 외국어 탈출 작전의 성공을 내 명예를 걸고 맹세하며 보좌하겠다.",
+      samples: {
+        ko: "{NAME}, 외국어 탈출 작전의 성공을 내 명예를 걸고 맹세하며 보좌하겠다.",
+        fr: "Je jure sur mon honneur de chevalier de vous mener au succès de cette mission, {NAME}.",
+        zh: "{NAME}，我以骑士长之荣誉起誓，必将护航此次外语突破任务直至胜利。",
+        ja: "{NAME}、この外国語脱出作戦の成功を、我が騎士の名誉にかけて誓い補佐しよう。",
+        en: "{NAME}, I pledge upon my knightly honor to escort you to linguistic victory."
+      }
+    }
   ];
 
-  // 인간 음성엔진 (여성 3종, 남성 3종)
-  const HUMAN_VOICE_PRESETS = [
-    // 여성 3종
-    { code: 'HUMAN_F_WARM', name: '서연 (다정하고 따뜻한 튜터)', gender: 'female', pitch: 1.05, rate: 0.98, icon: '👩‍🏫', style: '명확하고 다정한 코칭', sample: '반가워요 {NAME}님! 조급해하지 말고 한 단어씩 호흡을 맞춰봐요.' },
-    { code: 'HUMAN_F_CLEAR', name: '민서 (또렷하고 명확한 아나운서)', gender: 'female', pitch: 1.12, rate: 1.02, icon: '📰', style: '정확한 딕션과 표준 억양', sample: '안녕하십니까 {NAME}님. 표준 원어민 발음 교정 코칭을 시작합니다.' },
-    { code: 'HUMAN_F_YOUTH', name: '지우 (밝고 친근한 20대 청년)', gender: 'female', pitch: 1.18, rate: 1.05, icon: '✨', style: '생기 있고 편안한 대화', sample: '{NAME}님 안녕! 오늘 배울 회화도 정말 쉬우니까 편하게 따라해 봐요!' },
-    // 남성 3종
-    { code: 'HUMAN_M_NATURAL', name: '도윤 (자연스러운 20대 청년 원어민)', gender: 'male', pitch: 1.00, rate: 1.00, icon: '🗣️', style: '실제 사람 자연 대화', sample: '안녕하세요 {NAME}님, 오늘도 자연스럽게 귀가 트이는 연습을 해볼까요?' },
-    { code: 'HUMAN_M_CALM', name: '시우 (지적이고 차분한 튜터)', gender: 'male', pitch: 0.95, rate: 0.98, icon: '☕', style: '차분하고 정돈된 설명', sample: '{NAME}님, 문장의 강세를 느끼며 차분하게 한 걸음씩 완성해 봅시다.' },
-    { code: 'HUMAN_M_DEEP', name: '준혁 (신뢰감 넘치는 남성 멘토)', gender: 'male', pitch: 0.85, rate: 0.92, icon: '🎙️', style: '깊고 안정적인 발성', sample: '{NAME}님, 실전 비즈니스 회화까지 확실하게 서포트하겠습니다.' }
-  ];
+  // 기존 호환성 별칭 배열
+  const ANIME_VOICE_PRESETS = ALL_VOICE_20.filter(v => v.category === "anime");
+  const HUMAN_VOICE_PRESETS = ALL_VOICE_20.filter(v => v.category === "human");
+  const ALL_VOICE_PRESETS = ALL_VOICE_20;
 
-  // 전체 12종 결합 목록
-  const ALL_VOICE_PRESETS = [...ANIME_VOICE_PRESETS, ...HUMAN_VOICE_PRESETS];
+  // 음성 관리 상태 변수
+  let currentSelectedVoiceId = "ANIME_F1";
+  let selectedAnimeCode = "ANIME_F1";
+  let selectedHumanCode = "HUMAN_F1";
+  let selectedAiVoiceCode = "ANIME_F1";
+  let selectedVoiceGenderFilter = "all"; // 'all' | 'female' | 'male'
+  let globalSpeechRate = 1.0;
 
-  let selectedAnimeCode = 'ANIME_F_CUTE';
-  let selectedHumanCode = 'HUMAN_F_WARM';
-  let selectedAiVoiceCode = 'ANIME_F_CUTE';
+  /* =========================================================
+     20종 음성엔진 9대 공통 인터페이스 객체 (VoiceEngine20)
+     ========================================================= */
+  const VoiceEngine20 = {
+    // 1. 사용 가능한 전체 음성 목록 조회 (필터 지원)
+    getAvailableVoices(filter = {}) {
+      let list = ALL_VOICE_20;
+      if (filter.category) list = list.filter(v => v.category === filter.category);
+      if (filter.gender) list = list.filter(v => v.genderPresentation === filter.gender);
+      return list;
+    },
+
+    // 2. 특정 음성의 상세 메타데이터 조회
+    getVoiceDetails(voiceId) {
+      if (!voiceId) return ALL_VOICE_20[0];
+      // 레거시 코드 호환성 매핑
+      if (voiceId === "ANIME_F_CUTE") voiceId = "ANIME_F1";
+      else if (voiceId === "ANIME_F_SOFT") voiceId = "ANIME_F2";
+      else if (voiceId === "ANIME_F_BRIGHT") voiceId = "ANIME_F3";
+      else if (voiceId === "ANIME_M_YOUTH") voiceId = "ANIME_M1";
+      else if (voiceId === "ANIME_M_CALM") voiceId = "ANIME_M2";
+      else if (voiceId === "ANIME_M_DEEP") voiceId = "ANIME_M5";
+      else if (voiceId === "HUMAN_F_WARM") voiceId = "HUMAN_F1";
+      else if (voiceId === "HUMAN_F_CLEAR") voiceId = "HUMAN_F2";
+      else if (voiceId === "HUMAN_F_YOUTH") voiceId = "HUMAN_F3";
+      else if (voiceId === "HUMAN_M_NATURAL") voiceId = "HUMAN_M1";
+      else if (voiceId === "HUMAN_M_CALM") voiceId = "HUMAN_M2";
+      else if (voiceId === "HUMAN_M_DEEP") voiceId = "HUMAN_M3";
+
+      return ALL_VOICE_20.find(v => v.voiceId === voiceId || v.code === voiceId) || ALL_VOICE_20[0];
+    },
+
+    // 3. 현재 사용할 기본 음성 선택
+    selectVoice(voiceId) {
+      const v = this.getVoiceDetails(voiceId);
+      if (!v) return false;
+      currentSelectedVoiceId = v.voiceId;
+      if (v.category === "anime") {
+        selectedAnimeCode = v.voiceId;
+        try { localStorage.setItem("hangeoreum_anime_voice_code", v.voiceId); } catch(e) {}
+      } else {
+        selectedHumanCode = v.voiceId;
+        try { localStorage.setItem("hangeoreum_human_voice_code", v.voiceId); } catch(e) {}
+      }
+      selectedAiVoiceCode = v.voiceId;
+      try {
+        localStorage.setItem("hangeoreum_active_voice_id", v.voiceId);
+        localStorage.setItem("hangeoreum_ai_voice_code", v.voiceId);
+      } catch(e) {}
+      return true;
+    },
+
+    // 4. 음성 미리 듣기 샘플 재생 (현재 학습 언어 샘플 우선)
+    previewVoice(voiceId, customText = "") {
+      const v = this.getVoiceDetails(voiceId);
+      const curLang = selectedLang || "ko";
+      let sampleText = customText;
+      if (!sampleText) {
+        if (v.samples && v.samples[curLang]) sampleText = v.samples[curLang];
+        else sampleText = v.sample;
+      }
+      const txt = sampleText.replace(/\{NAME\}/g, userName);
+      const targetLang = (curLang && curLang !== "ko" && v.samples && v.samples[curLang]) ? curLang : "ko";
+      this.synthesizeSpeech(txt, targetLang, v.voiceId);
+    },
+
+    // 5. 음성 합성 및 스피커 출력 (주헌법 제20조 1항 온디바이스 -> Fallback 구조)
+    synthesizeSpeech(text, lang = "ko", voiceId = null, options = {}) {
+      const v = this.getVoiceDetails(voiceId || currentSelectedVoiceId);
+      const effRate = options.rate || (globalSpeechRate * v.speakingRate) || 1.0;
+      const effPitch = options.pitch || v.pitch || 1.0;
+      return speakTextWithFallback(text, lang, { pitch: effPitch, rate: effRate, voiceId: v.voiceId });
+    },
+
+    // 6. 현재 재생 중인 음성 즉시 중단 (300ms Barge-in 끼어들기 연동)
+    cancelSpeech() {
+      stopCurrentSpeechAndAudio();
+    },
+
+    // 7. 재생 속도 설정 (0.8x, 1.0x, 1.2x 등)
+    setSpeechRate(rate) {
+      globalSpeechRate = parseFloat(rate) || 1.0;
+      window.globalSpeechRate = globalSpeechRate;
+      try { localStorage.setItem("hangeoreum_speech_rate", globalSpeechRate); } catch(e) {}
+    },
+
+    // 8. 학습 언어 설정 ('ko', 'fr', 'zh', 'ja', 'en')
+    setLanguage(lang) {
+      selectedLang = lang;
+      window.selectedLang = selectedLang;
+      try { localStorage.setItem("hangeoreum_lang", lang); } catch(e) {}
+    },
+
+    // 9. 특정 음성의 온디바이스 가용 상태 확인
+    getVoiceAvailability(voiceId) {
+      const v = this.getVoiceDetails(voiceId);
+      const hasNative = (window.Native && typeof window.Native.call === "function");
+      const hasWebSpeech = ("speechSynthesis" in window);
+      return {
+        voiceId: v.voiceId,
+        ready: true,
+        category: v.category,
+        engineId: v.engineId,
+        fallback: !hasNative && !hasWebSpeech,
+        license: v.licenseStatus
+      };
+    }
+  };
+
+
+
+  // Duplicate declarations removed for 20-voice engine
   let activeAudioPlayer = null;
   let lipSyncInterval = null;
   let blinkTimer = null;
@@ -1147,7 +1818,7 @@
     }
     const mouth = document.getElementById('avatarMouth');
     if (mouth) {
-      mouth.setAttribute('d', "M49,64 Q54,64 59,64"); // Level 0 (CLOSED)
+      mouth.setAttribute('d', 'M50,70 Q54,73 58,70');
     }
   }
 
@@ -1219,10 +1890,11 @@
     }
   }
 
-  function playTargetTTS() {
+  function playTargetTTS(slow = false) {
     const roundData = getCurrentRoundData();
     if (roundData) {
-      speakTextWithFallback(roundData.target, selectedLang);
+      const rate = slow ? 0.8 : (globalSpeechRate || 1.0);
+      VoiceEngine20.synthesizeSpeech(roundData.target, selectedLang, currentSelectedVoiceId, { rate });
     }
   }
 
@@ -1615,6 +2287,7 @@
      6. 음성인식 & 효과음 연동 & 유사도 판정
      ========================================================= */
   function startVoiceRecognition() {
+    VoiceEngine20.cancelSpeech(); // 300ms Barge-in 즉시 중단 연동
     getAudioContext();
 
     // 입력받기 전 효과음 (intercom_sent.mp3)
@@ -1861,7 +2534,7 @@
 
 
   /* =========================================================
-     7. 2대 음성엔진 모드 전환 & 프리셋 렌더러
+     7. 20종 음성엔진 모드 전환, 성별 필터링 & 프리셋 렌더러
      ========================================================= */
   function switchVoiceEngineMode(mode) {
     activeVoiceEngineMode = mode;
@@ -1883,23 +2556,56 @@
 
     if (mode === 'ai') {
       if (tabAi) { tabAi.style.background = '#4f46e5'; tabAi.style.color = '#ffffff'; }
-      if (badge) badge.textContent = '🤖 1. AI 코칭 엔진';
+      if (badge) badge.textContent = '🤖 1. AI 코칭 (20종 전체)';
       if (avatarBadge) { avatarBadge.textContent = '1. AI'; avatarBadge.style.background = '#10b981'; }
-      if (subdesc) subdesc.innerHTML = '⚡ <strong>온디바이스 Supertonic 3 + Fallback</strong> 신경망 코칭 파이프라인 (아래 12종 중 원하는 AI 페르소나 선택)';
+      if (subdesc) subdesc.innerHTML = '⚡ <strong>온디바이스 Supertonic 3 + Fallback</strong> 신경망 코칭 파이프라인 (20종 전체 중 선택 가능)';
     } else if (mode === 'human') {
       if (tabHuman) { tabHuman.style.background = '#4f46e5'; tabHuman.style.color = '#ffffff'; }
-      if (badge) badge.textContent = '🗣️ 2. 사람 음성 (남3·여3)';
+      if (badge) badge.textContent = '🗣️ 2. 사람 음성 (10종: 남5·여5)';
       if (avatarBadge) { avatarBadge.textContent = '2. 사람'; avatarBadge.style.background = '#0284c7'; }
-      if (subdesc) subdesc.innerHTML = '🗣️ 실제 사람처럼 자연스러운 <strong>인간 원어민 6대 프리셋</strong> (여성 3종 / 남성 3종)';
+      if (subdesc) subdesc.innerHTML = '🗣️ 실제 사람처럼 자연스러운 <strong>Supertonic 3 공식 10대 프리셋</strong> (여성 5종 F1~F5 / 남성 5종 M1~M5)';
     } else {
       if (tabAnime) { tabAnime.style.background = '#4f46e5'; tabAnime.style.color = '#ffffff'; }
-      if (badge) badge.textContent = '✨ 3. 애니 음성 (남3·여3)';
+      if (badge) badge.textContent = '✨ 3. 애니 음성 (10종: 남5·여5)';
       if (avatarBadge) { avatarBadge.textContent = '3. 애니'; avatarBadge.style.background = '#ec4899'; }
-      if (subdesc) subdesc.innerHTML = '✨ 2D 캐릭터 8대 상태 머신 & 실시간 립싱크 <strong>애니메이션 6대 프리셋</strong> (여성 3종 / 남성 3종)';
+      if (subdesc) subdesc.innerHTML = '✨ 2D 캐릭터 8대 상태 머신 & 실시간 립싱크 <strong>애니메이션 10대 프리셋</strong> (여성 5종 / 남성 5종)';
     }
 
     renderVoicePresets();
-    testCurrentExileVoice();
+  }
+
+  function filterVoiceByGender(gender) {
+    selectedVoiceGenderFilter = gender;
+    const btnAll = document.getElementById('filterGenderAll');
+    const btnF = document.getElementById('filterGenderFemale');
+    const btnM = document.getElementById('filterGenderMale');
+
+    [btnAll, btnF, btnM].forEach(btn => {
+      if (btn) {
+        btn.style.background = '#f1f5f9';
+        btn.style.color = '#475569';
+      }
+    });
+
+    if (gender === 'female' && btnF) { btnF.style.background = '#4f46e5'; btnF.style.color = '#fff'; }
+    else if (gender === 'male' && btnM) { btnM.style.background = '#4f46e5'; btnM.style.color = '#fff'; }
+    else if (btnAll) { btnAll.style.background = '#4f46e5'; btnAll.style.color = '#fff'; }
+
+    renderVoicePresets();
+  }
+
+  function setGlobalSpeechRate(rate) {
+    VoiceEngine20.setSpeechRate(rate);
+    const r08 = document.getElementById('rateBtn08');
+    const r10 = document.getElementById('rateBtn10');
+    const r12 = document.getElementById('rateBtn12');
+    [r08, r10, r12].forEach(btn => {
+      if (btn) { btn.style.background = '#f1f5f9'; btn.style.color = '#475569'; }
+    });
+    if (rate <= 0.85 && r08) { r08.style.background = '#4f46e5'; r08.style.color = '#fff'; }
+    else if (rate >= 1.15 && r12) { r12.style.background = '#4f46e5'; r12.style.color = '#fff'; }
+    else if (r10) { r10.style.background = '#4f46e5'; r10.style.color = '#fff'; }
+    renderVoicePresets();
   }
 
   function renderVoicePresets() {
@@ -1908,60 +2614,70 @@
     container.innerHTML = '';
 
     let list = [];
-    let currentCode = '';
-
     if (activeVoiceEngineMode === 'anime') {
-      list = ANIME_VOICE_PRESETS;
-      currentCode = selectedAnimeCode;
+      list = ALL_VOICE_20.filter(v => v.category === 'anime');
     } else if (activeVoiceEngineMode === 'human') {
-      list = HUMAN_VOICE_PRESETS;
-      currentCode = selectedHumanCode;
+      list = ALL_VOICE_20.filter(v => v.category === 'human');
     } else {
-      list = ALL_VOICE_PRESETS;
-      currentCode = selectedAiVoiceCode || selectedAnimeCode;
+      list = ALL_VOICE_20;
     }
 
-    let lastGender = null;
+    if (selectedVoiceGenderFilter === 'female') {
+      list = list.filter(v => v.genderPresentation === 'female');
+    } else if (selectedVoiceGenderFilter === 'male') {
+      list = list.filter(v => v.genderPresentation === 'male');
+    }
+
+    const activeConfig = getActiveVoiceConfig();
+    const currentCode = activeConfig.voiceId || activeConfig.code;
+
+    let lastHeaderKey = null;
 
     list.forEach(v => {
-      if (v.gender !== lastGender) {
-        lastGender = v.gender;
+      const headerKey = `${v.category}_${v.genderPresentation}`;
+      if (headerKey !== lastHeaderKey) {
+        lastHeaderKey = headerKey;
         const sectionHeader = document.createElement('div');
-        sectionHeader.style.cssText = 'font-size:12px; font-weight:800; color:#4f46e5; padding:6px 6px 2px; text-transform:uppercase; letter-spacing:0.5px;';
-        sectionHeader.innerHTML = (v.gender === 'female') ? '🌸 여성 음성 (3종)' : '⚡ 남성 음성 (3종)';
+        sectionHeader.style.cssText = 'font-size:12px; font-weight:800; color:#4f46e5; padding:8px 6px 2px; text-transform:uppercase; letter-spacing:0.5px; width:100%; grid-column:1/-1;';
+        
+        let headerLabel = '';
+        if (v.category === 'human') {
+          headerLabel = (v.genderPresentation === 'female') ? '🌸 Supertonic 3 일반 여성 음성 (5종 · F1~F5)' : '⚡ Supertonic 3 일반 남성 음성 (5종 · M1~M5)';
+        } else {
+          headerLabel = (v.genderPresentation === 'female') ? '🌸 애니메이션 여성 캐릭터 음성 (5종 · 루나/세라/밍크/시온/유리아)' : '⚡ 애니메이션 남성 캐릭터 음성 (5종 · 카이/레오/레이/렌/바론)';
+        }
+        sectionHeader.innerHTML = headerLabel;
         container.appendChild(sectionHeader);
       }
 
-      const isSelected = (v.code === currentCode);
+      const isSelected = (v.voiceId === currentCode || v.code === currentCode);
       const card = document.createElement('div');
       card.className = `choice-card ${isSelected ? 'selected' : ''}`;
-      card.style.cssText = `padding:10px 14px; margin-bottom:2px; display:flex; align-items:center; gap:12px; border-radius:14px; cursor:pointer; background:${isSelected ? '#eef2ff' : '#ffffff'}; border:2px solid ${isSelected ? '#4f46e5' : '#e2e8f0'};`;
+      card.style.cssText = `padding:10px 14px; margin-bottom:2px; display:flex; align-items:center; gap:12px; border-radius:14px; cursor:pointer; background:${isSelected ? '#eef2ff' : '#ffffff'}; border:2px solid ${isSelected ? '#4f46e5' : '#e2e8f0'}; transition:all 0.15s ease;`;
+
+      const licenseBadgeColor = v.licenseStatus.includes('OpenRAIL') ? 'background:#ecfdf5; color:#047857; border:1px solid #a7f3d0;' : 'background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0;';
 
       card.innerHTML = `
         <span style="font-size:26px;">${v.icon}</span>
-        <div style="flex:1;">
-          <div style="font-size:15px; font-weight:900; color:#0f172a;">${v.name}</div>
-          <div style="font-size:12px; color:#64748b;">${v.style} · ${v.gender === 'female' ? '여성' : '남성'} (피치 ${v.pitch} / 속도 ${v.rate})</div>
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:15px; font-weight:900; color:#0f172a;">${v.displayName}</span>
+            <span style="font-size:10px; font-weight:800; padding:1px 5px; border-radius:4px; ${licenseBadgeColor}">${v.licenseStatus}</span>
+          </div>
+          <div style="font-size:12px; color:#64748b; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            ${v.style} · ${v.genderPresentation === 'female' ? '여성' : '남성'} (피치 ${v.pitch} / 속도 ${(v.speakingRate * globalSpeechRate).toFixed(2)}x)
+          </div>
         </div>
-        <button type="button" class="btn-3d btn-secondary" style="padding:6px 12px; min-height:34px; font-size:12px; white-space:nowrap;" onclick="event.stopPropagation(); speakSampleVoice('${v.code}')">
+        <button type="button" class="btn-3d btn-secondary" style="padding:6px 10px; min-height:34px; font-size:12px; white-space:nowrap;" onclick="event.stopPropagation(); VoiceEngine20.previewVoice('${v.voiceId}')">
           🔊 미리듣기
         </button>
       `;
 
       card.onclick = () => {
         soundTap();
-        if (activeVoiceEngineMode === 'anime') {
-          selectedAnimeCode = v.code;
-          try { localStorage.setItem('hangeoreum_anime_voice_code', v.code); } catch(e) {}
-        } else if (activeVoiceEngineMode === 'human') {
-          selectedHumanCode = v.code;
-          try { localStorage.setItem('hangeoreum_human_voice_code', v.code); } catch(e) {}
-        } else {
-          selectedAiVoiceCode = v.code;
-          try { localStorage.setItem('hangeoreum_ai_voice_code', v.code); } catch(e) {}
-        }
+        VoiceEngine20.selectVoice(v.voiceId);
         renderVoicePresets();
-        speakSampleVoice(v.code);
+        VoiceEngine20.previewVoice(v.voiceId);
       };
 
       container.appendChild(card);
@@ -1969,48 +2685,45 @@
   }
 
   function getActiveVoiceConfig() {
+    let targetCode = currentSelectedVoiceId;
     if (activeVoiceEngineMode === 'anime') {
-      return ANIME_VOICE_PRESETS.find(x => x.code === selectedAnimeCode) || ANIME_VOICE_PRESETS[0];
+      targetCode = selectedAnimeCode || 'ANIME_F1';
     } else if (activeVoiceEngineMode === 'human') {
-      return HUMAN_VOICE_PRESETS.find(x => x.code === selectedHumanCode) || HUMAN_VOICE_PRESETS[0];
+      targetCode = selectedHumanCode || 'HUMAN_F1';
     } else {
-      const code = selectedAiVoiceCode || selectedAnimeCode || 'ANIME_F_CUTE';
-      return ALL_VOICE_PRESETS.find(x => x.code === code) || ANIME_VOICE_PRESETS[0];
+      targetCode = selectedAiVoiceCode || currentSelectedVoiceId || 'ANIME_F1';
     }
+    return VoiceEngine20.getVoiceDetails(targetCode);
   }
 
   function speakSampleVoice(code) {
-    const v = ALL_VOICE_PRESETS.find(x => x.code === code) || ALL_VOICE_PRESETS[0];
-    const txt = v.sample.replace(/\{NAME\}/g, userName);
-    speakTextWithFallback(txt, 'ko', { pitch: v.pitch, rate: v.rate });
+    VoiceEngine20.previewVoice(code);
   }
 
   function speakExileTutor(text, lang = 'ko') {
-    const v = getActiveVoiceConfig();
-    speakTextWithFallback(text, lang, { pitch: v.pitch, rate: v.rate });
+    VoiceEngine20.synthesizeSpeech(text, lang);
   }
 
   function testCurrentExileVoice() {
-    const v = getActiveVoiceConfig();
-    const txt = v.sample.replace(/\{NAME\}/g, userName);
-    speakExileTutor(txt, 'ko');
+    VoiceEngine20.previewVoice(currentSelectedVoiceId);
   }
 
-  function speakExileIntroStory() {
-    const txt = `난 안드로메다 은하에서 머나먼 지구로 유배 온 AI 엑자일이야! 지구인 ${userName}을 외국어 회화 마스터로 키워야 내가 고향으로 돌아갈 수 있어! 날 꼭 안드로메다로 귀환시켜 줘!`;
-    speakExileTutor(txt, 'ko');
-  }
-
-  function replayCurrentTutorSpeech() {
-    const el = document.getElementById('obTutorSpeech');
-    if (el) {
-      speakExileTutor(el.textContent, 'ko');
+  function stopCurrentSpeechAndAudio() {
+    stopLipSyncAnimation();
+    if (activeAudioPlayer) {
+      try { activeAudioPlayer.pause(); activeAudioPlayer = null; } catch(e) {}
+    }
+    if ('speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch(e) {}
+    }
+    if (window.Native && typeof window.Native.call === 'function') {
+      try { window.Native.call("cancel", "{}"); } catch(e) {}
     }
   }
 
   function getObDialogues() {
     return {
-      1: `난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>호칭과 마음에 드는 <strong>3대 음성엔진(12대 목소리: 인간 남3·여3, 애니 남3·여3)</strong>를 골라줘!`,
+      1: `난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>호칭과 마음에 드는 <strong>3대 음성엔진(20종 목소리: 일반 남5·여5, 애니 남5·여5)</strong>를 골라줘!`,
       2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
       3: `좋아 <strong>${userName}</strong>! 안드로메다 귀환 판정 제1문!<br>외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
       4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
@@ -2835,9 +3548,9 @@
     } catch(e) {}
 
     activeVoiceEngineMode = localStorage.getItem('hangeoreum_voice_engine_mode') || 'anime';
-    selectedAnimeCode = localStorage.getItem('hangeoreum_anime_voice_code') || 'ANIME_F_CUTE';
-    selectedHumanCode = localStorage.getItem('hangeoreum_human_voice_code') || 'HUMAN_F_WARM';
-    selectedAiVoiceCode = localStorage.getItem('hangeoreum_ai_voice_code') || 'ANIME_F_CUTE';
+    selectedAnimeCode = localStorage.getItem('hangeoreum_anime_voice_code') || 'ANIME_F1';
+    selectedHumanCode = localStorage.getItem('hangeoreum_human_voice_code') || 'HUMAN_F1';
+    selectedAiVoiceCode = localStorage.getItem('hangeoreum_ai_voice_code') || 'ANIME_F1';
 
     // 요청 수칙 준수: 어플 실행 시 항상 초기화면(온보딩)으로 먼저 나오게 함!
     document.getElementById('viewOnboarding').classList.remove('hidden');
@@ -2868,8 +3581,8 @@
 
     // 음성 엔진 모드 복원
     activeVoiceEngineMode = localStorage.getItem('hangeoreum_voice_engine_mode') || 'anime';
-    selectedAnimeCode = localStorage.getItem('hangeoreum_anime_voice_code') || 'ANIME_F_CUTE';
-    selectedHumanCode = localStorage.getItem('hangeoreum_human_voice_code') || 'HUMAN_M_NATURAL';
+    selectedAnimeCode = localStorage.getItem('hangeoreum_anime_voice_code') || 'ANIME_F1';
+    selectedHumanCode = localStorage.getItem('hangeoreum_human_voice_code') || 'HUMAN_M1';
     switchVoiceEngineMode(activeVoiceEngineMode);
 
     window.addEventListener('touchstart', () => getAudioContext(), { once: true });
