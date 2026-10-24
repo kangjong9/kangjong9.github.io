@@ -130,9 +130,9 @@ function initProjectFolders(content) {
   };
   const projectDownloads = {
     "보컬트레이너[앱]": {
-      tag: "VocalMate 0.7.0-dev · 패턴 듣기·한 음 집중·같은 조건 전후 비교 · Android 8 이상 · 실기기 미검증 개발판",
+      tag: "VocalMate 0.9.0-dev · 피아노 음정 그래프·한글 악보·전문 가수 시범 · Android 8 이상 · 실기기 미검증 개발판",
       links: [
-        { label: "🎤 보컬트레이너 개발판 APK (0.7.0 · 87.3MB)", url: "./downloads/VocalMate-0.7.0-dev.apk", download: "VocalMate-0.7.0-dev.apk", primary: true },
+        { label: "🎤 보컬트레이너 개발판 APK (0.9.0 · 88.5MB)", url: "./downloads/VocalMate-0.9.0-dev.apk", download: "VocalMate-0.9.0-dev.apk", primary: true },
         { label: "📄 설치 안내 · 지원 기능과 제한", url: "./downloads/VocalMate-설치안내.txt", download: "VocalMate-설치안내.txt", primary: false }
       ]
     },
