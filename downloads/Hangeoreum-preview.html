@@ -1808,7 +1808,7 @@
 
           <div style="font-size:13px; font-weight:800; color:#4338ca;">10개 학습 문장 종합 성취도</div>
 
-          <div style="font-size:11px; color:#64748b;">기준 70점 이상 전원 합격 통과</div>
+          <div style="font-size:11px; color:#64748b;">기준 60점 이상 전원 합격 통과</div>
 
         </div>
 
@@ -18809,7 +18809,7 @@ function getCurrentRoundData() {
     // 포함 관계 보너스
     if (str1.includes(str2) || str2.includes(str1)) {
       const ratio = Math.min(str1.length, str2.length) / Math.max(str1.length, str2.length);
-      if (ratio >= 0.7) return Math.round(ratio * 100);
+      if (ratio >= 0.6) return Math.round(ratio * 100);
     }
 
     // Levenshtein distance
@@ -18872,7 +18872,7 @@ function getCurrentRoundData() {
       targetWords.forEach(w => {
         const span = document.createElement('span');
         span.textContent = w;
-        if (score >= 70) {
+        if (score >= 60) {
           span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#dcfce7; color:#166534; border:1.5px solid #86efac; font-size:14px;";
         } else {
           span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#fee2e2; color:#991b1b; border:1.5px solid #fca5a5; font-size:14px;";
@@ -18882,7 +18882,7 @@ function getCurrentRoundData() {
     }
 
     // [옵빠야 요청] 사용자가 말을 하면 입력을 받아 명확하게 합격/불합격 판단!
-    if (score >= 70) {
+    if (score >= 60) {
       // 1. 합격 (PASS) 판정
       soundCorrect();
       comboCount++;
@@ -18942,11 +18942,11 @@ function getCurrentRoundData() {
         badge.style.background = "#fee2e2";
         badge.style.color = "#991b1b";
         badge.style.border = "1.5px solid #fca5a5";
-        badge.innerHTML = `⚠️ [불합격] 재도전 권장 (${score}점 / 70점 기준)`;
+        badge.innerHTML = `⚠️ [불합격] 재도전 권장 (${score}점 / 60점 기준)`;
       }
 
       if (statusEl) {
-        statusEl.innerHTML = `<span style="color:#dc2626; font-weight:900;">⚠️ [불합격] ${score}점. 70점 이상이어야 통과됩니다.</span>`;
+        statusEl.innerHTML = `<span style="color:#dc2626; font-weight:900;">⚠️ [불합격] ${score}점. 60점 이상이어야 통과됩니다.</span>`;
       }
 
       updateHandsFreeStatus('retry', `🔄 [불합격] 다시 듣고 따라해 볼까요? (${score}점)`);
@@ -18956,7 +18956,7 @@ function getCurrentRoundData() {
       }
 
       if (noticeEl) {
-        noticeEl.innerHTML = `<span style='color:#dc2626;'>⚠️ 70점 미만입니다. 1.5초 후 엑자일의 발음을 다시 들려드리고 마이크를 재활성화합니다!</span>`;
+        noticeEl.innerHTML = `<span style='color:#dc2626;'>⚠️ 60점 미만입니다. 1.5초 후 엑자일의 발음을 다시 들려드리고 마이크를 재활성화합니다!</span>`;
       }
 
       if (nextBtn) {
@@ -18976,7 +18976,7 @@ function getCurrentRoundData() {
   function proceedNextRoundOrLevel() {
     if (!roundPassed[currentRound - 1]) {
       soundWrong();
-      alert("현재 단계를 70점 이상으로 통과해야만 다음 단계로 넘어갈 수 있습니다!");
+      alert("현재 단계를 60점 이상으로 통과해야만 다음 단계로 넘어갈 수 있습니다!");
       return;
     }
 
@@ -20402,7 +20402,7 @@ function getCurrentRoundData() {
 
     if (isCanvasActive) {
 
-      // 메인 캔버스 상태: 현재 단계가 통과(70점 이상)되었는지 엄격 검사!
+      // 메인 캔버스 상태: 현재 단계가 통과(60점 이상)되었는지 엄격 검사!
 
       if (roundPassed[currentRound - 1]) {
 
@@ -20430,7 +20430,7 @@ function getCurrentRoundData() {
 
         if (notice) {
 
-          notice.innerHTML = `<span style='color:#dc2626;'>⛔ [슬라이드 잠금] 현재 라운드를 70점 이상으로 통과해야 다음 단계로 슬라이드할 수 있습니다!</span>`;
+          notice.innerHTML = `<span style='color:#dc2626;'>⛔ [슬라이드 잠금] 현재 라운드를 60점 이상으로 통과해야 다음 단계로 슬라이드할 수 있습니다!</span>`;
 
         }
 
