@@ -4,6 +4,15 @@
 
 <head>
   <!-- Google Gemini 3.8 Flash 44종 실제 사람 신경망 음성 독립 엔진 탑재 -->
+  <!-- OurVoiceMasterEngine (v3.0.0) GitHub Pages 실시간 CDN 원격 임포트 (오프라인 자동 폴백) -->
+  <script src="https://kangjong9.github.io/assets/our_voice_master_engine.js"></script>
+  <script>
+    if (typeof OurVoiceMasterEngine === 'undefined') {
+      const s = document.createElement('script');
+      s.src = 'our_voice_master_engine.js';
+      document.head.appendChild(s);
+    }
+  </script>
   <script src="gemini_human_voice_engine.js"></script>
 
   <meta charset="UTF-8">
