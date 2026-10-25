@@ -1487,6 +1487,14 @@
           원하는 음성 엔진 모델을 선택하면, 해당 모델의 모든 보이스가 앱 전체에 실시간 동기화됩니다.
         </p>
 
+        <!-- 강사 성별: 수업 중 외국어 문장을 읽는 원어민 목소리의 성별 -->
+        <label style="font-size:13px; font-weight:900; color:#334155; margin-bottom:6px; display:block;">강사 성별 (수업 원어민 목소리)</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:6px;">
+          <button type="button" id="btnTutorFemale" onclick="setNuriTutorGender('female')" style="padding:9px 8px; border-radius:12px; border:2px solid #cbd5e1; background:#fff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer;">👩 여성 강사</button>
+          <button type="button" id="btnTutorMale" onclick="setNuriTutorGender('male')" style="padding:9px 8px; border-radius:12px; border:2px solid #cbd5e1; background:#fff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer;">👨 남성 강사</button>
+        </div>
+        <p style="font-size:11.5px; color:#64748b; margin-bottom:12px; line-height:1.4;">엑자일의 한국어 대사는 아래에서 고른 목소리, 수업 외국어 문장은 이 성별의 원어민 신경망 목소리(프랑스어·일본어·중국어)로 나옵니다.</p>
+
         <!-- 1단계: 4대 모델 선택 버튼 그리드 -->
         <label style="font-size:13px; font-weight:900; color:#334155; margin-bottom:6px; display:block;">1단계: 음성 엔진 모델 선택 (1~4번)</label>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px;">
@@ -4889,6 +4897,36 @@ const EXILE_VOICES = [
     return { engine, voice };
   }
 
+  // 수업 외국어 문장 = 원어민 Edge 목소리 (엑자일 캐릭터의 한국어 대사만 사용자가 고른 누리 보이스)
+  const NURI_NATIVE_VOICES = {
+    fr: { female: 'fr-FR-DeniseNeural', male: 'fr-FR-HenriNeural' },
+    ja: { female: 'ja-JP-NanamiNeural', male: 'ja-JP-KeitaNeural' },
+    'zh-CN': { female: 'zh-CN-XiaoxiaoNeural', male: 'zh-CN-YunxiNeural' },
+    en: { female: 'en-US-JennyNeural', male: 'en-US-GuyNeural' }
+  };
+
+  /** 강사 성별 (설정 화면에서 선택, 기본 여성) — 수업 원어민 목소리의 성별 */
+  function getNuriTutorGender() {
+    try { return localStorage.getItem('nuri_tutor_gender') === 'male' ? 'male' : 'female'; } catch (e) { return 'female'; }
+  }
+
+  function setNuriTutorGender(gender) {
+    try { localStorage.setItem('nuri_tutor_gender', gender === 'male' ? 'male' : 'female'); } catch (e) {}
+    stopAllTTSAudio();
+    globalTtsSeq++;
+    syncTutorGenderUI();
+  }
+
+  function syncTutorGenderUI() {
+    const g = getNuriTutorGender();
+    [['btnTutorFemale', 'female'], ['btnTutorMale', 'male']].forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.borderColor = g === val ? '#4f46e5' : '#cbd5e1';
+      el.style.background = g === val ? '#eef2ff' : '#fff';
+    });
+  }
+
   function nuriNotice(msg) {
     const badge = document.getElementById('openingVoiceText');
     if (badge && document.getElementById('openingSplashView')?.style.display !== 'none') badge.textContent = msg;
@@ -4929,15 +4967,19 @@ const EXILE_VOICES = [
 
       // 누리 보이스(OurVoiceMasterEngine) 단일 경로: 사용자가 선택한 엔진·목소리만 사용
       const masterEngine = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
-      const done = (ok) => { if (mySeq === globalTtsSeq && typeof options.onDone === 'function') options.onDone(ok); };
+      const onDoneCb = options.onDone || options.onComplete; // 기존 호출부의 onComplete도 같은 완료 신호로 처리
+      const done = (ok) => { if (mySeq === globalTtsSeq && typeof onDoneCb === 'function') onDoneCb(ok); };
       if (!masterEngine) {
         nuriNotice('누리 보이스 엔진을 불러오지 못했습니다.');
         done(false);
         return;
       }
-      const sel = options.forceEngine
+      let sel = options.forceEngine
         ? { engine: options.forceEngine, voice: options.forceVoice || NURI_ENGINE_DEFAULT_VOICES[options.forceEngine] }
         : getNuriSelection();
+      if (!options.forceEngine && NURI_NATIVE_VOICES[gLang]) {
+        sel = { engine: 'edge', voice: NURI_NATIVE_VOICES[gLang][getNuriTutorGender()] };
+      }
 
       const gKey = localStorage.getItem('gemini_voice_api_key') || localStorage.getItem('hangeoreum_gemini_key') || '';
       const eKey = localStorage.getItem('eleven_voice_api_key') || '';
@@ -20130,6 +20172,7 @@ function getCurrentRoundData() {
 
   function switchTTSEngineModel(modelKey, autoSave = true, fromSync = false) {
     currentTTSEngineModel = modelKey;
+    syncTutorGenderUI();
     if (autoSave) {
       // 엔진 모델 선택 시 재생 중이던 음성 즉시 중단 + 목소리까지 함께 저장 (불일치 방지)
       stopAllTTSAudio();
@@ -21813,6 +21856,10 @@ function getCurrentRoundData() {
     const roundData = getCurrentRoundData();
     if (!roundData) return;
 
+    // 데일리 체크인 창이 떠 있는 동안에는 수업 문장을 미리 재생하지 않는다 (체크인 질문을 덮어써 무음이 되던 원인)
+    const checkin = document.getElementById('dailyCheckinModal');
+    if (checkin && !checkin.classList.contains('hidden')) return;
+
     if (autoListenTimer) clearTimeout(autoListenTimer);
 
     updateHandsFreeStatus('ai_speaking', `🤖 AI 엑자일 발음 지도 중... 🔊`);
@@ -21829,7 +21876,8 @@ function getCurrentRoundData() {
       }, 400);
     };
 
-    const safetyTimeoutMs = Math.max(2600, (roundData.target || '').length * 170 + 1500);
+    // 정상 진행은 음성 완료 신호(onComplete)로 한다. 이 타이머는 응답이 아예 없을 때의 비상용(휴대폰 네트워크 지연 고려)
+    const safetyTimeoutMs = 20000 + (roundData.target || '').length * 170;
     autoListenTimer = setTimeout(onFinished, safetyTimeoutMs);
 
     speakTextWithFallback(roundData.target, selectedLang, {
