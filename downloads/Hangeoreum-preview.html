@@ -19294,20 +19294,7 @@ function getCurrentRoundData() {
   }
 
   function resetLearningProgress() {
-    if (!confirm("정말 학습 진행도를 초기화하고 1레벨 1라운드부터 다시 시작하시겠습니까?")) return;
-    try {
-      localStorage.removeItem("hangeoreum_current_level");
-      localStorage.removeItem("hangeoreum_current_round");
-      localStorage.removeItem("hangeoreum_round_passed");
-    } catch(e) {}
-    currentLevel = 1;
-    currentRound = 1;
-    roundPassed = [false, false, false, false];
-    const slider = document.getElementById('levelSlider');
-    if (slider) slider.value = 1;
-    updateLevelUI();
-    closeSettingsModal();
-    alert("학습 진행도가 초기화되었습니다. 1레벨 1라운드부터 다시 시작합니다!");
+    resetAllLearnedDataCompletely();
   }
 
   function applyDailyThemeUI() {
@@ -20821,14 +20808,14 @@ function getCurrentRoundData() {
 
     const resumeInfo = document.getElementById('resumeLevelInfo');
 
-    if (hasPreviousStudy && resumeBanner && resumeInfo) {
-
+    if (hasPreviousStudy && localStorage.getItem('hangeoreum_onboarding_done') === '1' && resumeBanner && resumeInfo) {
       resumeBanner.classList.remove('hidden');
-
+      resumeBanner.style.display = 'flex';
       const langName = selectedLang === 'fr' ? '프랑스어' : (selectedLang === 'cn' ? '중국어' : '일본어');
-
       resumeInfo.textContent = `Lv. ${currentLevel} ${langName} · 따라하기 진행 중`;
-
+    } else if (resumeBanner) {
+      resumeBanner.classList.add('hidden');
+      resumeBanner.style.display = 'none';
     }
 
 
@@ -21314,29 +21301,62 @@ function getCurrentRoundData() {
     }
 
     try {
-      const keys = [
-        'hangeoreum_current_level', 'hangeoreum_current_round', 'hangeoreum_round_passed',
+      // 1. 학습 진행 관련 키 전체 영구 삭제
+      const keysToRemove = [
+        'hangeoreum_onboarding_done', 'hangeoreum_level', 'hangeoreum_current_level',
+        'hangeoreum_round', 'hangeoreum_current_round', 'hangeoreum_round_passed',
         'hangeoreum_user_exp', 'hangeoreum_learned_words', 'hangeoreum_session_case',
         'hangeoreum_rp_history', 'hangeoreum_wrong_notes', 'hangeoreum_favorites',
-        'hangeoreum_daily_checkin', 'hangeoreum_level_slider'
+        'hangeoreum_daily_checkin', 'hangeoreum_level_slider', 'hangeoreum_lang'
       ];
-      keys.forEach(k => localStorage.removeItem(k));
-    } catch(e) {}
+      keysToRemove.forEach(k => localStorage.removeItem(k));
 
+      // 2. hangeoreum_lv 및 hangeoreum_round 로 저장된 동적 관문 키 전수 삭제
+      const allKeys = Object.keys(localStorage);
+      allKeys.forEach(k => {
+        if (k.startsWith('hangeoreum_lv') || k.startsWith('hangeoreum_round') || k.startsWith('hangeoreum_case')) {
+          localStorage.removeItem(k);
+        }
+      });
+    } catch(e) {
+      console.warn('localStorage clear failed:', e);
+    }
+
+    // 3. 인메모리 진행도 상태 완전 초기화
     currentLevel = 1;
     currentRound = 1;
     currentExp = 0;
     roundPassed = [false, false, false, false];
 
+    // 4. [옵빠야 요청] 처음 화면의 '이어서 하기' 스마트 배너를 즉시 완전히 숨김
+    const resumeBanner = document.getElementById('resumeLearningBanner');
+    if (resumeBanner) {
+      resumeBanner.classList.add('hidden');
+      resumeBanner.style.display = 'none';
+    }
+
+    // 5. 슬라이더 및 UI 1단계 리셋
     const slider = document.getElementById('levelSlider');
     if (slider) slider.value = 1;
 
     if (typeof updateLevelUI === 'function') updateLevelUI();
     if (typeof updateExpBar === 'function') updateExpBar();
-    if (typeof initDynamicContextualCase === 'function') initDynamicContextualCase(true);
     if (typeof closeSettingsModal === 'function') closeSettingsModal();
 
-    alert('✨ 지금까지 학습한 모든 데이터가 깨끗하게 초기화되었습니다! 1레벨부터 새로운 마음으로 시작합니다.');
+    // 6. [옵빠야 요청] 처음 화면(온보딩 1단계: 호칭 및 음성 선택)으로 완전히 복귀
+    const viewCanvas = document.getElementById('viewCanvas');
+    const viewRoleplay = document.getElementById('viewRoleplay');
+    const viewOnboarding = document.getElementById('viewOnboarding');
+
+    if (viewCanvas) viewCanvas.classList.add('hidden');
+    if (viewRoleplay) viewRoleplay.classList.add('hidden');
+    if (viewOnboarding) {
+      viewOnboarding.classList.remove('hidden');
+      obStep = 1;
+      if (typeof updateObStepUI === 'function') updateObStepUI();
+    }
+
+    alert('✨ 지금까지 학습한 모든 데이터가 깨끗하게 초기화되었습니다!\n처음 화면에서 새로운 마음으로 시작합니다.');
   }
 
 
