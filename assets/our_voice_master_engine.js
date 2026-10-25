@@ -44,42 +44,42 @@
     { id: 'ANIME_F_CUTE', name: '요정 루나', gender: 'female', pitch: 1.35, rate: 1.08, desc: '귀엽고 발랄한 요정 루나 (깜찍하고 친근한 어조)', defaultVoice: 'ko-KR-SunHiNeural' },
     { id: 'ANIME_F_SOFT', name: '멘토 세라', gender: 'female', pitch: 1.15, rate: 0.95, desc: '차분하고 다정한 멘토 세라 (부드러운 힐링 톤)', defaultVoice: 'ko-KR-SunHiNeural' },
     { id: 'ANIME_F_BRIGHT', name: '아이돌 밍크', gender: 'female', pitch: 1.45, rate: 1.12, desc: '밝고 활기찬 아이돌 밍크 (긍정 비타민 어조)', defaultVoice: 'ko-KR-SunHiNeural' },
-    { id: 'ANIME_M_YOUTH', name: '소년 카이', gender: 'male', pitch: 1.10, rate: 1.10, desc: '경쾌하고 활기찬 소년 카이 (자신감 넘치는 만화 주인공)', defaultVoice: 'ko-KR-InJoonNeural' },
-    { id: 'ANIME_M_CALM', name: '연구원 레오', gender: 'male', pitch: 0.90, rate: 0.95, desc: '부드럽고 차분한 연구원 레오 (신뢰감 넘치는 중저음)', defaultVoice: 'ko-KR-InJoonNeural' },
-    { id: 'ANIME_M_DEEP', name: '수호대장 바론', gender: 'male', pitch: 0.75, rate: 0.90, desc: '낮고 진중한 수호대장 바론 (묵직한 바리톤)', defaultVoice: 'ko-KR-InJoonNeural' }
+    { id: 'ANIME_M_YOUTH', name: '소년 카이', gender: 'male', pitch: 1.10, rate: 1.10, desc: '경쾌하고 활기찬 소년 카이 (자신감 넘치는 만화 주인공)', defaultVoice: 'ko-KR-SunHiNeural' },
+    { id: 'ANIME_M_CALM', name: '연구원 레오', gender: 'male', pitch: 0.90, rate: 0.95, desc: '부드럽고 차분한 연구원 레오 (신뢰감 넘치는 중저음)', defaultVoice: 'ko-KR-SunHiNeural' },
+    { id: 'ANIME_M_DEEP', name: '수호대장 바론', gender: 'male', pitch: 0.75, rate: 0.90, desc: '낮고 진중한 수호대장 바론 (묵직한 바리톤)', defaultVoice: 'ko-KR-SunHiNeural' }
   ];
 
   const EDGE_VOICES = [
-    // 🇰🇷 한국어 공식 실존 신경망 모델 (3종)
-    { id: 'ko-KR-SunHiNeural', name: '선희 (SunHi)', lang: 'ko-KR', gender: 'female', desc: '한국어 대표 표준 여성' },
-    { id: 'ko-KR-InJoonNeural', name: '인준 (InJoon)', lang: 'ko-KR', gender: 'male', desc: '한국어 대표 신뢰 남성' },
-    { id: 'ko-KR-HyunsuMultilingualNeural', name: '현수 (Hyunsu)', lang: 'ko-KR', gender: 'male', desc: '한국어 다국어 청년' },
+    // 🇰🇷 한국어 공식 실존 신경망 모델 (최우선 디폴트 3종)
+    { id: 'ko-KR-SunHiNeural', name: '선희 (SunHi - 한국어 대표 표준 여성)', lang: 'ko-KR', gender: 'female', desc: '한국어 대표 표준 여성 톤' },
+    { id: 'ko-KR-InJoonNeural', name: '인준 (InJoon - 한국어 대표 신뢰 남성)', lang: 'ko-KR', gender: 'male', desc: '한국어 대표 신뢰 남성 톤' },
+    { id: 'ko-KR-HyunsuMultilingualNeural', name: '현수 (Hyunsu - 다국어 청년 남성)', lang: 'ko-KR', gender: 'male', desc: '한국어 다국어 청년 톤' },
     // 🇺🇸 미국 영어 공식 모델 (6종)
-    { id: 'en-US-JennyNeural', name: 'Jenny (US)', lang: 'en-US', gender: 'female', desc: '미국 대표 자연스러운 여성' },
-    { id: 'en-US-GuyNeural', name: 'Guy (US)', lang: 'en-US', gender: 'male', desc: '미국 대표 편안한 남성' },
-    { id: 'en-US-AriaNeural', name: 'Aria (US)', lang: 'en-US', gender: 'female', desc: '뉴스 앵커 스타일 여성' },
-    { id: 'en-US-ChristopherNeural', name: 'Christopher (US)', lang: 'en-US', gender: 'male', desc: '안정적인 멘토 남성' },
-    { id: 'en-US-EricNeural', name: 'Eric (US)', lang: 'en-US', gender: 'male', desc: '활기찬 에너지 남성' },
-    { id: 'en-US-MichelleNeural', name: 'Michelle (US)', lang: 'en-US', gender: 'female', desc: '다정한 일상 대화 여성' },
+    { id: 'en-US-JennyNeural', name: 'Jenny (US - 미국 대표 여성)', lang: 'en-US', gender: 'female', desc: '미국 대표 자연스러운 여성' },
+    { id: 'en-US-GuyNeural', name: 'Guy (US - 미국 대표 남성)', lang: 'en-US', gender: 'male', desc: '미국 대표 편안한 남성' },
+    { id: 'en-US-AriaNeural', name: 'Aria (US - 뉴스 앵커 스타일)', lang: 'en-US', gender: 'female', desc: '뉴스 앵커 스타일 여성' },
+    { id: 'en-US-ChristopherNeural', name: 'Christopher (US - 멘토 남성)', lang: 'en-US', gender: 'male', desc: '안정적인 멘토 남성' },
+    { id: 'en-US-EricNeural', name: 'Eric (US - 에너지 청년)', lang: 'en-US', gender: 'male', desc: '활기찬 에너지 남성' },
+    { id: 'en-US-MichelleNeural', name: 'Michelle (US - 일상 대화 여성)', lang: 'en-US', gender: 'female', desc: '다정한 일상 대화 여성' },
     // 🇬🇧 영국 영어 모델 (4종)
-    { id: 'en-GB-SoniaNeural', name: 'Sonia (UK)', lang: 'en-GB', gender: 'female', desc: '영국 대표 튜터 여성' },
-    { id: 'en-GB-RyanNeural', name: 'Ryan (UK)', lang: 'en-GB', gender: 'male', desc: '영국 대표 청년 남성' },
-    { id: 'en-GB-LibbyNeural', name: 'Libby (UK)', lang: 'en-GB', gender: 'female', desc: '또렷하고 맑은 영국 여성' },
-    { id: 'en-GB-ThomasNeural', name: 'Thomas (UK)', lang: 'en-GB', gender: 'male', desc: '지적인 영국 신사 남성' },
+    { id: 'en-GB-SoniaNeural', name: 'Sonia (UK - 영국 대표 여성)', lang: 'en-GB', gender: 'female', desc: '영국 대표 튜터 여성' },
+    { id: 'en-GB-RyanNeural', name: 'Ryan (UK - 영국 대표 청년)', lang: 'en-GB', gender: 'male', desc: '영국 대표 청년 남성' },
+    { id: 'en-GB-LibbyNeural', name: 'Libby (UK - 맑은 영국 여성)', lang: 'en-GB', gender: 'female', desc: '또렷하고 맑은 영국 여성' },
+    { id: 'en-GB-ThomasNeural', name: 'Thomas (UK - 영국 신사 남성)', lang: 'en-GB', gender: 'male', desc: '지적인 영국 신사 남성' },
     // 🇯🇵 일본어 모델 (2종)
-    { id: 'ja-JP-NanamiNeural', name: 'Nanami (JP)', lang: 'ja-JP', gender: 'female', desc: '일본어 대표 친절한 여성' },
-    { id: 'ja-JP-KeitaNeural', name: 'Keita (JP)', lang: 'ja-JP', gender: 'male', desc: '일본어 대표 지적인 남성' },
+    { id: 'ja-JP-NanamiNeural', name: 'Nanami (JP - 일본어 대표 여성)', lang: 'ja-JP', gender: 'female', desc: '일본어 대표 친절한 여성' },
+    { id: 'ja-JP-KeitaNeural', name: 'Keita (JP - 일본어 대표 남성)', lang: 'ja-JP', gender: 'male', desc: '일본어 대표 지적인 남성' },
     // 🇨🇳 중국어 보통화 모델 (4종)
-    { id: 'zh-CN-XiaoxiaoNeural', name: 'Xiaoxiao (CN)', lang: 'zh-CN', gender: 'female', desc: '중국어 대표 표준 여성' },
-    { id: 'zh-CN-YunxiNeural', name: 'Yunxi (CN)', lang: 'zh-CN', gender: 'male', desc: '중국어 대표 활기찬 청년' },
-    { id: 'zh-CN-YunjianNeural', name: 'Yunjian (CN)', lang: 'zh-CN', gender: 'male', desc: '중국어 대표 다큐/내레이션' },
-    { id: 'zh-CN-YunyangNeural', name: 'Yunyang (CN)', lang: 'zh-CN', gender: 'male', desc: '중국어 대표 뉴스 앵커' },
+    { id: 'zh-CN-XiaoxiaoNeural', name: 'Xiaoxiao (CN - 중국어 대표 여성)', lang: 'zh-CN', gender: 'female', desc: '중국어 대표 표준 여성' },
+    { id: 'zh-CN-YunxiNeural', name: 'Yunxi (CN - 중국어 청년 남성)', lang: 'zh-CN', gender: 'male', desc: '중국어 대표 활기찬 청년' },
+    { id: 'zh-CN-YunjianNeural', name: 'Yunjian (CN - 내레이션 남성)', lang: 'zh-CN', gender: 'male', desc: '중국어 대표 다큐/내레이션' },
+    { id: 'zh-CN-YunyangNeural', name: 'Yunyang (CN - 뉴스 앵커 남성)', lang: 'zh-CN', gender: 'male', desc: '중국어 대표 뉴스 앵커' },
     // 🇫🇷 프랑스어 모델 (2종)
-    { id: 'fr-FR-DeniseNeural', name: 'Denise (FR)', lang: 'fr-FR', gender: 'female', desc: '프랑스어 대표 우아한 여성' },
-    { id: 'fr-FR-HenriNeural', name: 'Henri (FR)', lang: 'fr-FR', gender: 'male', desc: '프랑스어 대표 지적인 남성' },
+    { id: 'fr-FR-DeniseNeural', name: 'Denise (FR - 프랑스어 대표 여성)', lang: 'fr-FR', gender: 'female', desc: '프랑스어 대표 우아한 여성' },
+    { id: 'fr-FR-HenriNeural', name: 'Henri (FR - 프랑스어 지적 남성)', lang: 'fr-FR', gender: 'male', desc: '프랑스어 대표 지적인 남성' },
     // 🇪🇺 유럽 다국어 모델 (2종)
-    { id: 'de-DE-KatjaNeural', name: 'Katja (DE)', lang: 'de-DE', gender: 'female', desc: '독일어 대표 표준 여성' },
-    { id: 'es-ES-ElviraNeural', name: 'Elvira (ES)', lang: 'es-ES', gender: 'female', desc: '스페인어 대표 표준 여성' }
+    { id: 'de-DE-KatjaNeural', name: 'Katja (DE - 독일어 대표 여성)', lang: 'de-DE', gender: 'female', desc: '독일어 대표 표준 여성' },
+    { id: 'es-ES-ElviraNeural', name: 'Elvira (ES - 스페인어 대표 여성)', lang: 'es-ES', gender: 'female', desc: '스페인어 대표 표준 여성' }
   ];
 
   const ELEVEN_VOICES = [
@@ -504,7 +504,7 @@
         defaultMode: 'human',       // 'human' (일반 음성 모드) | 'anime' (애니 캐릭터 모드)
         defaultEngine: 'auto',
         defaultVoice: 'ko-KR-SunHiNeural',
-        autoTranslate: true,
+        autoTranslate: false,
         enableFallback: true,
         enableCircuitBreaker: true,
         enableCache: true,
@@ -1020,26 +1020,21 @@
         // -----------------------------------------------------------------------
     // 엔진 3. Edge Neural TTS (서버 스트리밍 + Google Neural TTS 자동 폴백)
     // -----------------------------------------------------------------------
+        // -----------------------------------------------------------------------
+    // 엔진 3. Edge Neural TTS (한국어 100% 디폴트 및 스마트 매핑)
+    // -----------------------------------------------------------------------
     async _speakEdge(rawText, opts) {
+      const hasKorean = /[가-힣]/.test(rawText);
       let voiceKey = opts.voice || 'ko-KR-SunHiNeural';
-      if (!voiceKey.includes('Neural')) voiceKey = 'ko-KR-SunHiNeural';
 
-      let targetLang = 'ko';
-      if (voiceKey.startsWith('en-')) targetLang = 'en';
-      else if (voiceKey.startsWith('ja-')) targetLang = 'ja';
-      else if (voiceKey.startsWith('zh-')) targetLang = 'zh-CN';
-      else if (voiceKey.startsWith('fr-')) targetLang = 'fr';
-      else if (voiceKey.startsWith('de-')) targetLang = 'de';
-      else if (voiceKey.startsWith('es-')) targetLang = 'es';
-
-      let speechText = rawText;
-      if (opts.translate && targetLang !== 'ko') {
-        speechText = await translateText(rawText, targetLang);
+      // 한국어 텍스트인 경우 무조건 한국어 공식 신경망 보이스로 안전 매핑!
+      if (hasKorean && !voiceKey.startsWith('ko-KR-')) {
+        voiceKey = 'ko-KR-SunHiNeural';
       }
 
       const endpoints = [
-        `${this.config.serverUrl}/api/edge-tts?voice=${encodeURIComponent(voiceKey)}&text=${encodeURIComponent(speechText)}`,
-        `/api/edge-tts?voice=${encodeURIComponent(voiceKey)}&text=${encodeURIComponent(speechText)}`
+        `${this.config.serverUrl}/api/edge-tts?voice=${encodeURIComponent(voiceKey)}&text=${encodeURIComponent(rawText)}`,
+        `/api/edge-tts?voice=${encodeURIComponent(voiceKey)}&text=${encodeURIComponent(rawText)}`
       ];
 
       for (const url of endpoints) {
@@ -1049,19 +1044,19 @@
             const blob = await resp.blob();
             const audioUrl = URL.createObjectURL(blob);
             await this._playAudioUrl(audioUrl);
-            return { voice: voiceKey, spokenText: speechText, blob, mode: 'edge-server-streaming' };
+            return { voice: voiceKey, spokenText: rawText, blob, mode: 'edge-server-streaming' };
           }
         } catch (e) {}
       }
 
-      // 모바일/정적 웹 환경용 고음질 Neural 오디오 스트림 자동 폴백
+      // 모바일/정적 웹 환경용 고음질 Neural 오디오 스트림 자동 폴백 (한국어 디폴트)
       try {
-        const fallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${targetLang}&q=${encodeURIComponent(speechText)}`;
+        const langCode = hasKorean ? 'ko' : (opts.lang || 'ko');
+        const fallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${langCode}&q=${encodeURIComponent(rawText)}`;
         await this._playAudioUrl(fallbackUrl);
-        return { voice: voiceKey, spokenText: speechText, mode: 'edge-neural-fallback' };
+        return { voice: voiceKey, spokenText: rawText, mode: 'edge-neural-fallback' };
       } catch (fbErr) {
-        // 최종 시스템 음성 폴백
-        return await this._speakSystemTTS(speechText, opts);
+        return await this._speakSystemTTS(rawText, opts);
       }
     }
 

@@ -5257,7 +5257,7 @@ const EXILE_VOICES = [
 
   async function speakSampleVoice(voiceId) {
     const model = currentFourTab || currentTTSEngineModel || localStorage.getItem('our_user_tts_engine') || 'edge';
-    const txt = `안녕하세요 ${userName}님! 안드로메다 탈출을 위해 함께 즐겁게 어학 공부를 시작해 봐요!`;
+    const txt = `안녕하세요 ${userName}님! 저는 AI 엑자일 튜터예요. 우리 함께 즐겁게 어학 공부를 시작해 봐요!`;
 
     try {
       localStorage.setItem('our_user_tts_engine', model);
@@ -20163,10 +20163,10 @@ function getCurrentRoundData() {
     // 4대 엔진 공식 실존 90종 완벽 카탈로그 (모델과 실제 ID 100% 일치)
     const EXACT_CATALOGS = {
       edge: [
-        // 🇰🇷 한국어 (3종)
-        { id: 'ko-KR-SunHiNeural', name: '선희 (SunHi - 한국어 대표 여성)', group: '🇰🇷 한국어 (3종)' },
-        { id: 'ko-KR-InJoonNeural', name: '인준 (InJoon - 한국어 대표 남성)', group: '🇰🇷 한국어 (3종)' },
-        { id: 'ko-KR-HyunsuMultilingualNeural', name: '현수 (Hyunsu - 다국어 청년)', group: '🇰🇷 한국어 (3종)' },
+        // 🇰🇷 한국어 공식 실존 모델 (최우선 추천 3종)
+        { id: 'ko-KR-SunHiNeural', name: '선희 (SunHi - 한국어 대표 표준 여성)', group: '🇰🇷 한국어 공식 모델 (3종 - 디폴트)' },
+        { id: 'ko-KR-InJoonNeural', name: '인준 (InJoon - 한국어 대표 신뢰 남성)', group: '🇰🇷 한국어 공식 모델 (3종 - 디폴트)' },
+        { id: 'ko-KR-HyunsuMultilingualNeural', name: '현수 (Hyunsu - 다국어 청년 남성)', group: '🇰🇷 한국어 공식 모델 (3종 - 디폴트)' },
         // 🇺🇸 미국 영어 (6종)
         { id: 'en-US-JennyNeural', name: 'Jenny (US - 미국 대표 여성)', group: '🇺🇸 미국 영어 (6종)' },
         { id: 'en-US-GuyNeural', name: 'Guy (US - 미국 대표 남성)', group: '🇺🇸 미국 영어 (6종)' },
@@ -20328,7 +20328,7 @@ function getCurrentRoundData() {
 
   async function testSelectedVoiceSpeech() {
     soundTap();
-    const testText = "안녕하세요! 한걸음 4대 신경망 음성 모델 연동 테스트입니다.";
+    const testText = "안녕하세요! 저는 AI 엑자일 튜터예요. 우리 함께 즐겁게 어학 공부를 시작해 봐요!";
     const select = document.getElementById('engineVoiceSelect');
     const voiceId = select ? select.value : currentTTSVoiceId;
     const engineKey = currentTTSEngineModel;
