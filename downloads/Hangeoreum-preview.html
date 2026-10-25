@@ -4779,73 +4779,135 @@ const EXILE_VOICES = [
 
   let selectedExileVoiceId = 'female_anime_lulu'; // 기본: 애니메이션 귀요미 보이스
   let selectedExileGender = 'female';
+    // =========================================================
+  // 🎙️ 전역 단일 발화 보장 시스템 (Last-Call-Wins & Debounce)
+  // 연속/동시 TTS 발생 시 이전 모든 오디오 즉시 올스톱,
+  // 오직 가장 마지막(최신) TTS만 단독 재생! (시끄러움 원천 차단)
+  // =========================================================
+  let globalTtsSeq = 0;
+  let globalTtsDebounceTimer = null;
   let activeAudioPlayer = null;
+
+  function stopAllTTSAudio() {
+    // 1. 현재 HTML5 Audio 정지
+    if (activeAudioPlayer) {
+      try {
+        activeAudioPlayer.pause();
+        activeAudioPlayer.currentTime = 0;
+      } catch(e) {}
+      activeAudioPlayer = null;
+    }
+
+    // 2. OurVoiceMasterEngine / OurTTS 정지
+    const master = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
+    if (master && typeof master.stop === 'function') {
+      try { master.stop(); } catch(e) {}
+    }
+
+    // 3. GeminiHumanVoiceEngine 정지
+    if (typeof GeminiHumanVoiceEngine !== 'undefined') {
+      try {
+        if (typeof GeminiHumanVoiceEngine.stopAll === 'function') GeminiHumanVoiceEngine.stopAll();
+      } catch(e) {}
+    }
+
+    // 4. Web Speech API 취소
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch(e) {}
+    }
+
+    // 5. Android Native TTS 정지
+    if (window.Native && typeof window.Native.call === 'function') {
+      try { window.Native.call("stopText", "{}"); } catch(e) {}
+    }
+  }
 
   function speakTextWithFallback(text, lang = 'ko', options = {}) {
     if (!text) return;
     const clean = text.replace(/<[^>]*>/g, '').replace(/[#*`_~]/g, '').trim();
     if (!clean) return;
 
-    const icon = document.getElementById('voiceRippleIcon');
-    if (icon) {
-      icon.style.transform = 'scale(1.35)';
-      setTimeout(() => { icon.style.transform = 'scale(1)'; }, 350);
+    // [핵심]: 새 TTS 요청 즉시 이전 재생 중인 모든 소리 100% 즉시 올스톱!
+    stopAllTTSAudio();
+
+    // 마지막 요청만 살아남도록 시퀀스 티켓 발급
+    const mySeq = ++globalTtsSeq;
+
+    // 연속 호출 디바운스 (70ms): 빠르게 여러 번 호출될 때 중간 요청은 폐기하고 마지막만 발화
+    if (globalTtsDebounceTimer) {
+      clearTimeout(globalTtsDebounceTimer);
     }
 
-    let gLang = 'ko';
-    if (lang === 'fr' || lang.startsWith('fr')) gLang = 'fr';
-    else if (lang === 'zh' || lang === 'cn' || lang.startsWith('zh')) gLang = 'zh-CN';
-    else if (lang === 'ja' || lang.startsWith('ja')) gLang = 'ja';
-    else if (lang === 'en') gLang = 'en';
+    globalTtsDebounceTimer = setTimeout(() => {
+      // 내 뒤에 더 새로운 TTS 요청이 들어왔다면 즉시 중단 폐기!
+      if (mySeq !== globalTtsSeq) return;
 
-    // [최우선 0순위]: OurVoiceMasterEngine 4대 모델(Edge, Gemini, ElevenLabs, Kokoro) 직결
-    const masterEngine = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
-    if (masterEngine) {
-      const activeEngine = localStorage.getItem('our_user_tts_engine') || 'edge';
-      const activeVoice = localStorage.getItem('our_user_tts_voice') || (activeEngine === 'edge' ? 'ko-KR-SunHiNeural' : (activeEngine === 'kokoro' ? 'af_bella' : (activeEngine === 'eleven' ? '21m00Tcm4TlvDq8ikWAM' : 'HUMAN_F1')));
-
-      const gKey = localStorage.getItem('gemini_voice_api_key') || localStorage.getItem('hangeoreum_gemini_key') || '';
-      const eKey = localStorage.getItem('eleven_voice_api_key') || '';
-      if (gKey && masterEngine.setApiKey) masterEngine.setApiKey('gemini', gKey);
-      if (eKey && masterEngine.setApiKey) masterEngine.setApiKey('eleven', eKey);
-
-      masterEngine.speak(clean, {
-        engine: activeEngine,
-        voice: activeVoice,
-        lang: gLang,
-        rate: options.rate || 1.0,
-        pitch: options.pitch || 1.0
-      }).then(res => {
-        if (res && res.ok === false) {
-          fallbackToAndroidNativeTTS(clean, gLang, options);
-        }
-      }).catch(err => {
-        fallbackToAndroidNativeTTS(clean, gLang, options);
-      });
-      return;
-    }
-
-    // 1순위: Supertonic 3 / Google Neural TTS 스트리밍
-    try {
-      if (activeAudioPlayer) {
-        activeAudioPlayer.pause();
-        activeAudioPlayer = null;
+      const icon = document.getElementById('voiceRippleIcon');
+      if (icon) {
+        icon.style.transform = 'scale(1.35)';
+        setTimeout(() => { icon.style.transform = 'scale(1)'; }, 350);
       }
-      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${gLang}&q=${encodeURIComponent(clean)}`;
-      const audio = new Audio(ttsUrl);
-      activeAudioPlayer = audio;
-      audio.playbackRate = options.rate || 1.0;
-      audio.play().catch(err => {
-        fallbackToAndroidNativeTTS(clean, gLang, options);
-      });
-      return;
-    } catch(e) {
-      fallbackToAndroidNativeTTS(clean, gLang, options);
-    }
+
+      let gLang = 'ko';
+      if (lang === 'fr' || lang.startsWith('fr')) gLang = 'fr';
+      else if (lang === 'zh' || lang === 'cn' || lang.startsWith('zh')) gLang = 'zh-CN';
+      else if (lang === 'ja' || lang.startsWith('ja')) gLang = 'ja';
+      else if (lang === 'en') gLang = 'en';
+
+      // [최우선 0순위]: OurVoiceMasterEngine (4대 모델 연동)
+      const masterEngine = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
+      if (masterEngine) {
+        const activeEngine = localStorage.getItem('our_user_tts_engine') || 'edge';
+        const activeVoice = localStorage.getItem('our_user_tts_voice') || (activeEngine === 'edge' ? 'ko-KR-SunHiNeural' : (activeEngine === 'kokoro' ? 'af_heart' : (activeEngine === 'eleven' ? 'pNInz6obpgDQGcFmaJgB' : 'HUMAN_F1')));
+
+        const gKey = localStorage.getItem('gemini_voice_api_key') || localStorage.getItem('hangeoreum_gemini_key') || '';
+        const eKey = localStorage.getItem('eleven_voice_api_key') || '';
+        if (gKey && masterEngine.setApiKey) masterEngine.setApiKey('gemini', gKey);
+        if (eKey && masterEngine.setApiKey) masterEngine.setApiKey('eleven', eKey);
+
+        masterEngine.speak(clean, {
+          engine: activeEngine,
+          voice: activeVoice,
+          lang: gLang,
+          rate: options.rate || 1.0,
+          pitch: options.pitch || 1.0
+        }).then(res => {
+          // 비동기 응답 도착 시점에도 최신 시퀀스가 아니면 오디오 재생 중단
+          if (mySeq !== globalTtsSeq) {
+            stopAllTTSAudio();
+            return;
+          }
+          if (res && res.ok === false && !res.canceled) {
+            fallbackToAndroidNativeTTS(clean, gLang, options, mySeq);
+          }
+        }).catch(err => {
+          if (mySeq !== globalTtsSeq) return;
+          fallbackToAndroidNativeTTS(clean, gLang, options, mySeq);
+        });
+        return;
+      }
+
+      // 1순위: Google Neural TTS 스트리밍
+      try {
+        if (mySeq !== globalTtsSeq) return;
+        const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${gLang}&q=${encodeURIComponent(clean)}`;
+        const audio = new Audio(ttsUrl);
+        activeAudioPlayer = audio;
+        audio.playbackRate = options.rate || 1.0;
+        audio.play().catch(err => {
+          if (mySeq !== globalTtsSeq) return;
+          fallbackToAndroidNativeTTS(clean, gLang, options, mySeq);
+        });
+      } catch(e) {
+        if (mySeq !== globalTtsSeq) return;
+        fallbackToAndroidNativeTTS(clean, gLang, options, mySeq);
+      }
+    }, 70);
   }
 
   // 2순위: Android Native Bridge (Android 기본 TTS Fallback - 헌법 제20조)
-  function fallbackToAndroidNativeTTS(clean, gLang, options) {
+  function fallbackToAndroidNativeTTS(clean, gLang, options, seq = null) {
+    if (seq !== null && seq !== globalTtsSeq) return;
     if (window.Native && typeof window.Native.call === 'function') {
       try {
         window.Native.call("speakText", JSON.stringify({
@@ -4862,6 +4924,7 @@ const EXILE_VOICES = [
     if ('speechSynthesis' in window) {
       try {
         window.speechSynthesis.cancel();
+        if (seq !== null && seq !== globalTtsSeq) return;
         const u = new SpeechSynthesisUtterance(clean);
         u.lang = gLang === 'ko' ? 'ko-KR' : (gLang === 'fr' ? 'fr-FR' : (gLang === 'zh-CN' ? 'zh-CN' : 'ja-JP'));
         u.pitch = options.pitch || 1.0;

@@ -708,6 +708,7 @@
     }
 
     stop() {
+      this.currentPlayToken = (this.currentPlayToken || 0) + 1;
       this._stopRMSAnalysis();
       if (this.currentAudio) {
         try {
@@ -715,6 +716,9 @@
           this.currentAudio.currentTime = 0;
         } catch (e) {}
         this.currentAudio = null;
+      }
+      if (this.geminiEngine && typeof this.geminiEngine.stop === 'function') {
+        try { this.geminiEngine.stop(); } catch(e) {}
       }
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -774,6 +778,7 @@
       }
 
       this.stop();
+      const playToken = this.currentPlayToken;
       this.isPlaying = true;
 
       // 캔버스 상태: 말하기 준비 (THINKING -> SPEAKING)
@@ -1197,6 +1202,12 @@
     }
 
     _playAudioUrl(url) {
+      if (this.currentPlayToken !== undefined) {
+        // Stop any existing audio
+        if (this.currentAudio) {
+          try { this.currentAudio.pause(); } catch(e) {}
+        }
+      }
       return new Promise((resolve, reject) => {
         const audio = new Audio(url);
         audio.crossOrigin = 'anonymous';
