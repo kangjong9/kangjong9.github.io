@@ -605,10 +605,22 @@
       <div style="display:inline-block; font-size:48px; margin-bottom:12px; filter:drop-shadow(0 0 16px rgba(129,140,248,0.6)); animation:pulse 2s infinite ease-in-out;">🛸</div>
       <div style="font-size:13px; font-weight:800; letter-spacing:3px; color:#818cf8; text-transform:uppercase; margin-bottom:8px;">Andromeda Exile AI Project</div>
       <h1 style="font-size:32px; font-weight:900; margin:0 0 10px 0; background:linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #818cf8 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 30px rgba(99,102,241,0.3);">한걸음 V1.0 Exile</h1>
-      <div style="font-size:14px; color:#94a3b8; line-height:1.6; margin-bottom:28px;">
-        지구에서 250만 광년 떨어진 안드로메다 유배지...<br>
-        외계 AI <strong style="color:#a5b4fc;">엑자일</strong>과 함께 지구인 언어 50단계를 마스터하고<br>
-        자유를 향한 사면장을 획득하십시오!
+            <!-- [옵빠야 요청] 엑자일의 말풍선 부분을 오프닝 화면으로 이동! -->
+      <div class="speech-bubble" style="background:#ffffff; color:#0f172a; border-radius:20px; padding:18px 20px; margin-bottom:20px; text-align:left; box-shadow:0 12px 35px rgba(0,0,0,0.4); position:relative;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <span style="font-size:20px;">💬</span>
+          <span style="font-size:14px; font-weight:900; color:#4f46e5;">외계 AI 엑자일의 교화 브리핑</span>
+        </div>
+        <div id="openingExileSpeech" style="font-size:14.5px; color:#1e293b; line-height:1.65; font-weight:600;">
+          난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>
+          지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br><br>
+          우리가 준비한 목소리는 사실 <strong>총 44가지</strong>야! 이 중 4가지는 비밀의 히든 음성이니, 먼저 <strong>40가지(사람 20종 + 애니 성우 20종) 목소리</strong> 중 마음에 드는 AI 튜터를 골라줘!
+        </div>
+        <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+          <button type="button" onclick="speakExileTutor(document.getElementById('openingExileSpeech').innerText, 'ko')" style="background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:10px; color:#4f46e5; font-size:12.5px; font-weight:800; padding:5px 12px; cursor:pointer; display:flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(79,70,229,0.1);">
+            <span id="openingVoiceIcon">🔊</span> <span>엑자일 목소리 듣기</span>
+          </button>
+        </div>
       </div>
 
       <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); backdrop-filter:blur(10px); border-radius:18px; padding:14px 18px; margin-bottom:28px; text-align:left; font-size:12.5px; color:#cbd5e1; line-height:1.55;">
@@ -19155,7 +19167,7 @@ function getCurrentRoundData() {
 
   function getObDialogues() {
     return {
-      1: `난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>우리가 준비한 목소리는 사실 <strong>총 44가지</strong>야! 이 중 4가지는 비밀의 히든 음성이니, 먼저 <strong>40가지(사람 20종 + 애니 성우 20종) 목소리</strong> 중 마음에 드는 AI 튜터를 골라줘!`,
+      1: `마음에 드는 <strong>AI 튜터의 목소리</strong>를 아래 4대 카테고리(사람 여성·남성, 애니 여성·남성) 드롭다운에서 골라줘!`, 
       2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
       3: `좋아 <strong>${userName}</strong>! 안드로메다 귀환 판정 제1문!<br>외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
       4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
