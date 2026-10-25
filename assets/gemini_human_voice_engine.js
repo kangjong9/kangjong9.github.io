@@ -1174,24 +1174,21 @@
     constructor(options = {}) {
       this.version = '3.8.0';
       this.apiKey = options.apiKey || this.detectStoredApiKey() || '';
-      this.priorityModel = options.priorityModel || 'gemini-3.8-flash';
+      this.priorityModel = options.priorityModel || 'gemini-3.8-flash-tts';
       this.blockMechanicalTts = (options.blockMechanicalTts !== false); // 기본값: 실제 사람 음성 전용 (기계음 원천 차단)
-      
+
+      // 음성 합성은 TTS 전용 모델만 호출한다 (글 생성 모델은 같은 API 키라도 여기서 부르지 않음).
+      // 이 목록은 기본값이며, 키로 조회한 실제 TTS 모델(_discoverTtsModels)이 있으면 그 최신순이 앞에 온다.
       this.candidateModels = [
-        'gemini-3.8-flash',
         'gemini-3.8-flash-tts',
-        'gemini-4-argon',
-        'gemini-4-argon-tts',
-        'gemini-3.7-flash',
-        'gemini-3.5-flash',
-        'gemini-2.5-flash',
-        'gemini-2.0-flash',
-        'gemini-2.0-flash-exp',
+        'gemini-3.7-flash-tts',
+        'gemini-3.6-flash-tts',
+        'gemini-3.5-flash-tts',
+        'gemini-3.0-flash-tts',
         'gemini-2.5-flash-preview-tts',
-        'gemini-3.8-flash-lite',
-        'gemini-2.0-flash-lite',
-        'gemini-1.5-flash'
+        'gemini-2.5-pro-preview-tts'
       ];
+      this._ttsDiscovered = false;
 
       this.audioCache = new Map();
       this.unsupportedModels = new Set();
@@ -1210,6 +1207,38 @@
     }
 
     // 로컬 스토리지에 저장된 Google API 키 자동 감지
+    /**
+     * 이 키로 실제 쓸 수 있는 TTS 전용 모델을 구글에서 조회해 최신 버전부터 앞에 둔다 (무료 조회, 하루 1번 캐시).
+     * 조회에 실패하면 기본 목록을 그대로 쓰고, 없는 모델은 404 때 unsupportedModels로 건너뛴다.
+     */
+    async _discoverTtsModels(key = this.apiKey) {
+      if (this._ttsDiscovered || !key) return;
+      this._ttsDiscovered = true;
+      const ver = (n) => parseFloat((n.match(/gemini-(\d+(?:\.\d+)?)/) || [])[1] || '0');
+      let list = null;
+      try {
+        const c = JSON.parse(localStorage.getItem('nuri_tts_models') || 'null');
+        if (c && Date.now() - c.t < 864e5 && Array.isArray(c.list)) list = c.list;
+      } catch (e) {}
+      if (!list) {
+        try {
+          const controller = new AbortController();
+          const tid = setTimeout(() => controller.abort(), 5000);
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key=${encodeURIComponent(key)}`, { signal: controller.signal });
+          clearTimeout(tid);
+          if (!res.ok) return;
+          const data = await res.json();
+          list = (data.models || [])
+            .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+            .map(m => String(m.name || '').replace(/^models\//, ''))
+            .filter(n => /^gemini-/.test(n) && /tts/.test(n))
+            .sort((a, b) => (ver(b) - ver(a)) || (/pro/.test(a) - /pro/.test(b)));
+          try { localStorage.setItem('nuri_tts_models', JSON.stringify({ t: Date.now(), list })); } catch (e) {}
+        } catch (e) { return; }
+      }
+      if (list && list.length) this.candidateModels = [...new Set([...list, ...this.candidateModels])];
+    }
+
     detectStoredApiKey() {
       try {
         if (typeof localStorage !== 'undefined') {
@@ -1358,7 +1387,8 @@
       this.exhaustedModels.clear();
       this.lastError = null;
 
-      const testModel = 'gemini-3.8-flash';
+      await this._discoverTtsModels(key);
+      const testModel = this.candidateModels[0];
       const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/${testModel}:generateContent?key=${key}`;
       const testPayload = {
         contents: [{
@@ -1517,6 +1547,7 @@
         }
       };
 
+      await this._discoverTtsModels();
       for (const m of this.candidateModels) {
         if (generation !== undefined && generation !== this.playGeneration) return false;
         if (this.unsupportedModels.has(m)) continue;

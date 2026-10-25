@@ -1,0 +1,52 @@
+/* 한걸음 가독성·애니메이션 보강 */
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; line-height: 1.5; }
+#viewCanvas, #viewOnboarding { color: #0f172a; }
+#viewCanvas p, #viewOnboarding p, .modal-sheet p { line-height: 1.6; }
+button, select, input, textarea { font-size: max(1em, 14px); }
+button[onclick="goToInitialScreen()"], [id^="quickTier"] { white-space: nowrap; }
+
+/* 말하는 동안 파동 */
+#hgSpeakWave { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%) scale(.6); width: 150px; height: 150px;
+  pointer-events: none; z-index: 99990; opacity: 0; transition: opacity .25s, transform .25s; }
+#hgSpeakWave.on { opacity: 1; transform: translateX(-50%) scale(1); }
+#hgSpeakWave .hgw-ring { position: absolute; inset: 35px; border-radius: 50%; border: 3px solid #ef4444;
+  animation: hgwRipple 1.6s ease-out infinite; }
+#hgSpeakWave .hgw-ring.d2 { animation-delay: .53s; }
+#hgSpeakWave .hgw-ring.d3 { animation-delay: 1.06s; }
+#hgSpeakWave .hgw-core { position: absolute; inset: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 28px; background: linear-gradient(135deg, #ef4444, #f97316); box-shadow: 0 6px 20px rgba(239,68,68,.45);
+  animation: hgwPulse .8s ease-in-out infinite alternate; }
+#hgSpeakWave .hgw-bars { position: absolute; left: 50%; bottom: -26px; transform: translateX(-50%); display: flex; gap: 4px; align-items: center; height: 26px; }
+#hgSpeakWave .hgw-bars i { width: 5px; height: 8px; border-radius: 3px; background: #ef4444; animation: hgwBar .9s ease-in-out infinite; }
+#hgSpeakWave .hgw-bars i:nth-child(2n) { animation-delay: .15s; background: #f97316; }
+#hgSpeakWave .hgw-bars i:nth-child(3n) { animation-delay: .3s; }
+#hgSpeakWave .hgw-bars i:nth-child(4n) { animation-delay: .45s; background: #f59e0b; }
+#hgSpeakWave .hgw-label { position: absolute; left: 50%; bottom: -54px; transform: translateX(-50%); white-space: nowrap;
+  font-size: 15px; font-weight: 900; color: #fff; background: #ef4444; padding: 3px 12px; border-radius: 999px; }
+@keyframes hgwRipple { from { transform: scale(1); opacity: .9; } to { transform: scale(2.1); opacity: 0; } }
+@keyframes hgwPulse { from { transform: scale(.94); } to { transform: scale(1.06); } }
+@keyframes hgwBar { 0%, 100% { height: 6px; } 50% { height: 24px; } }
+
+/* 장면 일러스트 카드 */
+#hgArtCard { display: flex; align-items: center; gap: 12px; margin: 0 auto 10px; padding: 10px 14px; max-width: 420px;
+  background: linear-gradient(135deg, #eef2ff, #fdf2f8); border: 1.5px solid #c7d2fe; border-radius: 18px; box-sizing: border-box; }
+#hgArtCard .hga-main { font-size: 54px; line-height: 1; filter: drop-shadow(0 4px 6px rgba(79,70,229,.25)); animation: hgaFloat 3s ease-in-out infinite; }
+#hgArtCard .hga-side { flex: 1; min-width: 0; text-align: left; }
+#hgArtCard .hga-scene { font-size: 26px; letter-spacing: 4px; }
+#hgArtCard .hga-title { font-size: 15px; font-weight: 900; color: #3730a3; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#hgArtCard.pop { animation: hgcPop .5s cubic-bezier(.2,1.6,.4,1); }
+@keyframes hgaFloat { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-6px) rotate(3deg); } }
+
+/* 축하 카드 */
+#hgCelebrate { position: fixed; inset: 0; z-index: 99996; display: flex; align-items: center; justify-content: center;
+  background: rgba(15,23,42,.35); transition: opacity .5s; padding: 16px; box-sizing: border-box; }
+#hgCelebrate.out { opacity: 0; }
+#hgCelebrate .hgc-card { max-width: 360px; background: #fff; border-radius: 22px; padding: 22px 20px; text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,.3); animation: hgcPop .45s cubic-bezier(.2,1.6,.4,1); }
+#hgCelebrate .hgc-card.big { border: 3px solid #f59e0b; }
+#hgCelebrate .hgc-title { font-size: 24px; font-weight: 900; color: #4f46e5; margin-bottom: 8px; }
+#hgCelebrate .hgc-msg { font-size: 16px; font-weight: 700; color: #1e293b; line-height: 1.6; }
+#hgCelebrate .hgc-confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+#hgCelebrate .hgc-confetti i { position: absolute; top: -12px; width: 9px; height: 14px; border-radius: 2px; animation: hgcFall 2.4s linear forwards; }
+@keyframes hgcPop { from { transform: scale(.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes hgcFall { to { transform: translateY(105vh) rotate(540deg); } }

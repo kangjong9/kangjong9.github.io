@@ -3,10 +3,19 @@
 <html lang="ko">
 
 <head>
+  <base href="hangeoreum-app/">
   <!-- 누리 보이스(Nuri Voice) TTS 엔진: GitHub Pages(kangjong9.github.io/assets)의 최신본으로 구동 -->
   <!-- 원본은 02. Apps/14. Human Voice TTS Studio, 앱 탑재본은 오프라인·접속 실패 시에만 쓰는 동일 사본(deploy_engine_to_apps.py) -->
-  <script src="../assets/gemini_human_voice_engine.js"></script>
-  <script src="../assets/our_voice_master_engine.js"></script>
+  <script src="../../assets/gemini_human_voice_engine.js"></script>
+  <script src="../../assets/our_voice_master_engine.js"></script>
+  <link rel="stylesheet" href="hg_readable.css">
+  <script src="curriculum_v2_fr.js"></script>
+  <script src="curriculum_v2_ja.js"></script>
+  <script src="curriculum_v2_cn.js"></script>
+  <script src="curriculum_v2_en.js"></script>
+  <script src="curriculum_v2_es.js"></script>
+  <script src="hg_sfx.js"></script>
+  <script src="hg_v2.js"></script>
 
   <meta charset="UTF-8">
 
@@ -668,7 +677,7 @@
 
     <div style="display:flex; align-items:center; gap:6px;">
 
-      <button onclick="returnToOnboardingView()" title="초기화면 복귀 (단축키: Home / Ctrl+H)" style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:12px; padding:0 10px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; font-weight:800; color:#334155; gap:4px;">
+      <button onclick="goToInitialScreen()" title="초기화면 복귀 (단축키: Home / Ctrl+H)" style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:12px; padding:0 10px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; font-weight:800; color:#334155; gap:4px;">
 
         <span>🏠</span><span style="display:inline-block;">처음으로</span>
 
@@ -924,6 +933,22 @@
 
             </div>
 
+          </div>
+
+          <div class="choice-card" onclick="onSelectLang('en', this)">
+            <span style="font-size:32px;">🇺🇸</span>
+            <div>
+              <div style="font-size:18px; font-weight:900;">영어 (English)</div>
+              <div style="font-size:14px; color:#64748b;">뉴욕 생활 회화 · 연음·억양 실전 코스</div>
+            </div>
+          </div>
+
+          <div class="choice-card" onclick="onSelectLang('es', this)">
+            <span style="font-size:32px;">🇪🇸</span>
+            <div>
+              <div style="font-size:18px; font-weight:900;">스페인어 (Español)</div>
+              <div style="font-size:14px; color:#64748b;">마드리드 감성 회화 · 또박또박 모음 발음 코스</div>
+            </div>
           </div>
 
         </div>
@@ -1211,12 +1236,8 @@
     <!-- [상단 통합 헤더 바] 언어 탭 + 레벨 뱃지 + 일상 대화 테마 캡슐 -->
     <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-radius:16px; padding:8px 12px; margin-bottom:8px; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <!-- 언어 선택 탭 -->
-        <div style="display:flex; gap:4px; background:#f1f5f9; padding:2px; border-radius:10px;">
-          <button id="langFR" onclick="switchLang('fr')" style="padding:4px 10px; border:none; border-radius:8px; font-weight:900; font-size:12.5px; cursor:pointer; background:#fff; color:#0f172a; box-shadow:0 1px 2px rgba(0,0,0,0.08);">🇫🇷 불어</button>
-          <button id="langCN" onclick="switchLang('cn')" style="padding:4px 10px; border:none; border-radius:8px; font-weight:900; font-size:12.5px; cursor:pointer; background:transparent; color:#64748b;">🇨🇳 중어</button>
-          <button id="langJA" onclick="switchLang('ja')" style="padding:4px 10px; border:none; border-radius:8px; font-weight:900; font-size:12.5px; cursor:pointer; background:transparent; color:#64748b;">🇯🇵 일어</button>
-        </div>
+        <!-- 학습 언어 (처음 시작할 때 정한 언어, 수업 중 변경 불가) -->
+        <span id="lessonLangLabel" style="font-size:14px; font-weight:900; color:#0f172a; background:#f1f5f9; padding:4px 10px; border-radius:10px;">🇫🇷 프랑스어</span>
 
         <!-- 레벨 & 티어 명칭 -->
         <div style="display:flex; align-items:center; gap:6px;">
@@ -1252,7 +1273,7 @@
         <button id="quickTier2" onclick="jumpLevel(11)" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:#f1f5f9; color:#64748b;">T2:기본문</button>
         <button id="quickTier3" onclick="jumpLevel(21)" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:#f1f5f9; color:#64748b;">T3:복합문</button>
         <button id="quickTier4" onclick="jumpLevel(31)" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:#f1f5f9; color:#64748b;">T4:고급문</button>
-        <button id="quickTier5" onclick="jumpLevel(41)" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:rgba(244,63,94,0.1); color:#f43f5e;">T5:롤플레잉</button>
+        <button id="quickTier5" onclick="jumpLevel(41)" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:rgba(244,63,94,0.1); color:#f43f5e;">T5:고급</button>
       </div>
     </div>
 
@@ -1619,8 +1640,7 @@
 
                 <option value="pop">톡 (Pop)</option>
 
-                <option value="tap">클릭 (Tap)</option>
-
+                <option value="tap">클릭 (Tap)</option><optgroup label="✨ 톡톡 개성 효과음"><option value="sfx_bubble">물방울 톡</option><option value="sfx_popcorn">팝콘 톡톡</option><option value="sfx_boing">통통 스프링</option><option value="sfx_sparkle">반짝 별가루</option><option value="sfx_coin8">8비트 코인</option><option value="sfx_chirp">새 지저귐</option><option value="sfx_marimba">마림바 똑딱</option><option value="sfx_zap">우주 레이저</option><option value="sfx_whoosh">휙 바람</option><option value="sfx_fanfare">8비트 팡파르</option><option value="sfx_oops">앗! 하강음</option><option value="sfx_dingdong">딩동</option></optgroup>
               </select>
 
               <button type="button" onclick="previewSound('micStart')" style="background:#eef2ff; border:1px solid #c7d2fe; color:#4338ca; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
@@ -1651,8 +1671,7 @@
 
                 <option value="combo">차임 (Chime)</option>
 
-                <option value="pop">톡 (Pop)</option>
-
+                <option value="pop">톡 (Pop)</option><optgroup label="✨ 톡톡 개성 효과음"><option value="sfx_bubble">물방울 톡</option><option value="sfx_popcorn">팝콘 톡톡</option><option value="sfx_boing">통통 스프링</option><option value="sfx_sparkle">반짝 별가루</option><option value="sfx_coin8">8비트 코인</option><option value="sfx_chirp">새 지저귐</option><option value="sfx_marimba">마림바 똑딱</option><option value="sfx_zap">우주 레이저</option><option value="sfx_whoosh">휙 바람</option><option value="sfx_fanfare">8비트 팡파르</option><option value="sfx_oops">앗! 하강음</option><option value="sfx_dingdong">딩동</option></optgroup>
               </select>
 
               <button type="button" onclick="previewSound('micEnd')" style="background:#eef2ff; border:1px solid #c7d2fe; color:#4338ca; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
@@ -1683,8 +1702,7 @@
 
                 <option value="coin">은은한 코인음 (추천)</option><option value="streak">세련된 징글</option>
 
-                <option value="combo">콤보 벨</option>
-
+                <option value="combo">콤보 벨</option><optgroup label="✨ 톡톡 개성 효과음"><option value="sfx_bubble">물방울 톡</option><option value="sfx_popcorn">팝콘 톡톡</option><option value="sfx_boing">통통 스프링</option><option value="sfx_sparkle">반짝 별가루</option><option value="sfx_coin8">8비트 코인</option><option value="sfx_chirp">새 지저귐</option><option value="sfx_marimba">마림바 똑딱</option><option value="sfx_zap">우주 레이저</option><option value="sfx_whoosh">휙 바람</option><option value="sfx_fanfare">8비트 팡파르</option><option value="sfx_oops">앗! 하강음</option><option value="sfx_dingdong">딩동</option></optgroup>
               </select>
 
               <button type="button" onclick="previewSound('correct')" style="background:#dcfce7; border:1px solid #bbf7d0; color:#15803d; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
@@ -1713,8 +1731,7 @@
 
                 <option value="wrong">부저 (기본)</option>
 
-                <option value="pop">낮은 단음</option>
-
+                <option value="pop">낮은 단음</option><optgroup label="✨ 톡톡 개성 효과음"><option value="sfx_bubble">물방울 톡</option><option value="sfx_popcorn">팝콘 톡톡</option><option value="sfx_boing">통통 스프링</option><option value="sfx_sparkle">반짝 별가루</option><option value="sfx_coin8">8비트 코인</option><option value="sfx_chirp">새 지저귐</option><option value="sfx_marimba">마림바 똑딱</option><option value="sfx_zap">우주 레이저</option><option value="sfx_whoosh">휙 바람</option><option value="sfx_fanfare">8비트 팡파르</option><option value="sfx_oops">앗! 하강음</option><option value="sfx_dingdong">딩동</option></optgroup>
               </select>
 
               <button type="button" onclick="previewSound('wrong')" style="background:#fee2e2; border:1px solid #fecaca; color:#b91c1c; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
@@ -1743,8 +1760,7 @@
 
                 <option value="tap">가벼운 클릭 (기본)</option>
 
-                <option value="pop">톡 (Pop)</option>
-
+                <option value="pop">톡 (Pop)</option><optgroup label="✨ 톡톡 개성 효과음"><option value="sfx_bubble">물방울 톡</option><option value="sfx_popcorn">팝콘 톡톡</option><option value="sfx_boing">통통 스프링</option><option value="sfx_sparkle">반짝 별가루</option><option value="sfx_coin8">8비트 코인</option><option value="sfx_chirp">새 지저귐</option><option value="sfx_marimba">마림바 똑딱</option><option value="sfx_zap">우주 레이저</option><option value="sfx_whoosh">휙 바람</option><option value="sfx_fanfare">8비트 팡파르</option><option value="sfx_oops">앗! 하강음</option><option value="sfx_dingdong">딩동</option></optgroup>
               </select>
 
               <button type="button" onclick="previewSound('tap')" style="background:#eef2ff; border:1px solid #c7d2fe; color:#4338ca; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">▶ 미리듣기</button>
@@ -2141,7 +2157,24 @@
 
     tap: './sounds/tap.mp3',
 
-    pop: './sounds/pop.mp3'
+    pop: './sounds/pop.mp3',
+
+    coin: './sounds/coin.mp3',
+
+    streak: './sounds/streak.mp3',
+
+    sfx_bubble: './sounds/sfx_bubble.wav',
+    sfx_popcorn: './sounds/sfx_popcorn.wav',
+    sfx_boing: './sounds/sfx_boing.wav',
+    sfx_sparkle: './sounds/sfx_sparkle.wav',
+    sfx_coin8: './sounds/sfx_coin8.wav',
+    sfx_chirp: './sounds/sfx_chirp.wav',
+    sfx_marimba: './sounds/sfx_marimba.wav',
+    sfx_zap: './sounds/sfx_zap.wav',
+    sfx_whoosh: './sounds/sfx_whoosh.wav',
+    sfx_fanfare: './sounds/sfx_fanfare.wav',
+    sfx_oops: './sounds/sfx_oops.wav',
+    sfx_dingdong: './sounds/sfx_dingdong.wav'
 
   };
 
@@ -4902,7 +4935,8 @@ const EXILE_VOICES = [
     fr: { female: 'fr-FR-DeniseNeural', male: 'fr-FR-HenriNeural' },
     ja: { female: 'ja-JP-NanamiNeural', male: 'ja-JP-KeitaNeural' },
     'zh-CN': { female: 'zh-CN-XiaoxiaoNeural', male: 'zh-CN-YunxiNeural' },
-    en: { female: 'en-US-JennyNeural', male: 'en-US-GuyNeural' }
+    en: { female: 'en-US-JennyNeural', male: 'en-US-GuyNeural' },
+    es: { female: 'es-ES-ElviraNeural', male: 'es-ES-AlvaroNeural' }
   };
 
   /** 강사 성별 (설정 화면에서 선택, 기본 여성) — 수업 원어민 목소리의 성별 */
@@ -4972,7 +5006,8 @@ const EXILE_VOICES = [
       if (lang === 'fr' || lang.startsWith('fr')) gLang = 'fr';
       else if (lang === 'zh' || lang === 'cn' || lang.startsWith('zh')) gLang = 'zh-CN';
       else if (lang === 'ja' || lang.startsWith('ja')) gLang = 'ja';
-      else if (lang === 'en') gLang = 'en';
+      else if (lang === 'en' || lang.startsWith('en')) gLang = 'en';
+      else if (lang === 'es' || lang.startsWith('es')) gLang = 'es';
 
       // 누리 보이스(OurVoiceMasterEngine) 단일 경로: 사용자가 선택한 엔진·목소리만 사용
       const masterEngine = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
@@ -18716,6 +18751,7 @@ const EXILE_VOICES = [
   }
 
   function initOrGetSessionCase(theme, lang, level, forceNew = false) {
+    if (window.HGV2) { const v2 = HGV2.applyCurrent(); if (v2) return v2; }
     if (!forceNew && activeSessionCase && activeSessionCase.theme === theme && activeSessionCase.lang === lang && activeSessionCase.level === level) {
       applySessionCaseToUI(activeSessionCase);
       return activeSessionCase;
@@ -18758,6 +18794,10 @@ const EXILE_VOICES = [
 
   async function requestNewContextualCase(forceAi = false) {
     soundTap();
+    if (window.HGV2) {
+      if (!(forceAi && await HGV2.regenerateCurrent())) { HGV2.applyCurrent(); updateLevelUI(); }
+      return;
+    }
     const titleEl = document.getElementById('sessionCaseTitle');
     const sitEl = document.getElementById('sessionCaseSituation');
 
@@ -18876,8 +18916,9 @@ const EXILE_VOICES = [
 
 function getCurrentRoundData() {
     // 1. 단일 맥락 몰입 엔진: 활성화된 activeSessionCase가 있으면 라운드 데이터 우선 반환
+    if (window.HGV2 && !HGV2.isSessionCurrent()) HGV2.applyCurrent();
     if (activeSessionCase && activeSessionCase.rounds && activeSessionCase.rounds[currentRound - 1]) {
-      if (activeSessionCase.theme === currentTheme && activeSessionCase.lang === selectedLang) {
+      if ((activeSessionCase.set || activeSessionCase.theme === currentTheme) && activeSessionCase.lang === selectedLang) {
         return activeSessionCase.rounds[currentRound - 1];
       }
     }
@@ -18929,6 +18970,7 @@ function getCurrentRoundData() {
     document.getElementById('targetDisplay').textContent = data.target;
     document.getElementById('targetPhonetic').textContent = data.phonetic;
     document.getElementById('buildUpNote').textContent = data.note;
+    if (window.HGV2) HGV2.renderArt();
 
     document.getElementById('feedbackSheet').classList.add('hidden');
     document.getElementById('userSpokenFeedback').textContent = '';
@@ -18989,6 +19031,8 @@ function getCurrentRoundData() {
       if (selectedLang === 'fr') speechRecognizer.lang = 'fr-FR';
       else if (selectedLang === 'cn') speechRecognizer.lang = 'zh-CN';
       else if (selectedLang === 'ja') speechRecognizer.lang = 'ja-JP';
+      else if (selectedLang === 'en') speechRecognizer.lang = 'en-US';
+      else if (selectedLang === 'es') speechRecognizer.lang = 'es-ES';
       else speechRecognizer.lang = 'ko-KR';
 
       speechRecognizer.onstart = () => {
@@ -19271,6 +19315,8 @@ function getCurrentRoundData() {
     if (currentRound < 4) {
       currentRound++;
       renderCurrentRoundUI();
+    } else if (window.HGV2) {
+      HGV2.advanceAfterSet();
     } else {
       soundLevelUp();
       alert(`🎉 축하합니다! ${userName}님이 Lv.${currentLevel}의 4단계 변형 문장을 모두 마스터하셨습니다!`);
@@ -19287,6 +19333,7 @@ function getCurrentRoundData() {
 
   function goToPrevRoundOrLevel() {
     soundTap();
+    if (window.HGV2 && HGV2.goBack()) { renderCurrentRoundUI(); return; }
     if (currentRound > 1) {
       currentRound--;
       renderCurrentRoundUI();
@@ -19589,6 +19636,8 @@ function getCurrentRoundData() {
 
     selectedLang = lang;
 
+    const langLabel = document.getElementById('lessonLangLabel');
+    if (langLabel) langLabel.textContent = ({ fr: '🇫🇷 프랑스어', cn: '🇨🇳 중국어', ja: '🇯🇵 일본어', en: '🇺🇸 영어', es: '🇪🇸 스페인어' })[lang] || lang;
     ['fr', 'cn', 'ja'].forEach(l => {
 
       const btn = document.getElementById(`lang${l.toUpperCase()}`);
@@ -19639,7 +19688,7 @@ function getCurrentRoundData() {
 
     if (lv <= 40) return { tier: 4, name: "31~40구간: 고급원어민", label: "Tier 4: 고급 원어민 실전" };
 
-    return { tier: 5, name: "41~50구간: 페르소나 롤플레잉", label: "Tier 5: 마스터 페르소나 롤플레잉" };
+    return { tier: 5, name: "41~50구간: 고급 뉘앙스", label: "Tier 5: 고급 뉘앙스 · 50레벨 후 실전 롤플레잉" };
 
   }
 
@@ -19677,7 +19726,8 @@ function getCurrentRoundData() {
 
     const info = getTierInfo(currentLevel);
 
-    document.getElementById('tierNameText').textContent = info.name;
+    document.getElementById('tierNameText').textContent = window.HGV2
+      ? `${HGV2.bandOf(currentLevel).name} · 세트 ${HGV2.getSetIdx()}/${HGV2.SETS_PER_LEVEL}` : info.name;
 
 
 
@@ -19703,7 +19753,7 @@ function getCurrentRoundData() {
 
 
 
-    if (currentLevel >= 41) {
+    if (window.HGV2 ? HGV2.isFreeTalk() : currentLevel >= 41) {
 
       document.getElementById('viewDrill').classList.add('hidden');
 
@@ -19737,6 +19787,7 @@ function getCurrentRoundData() {
   }
 
   function setupRoleplayView() {
+    if (window.HGV2 && HGV2.isFreeTalk()) { HGV2.setupFreeTalkView(); return; }
     const curLang = (typeof selectedLang !== 'undefined' && selectedLang) ? selectedLang : 'fr';
 
     // 단일 맥락 몰입 엔진: activeSessionCase 롤플레잉 정보 우선 적용
@@ -19841,6 +19892,8 @@ function getCurrentRoundData() {
       if (curLang === 'fr') roleplayRecognizer.lang = 'fr-FR';
       else if (curLang === 'cn') roleplayRecognizer.lang = 'zh-CN';
       else if (curLang === 'ja') roleplayRecognizer.lang = 'ja-JP';
+      else if (curLang === 'en') roleplayRecognizer.lang = 'en-US';
+      else if (curLang === 'es') roleplayRecognizer.lang = 'es-ES';
       else roleplayRecognizer.lang = 'ko-KR';
 
       roleplayRecognizer.onstart = () => {
@@ -19945,7 +19998,10 @@ function getCurrentRoundData() {
     let replyKo = "";
 
     const apiKey = getActiveApiKey();
-    if (apiKey && typeof requestGeminiDynamicCaseGeneration === 'function') {
+    if (window.HGV2 && HGV2.isFreeTalk()) {
+      try { const r = await HGV2.partnerReply(userSpokenText); if (r) { replyText = r.text; replyKo = r.ko || ''; } } catch (e) {}
+    }
+    if (!replyText && apiKey && typeof callGeminiFlashRaw === 'function') {
       try {
         const personaName = document.getElementById('personaName')?.textContent || '동료';
         const scenarioTitle = document.getElementById('rpSessionCaseTitle')?.textContent || '일상 대화';
@@ -19989,6 +20045,19 @@ function getCurrentRoundData() {
         const r = replies[Math.floor(Math.random() * replies.length)];
         replyText = r.cn;
         replyKo = r.ko;
+      } else if (curLang === 'en' || curLang === 'es') {
+        const replies = curLang === 'en' ? [
+          { t: "That sounds great! Tell me more.", ko: "좋네요! 더 얘기해 줘요." },
+          { t: "Oh, really? I didn't know that.", ko: "아, 정말요? 몰랐어요." },
+          { t: "Totally agree. Your pronunciation is getting better!", ko: "완전 동의해요. 발음이 점점 좋아지네요!" }
+        ] : [
+          { t: "¡Qué bien! Cuéntame más.", ko: "좋네요! 더 얘기해 줘요." },
+          { t: "¿De verdad? No lo sabía.", ko: "정말요? 몰랐어요." },
+          { t: "Estoy de acuerdo. ¡Tu pronunciación mejora mucho!", ko: "동의해요. 발음이 많이 좋아지네요!" }
+        ];
+        const r = replies[Math.floor(Math.random() * replies.length)];
+        replyText = r.t;
+        replyKo = r.ko;
       } else {
         const replies = [
           { ja: "素晴らしいです！ありがとうございます。", ko: "훌륭합니다! 감사합니다." },
@@ -20023,8 +20092,10 @@ function getCurrentRoundData() {
     chatLog.scrollTop = chatLog.scrollHeight;
     soundCorrect();
 
-    // 페르소나 음성 출력
-    speakTextWithFallback(replyText, curLang);
+    // 페르소나 음성 출력 (자유 대화는 고른 상대의 성별 원어민 목소리)
+    if (window.HGUX) HGUX.sfx('bubble', 0.7);
+    if (window.HGV2 && HGV2.isFreeTalk()) HGV2.speakPartner(replyText);
+    else speakTextWithFallback(replyText, curLang);
   }
 
   function advanceRoleplayLevel() {
@@ -20122,6 +20193,8 @@ function getCurrentRoundData() {
 
 
   
+  function getGeneralApiKey() { return getActiveApiKey(); }
+
   function getActiveApiKey() {
     try {
       return localStorage.getItem('hangeoreum_gemini_key') ||
@@ -20482,7 +20555,7 @@ function getCurrentRoundData() {
 
     if (!generalApiKey) return { ok: false, error: "일반 API 키 미설정 (내장 오프라인 분석 모드로 자동 동작)" };
 
-    const config = { apiKey: generalApiKey, defaultModel: 'gemini-3.8-flash' };
+    const config = { apiKey: generalApiKey, defaultModel: 'gemini-3.8-flash' }; // 글 생성 전용 (음성은 TTS 엔진이 TTS 모델만 사용)
 
 
 
@@ -20501,6 +20574,8 @@ function getCurrentRoundData() {
         const rawRes = window.Native.call("geminiGenerateContent", JSON.stringify({
 
           prompt: promptText,
+
+          models: (window.HGV2 && HGV2.cachedModels) ? HGV2.cachedModels() : [],
 
           apiKey: config.apiKey
 
@@ -20542,21 +20617,10 @@ function getCurrentRoundData() {
 
     // 2단계: Flash 계열 소진 시 -> Flash-Lite 계열 (3.8 Flash-Lite부터 하위 Lite 순차 폴백)
 
-    const baseCandidateModels = [
-      // 1. 구글 AI Studio 실제 실존 지원 모델 최우선 직결
-      'gemini-2.0-flash',
-      'gemini-1.5-flash',
-      'gemini-2.5-flash',
-      'gemini-2.0-flash-lite',
-      'gemini-1.5-flash-8b',
-      // 2. 차세대/상위 모델 (지원 시 자동 폴백)
-      'gemini-4-argon',
-      'gemini-argon',
-      'gemini-3.8-flash',
-      'gemini-3.7-flash',
-      'gemini-3.6-flash',
-      'gemini-3.5-flash'
-    ];
+    // 글 생성 폴백: 3.8 Flash부터 하위 Flash → Lite (TTS 모델 제외). 키로 조회해 확인된 모델이 있으면 그 순서를 우선
+    const textCascade = (window.HGV2 && HGV2.GEMINI_MODELS) || ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite'];
+    const discovered = (window.HGV2 && HGV2.cachedModels) ? HGV2.cachedModels() : [];
+    const baseCandidateModels = [...new Set([...discovered, ...textCascade])];
 
     // [초고속 직행 가속기]: 직전 성공 모델이 있으면 0순위로 즉시 호출하여 지연을 0.3초대로 단축!
     const fastLlmModel = window._fastActiveLlmModel || localStorage.getItem('hangeoreum_fast_llm_model');
@@ -20587,14 +20651,16 @@ function getCurrentRoundData() {
 
       const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${config.apiKey}`;
       const controller = new AbortController();
-      const tid = setTimeout(() => controller.abort(), 2000); // 2.0초 제한 (함흥차사 방지 초고속 전환)
+      const tid = setTimeout(() => controller.abort(), 12000); // 정상 응답이 잘리지 않게 12초
 
       // A. 직접 fetch 시도
       try {
         const res = await fetch(directUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(/2\.5/.test(currentModel)
+            ? { ...payload, generationConfig: { ...(payload.generationConfig || {}), thinkingConfig: { thinkingBudget: 0 } } }
+            : payload),
           signal: controller.signal
         });
         clearTimeout(tid);
@@ -20882,6 +20948,19 @@ function getCurrentRoundData() {
     soundTap();
 
     returnToOnboardingView();
+
+    // 오픈화면(스플래시)부터 다시 보여 준다
+    try { stopAllTTSAudio(); globalTtsSeq++; } catch (e) {}
+    if (window.HGUX) HGUX.sfx('whoosh');
+    const splash = document.getElementById('openingSplashView');
+    if (splash) {
+      splash.style.display = 'flex';
+      void splash.offsetWidth;
+      splash.style.visibility = 'visible';
+      splash.style.opacity = '1';
+      openingBriefingPlayed = false;
+      setTimeout(() => speakOpeningBriefingVoiceOnly(), 450);
+    }
 
   }
 
@@ -21281,7 +21360,7 @@ function getCurrentRoundData() {
     if (hasPreviousStudy && localStorage.getItem('hangeoreum_onboarding_done') === '1' && resumeBanner && resumeInfo) {
       resumeBanner.classList.remove('hidden');
       resumeBanner.style.display = 'flex';
-      const langName = selectedLang === 'fr' ? '프랑스어' : (selectedLang === 'cn' ? '중국어' : '일본어');
+      const langName = ({ fr: '프랑스어', cn: '중국어', ja: '일본어', en: '영어', es: '스페인어' })[selectedLang] || '프랑스어';
       resumeInfo.textContent = `Lv. ${currentLevel} ${langName} · 따라하기 진행 중`;
     } else if (resumeBanner) {
       resumeBanner.classList.add('hidden');
@@ -21902,6 +21981,7 @@ function getCurrentRoundData() {
 
   // 1레벨 상승 시 레벨 맞춤 맥락 AI 자동 생성
   async function autoGenerateLevelContext(level, lang) {
+    if (window.HGV2) { HGV2.applyCurrent(); return; }
     const noticeEl = document.getElementById('gatekeeperNotice');
     if (noticeEl) {
       noticeEl.innerHTML = `<span style="color:#6366f1; font-weight:800;">🌌 AI 엑자일이 Lv.${level} 맞춤 실전 맥락을 자동 생성 중입니다...</span>`;
@@ -21947,6 +22027,8 @@ function getCurrentRoundData() {
     if (currentRound < 4) {
       currentRound++;
       renderCurrentRoundUI();
+    } else if (window.HGV2) {
+      HGV2.advanceAfterSet();
     } else {
       // 4개 관문 올클리어! 다음 레벨 자동 승급!
       soundLevelUp();

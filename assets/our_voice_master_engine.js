@@ -1008,7 +1008,7 @@
               this.characterCanvas.setLipLevel(0);
             }
             if (ok) {
-              resolve({ voice: voiceId, spokenText: rawText, mode: 'gemini-3.8-flash' });
+              resolve({ voice: voiceId, spokenText: rawText, mode: 'gemini-tts' });
             } else {
               reject(new Error(this.geminiEngine.lastError?.message || 'Gemini speech failed.'));
             }
