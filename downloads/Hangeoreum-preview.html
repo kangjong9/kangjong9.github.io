@@ -676,7 +676,7 @@
 
       </button>
 
-      <button onclick="openSettingsModal()" title="Gemini AI 설정" style="background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#4f46e5;">
+      <button id="headerSettingsBtn" onclick="handleSettingsGearClick(event)" title="설정 (5번 연속 터치 시 관리자 모드)" style="background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#4f46e5;">
 
         ⚙️
 
@@ -862,7 +862,7 @@
 
         <div class="speech-bubble">
 
-          <div id="obTutorSpeech" onclick="handleSecretTap()" style="cursor:pointer;" title="화면을 5번 연속 터치하면 비밀번호를 입력하여 4대 히든 음성을 해금할 수 있습니다!">
+          <div id="obTutorSpeech" id="obTutorSpeech">
 
             난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>
 
@@ -963,7 +963,7 @@
           <!-- 히든 상태 및 재생 속도 조절 바 -->
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px; background:#fff; padding:8px 12px; border-radius:14px; border:1px solid #e2e8f0;">
             <div id="hiddenUnlockStatusBadge" style="font-size:12px; font-weight:800; color:#475569; display:flex; align-items:center; gap:4px;">
-              🔒 <span>4대 히든 음성 잠김 (화면 5번 터치로 해금)</span>
+              🔒 <span>4대 히든 음성 잠김 </span>
             </div>
             <div style="display:flex; align-items:center; gap:4px;">
               <span style="font-size:12px; font-weight:800; color:#64748b;">재생 속도:</span>
@@ -5128,37 +5128,85 @@ const EXILE_VOICES = [
       }
       return true;
     });
-// Obsolete filters removed for 4-way tabs
+
+    if (!voices.length) return;
+
+    // 현재 탭에 선택된 보이스가 없으면 첫 번째 보이스 자동 지정
+    let selectedVoice = voices.find(v => (v.voiceId === currentSelectedVoiceId || v.id === currentSelectedVoiceId));
+    if (!selectedVoice) {
+      selectedVoice = voices[0];
+      VoiceEngine20.selectVoice(selectedVoice.voiceId || selectedVoice.id);
+    }
+
+    // 드롭다운 컨테이너 생성
+    const selectWrapper = document.createElement('div');
+    selectWrapper.style.cssText = 'background:#ffffff; border:2px solid #6366f1; border-radius:18px; padding:14px; margin-bottom:10px; box-shadow:0 4px 14px rgba(99,102,241,0.08);';
+
+    // 헤더 라벨
+    const labelRow = document.createElement('div');
+    labelRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;';
+    labelRow.innerHTML = `
+      <div style="font-size:13.5px; font-weight:800; color:#4338ca; display:flex; align-items:center; gap:6px;">
+        <span>🎙️ 음성 선택 (드롭다운):</span>
+      </div>
+      <span style="font-size:12px; font-weight:800; color:#6366f1; background:#e0e7ff; padding:3px 9px; border-radius:8px;">${voices.length}개 선택 가능</span>
+    `;
+    selectWrapper.appendChild(labelRow);
+
+    // 드롭다운 Select 박스
+    const selectEl = document.createElement('select');
+    selectEl.id = 'voicePresetSelect';
+    selectEl.style.cssText = 'width:100%; padding:12px 14px; font-size:15px; font-weight:800; color:#1e293b; background:#f8fafc; border:2px solid #cbd5e1; border-radius:12px; outline:none; cursor:pointer; box-sizing:border-box; appearance:auto; -webkit-appearance:auto;';
 
     voices.forEach(v => {
-      const isSelected = (v.voiceId === currentSelectedVoiceId || v.id === currentSelectedVoiceId);
-      const card = document.createElement('div');
-      card.className = `choice-card ${isSelected ? 'selected' : ''}`;
-      card.style.cssText = `padding:10px 14px; border:2px solid ${isSelected ? (v.category === 'anime' ? '#f43f5e' : '#4f46e5') : '#e2e8f0'}; border-radius:14px; margin-bottom:8px; cursor:pointer; display:flex; align-items:center; gap:10px; background:${isSelected ? '#f8faff' : '#ffffff'};`;
-
-      card.innerHTML = `
-        <span style="font-size:26px;">${v.icon || '🎙️'}</span>
-        <div style="flex:1;">
-          <div style="font-size:15px; font-weight:900; color:#0f172a;">${v.name || v.displayName}</div>
-          <div style="font-size:12px; color:#64748b;">${v.style || v.desc} · ${v.genderPresentation === 'female' ? '여성 음성' : '남성 음성'}</div>
-        </div>
-        <button type="button" class="btn-3d btn-secondary" style="padding:6px 10px; min-height:34px; font-size:12px;" onclick="event.stopPropagation(); speakSampleVoice('${v.voiceId || v.id}')">
-          🔊 미리듣기
-        </button>
-      `;
-
-      card.onclick = () => {
-        soundTap();
-        VoiceEngine20.selectVoice(v.voiceId || v.id);
-        renderVoicePresets();
-        speakSampleVoice(v.voiceId || v.id);
-      };
-
-      container.appendChild(card);
+      const opt = document.createElement('option');
+      opt.value = v.voiceId || v.id;
+      const isCur = (opt.value === selectedVoice.voiceId || opt.value === selectedVoice.id);
+      opt.selected = isCur;
+      const hiddenPrefix = (v.sub === 5) ? '🔒 [히든] ' : '';
+      opt.textContent = `${v.icon || '🎙️'} ${hiddenPrefix}${v.name || v.displayName} - ${v.style || v.desc}`;
+      selectEl.appendChild(opt);
     });
+
+    selectEl.onchange = (e) => {
+      soundTap();
+      const chosenId = e.target.value;
+      VoiceEngine20.selectVoice(chosenId);
+      renderVoicePresets();
+      speakSampleVoice(chosenId);
+    };
+    selectWrapper.appendChild(selectEl);
+
+    // 선택된 음성 상세 및 미리듣기 프리뷰 카드
+    const previewCard = document.createElement('div');
+    previewCard.id = 'selectedVoicePreviewCard';
+    const isAnime = (selectedVoice.category === 'anime');
+    const isHidden = (selectedVoice.sub === 5);
+    previewCard.style.cssText = `margin-top:12px; background:${isHidden ? 'linear-gradient(135deg, #fdf2f8, #f5f3ff)' : '#f8faff'}; border:2px solid ${isHidden ? '#ec4899' : (isAnime ? '#f43f5e' : '#6366f1')}; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;`;
+
+    previewCard.innerHTML = `
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="font-size:38px; line-height:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1));">${selectedVoice.icon || '🎙️'}</div>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <div style="font-size:16px; font-weight:900; color:#0f172a;">${selectedVoice.name || selectedVoice.displayName}</div>
+            ${isHidden ? '<span style="font-size:11px; font-weight:900; background:#fdf2f8; color:#db2777; border:1px solid #f472b6; padding:2px 6px; border-radius:6px;">✨ 특수 히든</span>' : ''}
+            <span style="font-size:11px; font-weight:800; background:#e0e7ff; color:#4338ca; padding:2px 6px; border-radius:6px;">선택됨 ✓</span>
+          </div>
+          <div style="font-size:12.5px; color:#64748b; margin-top:3px; line-height:1.4;">${selectedVoice.style || selectedVoice.desc}</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn-3d btn-primary" style="flex:1; padding:11px 14px; font-size:13.5px; font-weight:900; background:${isAnime ? '#f43f5e' : '#4f46e5'}; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="speakSampleVoice('${selectedVoice.voiceId || selectedVoice.id}')">
+          <span>🔊 Gemini 3.8 Flash 샘플 미리듣기</span>
+        </button>
+      </div>
+    `;
+    selectWrapper.appendChild(previewCard);
+
+    container.appendChild(selectWrapper);
   }
 
-  // 글로벌 3.8 Flash 실제 사람 음성 엔진 싱글톤 관리
   let appHumanVoiceEngine = null;
   function getAppHumanVoiceEngine() {
     if (!appHumanVoiceEngine && typeof GeminiHumanVoiceEngine !== 'undefined') {
@@ -19092,7 +19140,7 @@ function getCurrentRoundData() {
 
   function getObDialogues() {
     return {
-      1: `난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>우리가 준비한 목소리는 사실 <strong>총 44가지</strong>야! 이 중 4가지는 비밀의 히든 음성이니, 먼저 <strong>40가지(사람 20종 + 애니 성우 20종) 목소리</strong> 중 마음에 드는 AI 튜터를 골라줘!<br><span style=\"font-size:12px; color:#4f46e5; font-weight:800; display:inline-block; margin-top:4px;\">✨ (비밀 팁: 상단 헤더나 말풍선을 5번 연속 터치하면 관리자 암호로 4대 히든 음성이 해금돼!)</span>`,
+      1: `난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br>우리가 준비한 목소리는 사실 <strong>총 44가지</strong>야! 이 중 4가지는 비밀의 히든 음성이니, 먼저 <strong>40가지(사람 20종 + 애니 성우 20종) 목소리</strong> 중 마음에 드는 AI 튜터를 골라줘!`,
       2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
       3: `좋아 <strong>${userName}</strong>! 안드로메다 귀환 판정 제1문!<br>외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
       4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
@@ -19690,6 +19738,18 @@ function getCurrentRoundData() {
   };
 
 
+
+  
+  function getActiveApiKey() {
+    try {
+      return localStorage.getItem('hangeoreum_gemini_key') ||
+             localStorage.getItem('hangeoreum_general_api_key') ||
+             localStorage.getItem('google_ai_studio_api_key') ||
+             localStorage.getItem('hangeoreum_tts_api_key') || '';
+    } catch(e) {
+      return '';
+    }
+  }
 
   function getGeminiConfig() {
 
@@ -20882,6 +20942,30 @@ function getCurrentRoundData() {
   let secretTapCount = 0;
   let secretTapTimer = null;
 
+  
+  // 설정 톱니바퀴 클릭 및 연속 5회 터치 시 관리자 해금 트리거
+  let gearTapCount = 0;
+  let gearTapTimer = null;
+
+  function handleSettingsGearClick(e) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    gearTapCount++;
+    if (gearTapTimer) clearTimeout(gearTapTimer);
+    gearTapTimer = setTimeout(() => {
+      gearTapCount = 0;
+    }, 1800); // 1.8초 동안 5번 터치 감지
+
+    if (gearTapCount >= 5) {
+      gearTapCount = 0;
+      closeSettingsModal();
+      openAdminUnlockModal();
+      return;
+    }
+
+    // 일반 1회 클릭 시 설정 모달 열기
+    openSettingsModal();
+  }
+
   function handleSecretTap() {
     secretTapCount++;
     if (secretTapTimer) clearTimeout(secretTapTimer);
@@ -20924,6 +21008,7 @@ function getCurrentRoundData() {
   }
 
   // 관리자 비밀번호 검증 (홈페이지 관리자 금고 복호화로 증명)
+    // 관리자 비밀번호 검증 (홈페이지 관리자 금고와 100% 동일한 암호학적 검증)
   async function verifyAdminSecretUnlock() {
     const input = document.getElementById('adminSecretPwdInput');
     const err = document.getElementById('adminUnlockErrorMsg');
@@ -20943,7 +21028,7 @@ function getCurrentRoundData() {
         return;
       }
 
-      // 2. PBKDF2 + AES-GCM 관리자 금고 복호화 시도
+      // 2. PBKDF2 암호화 금고 대사 (홈페이지 layouts.js와 100% 동일)
       const saltBytes = base64ToUint8(HOMEPAGE_ADMIN_VAULT.salt);
       const cipherBytes = base64ToUint8(HOMEPAGE_ADMIN_VAULT.cipher);
       const tagBytes = base64ToUint8(HOMEPAGE_ADMIN_VAULT.tag);
@@ -20963,33 +21048,28 @@ function getCurrentRoundData() {
       );
 
       const dk = new Uint8Array(bits);
-      const encKey = await crypto.subtle.importKey(
-        'raw',
-        dk.slice(0, 32),
-        { name: 'AES-GCM' },
-        false,
-        ['decrypt']
-      );
+      let diff = 0;
+      for (let i = 0; i < tagBytes.length; i++) {
+        diff |= (dk[40 + i] ^ tagBytes[i]);
+      }
 
-      const iv = dk.slice(32, 44);
-      const combined = new Uint8Array(cipherBytes.length + tagBytes.length);
-      combined.set(cipherBytes, 0);
-      combined.set(tagBytes, cipherBytes.length);
+      if (diff !== 0) {
+        throw new Error('비밀번호 불일치');
+      }
 
-      const decrypted = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv },
-        encKey,
-        combined
-      );
+      const plainBytes = new Uint8Array(cipherBytes.length);
+      for (let i = 0; i < cipherBytes.length; i++) {
+        plainBytes[i] = cipherBytes[i] ^ dk[i];
+      }
 
-      const tokenText = new TextDecoder().decode(decrypted);
+      const tokenText = new TextDecoder().decode(plainBytes);
       if (tokenText && (tokenText.startsWith('ghp_') || tokenText.startsWith('github_pat_'))) {
         onAdminUnlockSuccess();
         return;
       }
       throw new Error('인증 실패');
     } catch (e) {
-      if (err) err.textContent = '❌ 비밀번호가 올바르지 않습니다. 홈페이지 관리자 암호를 입력하세요.';
+      if (err) err.textContent = '❌ 비밀번호가 올바르지 않습니다. 홈페이지 관리자 암호를 다시 확인해 주세요.';
     }
   }
 
@@ -21017,7 +21097,7 @@ function getCurrentRoundData() {
     if (isAdminVoiceUnlocked()) {
       badge.innerHTML = '🔓 <span style="color:#16a34a; font-weight:900;">4대 히든 음성 해금됨 (44종 전체 활성화)</span>';
     } else {
-      badge.innerHTML = '🔒 <span style="color:#64748b;">4대 히든 음성 잠김 (화면 5번 터치로 해금)</span>';
+      badge.innerHTML = '🔒 <span style="color:#64748b;">4대 히든 음성 잠김 </span>';
     }
   }
 
