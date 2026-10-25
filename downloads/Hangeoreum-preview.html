@@ -1479,43 +1479,95 @@
 
 
 
-      <!-- [Google Gemini 단일 통합 API 키 & 용도별 스마트 자동 분기] -->
-
-      <div style="margin-bottom:18px; background:#f0fdf4; border:2px solid #bbf7d0; border-radius:16px; padding:16px;">
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-
+            <!-- [🎙️ 4대 신경망 음성(TTS) 엔진 모델 & 개인 API 키 분기 시스템] -->
+      <div style="margin-bottom:18px; background:linear-gradient(135deg, #f8faff, #f1f5f9); border:2px solid #6366f1; border-radius:18px; padding:16px; box-shadow:0 4px 12px rgba(99,102,241,0.08);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <div style="display:flex; align-items:center; gap:8px;">
-
-            <span style="font-size:20px;">🔑</span>
-
-            <label style="font-size:15px; font-weight:900; color:#166534;">Google AI Studio 통합 API 키</label>
-
+            <span style="font-size:22px;">🎙️</span>
+            <div style="font-size:16px; font-weight:900; color:#1e1b4b;">4대 신경망 음성 모델 & 보이스 설정</div>
           </div>
+          <span id="activeEngineBadge" style="font-size:11.5px; font-weight:900; background:#4f46e5; color:#fff; padding:3px 9px; border-radius:10px;">Edge 23종</span>
+        </div>
 
-          <button type="button" onclick="toggleApiKeyVisibility()" style="background:none; border:none; color:#16a34a; font-size:13px; font-weight:800; cursor:pointer;">
+        <p style="font-size:12.5px; color:#475569; margin-bottom:12px; line-height:1.45;">
+          원하는 음성 엔진 모델을 선택하면, 해당 모델의 모든 보이스가 앱 전체에 실시간 동기화됩니다.
+        </p>
 
-            <span id="apiKeyToggleLabel">비밀번호 표시</span>
-
+        <!-- 1단계: 4대 모델 선택 버튼 그리드 -->
+        <label style="font-size:13px; font-weight:900; color:#334155; margin-bottom:6px; display:block;">1단계: 음성 엔진 모델 선택 (1~4번)</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px;">
+          <button type="button" id="btnModelEdge" onclick="switchTTSEngineModel('edge')" style="padding:10px 8px; border-radius:12px; border:2px solid #4f46e5; background:#eef2ff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
+            <span style="display:flex; align-items:center; gap:5px;"><span style="font-size:16px;">🌊</span> 1. Edge Neural</span>
+            <span style="font-size:11px; color:#16a34a; font-weight:800;">100% 무료 · 23종</span>
+          </button>
+          
+          <button type="button" id="btnModelGemini" onclick="switchTTSEngineModel('gemini')" style="padding:10px 8px; border-radius:12px; border:1.5px solid #cbd5e1; background:#ffffff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
+            <span style="display:flex; align-items:center; gap:5px;"><span style="font-size:16px;">✨</span> 2. Gemini 3.8</span>
+            <span style="font-size:11px; color:#4f46e5; font-weight:800;">Google 음성 · 44종</span>
           </button>
 
+          <button type="button" id="btnModelEleven" onclick="switchTTSEngineModel('eleven')" style="padding:10px 8px; border-radius:12px; border:1.5px solid #cbd5e1; background:#ffffff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
+            <span style="display:flex; align-items:center; gap:5px;"><span style="font-size:16px;">💎</span> 3. ElevenLabs</span>
+            <span style="font-size:11px; color:#d97706; font-weight:800;">스튜디오급 · 16종</span>
+          </button>
+
+          <button type="button" id="btnModelKokoro" onclick="switchTTSEngineModel('kokoro')" style="padding:10px 8px; border-radius:12px; border:1.5px solid #cbd5e1; background:#ffffff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
+            <span style="display:flex; align-items:center; gap:5px;"><span style="font-size:16px;">⚡</span> 4. Kokoro-82M</span>
+            <span style="font-size:11px; color:#16a34a; font-weight:800;">온디바이스 · 7종</span>
+          </button>
         </div>
 
-        <div style="font-size:12.5px; color:#166534; margin-bottom:10px; line-height:1.5; background:#dcfce7; padding:8px 12px; border-radius:10px;">
-
-          ✨ <strong>하나의 API 키로 지능적 자동 분기:</strong><br>
-
-          • <strong>AI 음성 출력 시</strong>: 오직 TTS 엔진만 가동 (아르곤 ➔ 3.8 Flash Native Audio, 실패 시 기기 TTS 자동 폴백)<br>
-
-          • <strong>발음 분석·채점 시</strong>: TTS 미사용, 순수 추론 LLM 가동 (아르곤 ➔ 3.8 Flash ➔ 하위 Flash ➔ Flash-Lite 순차 폴백)
-
+        <!-- 2단계: 세부 목소리 선택 드롭다운 (선택한 모델의 전체 보이스 동적 바인딩) -->
+        <div style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label style="font-size:13px; font-weight:900; color:#334155;">2단계: 세부 목소리 선택</label>
+            <span id="voiceCountBadge" style="font-size:11.5px; font-weight:800; color:#4f46e5;">23개 음성 선택 가능</span>
+          </div>
+          <select id="engineVoiceSelect" onchange="onVoiceSelectionChange(this.value)" style="width:100%; padding:10px 12px; font-size:13.5px; font-weight:800; color:#1e293b; background:#fff; border:2px solid #cbd5e1; border-radius:12px; outline:none; cursor:pointer;">
+            <!-- JS 동적 로드 -->
+          </select>
         </div>
 
-        <input type="password" id="apiKeyInput" placeholder="Google AI Studio 무료 API 키 입력 (기본 무료 키 탑재됨)" style="width:100%; padding:12px 14px; border-radius:12px; border:2px solid #86efac; font-size:14px; font-family:monospace; background:#fff; outline:none;">
+        <!-- 3단계: 개인 API 키 유도 입력 컨테이너 (Gemini / ElevenLabs 선택 시에만 펼쳐짐) -->
+        <div id="engineApiKeyContainer" style="margin-bottom:12px;">
+          <!-- Edge / Kokoro 100% 무료 안내 배너 -->
+          <div id="freeEngineNotice" style="background:#dcfce7; border:1.5px solid #86efac; border-radius:12px; padding:10px 14px; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:20px;">🎉</span>
+            <div style="font-size:12.5px; font-weight:800; color:#166534; line-height:1.45;">
+              별도의 API 키가 필요 없습니다! <strong>100% 완전 무료 · 무제한</strong>으로 즉시 발화됩니다.
+            </div>
+          </div>
 
+          <!-- Gemini 개인 무료 키 입력 유도 박스 -->
+          <div id="geminiKeyBox" style="display:none; background:#f0fdf4; border:2px solid #86efac; border-radius:14px; padding:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:13.5px; font-weight:900; color:#166534;">🔑 Google Gemini 개인 무료 API 키</span>
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size:12px; font-weight:900; color:#2563eb; text-decoration:underline;">무료 키 1초 발급 ↗</a>
+            </div>
+            <div style="font-size:11.5px; color:#15803d; margin-bottom:8px; line-height:1.4;">
+              💡 <strong>개인 키 안내</strong>: 개발자의 키가 아닌 사용자 본인의 Google AI Studio 무료 키를 입력하셔야 무제한으로 사용하실 수 있습니다. 키는 기기(로컬 브라우저)에만 안전하게 보관됩니다.
+            </div>
+            <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy... (본인의 Google AI Studio 무료 키 입력)" style="width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid #86efac; font-size:13px; font-family:monospace; background:#fff; outline:none;">
+          </div>
+
+          <!-- ElevenLabs 개인 키 입력 유도 박스 -->
+          <div id="elevenKeyBox" style="display:none; background:#fffbeb; border:2px solid #fde68a; border-radius:14px; padding:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:13.5px; font-weight:900; color:#92400e;">🔑 ElevenLabs 개인 API 키</span>
+              <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" style="font-size:12px; font-weight:900; color:#2563eb; text-decoration:underline;">무료 키 발급 ↗</a>
+            </div>
+            <div style="font-size:11.5px; color:#b45309; margin-bottom:8px; line-height:1.4;">
+              💡 <strong>개인 키 안내</strong>: ElevenLabs 무료 계정에서 발급받은 본인의 API Key를 입력하세요. 키는 스마트폰 기기에만 안전하게 저장됩니다.
+            </div>
+            <input type="password" id="elevenApiKeyInput" placeholder="sk_... (본인의 ElevenLabs API 키 입력)" style="width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid #fcd34d; font-size:13px; font-family:monospace; background:#fff; outline:none;">
+          </div>
+        </div>
+
+        <!-- 4단계: 즉시 미리듣기 테스트 버튼 -->
+        <button type="button" class="btn-3d btn-primary" onclick="testSelectedVoiceSpeech()" style="width:100%; padding:10px 12px; font-size:13.5px; font-weight:900; background:#4f46e5; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px;">
+          <span>🔊 선택한 음성 즉시 미리듣기 (테스트)</span>
+        </button>
       </div>
-
-
 
       <!-- 🎵 효과음 맞춤 지정 메뉴 -->
 
@@ -4746,14 +4798,29 @@ const EXILE_VOICES = [
     else if (lang === 'ja' || lang.startsWith('ja')) gLang = 'ja';
     else if (lang === 'en') gLang = 'en';
 
-    // [최우선 0순위]: 최신 Google Gemini 3.8 Flash 실제 사람 음성 엔진 직결!
-    const engine = getAppHumanVoiceEngine();
-    if (engine && engine.apiKey) {
-      const activeVoiceId = currentSelectedVoiceId || selectedExileVoiceId || 'HUMAN_F1';
-      engine.speak(activeVoiceId, clean, gLang).then(ok => {
-        if (!ok && !engine.blockMechanicalTts) {
+    // [최우선 0순위]: OurVoiceMasterEngine 4대 모델(Edge, Gemini, ElevenLabs, Kokoro) 직결
+    const masterEngine = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
+    if (masterEngine) {
+      const activeEngine = localStorage.getItem('our_user_tts_engine') || 'edge';
+      const activeVoice = localStorage.getItem('our_user_tts_voice') || (activeEngine === 'edge' ? 'ko-KR-SunHiNeural' : (activeEngine === 'kokoro' ? 'af_bella' : (activeEngine === 'eleven' ? '21m00Tcm4TlvDq8ikWAM' : 'HUMAN_F1')));
+
+      const gKey = localStorage.getItem('gemini_voice_api_key') || localStorage.getItem('hangeoreum_gemini_key') || '';
+      const eKey = localStorage.getItem('eleven_voice_api_key') || '';
+      if (gKey && masterEngine.setApiKey) masterEngine.setApiKey('gemini', gKey);
+      if (eKey && masterEngine.setApiKey) masterEngine.setApiKey('eleven', eKey);
+
+      masterEngine.speak(clean, {
+        engine: activeEngine,
+        voice: activeVoice,
+        lang: gLang,
+        rate: options.rate || 1.0,
+        pitch: options.pitch || 1.0
+      }).then(res => {
+        if (res && res.ok === false) {
           fallbackToAndroidNativeTTS(clean, gLang, options);
         }
+      }).catch(err => {
+        fallbackToAndroidNativeTTS(clean, gLang, options);
       });
       return;
     }
@@ -19872,6 +19939,209 @@ function getCurrentRoundData() {
 
 
 
+  
+  /* =========================================================
+     🎙️ 4대 TTS 엔진 모델 & 세부 보이스 관리 시스템 (OurVoiceMasterEngine 연동)
+     1번: Edge Neural (23종, 100% 무료)
+     2번: Gemini 3.8 Flash (44종, 개인 무료 키 유도)
+     3번: ElevenLabs (16종, 개인 키 유도)
+     4번: Kokoro-82M (7종, 100% 무료 온디바이스)
+     ========================================================= */
+  let currentTTSEngineModel = 'edge';
+  let currentTTSVoiceId = 'ko-KR-SunHiNeural';
+
+  function initTTSEngineUI() {
+    try {
+      currentTTSEngineModel = localStorage.getItem('our_user_tts_engine') || 'edge';
+      currentTTSVoiceId = localStorage.getItem('our_user_tts_voice') || '';
+
+      const geminiInput = document.getElementById('geminiApiKeyInput');
+      if (geminiInput) {
+        geminiInput.value = localStorage.getItem('gemini_voice_api_key') || localStorage.getItem('hangeoreum_gemini_key') || '';
+      }
+      const elevenInput = document.getElementById('elevenApiKeyInput');
+      if (elevenInput) {
+        elevenInput.value = localStorage.getItem('eleven_voice_api_key') || '';
+      }
+
+      switchTTSEngineModel(currentTTSEngineModel, false);
+    } catch(e) {
+      console.error('initTTSEngineUI error:', e);
+    }
+  }
+
+  function switchTTSEngineModel(modelKey, autoSave = true) {
+    currentTTSEngineModel = modelKey;
+    if (autoSave) {
+      try {
+        localStorage.setItem('our_user_tts_engine', modelKey);
+      } catch(e) {}
+    }
+
+    const models = ['edge', 'gemini', 'eleven', 'kokoro'];
+    models.forEach(m => {
+      const btn = document.getElementById('btnModel' + m.charAt(0).toUpperCase() + m.slice(1));
+      if (btn) {
+        if (m === modelKey) {
+          btn.style.borderColor = '#4f46e5';
+          btn.style.background = '#eef2ff';
+          btn.style.boxShadow = '0 0 0 2px rgba(79, 70, 229, 0.2)';
+        } else {
+          btn.style.borderColor = '#cbd5e1';
+          btn.style.background = '#ffffff';
+          btn.style.boxShadow = 'none';
+        }
+      }
+    });
+
+    const badgeMap = {
+      edge: '🌊 Edge 23종 (100% 무료)',
+      gemini: '✨ Gemini 44종 (개인 키)',
+      eleven: '💎 ElevenLabs 16종 (개인 키)',
+      kokoro: '⚡ Kokoro 7종 (100% 무료)'
+    };
+    const badge = document.getElementById('activeEngineBadge');
+    if (badge) badge.textContent = badgeMap[modelKey] || modelKey;
+
+    const freeNotice = document.getElementById('freeEngineNotice');
+    const geminiBox = document.getElementById('geminiKeyBox');
+    const elevenBox = document.getElementById('elevenKeyBox');
+
+    if (freeNotice) freeNotice.style.display = (modelKey === 'edge' || modelKey === 'kokoro') ? 'flex' : 'none';
+    if (geminiBox) geminiBox.style.display = (modelKey === 'gemini') ? 'block' : 'none';
+    if (elevenBox) elevenBox.style.display = (modelKey === 'eleven') ? 'block' : 'none';
+
+    populateEngineVoices(modelKey);
+  }
+
+  function populateEngineVoices(modelKey) {
+    const select = document.getElementById('engineVoiceSelect');
+    const countBadge = document.getElementById('voiceCountBadge');
+    if (!select) return;
+    select.innerHTML = '';
+
+    let voices = [];
+    const engine = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
+    if (engine && typeof engine.getVoices === 'function') {
+      try {
+        voices = engine.getVoices(modelKey) || [];
+      } catch(e) {}
+    }
+
+    if (!voices || voices.length === 0) {
+      if (modelKey === 'edge') {
+        voices = [
+          { id: 'ko-KR-SunHiNeural', name: '선희 (SunHi)', desc: '한국어 대표 여성' },
+          { id: 'ko-KR-InJoonNeural', name: '인준 (InJoon)', desc: '한국어 대표 남성' },
+          { id: 'ko-KR-HyunsuMultilingualNeural', name: '현수 (Hyunsu)', desc: '다국어 스마트' },
+          { id: 'en-US-JennyNeural', name: 'Jenny (US)', desc: '미국 대표 여성' },
+          { id: 'en-US-GuyNeural', name: 'Guy (US)', desc: '미국 대표 남성' },
+          { id: 'fr-FR-DeniseNeural', name: 'Denise (FR)', desc: '프랑스어 대표 여성' },
+          { id: 'fr-FR-HenriNeural', name: 'Henri (FR)', desc: '프랑스어 대표 남성' },
+          { id: 'zh-CN-XiaoxiaoNeural', name: 'Xiaoxiao (CN)', desc: '중국어 대표 여성' },
+          { id: 'zh-CN-YunxiNeural', name: 'Yunxi (CN)', desc: '중국어 대표 남성' },
+          { id: 'ja-JP-NanamiNeural', name: 'Nanami (JP)', desc: '일본어 대표 여성' },
+          { id: 'ja-JP-KeitaNeural', name: 'Keita (JP)', desc: '일본어 대표 남성' }
+        ];
+      } else if (modelKey === 'gemini') {
+        voices = [
+          { id: 'HUMAN_F1', name: 'F1. 표준 한국어 여성 튜터' },
+          { id: 'HUMAN_M1', name: 'M1. 신뢰감 있는 남성 튜터' },
+          { id: 'ANIME_F1', name: 'AF1. 루나 발랄한 소녀' },
+          { id: 'ANIME_M1', name: 'AM1. 카이 열혈 소년' }
+        ];
+      } else if (modelKey === 'eleven') {
+        voices = [
+          { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', desc: '차분하고 따뜻한 여성' },
+          { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', desc: '깊고 무게감 있는 남성' }
+        ];
+      } else if (modelKey === 'kokoro') {
+        voices = [
+          { id: 'af_heart', name: 'Heart', desc: '최고 품질 Grade A 여성' },
+          { id: 'af_bella', name: 'Bella', desc: '발랄한 미국 여성' }
+        ];
+      }
+    }
+
+    if (countBadge) countBadge.textContent = `${voices.length}개 음성 선택 가능`;
+
+    let matchedVoice = false;
+    const savedVoice = localStorage.getItem('our_user_tts_voice');
+
+    voices.forEach(v => {
+      const opt = document.createElement('option');
+      const vid = v.id || v.voiceId;
+      opt.value = vid;
+      const descText = v.desc ? ` - ${v.desc}` : (v.style ? ` - ${v.style}` : '');
+      opt.textContent = `${v.name || v.displayName || vid}${descText}`;
+      if (savedVoice && vid === savedVoice) {
+        opt.selected = true;
+        matchedVoice = true;
+        currentTTSVoiceId = vid;
+      }
+      select.appendChild(opt);
+    });
+
+    if (!matchedVoice && select.options.length > 0) {
+      select.selectedIndex = 0;
+      currentTTSVoiceId = select.options[0].value;
+      try {
+        localStorage.setItem('our_user_tts_voice', currentTTSVoiceId);
+      } catch(e) {}
+    }
+  }
+
+  function onVoiceSelectionChange(voiceId) {
+    currentTTSVoiceId = voiceId;
+    try {
+      localStorage.setItem('our_user_tts_voice', voiceId);
+    } catch(e) {}
+  }
+
+  async function testSelectedVoiceSpeech() {
+    soundTap();
+    const testText = "안녕하세요! 한걸음 4대 신경망 음성 모델 연동 테스트입니다.";
+    const select = document.getElementById('engineVoiceSelect');
+    const voiceId = select ? select.value : currentTTSVoiceId;
+    const engineKey = currentTTSEngineModel;
+
+    const engine = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
+    if (engine) {
+      if (engineKey === 'gemini') {
+        const k = (document.getElementById('geminiApiKeyInput')?.value || '').trim();
+        if (!k) {
+          alert("Google Gemini 개인 무료 API 키를 먼저 입력해주세요!\n(Google AI Studio에서 1초 만에 무료 발급 가능합니다)");
+          document.getElementById('geminiApiKeyInput')?.focus();
+          return;
+        }
+        engine.setApiKey('gemini', k);
+        localStorage.setItem('gemini_voice_api_key', k);
+        localStorage.setItem('hangeoreum_gemini_key', k);
+      } else if (engineKey === 'eleven') {
+        const k = (document.getElementById('elevenApiKeyInput')?.value || '').trim();
+        if (!k) {
+          alert("ElevenLabs 개인 API 키를 먼저 입력해주세요!\n(ElevenLabs 사이트에서 무료 발급 가능합니다)");
+          document.getElementById('elevenApiKeyInput')?.focus();
+          return;
+        }
+        engine.setApiKey('eleven', k);
+        localStorage.setItem('eleven_voice_api_key', k);
+      }
+
+      try {
+        await engine.speak(testText, {
+          engine: engineKey,
+          voice: voiceId,
+          lang: 'ko'
+        });
+      } catch(e) {
+        alert("음성 테스트 중 안내: " + e.message);
+      }
+    } else {
+      speakTextWithFallback(testText, 'ko');
+    }
+  }
+
   function openSettingsModal() {
 
     soundTap();
@@ -19883,6 +20153,7 @@ function getCurrentRoundData() {
     document.getElementById('apiTestStatus').textContent = '';
 
     initSoundSettingsUI();
+    initTTSEngineUI();
 
     document.getElementById('settingsModal').classList.remove('hidden');
 
@@ -19925,6 +20196,29 @@ function getCurrentRoundData() {
 
 
   function saveApiSettings() {
+    // 4대 TTS 엔진 모델 및 세부 보이스 저장
+    try {
+      localStorage.setItem('our_user_tts_engine', currentTTSEngineModel);
+      localStorage.setItem('our_user_tts_voice', currentTTSVoiceId);
+
+      const gVal = (document.getElementById('geminiApiKeyInput')?.value || '').trim();
+      if (gVal) {
+        localStorage.setItem('gemini_voice_api_key', gVal);
+        localStorage.setItem('hangeoreum_gemini_key', gVal);
+      }
+
+      const eVal = (document.getElementById('elevenApiKeyInput')?.value || '').trim();
+      if (eVal) {
+        localStorage.setItem('eleven_voice_api_key', eVal);
+      }
+
+      const engine = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
+      if (engine) {
+        if (gVal) engine.setApiKey('gemini', gVal);
+        if (eVal) engine.setApiKey('eleven', eVal);
+      }
+    } catch(e) {}
+
 
     const apiKey = (document.getElementById('apiKeyInput')?.value || '').trim();
 
