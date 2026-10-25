@@ -4931,7 +4931,7 @@ const EXILE_VOICES = [
       return (ov.eleven || []).map(v => ({ id: v.id, name: v.name, desc: v.desc || '', icon: v.id === NURI_ELEVEN_DEFAULT_VOICE ? '💖' : (v.gender === 'male' ? '👨' : '👩'), badge: v.id === NURI_ELEVEN_DEFAULT_VOICE ? '기본' : '스튜디오급', group: v.gender === 'male' ? '👨 실제 사람 남성' : '👩 실제 사람 여성' }));
     }
     if (engine === 'kokoro') {
-      return (ov.kokoro || []).map(v => ({ id: v.id, name: v.name, desc: v.desc || '', icon: v.gender === 'male' ? '👨' : '👩', badge: '온디바이스 · 영어', group: '🍃 Kokoro-82M (영어 전용 · 한국어는 영어로 번역)' }));
+      return (ov.kokoro || []).map(v => ({ id: v.id, name: v.name, desc: v.desc || '', icon: v.gender === 'male' ? '👨' : '👩', badge: '온디바이스 · 영어', group: '🍃 Kokoro-82M (영어 전용 · 한글은 읽지 않고 원어만 그대로)' }));
     }
     return [];
   }
@@ -5314,7 +5314,7 @@ const EXILE_VOICES = [
       edge: `🌊 누리 보이스 · Edge Neural (${voices.length}종 · 100% 무료)`,
       gemini: `✨ 누리 보이스 · Gemini 3.8 (${voices.length}종 · Google 신경망)`,
       eleven: `💎 누리 보이스 · ElevenLabs (${voices.length}종 · 스튜디오급)`,
-      kokoro: `🍃 누리 보이스 · Kokoro-82M (${voices.length}종 · 온디바이스 영어 · 한국어는 영어 번역)`
+      kokoro: `🍃 누리 보이스 · Kokoro-82M (${voices.length}종 · 온디바이스 영어 · 한글은 읽지 않고 원어만)`
     };
 
     const headerRow = document.createElement('div');

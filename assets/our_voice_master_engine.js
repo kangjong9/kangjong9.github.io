@@ -103,7 +103,7 @@
     { id: 'SAz9YHcvj6GT2YYXdXww', name: 'River (리버)', gender: 'female', desc: '차분하고 안정적인 내레이터' }
   ];
 
-  // Kokoro-82M 실제 온디바이스 합성 (kokoro-js, 영어 전용 28종). 한국어 문장은 영어로 번역해 읽는다.
+  // Kokoro-82M 실제 온디바이스 합성 (kokoro-js, 영어 전용 28종). 한글은 번역하지 않고 건너뛰며 원어 부분만 그대로 읽는다.
   const KOKORO_JS_URL = 'https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/+esm';
   const KOKORO_MODEL_ID = 'onnx-community/Kokoro-82M-v1.0-ONNX'; // q8 약 92MB, 최초 1회 내려받아 브라우저 캐시에 보관
   const KOKORO_VOICES = [
@@ -1169,13 +1169,10 @@
 
       const isStale = () => opts.playToken !== undefined && opts.playToken !== this.currentPlayToken;
 
-      // Kokoro는 영어 전용: 한글이 있으면 영어로 번역해 읽는다 (번역 실패 시 한글을 영어 발음기로 읽지 않고 실패 처리)
-      let speechText = rawText;
-      if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(rawText)) {
-        speechText = await translateText(rawText, 'en');
-        if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(speechText)) throw new Error('Kokoro: 영어 번역 실패 (Kokoro는 영어 전용)');
-      }
-      if (isStale()) throw new Error('CANCELED');
+      // Kokoro는 원래 지원 범위(영어) 그대로 쓴다: 한글은 번역하지 않고 읽지 않으며, 한글을 뺀 원어 부분만 그대로 읽는다.
+      // 읽을 원어가 남지 않으면(한국어만 있는 문장) 소리 없이 바로 끝낸다 — 다른 음성으로 대신 읽지 않는다.
+      const speechText = rawText.replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]+/g, ' ').replace(/\s+/g, ' ').trim();
+      if (!/[\p{L}\p{N}]/u.test(speechText)) return { voice: voiceKey, spokenText: '', blob: null, mode: 'kokoro-skip-korean' };
 
       const tts = await this._loadKokoro();
       if (isStale()) throw new Error('CANCELED');
