@@ -767,20 +767,42 @@
         <!-- [옵빠야 요청] 관리자 키 넣는 프사쪽 말풍선: 지정 텍스트만 표시 & 공간 최소화하여 아래 영역 끌어올림 -->
     <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
       <div class="tutor-avatar-wrap" id="tutorAvatarWrap" onclick="handleAiAvatarTap(event)" style="cursor:pointer; position:relative; flex-shrink:0;" title="AI 엑자일 프로필 (연속 5번 터치 시 관리자 모드)">
-        <svg id="exileAvatarSvg" width="56" height="56" viewBox="0 0 108 108">
-          <circle cx="54" cy="54" r="50" fill="#312E81"/>
-          <circle cx="54" cy="54" r="42" fill="#4338CA"/>
-          <path d="M52,28 L56,28 L55,18 L53,18 Z" fill="#A5B4FC"/>
-          <polygon points="54,12 56,17 62,17 57,21 59,26 54,23 49,26 51,21 46,17 52,17" fill="#FACC15"/>
-          <circle cx="54" cy="58" r="28" fill="#34D399"/>
-          <ellipse cx="36" cy="62" rx="4" ry="3" fill="#F472B6"/>
-          <ellipse cx="72" cy="62" rx="4" ry="3" fill="#F472B6"/>
-          <ellipse cx="43" cy="56" rx="4.5" ry="5.5" fill="#0F172A"/>
-          <circle cx="42" cy="54" r="1.8" fill="#FFFFFF"/>
-          <ellipse cx="65" cy="56" rx="4.5" ry="5.5" fill="#0F172A"/>
-          <circle cx="64" cy="54" r="1.8" fill="#FFFFFF"/>
-          <path id="avatarMouth" d="M49,63 Q54,69 59,63" stroke="#047857" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        </svg>
+        <svg id="exileAvatarSvg" width="56" height="56" viewBox="0 0 108 108" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%; box-shadow:0 3px 10px rgba(79,70,229,0.3); display:block;">
+  <path d="M16,6 C10.48,6 6,10.48 6,16 L6,92 C6,97.52 10.48,102 16,102 L92,102 C97.52,102 102,97.52 102,92 L102,16 C102,10.48 97.52,6 92,6 Z" fill="#4F46E5"/>
+  <path d="M54,54m-44,0a44,44 0 1,0 88,0a44,44 0 1,0 -88,0" fill="#6366F1"/>
+  <path d="M22,24 L24,18 L26,24 L32,26 L26,28 L24,34 L22,28 L16,26 Z" fill="#FDE047"/>
+  <path d="M86,22 L87.5,17.5 L89,22 L93.5,23.5 L89,25 L87.5,29.5 L86,25 L81.5,23.5 Z" fill="#F472B6"/>
+  <path d="M88,82 L89.5,78 L91,82 L95,83.5 L91,85 L89.5,89 L88,85 L84,83.5 Z" fill="#38BDF8"/>
+  <path d="M24,44 C16,56 16,78 28,84 C36,88 38,70 32,54 Z" fill="#F472B6"/>
+  <path d="M84,44 C92,56 92,78 80,84 C72,88 70,70 76,54 Z" fill="#F472B6"/>
+  <path d="M26,46m-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0" fill="#A855F7"/>
+  <path d="M82,46m-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0" fill="#A855F7"/>
+  <path d="M48,70 L60,70 L60,78 L48,78 Z" fill="#FFE0D0"/>
+  <path d="M34,100 L44,76 L64,76 L74,100 Z" fill="#312E81"/>
+  <path d="M46,76 L54,88 L62,76 Z" fill="#FFFFFF"/>
+  <path d="M52,78 L56,78 L58,92 L54,95 L50,92 Z" fill="#EC4899"/>
+  <path d="M54,36 C38,36 34,48 34,60 C34,74 46,82 54,82 C62,82 74,74 74,60 C74,48 70,36 54,36 Z" fill="#FFF0E6"/>
+  <path d="M37,64 C37,61.8 40.6,60 45,60 C49.4,60 53,61.8 53,64 C53,66.2 49.4,68 45,68 C40.6,68 37,66.2 37,64 Z" fill="#FF99AA"/>
+  <path d="M55,64 C55,61.8 58.6,60 63,60 C67.4,60 71,61.8 71,64 C71,66.2 67.4,68 63,68 C58.6,68 55,66.2 55,64 Z" fill="#FF99AA"/>
+  <path d="M40,50 C40,46 48,46 48,50 C48,58 40,58 40,50 Z" fill="#1E1B4B"/>
+  <path d="M41,52 C41,49 47,49 47,52 C47,57 41,57 41,52 Z" fill="#7C3AED"/>
+  <path d="M42,50m-2,0a2,2 0 1,0 4,0a2,2 0 1,0 -4,0" fill="#FFFFFF"/>
+  <path d="M45,54m-1,0a1,1 0 1,0 2,0a1,1 0 1,0 -2,0" fill="#FFFFFF"/>
+  <path d="M39,48 C42,45 47,45 49,48 L48,49 C46,47 42,47 40,49 Z" fill="#0F172A"/>
+  <path d="M59,54 C62,49 68,49 71,54 L69.5,55 C67,51 63,51 60.5,55 Z" fill="#0F172A"/>
+  <path id="avatarMouth" d="M49,69 C49,75 59,75 59,69 Z" fill="#E11D48"/>
+  <path d="M51,69 L57,69 L55,71 L53,71 Z" fill="#FFFFFF"/>
+  <path d="M51.5,72 C52.5,74 55.5,74 56.5,72 Z" fill="#FB7185"/>
+  <path d="M54,26 C36,26 32,36 32,46 L36,54 L40,44 L46,52 L50,42 L54,54 L58,42 L64,52 L68,44 L72,54 L76,46 C76,36 72,26 54,26 Z" fill="#F472B6"/>
+  <path d="M42,32 C46,30 62,30 66,32 L65,34 C61,32 47,32 43,34 Z" fill="#FBCFE8"/>
+  <path d="M30,42 C30,22 78,22 78,42 L74,42 C74,26 34,26 34,42 Z" fill="#F59E0B"/>
+  <path d="M26,50m-6,0a6,8 0 1,0 12,0a6,8 0 1,0 -12,0" fill="#FACC15"/>
+  <path d="M82,50m-6,0a6,8 0 1,0 12,0a6,8 0 1,0 -12,0" fill="#FACC15"/>
+  <path d="M26,48 L27,46 L28,48 L30,48.5 L28,49 L27,51 L26,49 L24,48.5 Z" fill="#EA580C"/>
+  <path d="M82,48 L83,46 L84,48 L86,48.5 L84,49 L83,51 L82,49 L80,48.5 Z" fill="#EA580C"/>
+  <path d="M28,54 C32,66 42,72 48,70 L48,68 C43,69 34,64 30,53 Z" fill="#475569"/>
+  <path d="M48,70m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" fill="#EA580C"/>
+</svg>
         <div style="position:absolute; bottom:-3px; right:-2px; background:#10b981; color:#fff; font-size:9px; font-weight:900; padding:1px 5px; border-radius:6px; border:1.5px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,0.15);">LIVE</div>
       </div>
 
