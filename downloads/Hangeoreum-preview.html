@@ -18671,16 +18671,18 @@ function getCurrentRoundData() {
   function startVoiceRecognition() {
     getAudioContext();
 
-    // 입력받기 전 효과음 (intercom_sent.mp3)
+    // 입력받기 전 효과음
     soundMicStart();
 
     const statusEl = document.getElementById('sttStatusText');
     const feedbackEl = document.getElementById('userSpokenFeedback');
     const waveBars = document.querySelectorAll('.wave-bar');
+    const btnMic = document.getElementById('btnMicText');
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      statusEl.textContent = "음성인식 미지원 환경입니다. 텍스트 입력 테스트로 전환합니다.";
+      if (statusEl) statusEl.textContent = "음성인식 미지원 환경입니다. 텍스트 입력 테스트로 전환합니다.";
+      updateHandsFreeStatus('retry', "⚠️ 음성인식 미지원 브라우저입니다.");
       promptManualInputTest();
       return;
     }
@@ -18696,6 +18698,7 @@ function getCurrentRoundData() {
       speechRecognizer.interimResults = false;
       speechRecognizer.maxAlternatives = 1;
 
+      // 학습 언어에 맞춰 STT 언어 지정
       if (selectedLang === 'fr') speechRecognizer.lang = 'fr-FR';
       else if (selectedLang === 'cn') speechRecognizer.lang = 'zh-CN';
       else if (selectedLang === 'ja') speechRecognizer.lang = 'ja-JP';
@@ -18703,45 +18706,75 @@ function getCurrentRoundData() {
 
       speechRecognizer.onstart = () => {
         isRecordingSTT = true;
-        document.getElementById('btnMicText').textContent = "듣고 있습니다... 목소리를 내어 말하세요!";
-        statusEl.innerHTML = "<span style='color:#ef4444; font-weight:900;'>● 녹음 중...</span> 스마트폰 마이크에 대고 원어민 문장을 말씀하세요!";
+        if (btnMic) btnMic.textContent = "듣고 있습니다... 소리내어 말하세요!";
+        updateHandsFreeStatus('mic_active', `🎙️ 마이크 켜짐! 목표 문장을 소리내어 따라하세요...`);
+        if (statusEl) statusEl.innerHTML = "<span style='color:#ef4444; font-weight:900;'>● 녹음 중...</span> 스마트폰 마이크에 대고 원어민 문장을 말씀하세요!";
         waveBars.forEach((b, i) => b.style.height = `${14 + (i % 3) * 8}px`);
       };
 
       speechRecognizer.onresult = (event) => {
         isRecordingSTT = false;
         waveBars.forEach(b => b.style.height = '8px');
-        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기";
+        if (btnMic) btnMic.textContent = "마이크로 따라 말하기";
 
-        // 입력 다 되면 효과음 (intercom_received.mp3)
+        // 입력 완료 효과음
         soundMicEnd();
 
-        const transcript = event.results[0][0].transcript.trim();
-        feedbackEl.innerHTML = `🗣️ 인식된 목소리: <strong>"${transcript}"</strong>`;
-        analyzePronunciationAndJudge(transcript);
+        let transcript = '';
+        if (event.results && event.results[0] && event.results[0][0]) {
+          transcript = (event.results[0][0].transcript || '').trim();
+        }
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `🗣️ 인식된 목소리: <strong>"${transcript || '(음성 없음)'}"</strong>`;
+        }
+
+        updateHandsFreeStatus('judging', `⚡ AI가 발음을 정밀 분석·채점 중입니다...`);
+
+        // 핵심: 즉시 합격/불합격 판정 및 피드백 실행!
+        setTimeout(() => {
+          analyzePronunciationAndJudge(transcript);
+        }, 150);
       };
 
       speechRecognizer.onerror = (event) => {
         isRecordingSTT = false;
         waveBars.forEach(b => b.style.height = '8px');
-        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기 (다시 시도)";
-        console.warn("Speech error:", event.error);
+        if (btnMic) btnMic.textContent = "마이크로 따라 말하기 (다시 시도)";
+        console.warn("Speech recognition error:", event.error);
+
         if (event.error === 'not-allowed') {
-          statusEl.textContent = "마이크 권한이 꺼져 있습니다. 스마트폰 설정 > 애플리케이션 > 한걸음에서 마이크 권한을 허용해 주세요.";
+          if (statusEl) statusEl.textContent = "마이크 권한이 꺼져 있습니다. 스마트폰 설정 > 애플리케이션 > 한걸음에서 마이크 권한을 허용해 주세요.";
+          updateHandsFreeStatus('retry', `⚠️ 마이크 권한이 필요합니다. 권한을 허용해 주세요.`);
+        } else if (event.error === 'no-speech') {
+          if (statusEl) statusEl.textContent = "음성이 감지되지 않았습니다. 조용한 곳에서 다시 또박또박 말씀해 보세요!";
+          updateHandsFreeStatus('retry', `🔄 음성 미감지 - 1.5초 후 AI 발음을 다시 들려드립니다.`);
+          if (isHandsFreeAutoMode) {
+            setTimeout(() => {
+              if (isHandsFreeAutoMode) playTargetTTSAndAutoListen();
+            }, 1500);
+          }
         } else {
-          statusEl.textContent = `음성 감지 실패 (${event.error}). 조용한 곳에서 다시 말씀해 보세요!`;
+          if (statusEl) statusEl.textContent = `음성 감지 실패 (${event.error}). 조용한 곳에서 다시 말씀해 보세요!`;
+          updateHandsFreeStatus('retry', `🔄 다시 말씀해 보세요 (${event.error})`);
+          if (isHandsFreeAutoMode) {
+            setTimeout(() => {
+              if (isHandsFreeAutoMode) playTargetTTSAndAutoListen();
+            }, 1600);
+          }
         }
       };
 
       speechRecognizer.onend = () => {
         isRecordingSTT = false;
         waveBars.forEach(b => b.style.height = '8px');
-        document.getElementById('btnMicText').textContent = "마이크로 따라 말하기";
+        if (btnMic) btnMic.textContent = "마이크로 따라 말하기";
       };
 
       speechRecognizer.start();
 
     } catch(err) {
+      console.warn("speechRecognizer.start failed:", err);
       promptManualInputTest();
     }
   }
@@ -18751,12 +18784,13 @@ function getCurrentRoundData() {
     const input = prompt(`[따라하기 ${currentRound}/4 단계]\n목표 문장: "${roundData.target}"\n\n발음하거나 말한 내용을 텍스트로 입력하여 정확도 평가를 진행하세요:`, roundData.target);
     if (input !== null && input.trim()) {
       soundMicEnd();
-      document.getElementById('userSpokenFeedback').innerHTML = `🗣️ 입력된 발화: <strong>"${input.trim()}"</strong>`;
+      const feedbackEl = document.getElementById('userSpokenFeedback');
+      if (feedbackEl) feedbackEl.innerHTML = `🗣️ 입력된 발화: <strong>"${input.trim()}"</strong>`;
       analyzePronunciationAndJudge(input.trim());
     }
   }
 
-    function normalizeText(str) {
+  function normalizeText(str) {
     if (!str) return '';
     return str.toLowerCase()
       .normalize('NFD')
@@ -18769,9 +18803,16 @@ function getCurrentRoundData() {
   function calculateSimilarity(s1, s2) {
     const str1 = normalizeText(s1);
     const str2 = normalizeText(s2);
-    if (str1 === str2) return 100;
     if (!str1.length || !str2.length) return 0;
+    if (str1 === str2) return 100;
 
+    // 포함 관계 보너스
+    if (str1.includes(str2) || str2.includes(str1)) {
+      const ratio = Math.min(str1.length, str2.length) / Math.max(str1.length, str2.length);
+      if (ratio >= 0.7) return Math.round(ratio * 100);
+    }
+
+    // Levenshtein distance
     const track = Array(str2.length + 1).fill(null).map(() =>
       Array(str1.length + 1).fill(null));
     for (let i = 0; i <= str1.length; i += 1) track[0][i] = i;
@@ -18790,12 +18831,27 @@ function getCurrentRoundData() {
     const distance = track[str2.length][str1.length];
     const maxLen = Math.max(str1.length, str2.length);
     const score = Math.round(((maxLen - distance) / maxLen) * 100);
+
+    // 단어 일치율 보완 (어순 또는 조사 약간 상이한 경우 구제)
+    const w1 = str1.split(/\s+/).filter(Boolean);
+    const w2 = str2.split(/\s+/).filter(Boolean);
+    if (w1.length > 0 && w2.length > 0) {
+      const matchWords = w1.filter(word => w2.some(other => other.includes(word) || word.includes(other))).length;
+      const wordScore = Math.round((matchWords / Math.max(w1.length, w2.length)) * 100);
+      return Math.max(score, wordScore);
+    }
+
     return Math.max(0, Math.min(100, score));
   }
 
   function analyzePronunciationAndJudge(spokenText) {
     const roundData = getCurrentRoundData();
-    const score = calculateSimilarity(roundData.target, spokenText);
+    if (!roundData || !roundData.target) {
+      console.warn("No roundData found for analysis");
+      return;
+    }
+
+    const score = calculateSimilarity(roundData.target, spokenText || '');
 
     const sheet = document.getElementById('feedbackSheet');
     const badge = document.getElementById('passFailBadge');
@@ -18803,75 +18859,112 @@ function getCurrentRoundData() {
     const polishText = document.getElementById('polishText');
     const noticeEl = document.getElementById('gatekeeperNotice');
     const nextBtn = document.getElementById('btnNextRound');
+    const statusEl = document.getElementById('sttStatusText');
 
-    sheet.classList.remove('hidden');
-    wordsContainer.innerHTML = '';
+    if (sheet) {
+      sheet.style.display = 'block';
+      sheet.classList.remove('hidden');
+    }
 
-    const targetWords = roundData.target.split(/\s+/);
-    targetWords.forEach(w => {
-      const span = document.createElement('span');
-      span.textContent = w;
-      if (score >= 70) {
-        span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#dcfce7; color:#166534; border:1.5px solid #86efac; font-size:14px;";
-      } else {
-        span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#fee2e2; color:#991b1b; border:1.5px solid #fca5a5; font-size:14px;";
-      }
-      wordsContainer.appendChild(span);
-    });
+    if (wordsContainer) {
+      wordsContainer.innerHTML = '';
+      const targetWords = roundData.target.split(/\s+/);
+      targetWords.forEach(w => {
+        const span = document.createElement('span');
+        span.textContent = w;
+        if (score >= 70) {
+          span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#dcfce7; color:#166534; border:1.5px solid #86efac; font-size:14px;";
+        } else {
+          span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#fee2e2; color:#991b1b; border:1.5px solid #fca5a5; font-size:14px;";
+        }
+        wordsContainer.appendChild(span);
+      });
+    }
 
+    // [옵빠야 요청] 사용자가 말을 하면 입력을 받아 명확하게 합격/불합격 판단!
     if (score >= 70) {
-      // 맞추면 효과음 (correct.mp3 + combo_01.mp3)
+      // 1. 합격 (PASS) 판정
       soundCorrect();
       comboCount++;
-      document.getElementById('comboBadge').textContent = `x${comboCount} COMBO`;
+      const comboBadge = document.getElementById('comboBadge');
+      if (comboBadge) comboBadge.textContent = `x${comboCount} COMBO`;
       roundPassed[currentRound - 1] = true;
 
-      badge.style.background = "#dcfce7";
-      badge.style.color = "#166534";
-      badge.innerHTML = `🎉 발음 통과! (일치도 ${score}점)`;
-
-      polishText.innerHTML = `AI 엑자일 칭찬: <strong>"정확한 발음입니다! ${userName}님 아주 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>원문 발음: ${roundData.target}</span>`;
-
-      updateHandsFreeStatus('passed', `🎉 발음 통과 (${score}점)! 1.2초 후 다음으로 자동 진행...`);
-      if (currentRound < 4) {
-        noticeEl.innerHTML = `<span style='color:#166534;'>🎉 [관문 통과] ${score}점 달성! 1.2초 후 다음 관문으로 자동 이동합니다.</span>`;
-      } else {
-        noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4개 관문 올클리어] 축하합니다! 새로운 레벨과 맥락으로 자동 승급합니다!</span>`;
+      if (badge) {
+        badge.style.background = "#dcfce7";
+        badge.style.color = "#166534";
+        badge.style.border = "1.5px solid #86efac";
+        badge.innerHTML = `🎉 [합격] 발음 통과! (일치도 ${score}점)`;
       }
 
-      nextBtn.classList.remove('btn-disabled');
-      nextBtn.disabled = false;
-      nextBtn.innerHTML = `<span>다음 관문으로 자동 진행</span>`;
+      if (statusEl) {
+        statusEl.innerHTML = `<span style="color:#166534; font-weight:900;">🎉 [합격] ${score}점 획득! 완벽한 발음입니다.</span>`;
+      }
+
+      if (polishText) {
+        polishText.innerHTML = `AI 엑자일 칭찬: <strong>"정확한 발음입니다! ${userName}님 아주 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>원문: ${roundData.target}</span>`;
+      }
+
+      updateHandsFreeStatus('passed', `🎉 [합격] 발음 통과 (${score}점)! 1.2초 후 다음으로 자동 진행...`);
+
+      if (noticeEl) {
+        if (currentRound < 4) {
+          noticeEl.innerHTML = `<span style='color:#166534;'>🎉 [합격 관문 통과] ${score}점 달성! 1.2초 후 다음 관문으로 자동 이동합니다.</span>`;
+        } else {
+          noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4개 관문 올클리어] 축하합니다! 새로운 레벨과 맥락으로 자동 승급합니다!</span>`;
+        }
+      }
+
+      if (nextBtn) {
+        nextBtn.classList.remove('btn-disabled');
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = `<span>다음 관문으로 자동 진행</span>`;
+      }
 
       try {
         localStorage.setItem(`hangeoreum_lv${currentLevel}_r${currentRound}`, '1');
       } catch(e) {}
 
-      // [옵빠야 요청] 사용자는 별도 컨트롤 없이 AI가 자동으로 다음 단계 진행!
+      // 사용자는 별도 조작 없이 AI가 자동으로 다음 단계 진행!
       setTimeout(() => {
         if (typeof autoProceedNextRoundOrLevel === 'function') autoProceedNextRoundOrLevel();
       }, 1200);
 
     } else {
-      // 오답 효과음 (wrong.mp3)
+      // 2. 불합격 (RETRY) 판정
       soundWrong();
       comboCount = 0;
-      document.getElementById('comboBadge').textContent = `x0 COMBO`;
+      const comboBadge = document.getElementById('comboBadge');
+      if (comboBadge) comboBadge.textContent = `x0 COMBO`;
       roundPassed[currentRound - 1] = false;
 
-      badge.style.background = "#fee2e2";
-      badge.style.color = "#991b1b";
-      badge.innerHTML = `재도전 권장 (${score}점 / 통과 기준 70점)`;
+      if (badge) {
+        badge.style.background = "#fee2e2";
+        badge.style.color = "#991b1b";
+        badge.style.border = "1.5px solid #fca5a5";
+        badge.innerHTML = `⚠️ [불합격] 재도전 권장 (${score}점 / 70점 기준)`;
+      }
 
-      updateHandsFreeStatus('retry', `🔄 다시 듣고 따라해 볼까요? (${score}점)`);
-      polishText.innerHTML = `AI 엑자일 교정: <strong>"조금 더 또박또박 발음해 볼까요? 엑자일의 발음을 듣고 다시 도전하세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발음: "${spokenText}"</span>`;
+      if (statusEl) {
+        statusEl.innerHTML = `<span style="color:#dc2626; font-weight:900;">⚠️ [불합격] ${score}점. 70점 이상이어야 통과됩니다.</span>`;
+      }
 
-      noticeEl.innerHTML = `<span style='color:#dc2626;'>⚠️ 70점 미만입니다. 1.5초 후 엑자일의 발음을 다시 들려드리고 마이크를 재활성화합니다!</span>`;
+      updateHandsFreeStatus('retry', `🔄 [불합격] 다시 듣고 따라해 볼까요? (${score}점)`);
 
-      nextBtn.classList.add('btn-disabled');
-      nextBtn.disabled = true;
+      if (polishText) {
+        polishText.innerHTML = `AI 엑자일 교정: <strong>"조금 더 또박또박 발음해 볼까요? 엑자일의 발음을 듣고 다시 도전하세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발음: "${spokenText || '(인식 실패)'}"</span>`;
+      }
 
-      // [옵빠야 요청] 실패 시 AI 발음을 다시 들려주고 마이크 자동 재활성화
+      if (noticeEl) {
+        noticeEl.innerHTML = `<span style='color:#dc2626;'>⚠️ 70점 미만입니다. 1.5초 후 엑자일의 발음을 다시 들려드리고 마이크를 재활성화합니다!</span>`;
+      }
+
+      if (nextBtn) {
+        nextBtn.classList.add('btn-disabled');
+        nextBtn.disabled = true;
+      }
+
+      // 실패 시 엑자일 발음을 다시 들려주고 마이크 자동 재활성화
       setTimeout(() => {
         if (typeof playTargetTTSAndAutoListen === 'function') playTargetTTSAndAutoListen();
       }, 1500);
@@ -18880,7 +18973,7 @@ function getCurrentRoundData() {
     callAiPronunciationCoachIfAvailable(spokenText, roundData.target, score);
   }
 
-    function proceedNextRoundOrLevel() {
+  function proceedNextRoundOrLevel() {
     if (!roundPassed[currentRound - 1]) {
       soundWrong();
       alert("현재 단계를 70점 이상으로 통과해야만 다음 단계로 넘어갈 수 있습니다!");
