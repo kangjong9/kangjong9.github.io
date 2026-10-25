@@ -766,18 +766,22 @@
 
         <!-- [옵빠야 요청] 관리자 키 넣는 프사쪽 말풍선: 지정 텍스트만 표시 & 공간 최소화하여 아래 영역 끌어올림 -->
     <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
-      <div class="tutor-avatar-wrap" id="tutorAvatarWrap" onclick="handleAiAvatarTap(event)" style="cursor:pointer;" title="AI 엑자일 프로필 (연속 5번 터치 시 관리자 모드)">
-        <svg id="exileAvatarSvg" width="48" height="48" viewBox="0 0 108 108">
-          <circle cx="54" cy="54" r="50" fill="#4F46E5"/>
-          <circle cx="54" cy="54" r="42" fill="#6366F1"/>
-          <ellipse cx="44" cy="54" rx="4.5" ry="5.5" fill="#1E1B4B"/>
-          <ellipse cx="44" cy="55" rx="3.5" ry="4.5" fill="#7C3AED"/>
-          <circle cx="43" cy="52" r="1.8" fill="#FFFFFF"/>
-          <ellipse cx="64" cy="54" rx="4.5" ry="5.5" fill="#1E1B4B"/>
-          <ellipse cx="64" cy="55" rx="3.5" ry="4.5" fill="#7C3AED"/>
-          <circle cx="63" cy="52" r="1.8" fill="#FFFFFF"/>
-          <path id="avatarMouth" d="M50,70 Q54,73 58,70" stroke="#E11D48" stroke-width="2.5" fill="#E11D48" stroke-linecap="round"/>
+      <div class="tutor-avatar-wrap" id="tutorAvatarWrap" onclick="handleAiAvatarTap(event)" style="cursor:pointer; position:relative; flex-shrink:0;" title="AI 엑자일 프로필 (연속 5번 터치 시 관리자 모드)">
+        <svg id="exileAvatarSvg" width="56" height="56" viewBox="0 0 108 108">
+          <circle cx="54" cy="54" r="50" fill="#312E81"/>
+          <circle cx="54" cy="54" r="42" fill="#4338CA"/>
+          <path d="M52,28 L56,28 L55,18 L53,18 Z" fill="#A5B4FC"/>
+          <polygon points="54,12 56,17 62,17 57,21 59,26 54,23 49,26 51,21 46,17 52,17" fill="#FACC15"/>
+          <circle cx="54" cy="58" r="28" fill="#34D399"/>
+          <ellipse cx="36" cy="62" rx="4" ry="3" fill="#F472B6"/>
+          <ellipse cx="72" cy="62" rx="4" ry="3" fill="#F472B6"/>
+          <ellipse cx="43" cy="56" rx="4.5" ry="5.5" fill="#0F172A"/>
+          <circle cx="42" cy="54" r="1.8" fill="#FFFFFF"/>
+          <ellipse cx="65" cy="56" rx="4.5" ry="5.5" fill="#0F172A"/>
+          <circle cx="64" cy="54" r="1.8" fill="#FFFFFF"/>
+          <path id="avatarMouth" d="M49,63 Q54,69 59,63" stroke="#047857" stroke-width="2.5" fill="none" stroke-linecap="round"/>
         </svg>
+        <div style="position:absolute; bottom:-3px; right:-2px; background:#10b981; color:#fff; font-size:9px; font-weight:900; padding:1px 5px; border-radius:6px; border:1.5px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,0.15);">LIVE</div>
       </div>
 
       <div style="flex:1;">
