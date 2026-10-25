@@ -598,34 +598,21 @@
   <!-- =========================================================
        [요구사항 2] 우주 은하 감각적 오프닝 스플래시 인트로 화면
        ========================================================= -->
+    <!-- =========================================================
+       [옵빠야 지침] 우주 은하 감각적 오프닝 화면 (시각 말풍선 없이 분위기 유지 & 음성 브리핑만 실행)
+       ========================================================= -->
   <div id="openingSplashView" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; color:#ffffff; transition:opacity 0.5s ease, visibility 0.5s ease; font-family:sans-serif;">
     <div style="position:absolute; width:100%; height:100%; top:0; left:0; background:radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(0,0,0,0) 70%); pointer-events:none;"></div>
     
     <div style="max-width:440px; width:100%; text-align:center; position:relative; z-index:2;">
-      <div style="display:inline-block; font-size:48px; margin-bottom:12px; filter:drop-shadow(0 0 16px rgba(129,140,248,0.6)); animation:pulse 2s infinite ease-in-out;">🛸</div>
+      <div id="openingAiAvatar" onclick="handleAiAvatarTap(event)" style="cursor:pointer; display:inline-block; font-size:52px; margin-bottom:12px; filter:drop-shadow(0 0 16px rgba(129,140,248,0.6)); animation:pulse 2s infinite ease-in-out;" title="AI 엑자일 프로필 (연속 5번 터치 시 관리자 모드)">🛸</div>
       <div style="font-size:13px; font-weight:800; letter-spacing:3px; color:#818cf8; text-transform:uppercase; margin-bottom:8px;">Andromeda Exile AI Project</div>
-      <h1 style="font-size:32px; font-weight:900; margin:0 0 10px 0; background:linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #818cf8 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 30px rgba(99,102,241,0.3);">한걸음 V1.0 Exile</h1>
-            <!-- [옵빠야 요청] 엑자일의 말풍선 부분을 오프닝 화면으로 이동! -->
-      <div class="speech-bubble" style="background:#ffffff; color:#0f172a; border-radius:20px; padding:18px 20px; margin-bottom:20px; text-align:left; box-shadow:0 12px 35px rgba(0,0,0,0.4); position:relative;">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-          <span style="font-size:20px;">💬</span>
-          <span style="font-size:14px; font-weight:900; color:#4f46e5;">외계 AI 엑자일의 교화 브리핑</span>
-        </div>
-        <div id="openingExileSpeech" style="font-size:14.5px; color:#1e293b; line-height:1.65; font-weight:600;">
-          난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>
-          지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어!<br><br>
-          우리가 준비한 목소리는 사실 <strong>총 44가지</strong>야! 이 중 4가지는 비밀의 히든 음성이니, 먼저 <strong>40가지(사람 20종 + 애니 성우 20종) 목소리</strong> 중 마음에 드는 AI 튜터를 골라줘!
-        </div>
-        <div style="display:flex; justify-content:flex-end; margin-top:10px;">
-          <button type="button" onclick="speakExileTutor(document.getElementById('openingExileSpeech').innerText, 'ko')" style="background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:10px; color:#4f46e5; font-size:12.5px; font-weight:800; padding:5px 12px; cursor:pointer; display:flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(79,70,229,0.1);">
-            <span id="openingVoiceIcon">🔊</span> <span>엑자일 목소리 듣기</span>
-          </button>
-        </div>
-      </div>
+      <h1 style="font-size:32px; font-weight:900; margin:0 0 16px 0; background:linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #818cf8 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 30px rgba(99,102,241,0.3);">한걸음 V1.0 Exile</h1>
 
-      <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); backdrop-filter:blur(10px); border-radius:18px; padding:14px 18px; margin-bottom:28px; text-align:left; font-size:12.5px; color:#cbd5e1; line-height:1.55;">
-        🎙️ <strong>최신 Google Gemini 3.8 Flash 엔진 탑재</strong><br>
-        • 사람/애니 성우 40종 + 숨겨진 히든 4종 고음질 신경망 목소리<br>
+      <!-- 세련된 스펙 안내 카드 (문자/시각 말풍선 배제, 분위기 유지) -->
+      <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); backdrop-filter:blur(10px); border-radius:18px; padding:16px 20px; margin-bottom:28px; text-align:left; font-size:13px; color:#cbd5e1; line-height:1.6;">
+        🎙️ <strong>Google Gemini 3.8 Flash 최신 신경망 음성 탑재</strong><br>
+        • 사람/애니 성우 40종 + 히든 4종 고음질 신경망 목소리<br>
         • 기계음 100% 원천 차단 및 원어민 24kHz 실시간 발음 코칭
       </div>
 
@@ -638,9 +625,6 @@
       </div>
     </div>
   </div>
-
-
-
 
 <div class="app-root">
 
@@ -716,7 +700,7 @@
 
        ========================================================= -->
 
-  <div id="viewOnboarding" style="flex:1; display:flex; flex-direction:column; padding:20px 18px 24px;">
+  <div id="viewOnboarding" style="flex:1; display:flex; flex-direction:column; padding:12px 14px 16px;">
 
     
 
@@ -774,187 +758,30 @@
 
     <!-- 엑자일 캐릭터 & 말풍선 -->
 
-    <div style="display:flex; gap:14px; margin-bottom:18px; align-items:flex-start;">
-
-      <div class="tutor-avatar-wrap" id="tutorAvatarWrap" onclick="handleAiAvatarTap(event)" style="cursor:pointer;" title="엑자일 이야기 듣기">
-
-        <svg id="exileAvatarSvg" width="76" height="76" viewBox="0 0 108 108">
-
-          <!-- 배경 원 & 글로우 -->
-
+        <!-- [옵빠야 요청] 관리자 키 넣는 프사쪽 말풍선: 지정 텍스트만 표시 & 공간 최소화하여 아래 영역 끌어올림 -->
+    <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
+      <div class="tutor-avatar-wrap" id="tutorAvatarWrap" onclick="handleAiAvatarTap(event)" style="cursor:pointer;" title="AI 엑자일 프로필 (연속 5번 터치 시 관리자 모드)">
+        <svg id="exileAvatarSvg" width="52" height="52" viewBox="0 0 108 108">
           <circle cx="54" cy="54" r="50" fill="#4F46E5"/>
-
           <circle cx="54" cy="54" r="42" fill="#6366F1"/>
-
-          <!-- 반짝이 별 장식 -->
-
-          <polygon points="20,24 22,19 24,24 29,26 24,28 22,33 20,28 15,26" fill="#FDE047"/>
-
-          <polygon points="86,22 87.5,18 89,22 93,23.5 89,25 87.5,29 86,25 82,23.5" fill="#F472B6"/>
-
-          <!-- 아미코 풍 벚꽃 핑크 트윈테일 (뒷머리) -->
-
-          <path d="M26,44 C18,56 18,78 30,84 C38,88 40,70 34,54 Z" fill="#F472B6"/>
-
-          <path d="M82,44 C90,56 90,78 78,84 C70,88 68,70 74,54 Z" fill="#F472B6"/>
-
-          <circle cx="28" cy="46" r="4.5" fill="#A855F7"/>
-
-          <circle cx="80" cy="46" r="4.5" fill="#A855F7"/>
-
-          <!-- 목 & 스쿨룩 카라 -->
-
-          <rect x="49" y="70" width="10" height="9" fill="#FFE0D0"/>
-
-          <polygon points="36,102 46,76 62,76 72,102" fill="#312E81"/>
-
-          <polygon points="48,76 54,86 60,76" fill="#FFFFFF"/>
-
-          <polygon points="52,78 56,78 58,90 54,93 50,90" fill="#EC4899"/>
-
-          <!-- 뽀얀 얼굴형 -->
-
-          <path d="M54,36 C39,36 35,48 35,60 C35,74 46,82 54,82 C62,82 73,74 73,60 C73,48 69,36 54,36 Z" fill="#FFF0E6"/>
-
-          <!-- 사랑스러운 핑크 볼터치 -->
-
-          <ellipse cx="43" cy="65" rx="5.5" ry="3.5" fill="#FF99AA" opacity="0.85"/>
-
-          <ellipse cx="65" cy="65" rx="5.5" ry="3.5" fill="#FF99AA" opacity="0.85"/>
-
-          <!-- 초롱초롱 애니 눈 & 깜빡임 연동 -->
-
-          <ellipse id="avatarEyeL" cx="44" cy="54" rx="4.5" ry="5.5" fill="#1E1B4B"/>
-
+          <ellipse cx="44" cy="54" rx="4.5" ry="5.5" fill="#1E1B4B"/>
           <ellipse cx="44" cy="55" rx="3.5" ry="4.5" fill="#7C3AED"/>
-
-          <circle id="avatarPupilL" cx="43" cy="52" r="1.8" fill="#FFFFFF"/>
-
-          <ellipse id="avatarEyeR" cx="64" cy="54" rx="4.5" ry="5.5" fill="#1E1B4B"/>
-
+          <circle cx="43" cy="52" r="1.8" fill="#FFFFFF"/>
+          <ellipse cx="64" cy="54" rx="4.5" ry="5.5" fill="#1E1B4B"/>
           <ellipse cx="64" cy="55" rx="3.5" ry="4.5" fill="#7C3AED"/>
-
-          <circle id="avatarPupilR" cx="63" cy="52" r="1.8" fill="#FFFFFF"/>
-
-          <!-- 실시간 4단계 립싱크 (Lip Sync) 연동 입모양 -->
-
+          <circle cx="63" cy="52" r="1.8" fill="#FFFFFF"/>
           <path id="avatarMouth" d="M50,70 Q54,73 58,70" stroke="#E11D48" stroke-width="2.5" fill="#E11D48" stroke-linecap="round"/>
-
-          <!-- 앞머리 뱅 -->
-
-          <path d="M54,26 C37,26 33,36 33,46 L37,54 L41,44 L47,52 L51,42 L54,54 L57,42 L63,52 L67,44 L71,54 L75,46 C75,36 71,26 54,26 Z" fill="#F472B6"/>
-
-          <path d="M43,32 C47,30 61,30 65,32" stroke="#FBCFE8" stroke-width="2" stroke-linecap="round" fill="none"/>
-
-          <!-- 튜터 스마트 헤드셋 -->
-
-          <path d="M31,44 C31,24 77,24 77,44" stroke="#F59E0B" stroke-width="4" fill="none"/>
-
-          <ellipse cx="28" cy="52" rx="4" ry="7" fill="#FACC15"/>
-
-          <ellipse cx="80" cy="52" rx="4" ry="7" fill="#FACC15"/>
-
-          <path d="M30,55 C34,66 43,71 49,70" stroke="#475569" stroke-width="2" fill="none"/>
-
-          <circle cx="49" cy="70" r="2" fill="#EA580C"/>
-
         </svg>
-
-        <div id="avatarBadgeText" style="position:absolute; bottom:-4px; right:-2px; background:#0284c7; color:#fff; font-size:10px; font-weight:900; padding:2px 6px; border-radius:8px; border:1.5px solid #fff;">
-
-          1. 사람
-
-        </div>
-
       </div>
-
-
 
       <div style="flex:1;">
-
-        <div class="speech-bubble">
-
-          <div id="obTutorSpeech" id="obTutorSpeech">
-
-            난 안드로메다에서 지구로 유배 온 AI <strong>엑자일</strong>이야! 🌌<br>
-
-            우리가 준비한 목소리는 사실 <strong>총 44가지</strong>야! 이 중 4가지는 비밀의 히든 음성이니, 먼저 <strong>40가지(사람 20종 + 애니 성우 20종) 목소리</strong> 중 마음에 드는 AI 튜터를 골라줘!<br>
-
-            <span style="font-size:12px; color:#4f46e5; font-weight:800; display:inline-block; margin-top:4px;">✨ (비밀 팁: 여기 말풍선을 5번 연속 터치하면 관리자 암호로 4대 히든 음성이 해금돼!)</span>
-
+        <div class="speech-bubble" style="padding:10px 14px; border-radius:14px; background:#ffffff; border:1.5px solid #c7d2fe; box-shadow:0 3px 8px rgba(79,70,229,0.06);">
+          <div id="obTutorSpeech" style="font-size:13.5px; font-weight:800; color:#1e293b; line-height:1.45;">
+            내가 너를 뭐로 부르면 될까?<br>마음에 드는 AI 튜터의 목소리를 골라줘.
           </div>
-
-          <div style="display:flex; justify-content:flex-end; margin-top:8px;">
-
-            <button onclick="replayCurrentTutorSpeech()" style="background:none; border:none; color:#6366f1; font-weight:800; font-size:14px; cursor:pointer; display:flex; align-items:center; gap:4px;">
-
-              <span id="voiceRippleIcon">🔊</span> 다시 듣기
-
-            </button>
-
-          </div>
-
         </div>
-
       </div>
-
     </div>
-
-
-
-    <!-- 단계별 컨텐츠 영역 -->
-
-    <div style="flex:1; overflow-y:auto; margin-bottom:16px; max-height:480px; padding-right:2px;">
-
-
-
-      <!-- STEP 1: 유저 호칭 & 9대 음성 선택 (성별 선택은 중복이므로 삭제됨) -->
-
-      <div id="obStep1">
-
-        <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px; margin-bottom:14px;">
-
-          <label style="display:block; font-size:16px; font-weight:800; color:#334155; margin-bottom:8px;">
-
-            👤 AI 엑자일이 당신을 어떻게 부를까요? (사용자 이름 고정)
-
-          </label>
-
-          <input type="text" id="obUserNameInput" value="" oninput="setAndSaveUserName(this.value)" placeholder="이름 또는 호칭을 입력하세요" style="width:100%; padding:14px 16px; border-radius:14px; border:2.5px solid #6366f1; font-size:18px; font-weight:800; color:#0f172a; outline:none; background:#ffffff;">
-
-          <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
-
-            <button type="button" class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('학습자')">학습자</button>
-
-            <button type="button" class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('사령관')">사령관</button>
-
-            <button type="button" class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('캡틴')">캡틴</button>
-
-            <button type="button" class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('마스터')">마스터</button>
-
-            <button type="button" class="btn-3d btn-secondary" style="padding:8px 14px; min-height:36px; font-size:14px;" onclick="selectQuickName('친구')">친구</button>
-
-          </div>
-
-        </div>
-
-
-
-        <div style="background:#f8fafc; border:2px solid #e2e8f0; border-radius:20px; padding:16px;">
-
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-
-            <label style="font-size:16px; font-weight:800; color:#334155;">
-
-              🎙️ 최신 Gemini 3.8 Flash 실제 사람 음성 엔진 (44종 마스터 프리셋)
-
-            </label>
-
-            <span id="currentEngineBadge" style="font-size:12px; font-weight:800; color:#15803d; background:#dcfce7; border:1px solid #86efac; padding:4px 10px; border-radius:8px;">✨ 3.8 Flash 사람 음성 엔진 직결 (기계음 원천 차단)</span>
-
-          </div>
-
-
 
           <!-- [요구사항 5] 사람 여성 / 사람 남성 / 애니 여성 / 애니 남성 4대 탭 분류 네비게이션 -->
           <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; margin-bottom:10px; background:#e2e8f0; padding:4px; border-radius:14px;" id="fourVoiceTabsGroup">
@@ -4772,6 +4599,111 @@
 
   }
 
+  ,
+  {
+    "id": "HUMAN_FH",
+    "voiceId": "HUMAN_FH",
+    "cat": "hf",
+    "category": "human",
+    "genderPresentation": "female",
+    "name": "FH. 매혹의 섹시녀 (도발 팜므파탈)",
+    "displayName": "여성 히든 (FH 매혹의 섹시녀)",
+    "icon": "💋",
+    "base": "Aoede",
+    "googleBase": "Aoede",
+    "pitch": 0.97,
+    "rate": 0.92,
+    "speakingRate": 0.92,
+    "sub": 5,
+    "style": "아주 섹시하고 도발적인 팜므파탈 매혹 톤",
+    "desc": "귓가에 숨결을 불어넣듯 끈적하고 요염하게 유혹하는 20대 후반 섹시녀 톤",
+    "prompt": "아주 섹시하고 도발적인 20대 후반 여성처럼, 귓가에 숨결이 느껴지듯 나긋나긋하고 끈적하며 요염하고 유혹적인 목소리로 말해 주세요.",
+    "samples": {
+      "ko": "어머 사령관님... 제 목소리에 이렇게 집중하시면, 저도 더 깊이 빠져들고 싶어지잖아요... 후훗.",
+      "fr": "Oh mon commandant... Si vous écoutez ma voix de si près, j'ai envie de me perdre en vous... Chut.",
+      "zh": "哎呀司令官……您这么专注地听着我的声音，我也想陷得更深了呢……呵呵。",
+      "ja": "あら司令官様……そんなに熱心に私の声を聞かれたら、もっと深く溺れたくなっちゃいますわ……ふふっ。",
+      "en": "Oh Commander... listening so closely to my voice makes me want to dive even deeper with you... Hehe."
+    }
+  },
+  {
+    "id": "HUMAN_MH",
+    "voiceId": "HUMAN_MH",
+    "cat": "hm",
+    "category": "human",
+    "genderPresentation": "male",
+    "name": "MH. 명품배우 유해진 (구수 위트)",
+    "displayName": "남성 히든 (MH 영화배우 유해진)",
+    "icon": "🎬",
+    "base": "Charon",
+    "googleBase": "Charon",
+    "pitch": 0.84,
+    "rate": 1.04,
+    "speakingRate": 1.04,
+    "sub": 5,
+    "style": "친근하고 구수하며 사람 냄새 물씬 풍기는 유해진 배우 특유의 위트 넘치는 톤",
+    "desc": "영화 삼시세끼·타짜 속 유해진처럼 넉살 좋고 유쾌하며 툭툭 던지듯 자연스러운 대한민국 대표 명품 배우 톤",
+    "prompt": "대한민국 대표 영화배우 유해진처럼, 구수하고 넉살 좋으며 위트와 인간미가 넘치는 자연스러운 일상 톤으로, 툭툭 던지듯 유쾌하고 찰지게 말해 주세요.",
+    "samples": {
+      "ko": "어이 사령관님! 아이고 반갑구만 그래~ 아 발음이라는 게 말이지, 힘 빡 주지 말고 툭툭 던지는 겨, 알았지?",
+      "fr": "Eh salut Commandant ! Ça fait plaisir de vous voir ! La prononciation, faut pas forcer, ça se lance tout naturellement, compris ?",
+      "zh": "哎呀司令官！好久不见真高兴啊~ 这发音嘛，不用使太大力气，自然而然地说出来就行，懂了吧？",
+      "ja": "おっ、司令官さん！いやぁ会えて嬉しいねぇ！発音ってのはさ、力まずにサラッと言うもんなのよ、分かった？",
+      "en": "Hey there, Commander! Great to see you! Pronunciation is all about relaxing and letting it flow naturally, got it?"
+    }
+  },
+  {
+    "id": "ANIME_AFH",
+    "voiceId": "ANIME_AFH",
+    "cat": "af",
+    "category": "anime",
+    "genderPresentation": "female",
+    "name": "AFH. 렘 (헌신적인 저택 메이드)",
+    "displayName": "애니 여성 히든 (AFH 렘 · 헌신적 메이드)",
+    "icon": "💙",
+    "base": "Aoede",
+    "googleBase": "Aoede",
+    "pitch": 1.12,
+    "rate": 0.95,
+    "speakingRate": 0.95,
+    "sub": 5,
+    "style": "주인님만을 일편단심 섬기는 헌신적이고 사랑스러운 애니 메이드 성우 톤 (렘)",
+    "desc": "Re:Zero 렘 느낌의 나긋나긋하고 애절하며 사령관님께 헌신하는 최고 인기 블루헤어 메이드 톤",
+    "prompt": "로즈월 저택의 블루헤어 메이드 렘처럼, 사령관님을 세상에서 가장 소중하고 사랑하는 사람으로 온 마음을 다해 헌신적으로 모시는 나긋나긋하고 애절하며 충성스러운 애니메이션 여성 성우 목소리로 말해 주세요.",
+    "samples": {
+      "ko": "사령관님을 위해서라면 렘은 무엇이든 할 수 있어요. 렘은 오직 사령관님만의 메이드니까요.",
+      "fr": "Pour mon commandant, Rem ferait n'importe quoi. Car Rem est uniquement votre servante dévouée.",
+      "zh": "只要是为了司令官，雷姆什么都愿意做。因为雷姆只是属于司令官一人的女仆啊。",
+      "ja": "司令官様のためなら、レムは何だってできます。レムは、司令官様だけのメイドですから。",
+      "en": "For the Commander, Rem can do anything in the world. Because Rem is yours and yours alone."
+    }
+  },
+  {
+    "id": "ANIME_AMH",
+    "voiceId": "ANIME_AMH",
+    "cat": "am",
+    "category": "anime",
+    "genderPresentation": "male",
+    "name": "AMH. 아가츠마 젠이츠 (번개의 호흡)",
+    "displayName": "애니 남성 히든 (AMH 젠이츠 · 번개의 호흡)",
+    "icon": "⚡",
+    "base": "Puck",
+    "googleBase": "Puck",
+    "pitch": 0.92,
+    "rate": 1.12,
+    "speakingRate": 1.12,
+    "sub": 5,
+    "style": "겁에 질려 울먹이고 징징대다가도 번개의 호흡으로 일격필살을 날리는 젠이츠 톤",
+    "desc": "귀멸의 칼날 젠이츠처럼 호들갑 떨며 살려달라고 애원하다가 순식간에 진지한 번개의 일격을 가하는 반전 매력 성우 톤",
+    "prompt": "귀멸의 칼날 아가츠마 젠이츠처럼, 사령관님께 살려달라고 징징대고 울먹이며 호들갑을 떨다가도, 순간적으로 번개의 호흡 벽력일섬처럼 날카롭고 멋있게 일격을 가하는 반전 매력의 애니메이션 소년 성우 목소리로 말해 주세요.",
+    "samples": {
+      "ko": "사령관니이임~! 무서워요 살려주세요오오! ...번개의 호흡 제1형, 벽력일섬! 단 한 번의 호흡으로 발음을 베어 넘긴다!",
+      "fr": "Commandannnt~! J'ai tellement peur, sauvez-moi au secours ! ...Souffle de la Foudre, Premier Mouvement : Frappe Foudroyante ! Tranchons ce mot d'un seul éclair !",
+      "zh": "司令官大人啊啊啊~！太可怕了救命啊！……雷之呼吸，壹之型·霹雳一闪！用这一击瞬间斩断发音难题！",
+      "ja": "司令官さぁぁん〜！怖いよ助けてぇぇ！……雷の呼吸、壱ノ型・霹靂一閃！一撃でこの発音を切り裂いてみせる！",
+      "en": "Commandeeer~! I'm so scared, save meee! ...Thunder Breathing, First Form: Thunderclap and Flash! Slice through every word in an instant!"
+    }
+  }
 ];
 
   const ALL_VOICE_20 = ALL_VOICE_40; // 하위 호환성 유지
@@ -5117,7 +5049,7 @@ const EXILE_VOICES = [
     });
   }
 
-  function renderVoicePresets() {
+    function renderVoicePresets() {
     const container = document.getElementById('voicePresetContainer');
     if (!container) return;
     container.innerHTML = '';
@@ -5126,10 +5058,11 @@ const EXILE_VOICES = [
     let allList = getMasterVoicesList();
     const isUnlocked = isAdminVoiceUnlocked();
 
-    // 4대 탭별 필터링
+    // 4대 탭별 필터링 (일반 모드 10개씩 총 40개, 관리자 모드 11개씩 총 44개)
     let voices = allList.filter(v => {
-      // 1. 히든 음성 체크 (미해금 시 숨김)
-      if (v.sub === 5 && !isUnlocked) {
+      // 1. 히든 음성 체크 (sub === 5 또는 id 끝이 H)
+      const isHidden = (v.sub === 5 || (v.id && v.id.endsWith('H')) || (v.voiceId && v.voiceId.endsWith('H')));
+      if (isHidden && !isUnlocked) {
         return false;
       }
       // 2. 4대 탭 매칭
@@ -5147,39 +5080,47 @@ const EXILE_VOICES = [
 
     if (!voices.length) return;
 
-    // 현재 탭에 선택된 보이스가 없으면 첫 번째 보이스 자동 지정
+    // 현재 선택된 보이스 없으면 1번째 자동 지정
     let selectedVoice = voices.find(v => (v.voiceId === currentSelectedVoiceId || v.id === currentSelectedVoiceId));
     if (!selectedVoice) {
       selectedVoice = voices[0];
       VoiceEngine20.selectVoice(selectedVoice.voiceId || selectedVoice.id);
     }
 
-    // 드롭다운 컨테이너 생성
+    // 드롭다운 컨테이너 생성 (공간 컴팩트하게 위로 끌어올림)
     const selectWrapper = document.createElement('div');
-    selectWrapper.style.cssText = 'background:#ffffff; border:2px solid #6366f1; border-radius:18px; padding:14px; margin-bottom:10px; box-shadow:0 4px 14px rgba(99,102,241,0.08);';
+    selectWrapper.style.cssText = 'background:#ffffff; border:2px solid #6366f1; border-radius:16px; padding:12px; margin-bottom:8px; box-shadow:0 4px 12px rgba(99,102,241,0.08);';
 
-    // 헤더 라벨
+    // 헤더 라벨: 일반 모드 40종 / 관리자 모드 44종 상태 명시
     const labelRow = document.createElement('div');
-    labelRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;';
+    labelRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;';
+    const modeBadge = isUnlocked
+      ? '<span style="font-size:11.5px; font-weight:900; color:#16a34a; background:#dcfce7; padding:2px 8px; border-radius:8px;">🔓 관리자 44종 전체 해금</span>'
+      : '<span style="font-size:11.5px; font-weight:800; color:#6366f1; background:#e0e7ff; padding:2px 8px; border-radius:8px;">일반 모드 40종</span>';
+
     labelRow.innerHTML = `
-      <div style="font-size:13.5px; font-weight:800; color:#4338ca; display:flex; align-items:center; gap:6px;">
-        <span>🎙️ 음성 선택 (드롭다운):</span>
+      <div style="font-size:13px; font-weight:800; color:#4338ca; display:flex; align-items:center; gap:6px;">
+        <span>🎙️ 목소리 선택 (드롭다운):</span>
       </div>
-      <span style="font-size:12px; font-weight:800; color:#6366f1; background:#e0e7ff; padding:3px 9px; border-radius:8px;">${voices.length}개 선택 가능</span>
+      <div style="display:flex; align-items:center; gap:6px;">
+        ${modeBadge}
+        <span style="font-size:11.5px; font-weight:800; color:#475569;">${voices.length}개 선택 가능</span>
+      </div>
     `;
     selectWrapper.appendChild(labelRow);
 
     // 드롭다운 Select 박스
     const selectEl = document.createElement('select');
     selectEl.id = 'voicePresetSelect';
-    selectEl.style.cssText = 'width:100%; padding:12px 14px; font-size:15px; font-weight:800; color:#1e293b; background:#f8fafc; border:2px solid #cbd5e1; border-radius:12px; outline:none; cursor:pointer; box-sizing:border-box; appearance:auto; -webkit-appearance:auto;';
+    selectEl.style.cssText = 'width:100%; padding:10px 12px; font-size:14.5px; font-weight:800; color:#1e293b; background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; outline:none; cursor:pointer; box-sizing:border-box; appearance:auto; -webkit-appearance:auto;';
 
     voices.forEach(v => {
       const opt = document.createElement('option');
       opt.value = v.voiceId || v.id;
       const isCur = (opt.value === selectedVoice.voiceId || opt.value === selectedVoice.id);
       opt.selected = isCur;
-      const hiddenPrefix = (v.sub === 5) ? '🔒 [히든] ' : '';
+      const isHidden = (v.sub === 5 || (v.id && v.id.endsWith('H')));
+      const hiddenPrefix = isHidden ? '✨ [히든] ' : '';
       opt.textContent = `${v.icon || '🎙️'} ${hiddenPrefix}${v.name || v.displayName} - ${v.style || v.desc}`;
       selectEl.appendChild(opt);
     });
@@ -5193,27 +5134,27 @@ const EXILE_VOICES = [
     };
     selectWrapper.appendChild(selectEl);
 
-    // 선택된 음성 상세 및 미리듣기 프리뷰 카드
+    // 선택된 음성 상세 및 미리듣기 프리뷰 카드 (컴팩트 레이아웃)
     const previewCard = document.createElement('div');
     previewCard.id = 'selectedVoicePreviewCard';
     const isAnime = (selectedVoice.category === 'anime');
-    const isHidden = (selectedVoice.sub === 5);
-    previewCard.style.cssText = `margin-top:12px; background:${isHidden ? 'linear-gradient(135deg, #fdf2f8, #f5f3ff)' : '#f8faff'}; border:2px solid ${isHidden ? '#ec4899' : (isAnime ? '#f43f5e' : '#6366f1')}; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;`;
+    const isHidden = (selectedVoice.sub === 5 || (selectedVoice.id && selectedVoice.id.endsWith('H')));
+    previewCard.style.cssText = `margin-top:10px; background:${isHidden ? 'linear-gradient(135deg, #fdf2f8, #f5f3ff)' : '#f8faff'}; border:2px solid ${isHidden ? '#ec4899' : (isAnime ? '#f43f5e' : '#6366f1')}; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;`;
 
     previewCard.innerHTML = `
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="font-size:38px; line-height:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1));">${selectedVoice.icon || '🎙️'}</div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="font-size:32px; line-height:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1));">${selectedVoice.icon || '🎙️'}</div>
         <div style="flex:1;">
           <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-            <div style="font-size:16px; font-weight:900; color:#0f172a;">${selectedVoice.name || selectedVoice.displayName}</div>
-            ${isHidden ? '<span style="font-size:11px; font-weight:900; background:#fdf2f8; color:#db2777; border:1px solid #f472b6; padding:2px 6px; border-radius:6px;">✨ 특수 히든</span>' : ''}
-            <span style="font-size:11px; font-weight:800; background:#e0e7ff; color:#4338ca; padding:2px 6px; border-radius:6px;">선택됨 ✓</span>
+            <div style="font-size:15px; font-weight:900; color:#0f172a;">${selectedVoice.name || selectedVoice.displayName}</div>
+            ${isHidden ? '<span style="font-size:11px; font-weight:900; background:#fdf2f8; color:#db2777; border:1px solid #f472b6; padding:1px 6px; border-radius:6px;">✨ 히든 해금</span>' : ''}
+            <span style="font-size:11px; font-weight:800; background:#e0e7ff; color:#4338ca; padding:1px 6px; border-radius:6px;">선택됨 ✓</span>
           </div>
-          <div style="font-size:12.5px; color:#64748b; margin-top:3px; line-height:1.4;">${selectedVoice.style || selectedVoice.desc}</div>
+          <div style="font-size:12px; color:#64748b; margin-top:2px; line-height:1.35;">${selectedVoice.style || selectedVoice.desc}</div>
         </div>
       </div>
-      <div style="display:flex; gap:8px;">
-        <button type="button" class="btn-3d btn-primary" style="flex:1; padding:11px 14px; font-size:13.5px; font-weight:900; background:${isAnime ? '#f43f5e' : '#4f46e5'}; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="speakSampleVoice('${selectedVoice.voiceId || selectedVoice.id}')">
+      <div style="display:flex; gap:6px;">
+        <button type="button" class="btn-3d btn-primary" style="flex:1; padding:9px 12px; font-size:13px; font-weight:900; background:${isAnime ? '#f43f5e' : '#4f46e5'}; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="speakSampleVoice('${selectedVoice.voiceId || selectedVoice.id}')">
           <span>🔊 Gemini 3.8 Flash 샘플 미리듣기</span>
         </button>
       </div>
@@ -5247,7 +5188,10 @@ const EXILE_VOICES = [
 
   // 44종 마스터 보이스 목록 바인딩 (GeminiHumanVoiceEngine 내장 44종 우선)
   function getMasterVoicesList() {
-    if (typeof GeminiHumanVoiceEngine !== 'undefined' && GeminiHumanVoiceEngine.VOICES) {
+    if (typeof ALL_VOICE_40 !== 'undefined' && ALL_VOICE_40.length >= 44) {
+      return ALL_VOICE_40;
+    }
+    if (typeof GeminiHumanVoiceEngine !== 'undefined' && GeminiHumanVoiceEngine.VOICES && GeminiHumanVoiceEngine.VOICES.length >= 44) {
       return GeminiHumanVoiceEngine.VOICES;
     }
     return (typeof ALL_VOICE_40 !== 'undefined') ? ALL_VOICE_40 : [];
@@ -19167,7 +19111,7 @@ function getCurrentRoundData() {
 
   function getObDialogues() {
     return {
-      1: `마음에 드는 <strong>AI 튜터의 목소리</strong>를 아래 4대 카테고리(사람 여성·남성, 애니 여성·남성) 드롭다운에서 골라줘!`, 
+      1: `내가 너를 뭐로 부르면 될까?<br>마음에 드는 AI 튜터의 목소리를 골라줘.`,  
       2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
       3: `좋아 <strong>${userName}</strong>! 안드로메다 귀환 판정 제1문!<br>외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
       4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
@@ -20954,6 +20898,13 @@ function getCurrentRoundData() {
      ========================================================= */
 
   // 1. 오프닝 스플래시 화면 제어
+  
+  // [옵빠야 지침] 오프닝 화면 시각 문자 없이 오직 말로만 AI 소개와 목적 브리핑
+  function speakOpeningBriefingVoiceOnly() {
+    const text = "난 안드로메다에서 지구로 유배 온 AI 엑자일이야. 지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어.";
+    speakExileTutor(text, 'ko');
+  }
+
   function dismissOpeningSplash() {
     const splash = document.getElementById('openingSplashView');
     if (!splash) return;
