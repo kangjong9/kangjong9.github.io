@@ -103,19 +103,25 @@
     { id: 'SAz9YHcvj6GT2YYXdXww', name: 'River (리버)', gender: 'female', desc: '차분하고 안정적인 내레이터' }
   ];
 
+  // Kokoro-82M 실제 온디바이스 합성 (kokoro-js, 영어 전용 28종). 한국어 문장은 영어로 번역해 읽는다.
+  const KOKORO_JS_URL = 'https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/+esm';
+  const KOKORO_MODEL_ID = 'onnx-community/Kokoro-82M-v1.0-ONNX'; // q8 약 92MB, 최초 1회 내려받아 브라우저 캐시에 보관
   const KOKORO_VOICES = [
-    // 👩 미국 여성 실존 모델 (3종)
-    { id: 'af_heart', name: 'Heart (최고 평점 Grade A / 대표 여성)', file: 'kokoro_af_heart.wav', gender: 'female', lang: 'en-US', remote: 'https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/af_heart_0.wav', desc: '부드럽고 자연스러운 미국 대표 여성' },
-    { id: 'af_bella', name: 'Bella (부드럽고 맑은 음색)', file: 'kokoro_af_bella.wav', gender: 'female', lang: 'en-US', remote: 'https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/af_bella_0.wav', desc: '맑고 상냥한 미국 여성' },
-    { id: 'af_sky', name: 'Sky (밝고 상쾌한 하이톤)', file: 'kokoro_af_sky.wav', gender: 'female', lang: 'en-US', remote: 'https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/af_sky_0.wav', desc: '경쾌하고 통통 튀는 하이톤' },
-    // 👨 미국 남성 실존 모델 (2종)
-    { id: 'am_adam', name: 'Adam (깊고 울림 있는 남성 바리톤)', file: 'kokoro_am_adam.wav', gender: 'male', lang: 'en-US', remote: 'https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/am_adam_0.wav', desc: '중후하고 신뢰감 넘치는 남성' },
-    { id: 'am_michael', name: 'Michael (지적이고 젠틀한 남성)', file: 'kokoro_am_michael.wav', gender: 'male', lang: 'en-US', remote: 'https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/am_michael_0.wav', desc: '지적인 미국 젠틀맨' },
-    // 🇬🇧 영국 남성 실존 모델 (1종)
-    { id: 'bm_lewis', name: 'Lewis (지적인 영국 신사)', file: 'kokoro_bm_lewis.wav', gender: 'male', lang: 'en-GB', remote: 'https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/bm_lewis_0.wav', desc: '품격 있는 영국 발음 남성' },
-    // 🎙️ 공식 소개 오디오 (1종)
-    { id: 'intro', name: 'Intro (Kokoro-82M 공식 영문 오버뷰)', file: 'kokoro_intro.wav', gender: 'female', lang: 'en-US', remote: 'https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/HEARME.wav', desc: '82M 파라미터 신경망 공식 소개' }
-  ];
+    ['af_heart', 'Heart', '최고 평점 대표 여성'], ['af_bella', 'Bella', '맑고 상냥한 여성'], ['af_nicole', 'Nicole', '속삭이듯 부드러운 여성'],
+    ['af_aoede', 'Aoede', '차분한 여성'], ['af_kore', 'Kore', '또렷한 여성'], ['af_sarah', 'Sarah', '친근한 여성'],
+    ['af_nova', 'Nova', '밝은 여성'], ['af_sky', 'Sky', '경쾌한 하이톤 여성'], ['af_alloy', 'Alloy', '중성적 여성'],
+    ['af_jessica', 'Jessica', '활발한 여성'], ['af_river', 'River', '잔잔한 여성'],
+    ['am_michael', 'Michael', '지적이고 젠틀한 남성'], ['am_fenrir', 'Fenrir', '힘 있는 남성'], ['am_puck', 'Puck', '장난기 있는 남성'],
+    ['am_echo', 'Echo', '울림 있는 남성'], ['am_eric', 'Eric', '자신감 있는 남성'], ['am_liam', 'Liam', '청년 남성'],
+    ['am_onyx', 'Onyx', '깊은 저음 남성'], ['am_santa', 'Santa', '푸근한 남성'], ['am_adam', 'Adam', '바리톤 남성'],
+    ['bf_emma', 'Emma', '영국 여성'], ['bf_isabella', 'Isabella', '우아한 영국 여성'], ['bf_alice', 'Alice', '단정한 영국 여성'],
+    ['bf_lily', 'Lily', '부드러운 영국 여성'],
+    ['bm_george', 'George', '영국 신사 남성'], ['bm_fable', 'Fable', '이야기꾼 영국 남성'], ['bm_lewis', 'Lewis', '품격 있는 영국 남성'],
+    ['bm_daniel', 'Daniel', '차분한 영국 남성']
+  ].map(([id, name, desc]) => ({
+    id, name: `${name} (${id[0] === 'a' ? 'US' : 'UK'})`, desc,
+    gender: id[1] === 'm' ? 'male' : 'female', lang: id[0] === 'a' ? 'en-US' : 'en-GB'
+  }));
 
   const GEMINI_VOICE_CATALOG = [
     // 👩 1. 실제 사람 여성 (10종 + 💋히든 FH)
@@ -1161,32 +1167,42 @@
       const voiceKey = (opts.voice && KOKORO_VOICES.some(v => v.id === opts.voice)) ? opts.voice : 'af_heart';
       const voiceInfo = KOKORO_VOICES.find(v => v.id === voiceKey) || KOKORO_VOICES[0];
 
+      const isStale = () => opts.playToken !== undefined && opts.playToken !== this.currentPlayToken;
+
+      // Kokoro는 영어 전용: 한글이 있으면 영어로 번역해 읽는다 (번역 실패 시 한글을 영어 발음기로 읽지 않고 실패 처리)
       let speechText = rawText;
-      if (opts.translate && /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(rawText)) {
+      if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(rawText)) {
         speechText = await translateText(rawText, 'en');
+        if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(speechText)) throw new Error('Kokoro: 영어 번역 실패 (Kokoro는 영어 전용)');
       }
+      if (isStale()) throw new Error('CANCELED');
 
-      const candidateUrls = [
-        `${this.config.audioSamplesPath}${voiceInfo.file}`,
-        voiceInfo.remote,
-        `${this.config.audioSamplesPath}kokoro_intro.wav`,
-        'https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/HEARME.wav'
-      ];
+      const tts = await this._loadKokoro();
+      if (isStale()) throw new Error('CANCELED');
+      const audio = await tts.generate(speechText, { voice: voiceInfo.id, speed: opts.rate || 1.0 });
+      if (isStale()) throw new Error('CANCELED');
 
-      for (const url of candidateUrls) {
-        if (!url) continue;
-        let blob = null;
-        try {
-          const resp = await fetch(url);
-          if (resp.ok) blob = await resp.blob();
-        } catch (e) {}
-        if (!blob) continue;
-        const audioUrl = URL.createObjectURL(blob);
-        await this._playAudioUrl(audioUrl, opts.playToken);
-        return { voice: voiceKey, spokenText: speechText, blob, mode: 'kokoro-physical-audio' };
+      const blob = audio.toBlob();
+      await this._playAudioUrl(URL.createObjectURL(blob), opts.playToken);
+      return { voice: voiceKey, spokenText: speechText, blob, mode: 'kokoro-on-device' };
+    }
+
+    /** Kokoro 모델을 한 번만 불러와 재사용 (최초 1회 약 92MB 다운로드, 이후 브라우저 캐시) */
+    _loadKokoro() {
+      if (!OurVoiceMasterEngine._kokoroPromise) {
+        // 진행 상황 콜백은 앱이 내보낸 인스턴스에 지정한다 (예: OurVoiceMasterEngine.onKokoroStatus = msg => ...)
+        let last = '';
+        const report = (msg) => { if (msg !== last && typeof this.onKokoroStatus === 'function') { last = msg; this.onKokoroStatus(msg); } };
+        report('Kokoro 모델 준비 중... (최초 1회 약 92MB)');
+        OurVoiceMasterEngine._kokoroPromise = import(KOKORO_JS_URL)
+          .then(m => m.KokoroTTS.from_pretrained(KOKORO_MODEL_ID, {
+            dtype: 'q8', device: 'wasm',
+            progress_callback: (p) => { if (p && p.status === 'progress' && /onnx/.test(p.file || '')) report(`Kokoro 모델 내려받는 중 ${Math.round(p.progress || 0)}%`); }
+          }))
+          .then(tts => { report('Kokoro 준비 완료'); return tts; })
+          .catch(e => { OurVoiceMasterEngine._kokoroPromise = null; report('Kokoro 모델 불러오기 실패'); throw e; });
       }
-
-      throw new Error(`Kokoro audio playback failed for ${voiceKey}.`);
+      return OurVoiceMasterEngine._kokoroPromise;
     }
 
     // -----------------------------------------------------------------------

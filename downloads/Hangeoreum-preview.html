@@ -4860,7 +4860,7 @@ const EXILE_VOICES = [
       return (ov.eleven || []).map(v => ({ id: v.id, name: v.name, desc: v.desc || '', icon: v.id === NURI_ELEVEN_DEFAULT_VOICE ? '💖' : (v.gender === 'male' ? '👨' : '👩'), badge: v.id === NURI_ELEVEN_DEFAULT_VOICE ? '기본' : '스튜디오급', group: v.gender === 'male' ? '👨 실제 사람 남성' : '👩 실제 사람 여성' }));
     }
     if (engine === 'kokoro') {
-      return (ov.kokoro || []).map(v => ({ id: v.id, name: v.name, desc: v.desc || '', icon: v.gender === 'male' ? '👨' : '👩', badge: '샘플 음원', group: '🍃 Kokoro-82M' }));
+      return (ov.kokoro || []).map(v => ({ id: v.id, name: v.name, desc: v.desc || '', icon: v.gender === 'male' ? '👨' : '👩', badge: '온디바이스 · 영어', group: '🍃 Kokoro-82M (영어 전용 · 한국어는 영어로 번역)' }));
     }
     return [];
   }
@@ -4925,6 +4925,15 @@ const EXILE_VOICES = [
       el.style.borderColor = g === val ? '#4f46e5' : '#cbd5e1';
       el.style.background = g === val ? '#eef2ff' : '#fff';
     });
+  }
+
+  if (typeof OurVoiceMasterEngine !== 'undefined') {
+    // Kokoro 최초 모델 다운로드(약 92MB) 진행 상황 표시
+    OurVoiceMasterEngine.onKokoroStatus = (msg) => {
+      const badge = document.getElementById('activeEngineBadge');
+      if (badge && currentTTSEngineModel === 'kokoro') badge.textContent = msg;
+      nuriNotice(msg);
+    };
   }
 
   function nuriNotice(msg) {
@@ -5140,7 +5149,7 @@ const EXILE_VOICES = [
      사람여성 = Edge Neural (23종)
      사람남성 = Gemini 3.8 (44종)
      애니여성 = ElevenLabs (16종)
-     애니남성 = Kokoro-82M (7종)
+     애니남성 = Kokoro-82M (28종, 온디바이스 영어 합성)
      ========================================================= */
   let currentFourTab = localStorage.getItem('our_user_tts_engine') || 'edge';
 
@@ -5232,7 +5241,7 @@ const EXILE_VOICES = [
       edge: `🌊 누리 보이스 · Edge Neural (${voices.length}종 · 100% 무료)`,
       gemini: `✨ 누리 보이스 · Gemini 3.8 (${voices.length}종 · Google 신경망)`,
       eleven: `💎 누리 보이스 · ElevenLabs (${voices.length}종 · 스튜디오급)`,
-      kokoro: `🍃 누리 보이스 · Kokoro-82M (${voices.length}종 · 샘플 음원)`
+      kokoro: `🍃 누리 보이스 · Kokoro-82M (${voices.length}종 · 온디바이스 영어 · 한국어는 영어 번역)`
     };
 
     const headerRow = document.createElement('div');
@@ -20144,7 +20153,7 @@ function getCurrentRoundData() {
      1번: Edge Neural (23종, 100% 무료)
      2번: Gemini 3.8 Flash (44종, 개인 무료 키 유도)
      3번: ElevenLabs (16종, 개인 키 유도)
-     4번: Kokoro-82M (7종, 100% 무료 온디바이스)
+     4번: Kokoro-82M (28종, 100% 무료 온디바이스 영어 합성)
      ========================================================= */
   let currentTTSEngineModel = 'edge';
   let currentTTSVoiceId = 'ko-KR-SunHiNeural';
@@ -20201,7 +20210,7 @@ function getCurrentRoundData() {
       edge: '🌊 Edge (100% 무료)',
       gemini: '✨ Gemini (개인 키)',
       eleven: '💎 ElevenLabs (개인 키)',
-      kokoro: '⚡ Kokoro (샘플 음원)'
+      kokoro: '⚡ Kokoro 28종 (영어)'
     };
     const badge = document.getElementById('activeEngineBadge');
     if (badge) badge.textContent = badgeMap[modelKey] || modelKey;
