@@ -644,7 +644,7 @@
 
     <div style="display:flex; align-items:center; gap:10px;">
 
-      <div style="width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg, #6366f1, #3b82f6); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:18px; box-shadow:0 3px 8px rgba(99,102,241,0.4);">
+      <div id="headerAppAvatar" onclick="handleAiAvatarTap(event)" style="cursor:pointer; width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg, #6366f1, #3b82f6); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:18px; box-shadow:0 3px 8px rgba(99,102,241,0.4);">
 
         🌌
 
@@ -676,7 +676,7 @@
 
       </button>
 
-      <button id="headerSettingsBtn" onclick="handleSettingsGearClick(event)" title="설정 (5번 연속 터치 시 관리자 모드)" style="background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#4f46e5;">
+      <button id="headerSettingsBtn" onclick="openSettingsModal()" title="설정" style="background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:12px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#4f46e5;">
 
         ⚙️
 
@@ -764,7 +764,7 @@
 
     <div style="display:flex; gap:14px; margin-bottom:18px; align-items:flex-start;">
 
-      <div class="tutor-avatar-wrap" onclick="speakExileIntroStory()" style="cursor:pointer;" title="엑자일 이야기 듣기">
+      <div class="tutor-avatar-wrap" id="tutorAvatarWrap" onclick="handleAiAvatarTap(event)" style="cursor:pointer;" title="엑자일 이야기 듣기">
 
         <svg id="exileAvatarSvg" width="76" height="76" viewBox="0 0 108 108">
 
@@ -1702,7 +1702,7 @@
 
       <div style="background:#ffffff; border:2px solid #e2e8f0; border-radius:20px; padding:14px; margin-bottom:12px; display:flex; align-items:center; gap:12px;">
 
-        <div id="personaAvatar" style="font-size:32px;">💼</div>
+        <div id="personaAvatar" onclick="handleAiAvatarTap(event)" style="cursor:pointer; font-size:32px;">💼</div>
 
         <div>
 
@@ -20961,6 +20961,36 @@ function getCurrentRoundData() {
   // 설정 톱니바퀴 클릭 및 연속 5회 터치 시 관리자 해금 트리거
   let gearTapCount = 0;
   let gearTapTimer = null;
+
+  
+  // [옵빠야 요청] AI 프로필 사진 연속 5번 터치 시 관리자 모드 호출
+  let aiAvatarTapCount = 0;
+  let aiAvatarTapTimer = null;
+
+  function handleAiAvatarTap(e) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    aiAvatarTapCount++;
+    if (aiAvatarTapTimer) clearTimeout(aiAvatarTapTimer);
+    aiAvatarTapTimer = setTimeout(() => {
+      aiAvatarTapCount = 0;
+    }, 1800); // 1.8초 동안 5번 터치 감지
+
+    if (aiAvatarTapCount >= 5) {
+      aiAvatarTapCount = 0;
+      openAdminUnlockModal();
+      return;
+    }
+
+    // 1~4회 터치 시 아바타 깜빡임 및 인사
+    const svg = document.getElementById('exileAvatarSvg');
+    if (svg) {
+      svg.style.transform = 'scale(1.15)';
+      setTimeout(() => { svg.style.transform = 'scale(1)'; }, 200);
+    }
+    if (typeof speakExileIntroStory === 'function' && aiAvatarTapCount === 1) {
+      speakExileIntroStory();
+    }
+  }
 
   function handleSettingsGearClick(e) {
     if (e && e.stopPropagation) e.stopPropagation();
