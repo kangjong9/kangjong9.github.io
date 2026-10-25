@@ -21254,6 +21254,8 @@ function getCurrentRoundData() {
       if (localStorage.getItem('hangeoreum_onboarding_done') === '1') {
 
         hasPreviousStudy = true;
+        const splashEl = document.getElementById('openingSplashView');
+        if (splashEl) splashEl.style.display = 'none';
 
         currentLevel = parseInt(localStorage.getItem('hangeoreum_level'), 10) || 1;
 
@@ -21795,26 +21797,7 @@ function getCurrentRoundData() {
     }
   }
 
-  // 3. 사람여성, 사람남성, 애니여성, 애니남성 4대 탭 제어
-  let currentFourTab = 'hf'; // 'hf', 'hm', 'af', 'am'
-
-  function switchFourVoiceTab(tab) {
-    currentFourTab = tab;
-    const tabs = ['hf', 'hm', 'af', 'am'];
-    tabs.forEach(t => {
-      const btn = document.getElementById('tabVoice' + t.toUpperCase());
-      if (btn) {
-        if (t === tab) {
-          btn.style.background = '#4f46e5';
-          btn.style.color = '#ffffff';
-        } else {
-          btn.style.background = '#f8fafc';
-          btn.style.color = '#475569';
-        }
-      }
-    });
-    renderVoicePresets();
-  }
+  // (구버전 중복 탭 핸들러 제거됨)
 
   // 4. 요구사항 3: 지금까지 학습한 모든 데이터 완전 초기화
   function resetAllLearnedDataCompletely() {
