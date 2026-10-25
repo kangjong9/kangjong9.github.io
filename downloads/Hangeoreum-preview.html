@@ -599,7 +599,7 @@
        [요구사항 2] 우주 은하 감각적 오프닝 스플래시 인트로 화면
        ========================================================= -->
     <!-- =========================================================
-       [옵빠야 지침] 우주 은하 감각적 오프닝 화면 (시각 말풍선 없이 분위기 유지 & 음성 브리핑만 실행)
+       [옵빠야 지침] 우주 은하 감각적 오프닝 화면 (시각 말풍선/문자 배제 & 오직 음성 브리핑만 실행)
        ========================================================= -->
   <div id="openingSplashView" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; color:#ffffff; transition:opacity 0.5s ease, visibility 0.5s ease; font-family:sans-serif;">
     <div style="position:absolute; width:100%; height:100%; top:0; left:0; background:radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(0,0,0,0) 70%); pointer-events:none;"></div>
@@ -607,13 +607,19 @@
     <div style="max-width:440px; width:100%; text-align:center; position:relative; z-index:2;">
       <div id="openingAiAvatar" onclick="handleAiAvatarTap(event)" style="cursor:pointer; display:inline-block; font-size:52px; margin-bottom:12px; filter:drop-shadow(0 0 16px rgba(129,140,248,0.6)); animation:pulse 2s infinite ease-in-out;" title="AI 엑자일 프로필 (연속 5번 터치 시 관리자 모드)">🛸</div>
       <div style="font-size:13px; font-weight:800; letter-spacing:3px; color:#818cf8; text-transform:uppercase; margin-bottom:8px;">Andromeda Exile AI Project</div>
-      <h1 style="font-size:32px; font-weight:900; margin:0 0 16px 0; background:linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #818cf8 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 30px rgba(99,102,241,0.3);">한걸음 V1.0 Exile</h1>
+      <h1 style="font-size:32px; font-weight:900; margin:0 0 14px 0; background:linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #818cf8 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 30px rgba(99,102,241,0.3);">한걸음 V1.0 Exile</h1>
 
-      <!-- 세련된 스펙 안내 카드 (문자/시각 말풍선 배제, 분위기 유지) -->
-      <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); backdrop-filter:blur(10px); border-radius:18px; padding:16px 20px; margin-bottom:28px; text-align:left; font-size:13px; color:#cbd5e1; line-height:1.6;">
-        🎙️ <strong>Google Gemini 3.8 Flash 최신 신경망 음성 탑재</strong><br>
-        • 사람/애니 성우 40종 + 히든 4종 고음질 신경망 목소리<br>
-        • 기계음 100% 원천 차단 및 원어민 24kHz 실시간 발음 코칭
+      <!-- 외계 AI 엑자일 교화 브리핑: 시각적 말풍선 없이 분위기 유지 & 음성 브리핑만 실행 -->
+      <div style="font-size:14px; color:#94a3b8; line-height:1.6; margin-bottom:24px;">
+        지구에서 250만 광년 떨어진 안드로메다 유배지...<br>
+        외계 AI <strong style="color:#a5b4fc;">엑자일</strong>과 함께 지구인 언어 50단계를 마스터하고<br>
+        자유를 향한 사면장을 획득하십시오!
+      </div>
+
+      <!-- 실시간 음성 브리핑 재생 상태 배지 (클릭 시 다시 듣기) -->
+      <div id="openingVoiceStatusBadge" onclick="speakOpeningBriefingVoiceOnly()" style="display:inline-flex; align-items:center; gap:8px; background:rgba(99,102,241,0.22); border:1.5px solid rgba(129,140,248,0.5); border-radius:14px; padding:10px 18px; font-size:13px; font-weight:800; color:#e0e7ff; margin-bottom:28px; cursor:pointer; box-shadow:0 4px 15px rgba(99,102,241,0.25);" title="클릭 시 엑자일 음성 브리핑 다시 듣기">
+        <span id="openingVoiceIcon">🔊</span>
+        <span id="openingVoiceText">AI 엑자일 음성 브리핑 듣는 중...</span>
       </div>
 
       <button type="button" class="btn-3d" onclick="dismissOpeningSplash()" style="width:100%; padding:16px 20px; font-size:17px; font-weight:900; background:linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color:#ffffff; border-radius:16px; border:none; cursor:pointer; box-shadow:0 8px 24px rgba(79,70,229,0.4); display:flex; align-items:center; justify-content:center; gap:8px;">
@@ -761,7 +767,7 @@
         <!-- [옵빠야 요청] 관리자 키 넣는 프사쪽 말풍선: 지정 텍스트만 표시 & 공간 최소화하여 아래 영역 끌어올림 -->
     <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
       <div class="tutor-avatar-wrap" id="tutorAvatarWrap" onclick="handleAiAvatarTap(event)" style="cursor:pointer;" title="AI 엑자일 프로필 (연속 5번 터치 시 관리자 모드)">
-        <svg id="exileAvatarSvg" width="52" height="52" viewBox="0 0 108 108">
+        <svg id="exileAvatarSvg" width="48" height="48" viewBox="0 0 108 108">
           <circle cx="54" cy="54" r="50" fill="#4F46E5"/>
           <circle cx="54" cy="54" r="42" fill="#6366F1"/>
           <ellipse cx="44" cy="54" rx="4.5" ry="5.5" fill="#1E1B4B"/>
@@ -775,7 +781,7 @@
       </div>
 
       <div style="flex:1;">
-        <div class="speech-bubble" style="padding:10px 14px; border-radius:14px; background:#ffffff; border:1.5px solid #c7d2fe; box-shadow:0 3px 8px rgba(79,70,229,0.06);">
+        <div class="speech-bubble" style="padding:9px 13px; border-radius:14px; background:#ffffff; border:1.5px solid #c7d2fe; box-shadow:0 3px 8px rgba(79,70,229,0.06);">
           <div id="obTutorSpeech" style="font-size:13.5px; font-weight:800; color:#1e293b; line-height:1.45;">
             내가 너를 뭐로 부르면 될까?<br>마음에 드는 AI 튜터의 목소리를 골라줘.
           </div>
@@ -783,54 +789,61 @@
       </div>
     </div>
 
-          <!-- [요구사항 5] 사람 여성 / 사람 남성 / 애니 여성 / 애니 남성 4대 탭 분류 네비게이션 -->
-          <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; margin-bottom:10px; background:#e2e8f0; padding:4px; border-radius:14px;" id="fourVoiceTabsGroup">
-            <button type="button" id="tabVoiceHF" class="btn-3d" style="min-height:42px; padding:6px 2px; font-size:12px; font-weight:900; background:#4f46e5; color:#fff;" onclick="switchFourVoiceTab('hf')">
-              🌸 사람 여성
-            </button>
-            <button type="button" id="tabVoiceHM" class="btn-3d" style="min-height:42px; padding:6px 2px; font-size:12px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('hm')">
-              ⚡ 사람 남성
-            </button>
-            <button type="button" id="tabVoiceAF" class="btn-3d" style="min-height:42px; padding:6px 2px; font-size:12px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('af')">
-              🧚 애니 여성
-            </button>
-            <button type="button" id="tabVoiceAM" class="btn-3d" style="min-height:42px; padding:6px 2px; font-size:12px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('am')">
-              ⚔️ 애니 남성
-            </button>
-          </div>
-
-          <!-- 히든 상태 및 재생 속도 조절 바 -->
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px; background:#fff; padding:8px 12px; border-radius:14px; border:1px solid #e2e8f0;">
-            <div id="hiddenUnlockStatusBadge" style="font-size:12px; font-weight:800; color:#475569; display:flex; align-items:center; gap:4px;">
-              🔒 <span>4대 히든 음성 잠김 </span>
-            </div>
-            <div style="display:flex; align-items:center; gap:4px;">
-              <span style="font-size:12px; font-weight:800; color:#64748b;">재생 속도:</span>
-              <button type="button" id="rateBtn08" class="btn-3d" style="padding:3px 8px; font-size:11px; font-weight:800; background:#f1f5f9; color:#475569;" onclick="setGlobalSpeechRate(0.8)">0.8x</button>
-              <button type="button" id="rateBtn10" class="btn-3d" style="padding:3px 8px; font-size:11px; font-weight:800; background:#4f46e5; color:#fff;" onclick="setGlobalSpeechRate(1.0)">1.0x</button>
-              <button type="button" id="rateBtn12" class="btn-3d" style="padding:3px 8px; font-size:11px; font-weight:800; background:#f1f5f9; color:#475569;" onclick="setGlobalSpeechRate(1.2)">1.2x</button>
-            </div>
-          </div>
-
-
-
-          <div id="voiceEngineSubdesc" style="display:none;"></div>
-
-
-
-          <div id="voicePresetContainer" class="fold-responsive-grid" style="display:flex; flex-direction:column; gap:8px;">
-
-            <!-- JS 동적 렌더링 -->
-
-          </div>
-
+    <!-- STEP 1: 사용자 호칭 & AI 튜터 음성 40/44종 선택 -->
+    <div id="obStep1">
+      <!-- 1) 호칭 설정 카드 (답변: "내가 너를 뭐로 부르면 될까?") -->
+      <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:16px; padding:10px 14px; margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label for="obUserNameInput" style="font-size:13px; font-weight:800; color:#334155; display:flex; align-items:center; gap:5px;">
+            🏷️ <span>내 호칭(이름) 설정:</span>
+          </label>
+          <span style="font-size:11px; font-weight:700; color:#6366f1;">엑자일이 나를 부르는 이름</span>
         </div>
-
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="text" id="obUserNameInput" value="옵빠야" oninput="onInputUserName(this.value)" placeholder="호칭 입력 (예: 옵빠야)" style="flex:1; padding:8px 12px; border-radius:12px; border:2px solid #6366f1; font-size:14px; font-weight:800; color:#0f172a; outline:none; background:#ffffff;">
+        </div>
+        <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+          <button type="button" class="btn-3d" style="padding:4px 10px; min-height:28px; font-size:12px; font-weight:800; background:#eef2ff; color:#4f46e5; border-radius:10px;" onclick="selectQuickName('옵빠야')">옵빠야</button>
+          <button type="button" class="btn-3d" style="padding:4px 10px; min-height:28px; font-size:12px; font-weight:800; background:#f1f5f9; color:#475569; border-radius:10px;" onclick="selectQuickName('학습자')">학습자</button>
+          <button type="button" class="btn-3d" style="padding:4px 10px; min-height:28px; font-size:12px; font-weight:800; background:#f1f5f9; color:#475569; border-radius:10px;" onclick="selectQuickName('사령관')">사령관</button>
+          <button type="button" class="btn-3d" style="padding:4px 10px; min-height:28px; font-size:12px; font-weight:800; background:#f1f5f9; color:#475569; border-radius:10px;" onclick="selectQuickName('캡틴')">캡틴</button>
+          <button type="button" class="btn-3d" style="padding:4px 10px; min-height:28px; font-size:12px; font-weight:800; background:#f1f5f9; color:#475569; border-radius:10px;" onclick="selectQuickName('마스터')">마스터</button>
+        </div>
       </div>
 
+      <!-- 2) AI 튜터 음성 선택 카드 (답변: "마음에 드는 AI 튜터의 목소리를 골라줘.") -->
+      <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:16px; padding:10px 14px; margin-bottom:10px;">
+        <!-- 사람 여성 / 사람 남성 / 애니 여성 / 애니 남성 4대 탭 -->
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; margin-bottom:8px; background:#e2e8f0; padding:3px; border-radius:12px;" id="fourVoiceTabsGroup">
+          <button type="button" id="tabVoiceHF" class="btn-3d" style="min-height:38px; padding:4px 2px; font-size:12px; font-weight:900; background:#4f46e5; color:#fff;" onclick="switchFourVoiceTab('hf')">🌸 사람 여성</button>
+          <button type="button" id="tabVoiceHM" class="btn-3d" style="min-height:38px; padding:4px 2px; font-size:12px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('hm')">⚡ 사람 남성</button>
+          <button type="button" id="tabVoiceAF" class="btn-3d" style="min-height:38px; padding:4px 2px; font-size:12px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('af')">🧚 애니 여성</button>
+          <button type="button" id="tabVoiceAM" class="btn-3d" style="min-height:38px; padding:4px 2px; font-size:12px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('am')">⚔️ 애니 남성</button>
+        </div>
 
+        <!-- 히든 상태 및 재생 속도 조절 바 -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:4px;">
+          <div id="hiddenUnlockStatusBadge" style="font-size:11.5px; font-weight:800; color:#475569; display:flex; align-items:center; gap:4px;">
+            🔒 <span>4대 히든 음성 잠김</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:4px;">
+            <span style="font-size:11.5px; font-weight:800; color:#64748b;">속도:</span>
+            <button type="button" id="rateBtn08" class="btn-3d" style="padding:2px 7px; min-height:26px; font-size:11px; font-weight:800; background:#f1f5f9; color:#475569;" onclick="setGlobalSpeechRate(0.8)">0.8x</button>
+            <button type="button" id="rateBtn10" class="btn-3d" style="padding:2px 7px; min-height:26px; font-size:11px; font-weight:800; background:#4f46e5; color:#fff;" onclick="setGlobalSpeechRate(1.0)">1.0x</button>
+            <button type="button" id="rateBtn12" class="btn-3d" style="padding:2px 7px; min-height:26px; font-size:11px; font-weight:800; background:#f1f5f9; color:#475569;" onclick="setGlobalSpeechRate(1.2)">1.2x</button>
+          </div>
+        </div>
 
-      <!-- STEP 2: 탈출 도전 언어 선택 -->
+        <div id="voiceEngineSubdesc" style="display:none;"></div>
+
+        <div id="voicePresetContainer" class="fold-responsive-grid" style="display:flex; flex-direction:column; gap:8px;">
+          <!-- JS 동적 렌더링 -->
+        </div>
+      </div>
+    </div>
+    <!-- STEP 1 종료 -->
+
+    <!-- STEP 2: 탈출 도전 언어 선택 -->
 
       <div id="obStep2" class="hidden">
 
@@ -19186,6 +19199,13 @@ function getCurrentRoundData() {
   }
 
   function goToNextObStep() {
+    if (obStep === 1) {
+      const nameInput = document.getElementById('obUserNameInput');
+      if (nameInput && nameInput.value.trim()) {
+        userName = nameInput.value.trim();
+        try { localStorage.setItem('hangeoreum_user_name', userName); } catch(e){}
+      }
+    }
     if (obStep < 6) {
       soundTap();
       obStep++;
@@ -19242,7 +19262,7 @@ function getCurrentRoundData() {
     }
 
     if (obStep === 1) {
-      mainBtn.innerHTML = `<span>호칭 설정 완료 ➔ 언어 선택</span>`;
+      mainBtn.innerHTML = `<span>호칭 및 음성 설정 완료 ➔ 언어 선택</span>`;
     } else if (obStep === 6) {
       mainBtn.innerHTML = `<span>AI 분석 결과 확인하기 ➔</span>`;
     } else if (obStep === 7) {
@@ -20641,6 +20661,21 @@ function getCurrentRoundData() {
 
 
 
+    
+    // 오프닝 화면 자동 음성 브리핑 발화
+    const openingSplash = document.getElementById('openingSplashView');
+    if (openingSplash && openingSplash.style.display !== 'none') {
+      setTimeout(() => {
+        speakOpeningBriefingVoiceOnly();
+      }, 450);
+
+      openingSplash.addEventListener('pointerdown', (e) => {
+        if (!openingBriefingPlayed && e.target.tagName !== 'BUTTON') {
+          speakOpeningBriefingVoiceOnly();
+        }
+      }, { once: true });
+    }
+
     const nameInput = document.getElementById('obUserNameInput');
 
     if (nameInput) {
@@ -20900,9 +20935,19 @@ function getCurrentRoundData() {
   // 1. 오프닝 스플래시 화면 제어
   
   // [옵빠야 지침] 오프닝 화면 시각 문자 없이 오직 말로만 AI 소개와 목적 브리핑
+  let openingBriefingPlayed = false;
   function speakOpeningBriefingVoiceOnly() {
+    openingBriefingPlayed = true;
+    const badgeText = document.getElementById('openingVoiceText');
+    const badgeIcon = document.getElementById('openingVoiceIcon');
+    if (badgeText) badgeText.textContent = "AI 엑자일 음성 브리핑 발화 중...";
+    if (badgeIcon) badgeIcon.textContent = "🔊";
+
     const text = "난 안드로메다에서 지구로 유배 온 AI 엑자일이야. 지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어.";
-    speakExileTutor(text, 'ko');
+    speakExileTutor(text, 'ko', () => {
+      if (badgeText) badgeText.textContent = "AI 엑자일 음성 브리핑 완료 (다시 듣기)";
+      if (badgeIcon) badgeIcon.textContent = "✨";
+    });
   }
 
   function dismissOpeningSplash() {
@@ -20912,6 +20957,9 @@ function getCurrentRoundData() {
     splash.style.visibility = 'hidden';
     setTimeout(() => {
       splash.style.display = 'none';
+      if (obStep === 1) {
+        speakExileTutor("내가 너를 뭐로 부르면 될까? 마음에 드는 AI 튜터의 목소리를 골라줘.", 'ko');
+      }
     }, 500);
     try { localStorage.setItem('hangeoreum_opening_seen', 'true'); } catch(e){}
   }
