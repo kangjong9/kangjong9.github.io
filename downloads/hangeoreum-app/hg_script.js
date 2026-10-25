@@ -65,10 +65,10 @@
 
   function passIntro(st) {
     const u = units()[st.unit];
-    if (st.pass === 1 && st.phase === 'c') return `입문 ${st.unit + 1}단원, ${u.t}! ${u.tip} 먼저 글자와 한글 읽기를 같이 볼게. 잘 듣고 따라 읽어 봐.`;
-    if (st.pass === 1) return '이번엔 방금 배운 글자로 만든 단어야. 한글과 함께 읽어 볼게.';
-    if (st.pass === 2) return '좋아! 이제 한글 없이 글자만 보고 읽어 봐. 두 번째야.';
-    return '마지막 세 번째! 순서를 섞었어. 글자만 보고 소리 내어 읽어 봐.';
+    if (st.pass === 1 && st.phase === 'c') return `입문 ${st.unit + 1}단원, ${u.t}! ${u.tip} 글자마다 내가 먼저 시범으로 읽어 줄게. 한글 읽기와 같이 보면서 따라 읽어 봐.`;
+    if (st.pass === 1) return '이번엔 방금 배운 글자로 만든 단어야. 내가 먼저 읽어 줄 테니 한글과 함께 보면서 따라 읽어 봐.';
+    if (st.pass === 2) return '좋아! 두 번째는 한글 없이 글자만 보여 줄게. 내 시범을 듣고 글자를 보면서 따라 읽어 봐.';
+    return '마지막 세 번째! 순서를 섞었어. 이번에도 내가 먼저 읽어 줄 테니 글자만 보고 따라 읽어 봐.';
   }
 
   /* ---------- 화면 ---------- */
@@ -132,12 +132,13 @@
     const showAll = st.pass === 1 || session.revealed;
     const dots = [1, 2, 3].map(n => `<div class="hs-dot ${n === st.pass ? 'on' : (n < st.pass ? 'done' : '')}">${n}회차 ${n === 1 ? '한글과 함께' : '글자만'}</div>`).join('');
     let card = `<div class="hs-char ${item.c.length > 4 ? 'long' : ''}">${esc(item.c)}</div>`;
+    // 보조 표기(중국어 한자·병음, 영어 예시 단어)는 그 언어의 문자이므로 모든 회차에 보이고, 한글 읽기만 2·3회차에 숨긴다
+    if (item.p) card += `<div class="hs-p">${esc(item.p)}</div>`;
     if (showAll) {
-      if (item.p) card += `<div class="hs-p">${esc(item.p)}</div>`;
       card += `<div class="hs-k">${esc(item.k)}</div>`;
       if (item.m) card += `<div class="hs-m">뜻: ${esc(item.m)}</div>`;
     } else {
-      card += `<div class="hs-hide">🤔 한글 없이 소리 내어 읽어 보세요</div>`;
+      card += `<div class="hs-hide">🔊 엑자일 시범을 듣고 글자를 보며 따라 읽어 보세요</div>`;
     }
     if (session.heard) card += `<div class="hs-heard">${session.heard}</div>`;
 
@@ -147,7 +148,8 @@
       btns = `<div class="hs-row"><button class="hs-btn gray" onclick="HGSCRIPT.replay()">🔊 다시 듣기</button>${mic}</div>
         <div class="hs-row"><button class="hs-btn" onclick="HGSCRIPT.next()">다음 ➔</button></div>`;
     } else if (!session.revealed) {
-      btns = `<div class="hs-row">${mic}<button class="hs-btn" onclick="HGSCRIPT.reveal()">👀 정답 확인</button></div>`;
+      btns = `<div class="hs-row"><button class="hs-btn gray" onclick="HGSCRIPT.replay()">🔊 시범 다시 듣기</button>${mic}</div>
+        <div class="hs-row"><button class="hs-btn" onclick="HGSCRIPT.reveal()">👀 정답 확인</button></div>`;
     } else {
       btns = `<div class="hs-row"><button class="hs-btn gray" onclick="HGSCRIPT.replay()">🔊 다시 듣기</button></div>
         <div class="hs-row"><button class="hs-btn pink" onclick="HGSCRIPT.mark(false)">🔁 헷갈려요</button><button class="hs-btn" onclick="HGSCRIPT.mark(true)">✅ 맞췄어요</button></div>`;
@@ -189,7 +191,7 @@
     render();
     if (fresh || session.needVoice) {
       session.needVoice = checkinOpen();
-      exileThen(passIntro(st), st.pass === 1 ? session.queue[0] : null);
+      exileThen(passIntro(st), session.queue[0]);  // 모든 회차: 안내 뒤 첫 글자 시범
     }
   }
 
@@ -251,7 +253,9 @@
       if (st.pass === 1) sfx('bubble');
       render();
       speakSeq++;
-      if (st.pass === 1) sayItem(session.queue[session.pos]);
+      // 엑자일이 먼저 시범 (효과음과 겹치지 않게 살짝 뒤에)
+      const my = speakSeq, item = session.queue[session.pos];
+      setTimeout(() => { if (my === speakSeq) sayItem(item); }, st.pass === 1 ? 0 : 350);
       return;
     }
     passDone(st);
