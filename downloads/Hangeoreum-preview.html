@@ -1408,21 +1408,27 @@
 
 
 
-      <div style="background:#eef2ff; border:2px solid #c7d2fe; border-radius:16px; padding:12px; margin-bottom:12px;">
+      <!-- [옵빠야 요청] 실력이 향상된 최상위 단계이므로 추천 없이 원어로 직접 말하고 대화하는 실전 롤플레잉 인터페이스 -->
+      <div id="rpInputArea" style="background:#ffffff; border:2px solid #c7d2fe; border-radius:18px; padding:12px 14px; box-shadow:0 4px 14px rgba(79,70,229,0.08); margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-size:12.5px; font-weight:900; color:#4338ca;">🎯 실전 원어 대화 (추천 없이 자유 발화)</span>
+          <span id="rpMicStatus" style="font-size:11px; font-weight:700; color:#64748b;">원어로 소리내어 답변하세요</span>
+        </div>
 
-        <div style="font-size:13px; font-weight:800; color:#4338ca; margin-bottom:4px;">💡 추천 발화 힌트:</div>
+        <!-- 원어 음성 발화 마이크 버튼 -->
+        <button type="button" id="btnRpMic" class="btn-3d btn-indigo" onclick="toggleRoleplayMicListening()" style="width:100%; min-height:46px; font-size:15px; font-weight:900; margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <span id="btnRpMicIcon">🎙️</span>
+          <span id="btnRpMicText">원어로 소리내어 말하기</span>
+        </button>
 
-        <div id="rpSuggestedHint" style="font-size:16px; font-weight:800; color:#1e1b4b;">"Merci Pierre !"</div>
-
+        <!-- 원어 텍스트 직접 입력 보조 바 -->
+        <div style="display:flex; gap:6px; align-items:center;">
+          <input type="text" id="rpTextInput" placeholder="원어로 직접 입력 (예: Oui, je suis d'accord !)" onkeydown="if(event.key==='Enter') submitRoleplayUserText()" style="flex:1; padding:8px 12px; border-radius:12px; border:1.5px solid #cbd5e1; font-size:13.5px; font-weight:700; color:#0f172a; outline:none; background:#f8fafc;">
+          <button type="button" class="btn-3d" onclick="submitRoleplayUserText()" style="padding:8px 14px; min-height:36px; font-size:13px; font-weight:900; background:#4f46e5; color:#ffffff; border-radius:12px;">
+            전송
+          </button>
+        </div>
       </div>
-
-
-
-      <button class="btn-3d btn-indigo" onclick="triggerRoleplayTurn()">
-
-        <span>🎙️ 추천 문장으로 대화하기</span>
-
-      </button>
 
     </div>
 
@@ -19457,6 +19463,17 @@ function getCurrentRoundData() {
 
 
 
+  let currentPersonaGreetingText = '';
+  let isRoleplayRecording = false;
+  let roleplayRecognizer = null;
+
+  function replayPersonaGreeting() {
+    const curLang = (typeof selectedLang !== 'undefined' && selectedLang) ? selectedLang : 'fr';
+    if (currentPersonaGreetingText) {
+      speakTextWithFallback(currentPersonaGreetingText, curLang);
+    }
+  }
+
   function setupRoleplayView() {
     const curLang = (typeof selectedLang !== 'undefined' && selectedLang) ? selectedLang : 'fr';
 
@@ -19466,7 +19483,7 @@ function getCurrentRoundData() {
       document.getElementById('personaAvatar').textContent = rp.avatar || '💼';
       document.getElementById('personaName').textContent = rp.name || '파트너';
       document.getElementById('personaRole').textContent = `${rp.role || '상대방'} · [${activeSessionCase.title}]`;
-      document.getElementById('rpSuggestedHint').textContent = `"${rp.suggested || ''}"`;
+      currentPersonaGreetingText = rp.greetings || '';
 
       const chatLog = document.getElementById('chatLog');
       chatLog.innerHTML = `
@@ -19479,7 +19496,12 @@ function getCurrentRoundData() {
         </div>
       `;
       const rpTitleEl = document.getElementById('rpSessionCaseTitle');
-      if (rpTitleEl) rpTitleEl.textContent = activeSessionCase.title || '실시간 몰입 시나리오';
+      if (rpTitleEl) rpTitleEl.textContent = activeSessionCase.title || '실전 프리 토킹 롤플레잉';
+
+      // 페르소나 첫 인사 음성 자동 발화
+      setTimeout(() => {
+        speakTextWithFallback(rp.greetings, curLang);
+      }, 300);
       return;
     }
 
@@ -19494,11 +19516,11 @@ function getCurrentRoundData() {
       greetingsKo: p.greetingsKo,
       suggested: p.suggested
     };
+    currentPersonaGreetingText = sc.greetings || p.greetings || '';
 
     document.getElementById('personaAvatar').textContent = p.avatar;
     document.getElementById('personaName').textContent = p.name;
     document.getElementById('personaRole').textContent = `${p.role} · Lv.${currentLevel} [${sc.title}]`;
-    document.getElementById('rpSuggestedHint').textContent = `"${sc.suggested}"`;
 
     const chatLog = document.getElementById('chatLog');
     chatLog.innerHTML = `
@@ -19512,52 +19534,235 @@ function getCurrentRoundData() {
     `;
     const rpTitleEl = document.getElementById('rpSessionCaseTitle');
     if (rpTitleEl) rpTitleEl.textContent = `Lv.${currentLevel} [${sc.title}]`;
+
+    // 페르소나 첫 인사 음성 자동 발화
+    setTimeout(() => {
+      speakTextWithFallback(sc.greetings || p.greetings, curLang);
+    }, 300);
   }
 
-  function triggerRoleplayTurn() {
+  // [옵빠야 요청] 실력이 늘었으므로 원어로 직접 마이크 입력을 받아 롤플레잉 수행
+  function toggleRoleplayMicListening() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const curLang = (typeof selectedLang !== 'undefined' && selectedLang) ? selectedLang : 'fr';
-    let suggestedText = "Merci !";
+    const statusEl = document.getElementById('rpMicStatus');
+    const btnText = document.getElementById('btnRpMicText');
+    const btnIcon = document.getElementById('btnRpMicIcon');
+    const btn = document.getElementById('btnRpMic');
 
-    if (activeSessionCase && activeSessionCase.roleplay && activeSessionCase.theme === currentTheme && activeSessionCase.lang === curLang) {
-      suggestedText = activeSessionCase.roleplay.suggested;
-    } else {
-      const themeObj = (typeof THEMED_DATA !== 'undefined' && THEMED_DATA[currentTheme]) ? THEMED_DATA[currentTheme] : THEMED_DATA.work;
-      const langObj = (themeObj && themeObj[curLang]) ? themeObj[curLang] : themeObj.fr;
-      const p = langObj.persona;
-      const scenarioIdx = Math.max(0, Math.min(9, currentLevel - 41));
-      const sc = (p.scenarios && p.scenarios[scenarioIdx]) ? p.scenarios[scenarioIdx] : { suggested: p.suggested };
-      suggestedText = sc.suggested;
+    if (!SpeechRecognition) {
+      if (statusEl) statusEl.textContent = "음성인식 미지원 환경입니다. 텍스트로 직접 입력하세요.";
+      const manualText = prompt(`[실전 롤플레잉] 상대방에게 할 원어 답변을 입력하세요:`);
+      if (manualText && manualText.trim()) {
+        handleRoleplayUserTurn(manualText.trim());
+      }
+      return;
     }
 
-    const chatLog = document.getElementById('chatLog');
+    if (isRoleplayRecording) {
+      if (roleplayRecognizer) roleplayRecognizer.stop();
+      isRoleplayRecording = false;
+      return;
+    }
 
+    try {
+      if (roleplayRecognizer) {
+        roleplayRecognizer.abort();
+        roleplayRecognizer = null;
+      }
+
+      roleplayRecognizer = new SpeechRecognition();
+      roleplayRecognizer.continuous = false;
+      roleplayRecognizer.interimResults = false;
+      roleplayRecognizer.maxAlternatives = 1;
+
+      if (curLang === 'fr') roleplayRecognizer.lang = 'fr-FR';
+      else if (curLang === 'cn') roleplayRecognizer.lang = 'zh-CN';
+      else if (curLang === 'ja') roleplayRecognizer.lang = 'ja-JP';
+      else roleplayRecognizer.lang = 'ko-KR';
+
+      roleplayRecognizer.onstart = () => {
+        isRoleplayRecording = true;
+        soundMicStart();
+        if (btnText) btnText.textContent = "듣고 있습니다... 원어로 말씀하세요!";
+        if (btnIcon) btnIcon.textContent = "🔴";
+        if (btn) btn.style.background = "linear-gradient(135deg, #dc2626, #ef4444)";
+        if (statusEl) statusEl.innerHTML = "<span style='color:#ef4444; font-weight:900;'>● 녹음 중...</span> 원어로 자유롭게 말씀하세요!";
+      };
+
+      roleplayRecognizer.onresult = (event) => {
+        isRoleplayRecording = false;
+        soundMicEnd();
+        if (btnText) btnText.textContent = "원어로 소리내어 말하기";
+        if (btnIcon) btnIcon.textContent = "🎙️";
+        if (btn) btn.style.background = "";
+
+        let transcript = '';
+        if (event.results && event.results[0] && event.results[0][0]) {
+          transcript = (event.results[0][0].transcript || '').trim();
+        }
+
+        if (statusEl) statusEl.innerHTML = `🗣️ 인식 완료: <strong>"${transcript}"</strong>`;
+        if (transcript) {
+          handleRoleplayUserTurn(transcript);
+        } else {
+          if (statusEl) statusEl.textContent = "음성이 인식되지 않았습니다. 다시 말씀해 보세요.";
+        }
+      };
+
+      roleplayRecognizer.onerror = (event) => {
+        isRoleplayRecording = false;
+        if (btnText) btnText.textContent = "원어로 소리내어 말하기";
+        if (btnIcon) btnIcon.textContent = "🎙️";
+        if (btn) btn.style.background = "";
+        console.warn("Roleplay speech error:", event.error);
+        if (statusEl) statusEl.textContent = `음성 감지 실패 (${event.error}). 다시 말씀해 보세요!`;
+      };
+
+      roleplayRecognizer.onend = () => {
+        isRoleplayRecording = false;
+        if (btnText) btnText.textContent = "원어로 소리내어 말하기";
+        if (btnIcon) btnIcon.textContent = "🎙️";
+        if (btn) btn.style.background = "";
+      };
+
+      roleplayRecognizer.start();
+
+    } catch(err) {
+      console.warn("roleplayRecognizer error:", err);
+      const manualText = prompt(`[실전 롤플레잉] 상대방에게 할 원어 답변을 입력하세요:`);
+      if (manualText && manualText.trim()) {
+        handleRoleplayUserTurn(manualText.trim());
+      }
+    }
+  }
+
+  // 텍스트 직접 입력 시 호출
+  function submitRoleplayUserText() {
+    const input = document.getElementById('rpTextInput');
+    if (!input) return;
+    const text = (input.value || '').trim();
+    if (!text) {
+      alert("원어 대화 문장을 입력하거나 마이크로 말씀해 주세요!");
+      input.focus();
+      return;
+    }
+    input.value = '';
+    handleRoleplayUserTurn(text);
+  }
+
+  // 원어 발화 수신 후 티키타카 대화 처리 엔진
+  async function handleRoleplayUserTurn(userSpokenText) {
+    const curLang = (typeof selectedLang !== 'undefined' && selectedLang) ? selectedLang : 'fr';
+    const chatLog = document.getElementById('chatLog');
+    if (!chatLog) return;
+
+    soundTap();
+
+    // 1. 사용자 원어 메시지 말풍선 추가 (우측 인디고)
     const userMsg = document.createElement('div');
     userMsg.style.cssText = "display:flex; justify-content:flex-end; gap:8px;";
     userMsg.innerHTML = `
-      <div style="background:#6366f1; color:#fff; padding:10px 14px; border-radius:14px; font-size:14px; font-weight:800; max-width:85%; text-align:left;">
-        "${suggestedText}"
+      <div style="background:linear-gradient(135deg, #4f46e5, #6366f1); color:#ffffff; padding:10px 14px; border-radius:14px; font-size:14px; font-weight:800; max-width:85%; text-align:left; box-shadow:0 3px 10px rgba(79,70,229,0.25);">
+        "${userSpokenText}"
       </div>
     `;
     chatLog.appendChild(userMsg);
     chatLog.scrollTop = chatLog.scrollHeight;
+
+    // 2. 상대방(페르소나) 응답 생성 중 표시
+    const typingIndicator = document.createElement('div');
+    typingIndicator.id = 'rpTypingIndicator';
+    typingIndicator.style.cssText = "display:flex; gap:8px; align-items:center; color:#64748b; font-size:12px; font-weight:700;";
+    typingIndicator.innerHTML = `<span>💬 상대방이 원어로 답변을 준비 중입니다...</span>`;
+    chatLog.appendChild(typingIndicator);
+    chatLog.scrollTop = chatLog.scrollHeight;
+
+    // 3. Gemini 또는 오프라인 맞춤형 실전 원어 응답 도출
+    let replyText = "";
+    let replyKo = "";
+
+    const apiKey = getActiveApiKey();
+    if (apiKey && typeof requestGeminiDynamicCaseGeneration === 'function') {
+      try {
+        const personaName = document.getElementById('personaName')?.textContent || '동료';
+        const scenarioTitle = document.getElementById('rpSessionCaseTitle')?.textContent || '일상 대화';
+        const prompt = `당신은 ${scenarioTitle} 상황의 상대방 '${personaName}'입니다.
+학습자(${userName || '학습자'})가 방금 원어로 다음과 같이 말했습니다: "${userSpokenText}".
+이 말에 호응하여 실전 감각이 돋보이는 자연스러운 1~2문장의 ${curLang === 'fr' ? '프랑스어' : (curLang === 'cn' ? '중국어' : '일본어')} 답변을 작성하고, 괄호 안에 한국어 번역을 제공해 주세요.
+형식: [원어 답변] (한국어 번역)`;
+        
+        const res = await callGeminiFlashRaw(prompt, apiKey);
+        if (res && res.text) {
+          const match = res.text.match(/^([^(]+)(?:\(([^)]+)\))?/);
+          if (match) {
+            replyText = match[1].trim();
+            replyKo = match[2] ? match[2].trim() : '';
+          } else {
+            replyText = res.text.trim();
+          }
+        }
+      } catch(e) {
+        console.warn("Gemini roleplay turn failed, fallback to progressive reply:", e);
+      }
+    }
+
+    if (!replyText) {
+      // 오프라인 스마트 티키타카 응답 라이브러리
+      if (curLang === 'fr') {
+        const replies = [
+          { fr: "C'est parfait ! Merci beaucoup pour votre partage.", ko: "완벽해요! 공유해 주셔서 정말 감사합니다." },
+          { fr: "Très bien, continuons sur cette lancée !", ko: "아주 좋습니다, 이 기세로 계속 진행합시다!" },
+          { fr: "Absolument d'accord, votre prononciation est excellente.", ko: "전적으로 동의합니다, 발음이 정말 훌륭하시네요." }
+        ];
+        const r = replies[Math.floor(Math.random() * replies.length)];
+        replyText = r.fr;
+        replyKo = r.ko;
+      } else if (curLang === 'cn') {
+        const replies = [
+          { cn: "太棒了！非常感谢您的配合。", ko: "대단해요! 협조해 주셔서 감사합니다." },
+          { cn: "非常好，咱们继续推进吧！", ko: "아주 좋습니다, 계속 진행해 보죠!" },
+          { cn: "完全同意，你的发音真标准！", ko: "완전히 동의합니다, 발음이 정말 표준적이네요!" }
+        ];
+        const r = replies[Math.floor(Math.random() * replies.length)];
+        replyText = r.cn;
+        replyKo = r.ko;
+      } else {
+        const replies = [
+          { ja: "素晴らしいです！ありがとうございます。", ko: "훌륭합니다! 감사합니다." },
+          { ja: "とても良いですね、この調子で進めましょう！", ko: "아주 좋네요, 이 기세로 진행합시다!" },
+          { ja: "大賛成です。発音がとても自然ですね！", ko: "대찬성입니다. 발음이 정말 자연스러우시네요!" }
+        ];
+        const r = replies[Math.floor(Math.random() * replies.length)];
+        replyText = r.ja;
+        replyKo = r.ko;
+      }
+    }
+
+    // 인디케이터 제거
+    const ind = document.getElementById('rpTypingIndicator');
+    if (ind) ind.remove();
+
+    // 4. 페르소나 응답 말풍선 추가 (좌측 화이트/그린)
+    const personaAvatar = document.getElementById('personaAvatar')?.textContent || '💼';
+    const replyMsg = document.createElement('div');
+    replyMsg.style.cssText = "display:flex; gap:8px; align-items:flex-start;";
+    replyMsg.innerHTML = `
+      <div style="width:32px; height:32px; border-radius:50%; background:#e0e7ff; display:flex; align-items:center; justify-content:center; font-size:16px;">${personaAvatar}</div>
+      <div style="background:#ffffff; border:1.5px solid #86efac; padding:10px 14px; border-radius:14px; font-size:14px; text-align:left; max-width:85%; box-shadow:0 3px 10px rgba(16,185,129,0.12);">
+        <strong style="color:#0f172a;">${replyText}</strong>
+        ${replyKo ? `<div style="font-size:12px; color:#64748b; margin-top:4px;">(${replyKo})</div>` : ''}
+        <div style="margin-top:6px; font-size:11px; font-weight:800; color:#16a34a; display:flex; align-items:center; gap:4px;">
+          <span>✨ 원어 실전 대화 성공!</span>
+        </div>
+      </div>
+    `;
+    chatLog.appendChild(replyMsg);
+    chatLog.scrollTop = chatLog.scrollHeight;
     soundCorrect();
 
-    speakTextWithFallback(suggestedText, curLang);
-
-    setTimeout(() => {
-      const replyMsg = document.createElement('div');
-      replyMsg.style.cssText = "display:flex; gap:8px; align-items:flex-start;";
-      replyMsg.innerHTML = `
-        <div style="width:32px; height:32px; border-radius:50%; background:#e0e7ff; display:flex; align-items:center; justify-content:center; font-size:16px;">✨</div>
-        <div style="background:#ffffff; border:1.5px solid #86efac; padding:10px 14px; border-radius:14px; font-size:14px; text-align:left; max-width:85%;">
-          <strong style="color:#16a34a;">완벽한 실전 발화입니다!</strong>
-          <div style="font-size:12px; color:#64748b; margin-top:4px;">상황 맥락에 맞는 정확한 억양과 표현이 체화되었습니다.</div>
-        </div>
-      `;
-      chatLog.appendChild(replyMsg);
-      chatLog.scrollTop = chatLog.scrollHeight;
-      soundLevelUp();
-    }, 1200);
+    // 페르소나 음성 출력
+    speakTextWithFallback(replyText, curLang);
   }
 
   function advanceRoleplayLevel() {
