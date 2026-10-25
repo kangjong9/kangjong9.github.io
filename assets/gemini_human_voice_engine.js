@@ -1306,12 +1306,22 @@
 
     // 현재 발화 중지
     stop() {
+      // 세대 번호 증가: 정지 이전에 시작된 합성 요청은 응답이 와도 재생하지 않는다
+      this.playGeneration = (this.playGeneration || 0) + 1;
       if (this.currentAudio) {
         try {
+          this.currentAudio.onended = null;
+          this.currentAudio.onerror = null;
           this.currentAudio.pause();
-          this.currentAudio.currentTime = 0;
+          this.currentAudio.removeAttribute('src');
+          this.currentAudio.load();
         } catch (e) {}
         this.currentAudio = null;
+      }
+      if (this.pendingCleanup) {
+        const c = this.pendingCleanup;
+        this.pendingCleanup = null;
+        c(false);
       }
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         try {
@@ -1420,6 +1430,7 @@
     // 음성 합성 및 재생 메인 디스패처
     async speak(voiceInput, textInput = '', lang = 'ko', onComplete = null) {
       this.stop();
+      const generation = this.playGeneration;
 
       const voice = (typeof voiceInput === 'string') 
         ? this.getVoiceById(voiceInput) 
@@ -1445,14 +1456,18 @@
       if (this.audioCache.has(cacheKey)) {
         const audioUrl = this.audioCache.get(cacheKey);
         this.notifyState('PLAYING_CACHE', { voice: voice.name, model: 'cache', langName });
-        return this.playAudioUrl(audioUrl, voice, onComplete);
+        return this.playAudioUrl(audioUrl, voice, onComplete, generation);
       }
 
       // 2. Google AI Studio 3.8 Flash 실제 사람 신경망 음성 합성 시도
       if (this.apiKey) {
-        const googleSuccess = await this.fetchGoogleNativeAudio(voice, text, lang, langName, cacheKey, onComplete);
+        const googleSuccess = await this.fetchGoogleNativeAudio(voice, text, lang, langName, cacheKey, onComplete, generation);
         if (googleSuccess) {
           return true;
+        }
+        if (generation !== this.playGeneration) {
+          if (onComplete) onComplete(false);
+          return false; // 정지됨: 어떤 대체 소리도 내지 않음
         }
       }
 
@@ -1474,7 +1489,7 @@
     }
 
     // Google Gemini 3.8 Flash Native Audio 호출 내부 구현
-    async fetchGoogleNativeAudio(voice, text, lang, langName, cacheKey, onComplete) {
+    async fetchGoogleNativeAudio(voice, text, lang, langName, cacheKey, onComplete, generation) {
       const now = Date.now();
       const promptInstruction = `[역할 및 발화 연출 지침]
 당신은 ${voice.displayName || voice.name}입니다 (음성코드: ${voice.id}).
@@ -1503,6 +1518,7 @@
       };
 
       for (const m of this.candidateModels) {
+        if (generation !== undefined && generation !== this.playGeneration) return false;
         if (this.unsupportedModels.has(m)) continue;
         const cooldown = this.exhaustedModels.get(m);
         if (cooldown && now < cooldown) continue;
@@ -1550,8 +1566,9 @@
               this.audioCache.set(cacheKey, audioUrl);
               this.lastError = null;
 
+              if (generation !== undefined && generation !== this.playGeneration) return false;
               this.notifyState('PLAYING_GOOGLE', { voice: voice.name, model: m, langName });
-              return this.playAudioUrl(audioUrl, voice, onComplete);
+              return this.playAudioUrl(audioUrl, voice, onComplete, generation);
             }
           }
         } catch (err) {
@@ -1563,16 +1580,27 @@
     }
 
     // HTML Audio 객체 재생 제어 (실시간 고속 재생 및 자동 안전 완료)
-    playAudioUrl(url, voice, onComplete) {
+    playAudioUrl(url, voice, onComplete, generation) {
       return new Promise((resolve) => {
+        if (generation !== undefined && generation !== this.playGeneration) {
+          if (onComplete) onComplete(false);
+          resolve(false);
+          return;
+        }
         const audio = new Audio(url);
         this.currentAudio = audio;
         let ended = false;
+        let safetyTimer = null;
 
         const cleanup = (success) => {
           if (!ended) {
             ended = true;
-            this.currentAudio = null;
+            clearTimeout(safetyTimer);
+            if (this.pendingCleanup === cleanup) this.pendingCleanup = null;
+            if (this.currentAudio === audio) this.currentAudio = null;
+            if (!success) {
+              try { audio.pause(); } catch (e) {}
+            }
             if (typeof this.callbacks.onAudioEnd === 'function') {
               this.callbacks.onAudioEnd({ voice, success });
             }
@@ -1580,22 +1608,25 @@
             resolve(success);
           }
         };
+        this.pendingCleanup = cleanup;
 
         audio.onended = () => cleanup(true);
-        audio.onerror = () => cleanup(true); // 헤드리스/무음 환경 안전 완료
+        audio.onerror = () => cleanup(false);
 
         if (typeof this.callbacks.onAudioStart === 'function') {
           this.callbacks.onAudioStart({ voice, url });
         }
 
-        // 안전 완료 타이머 (무한 멈춤 방지)
-        const safetyTimer = setTimeout(() => cleanup(true), 6000);
+        // 시작 대기 안전 타이머 (무한 멈춤 방지). 재생이 시작되면 실제 길이 기준으로 다시 잡는다.
+        // ※ 기존 6초 고정 타이머는 긴 문장 재생 중에 '완료'로 처리해 참조를 잃고 다음 음성과 겹치게 했음
+        safetyTimer = setTimeout(() => cleanup(false), 12000);
 
         audio.play().then(() => {
-          // 오디오 시작 성공
-        }).catch(() => {
           clearTimeout(safetyTimer);
-          cleanup(true);
+          const dur = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 60;
+          safetyTimer = setTimeout(() => cleanup(true), dur * 1000 + 3000);
+        }).catch(() => {
+          cleanup(false);
         });
       });
     }
@@ -1649,6 +1680,8 @@
   };
 
   GeminiHumanVoiceEngine.VOICES = MASTER_VOICES_44;
+  // 앱 화면(오픈화면·설정)이 동일한 44종 원본을 참조하도록 공개 (기존엔 미공개 → 4종 대체목록 표시)
+  GeminiHumanVoiceEngine.MASTER_VOICES_44 = MASTER_VOICES_44;
 
   return GeminiHumanVoiceEngine;
 }));

@@ -130,10 +130,10 @@ function initProjectFolders(content) {
   };
   const projectDownloads = {
     "한걸음V1.0 Exile": {
-      tag: "한걸음V1.0 Exile · Gemini 3.8 Flash 실제 사람 음성 엔진 & 44종 보이스 탑재",
+      tag: "한걸음V1.0 Exile · 누리 보이스(Nuri Voice) 4대 엔진 · 44종 보이스",
       links: [
         { label: "한걸음V1.0 Exile APK (1.0MB) · Android 8 이상", url: "./downloads/Hangeoreum-V1.0-Exile.apk", download: "Hangeoreum-V1.0-Exile.apk", primary: true },
-        { label: "화면 시안 체험 · 3.8 Flash 사람 음성 & 50레벨", url: "./downloads/Hangeoreum-preview.html", external: true },
+        { label: "화면 시안 체험 · 누리 보이스 & 50레벨", url: "./downloads/Hangeoreum-preview.html", external: true },
         { label: "사용 안내 · 안드로메다 유배 스토리 및 음성 코칭", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
       ]
     },
