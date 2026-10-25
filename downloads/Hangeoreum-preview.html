@@ -16,6 +16,8 @@
   <script src="curriculum_v2_es.js"></script>
   <script src="hg_sfx.js"></script>
   <script src="hg_v2.js"></script>
+  <script src="script_data.js"></script>
+  <script src="hg_script.js"></script>
 
   <meta charset="UTF-8">
 
@@ -963,6 +965,40 @@
 
         <div style="font-size:17px; font-weight:800; color:#1e293b; margin-bottom:12px;">
 
+          Q0. <span id="obScriptNameQ">이 언어의 문자</span>를 읽을 수 있나요?
+
+        </div>
+
+        <div id="obScriptChoices" style="display:flex; flex-direction:column; gap:12px; margin-bottom:22px;">
+
+          <div class="choice-card" onclick="onAnswerScript(0, this)">
+
+            <span style="font-size:24px;">🔤</span>
+
+            <div style="font-size:16px; font-weight:800;">전혀 몰라요 — 문자부터 배울래요 (Lv.0 입문)</div>
+
+          </div>
+
+          <div class="choice-card" onclick="onAnswerScript(1, this)">
+
+            <span style="font-size:24px;">🔡</span>
+
+            <div style="font-size:16px; font-weight:800;">조금 알아요 — 천천히 읽을 수는 있어요</div>
+
+          </div>
+
+          <div class="choice-card" onclick="onAnswerScript(2, this)">
+
+            <span style="font-size:24px;">📖</span>
+
+            <div style="font-size:16px; font-weight:800;">술술 읽을 수 있어요</div>
+
+          </div>
+
+        </div>
+
+        <div style="font-size:17px; font-weight:800; color:#1e293b; margin-bottom:12px;">
+
           Q1. 현지 식당에서 메뉴판을 보고 단어(물, 커피 등)가 바로 떠오르나요?
 
         </div>
@@ -1269,6 +1305,7 @@
       </div>
       <input type="range" id="levelSlider" min="1" max="50" value="1" oninput="onLevelSlider(this.value)" style="width:100%; accent-color:#4f46e5; height:4px; margin-bottom:6px; cursor:pointer;">
       <div style="display:flex; gap:4px;">
+        <button id="quickTier0" onclick="HGSCRIPT.start()" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:rgba(20,184,166,0.1); color:#0f766e;">T0:문자</button>
         <button id="quickTier1" onclick="jumpLevel(1)" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:#58cc02; color:#fff;">T1:청크</button>
         <button id="quickTier2" onclick="jumpLevel(11)" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:#f1f5f9; color:#64748b;">T2:기본문</button>
         <button id="quickTier3" onclick="jumpLevel(21)" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:#f1f5f9; color:#64748b;">T3:복합문</button>
@@ -4788,6 +4825,7 @@
 
   let obStep = 1;
   let obAnswers = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  let obScriptAnswer = null; // 0 모른다(무조건 Lv.0 입문) · 1 조금 · 2 읽을 수 있다
   let obDiagnosedLevel = 1;
 
   let currentRound = 1;
@@ -19375,7 +19413,7 @@ function getCurrentRoundData() {
     return {
       1: `내가 너를 뭐로 부르면 될까?<br>마음에 드는 AI 튜터의 목소리를 골라줘.`,  
       2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
-      3: `좋아 <strong>${userName}</strong>! 안드로메다 귀환 판정 제1문!<br>외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
+      3: `좋아 <strong>${userName}</strong>! 먼저 제0문, <strong>${window.HGSCRIPT ? HGSCRIPT.scriptName(selectedLang) : '문자'}</strong>를 읽을 수 있어?<br>그리고 제1문! 외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
       4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
       5: `제3문! 문장 2개를 접속사로 이어서<br>길게 말하는 상황은 어때 <strong>${userName}</strong>?`,
       6: `마지막 제4문! 까다로운 원어민 바이어와<br>나 엑자일과 실시간 1:1 자유 롤플레잉이 가능해?`,
@@ -19397,6 +19435,12 @@ function getCurrentRoundData() {
     card.parentElement.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
   }
+  function onAnswerScript(score, card) {
+    soundTap();
+    obScriptAnswer = score;
+    card.parentElement.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+  }
   function onAnswerQuestion(qNum, score, card) {
     soundTap();
     obAnswers[qNum] = score;
@@ -19405,6 +19449,20 @@ function getCurrentRoundData() {
   }
 
   function calculateAIDiagnosis() {
+    const diag = calculateAIDiagnosisCore();
+    const sName = window.HGSCRIPT ? HGSCRIPT.scriptName(selectedLang) : '문자';
+    if (obScriptAnswer === 0) {
+      obDiagnosedLevel = 1;
+      return {
+        title: "Lv. 0 문자 배우기 입문", sub: `${sName} 읽는 법 → 배운 글자로 단어 읽기`,
+        desc: `${userName}님은 아직 ${sName}를 읽지 못하므로 Lv.0 입문부터 시작합니다. 글자마다 한글 읽기와 함께 한 번, 글자만 보고 두 번, 총 세 번씩 읽고 배운 글자로 만든 단어까지 읽어 본 뒤 Lv.1로 올라갑니다!`
+      };
+    }
+    if (obScriptAnswer === 1) diag.desc += ` 문자 읽기가 아직 느리다면 레벨 버튼의 'T0:문자'로 언제든 입문 단계를 복습할 수 있어요.`;
+    return diag;
+  }
+
+  function calculateAIDiagnosisCore() {
     const totalScore = obAnswers[1] + obAnswers[2] + obAnswers[3] + obAnswers[4];
     const chunkPct = Math.round((obAnswers[1] / 2) * 100);
     const sentencePct = Math.round((obAnswers[2] / 2) * 100);
@@ -19455,6 +19513,13 @@ function getCurrentRoundData() {
         try { localStorage.setItem('hangeoreum_user_name', userName); } catch(e){}
       }
     }
+    if (obStep === 3 && obScriptAnswer === null) {
+      if (window.HGUX) HGUX.sfx('oops');
+      const box = document.getElementById('obScriptChoices');
+      if (box) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      speakExileTutor('먼저 제0문! 문자를 읽을 수 있는지 골라 줘.', 'ko');
+      return;
+    }
     if (obStep < 6) {
       soundTap();
       obStep++;
@@ -19501,6 +19566,10 @@ function getCurrentRoundData() {
     if (obStep === 1) {
       renderVoicePresets();
     }
+    if (obStep === 3) {
+      const q = document.getElementById('obScriptNameQ');
+      if (q && window.HGSCRIPT) q.textContent = HGSCRIPT.scriptName(selectedLang);
+    }
 
     const backBtn = document.getElementById('obBackStepBtn');
     const mainBtn = document.getElementById('obMainActionBtn');
@@ -19523,7 +19592,7 @@ function getCurrentRoundData() {
       document.getElementById('obReportSub').textContent = diag.sub;
       document.getElementById('obReportDesc').textContent = diag.desc;
       mainBtn.className = "btn-3d btn-indigo btn-nav-next";
-      mainBtn.innerHTML = `<span>🚀 Lv.${obDiagnosedLevel} 맞춤 캔버스 입장</span>`;
+      mainBtn.innerHTML = obScriptAnswer === 0 ? `<span>🚀 Lv.0 문자 배우기 입장</span>` : `<span>🚀 Lv.${obDiagnosedLevel} 맞춤 캔버스 입장</span>`;
     } else {
       mainBtn.className = "btn-3d btn-green btn-nav-next";
       mainBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
@@ -19547,6 +19616,14 @@ function getCurrentRoundData() {
 
     document.getElementById('viewOnboarding').classList.add('hidden');
     document.getElementById('viewCanvas').classList.remove('hidden');
+
+    // 문자를 모른다고 답하면 무조건 입문 Lv.0(문자 배우기)부터
+    if (window.HGSCRIPT) {
+      const s = HGSCRIPT.load();
+      s.active = (obScriptAnswer === 0);
+      if (s.active) Object.assign(s, { unit: 0, phase: 'c', pass: 1, done: false });
+      HGSCRIPT.save(s);
+    }
 
     initOrGetSessionCase(currentTheme, selectedLang, currentLevel, true);
     applyDailyThemeUI();
@@ -19695,6 +19772,7 @@ function getCurrentRoundData() {
 
 
   function onLevelSlider(val) {
+    if (window.HGSCRIPT) HGSCRIPT.leave();
     const newLv = parseInt(val, 10);
     const lvChanged = (newLv !== currentLevel);
     currentLevel = newLv;
@@ -19707,6 +19785,7 @@ function getCurrentRoundData() {
   }
 
   function jumpLevel(targetLv) {
+    if (window.HGSCRIPT) HGSCRIPT.leave();
     const lvChanged = (targetLv !== currentLevel);
     currentLevel = targetLv;
     document.getElementById('levelSlider').value = targetLv;
@@ -19731,11 +19810,13 @@ function getCurrentRoundData() {
 
 
 
+    const scriptOn = !!(window.HGSCRIPT && HGSCRIPT.isActive());
+
     for (let t = 1; t <= 5; t++) {
 
       const btn = document.getElementById(`quickTier${t}`);
 
-      if (info.tier === t) {
+      if (info.tier === t && !scriptOn) {
 
         btn.style.background = (t === 5) ? "#f43f5e" : "#58cc02";
 
@@ -19753,7 +19834,13 @@ function getCurrentRoundData() {
 
 
 
-    if (window.HGV2 ? HGV2.isFreeTalk() : currentLevel >= 41) {
+    if (scriptOn) {
+
+      HGSCRIPT.show();
+
+    } else if (window.HGV2 ? HGV2.isFreeTalk() : currentLevel >= 41) {
+
+      if (window.HGSCRIPT) HGSCRIPT.hide();
 
       document.getElementById('viewDrill').classList.add('hidden');
 
@@ -19762,6 +19849,8 @@ function getCurrentRoundData() {
       setupRoleplayView();
 
     } else {
+
+      if (window.HGSCRIPT) HGSCRIPT.hide();
 
       document.getElementById('viewDrill').classList.remove('hidden');
 
@@ -21854,7 +21943,8 @@ function getCurrentRoundData() {
       // 2. hangeoreum_lv 및 hangeoreum_round 로 저장된 동적 관문 키 전수 삭제
       const allKeys = Object.keys(localStorage);
       allKeys.forEach(k => {
-        if (k.startsWith('hangeoreum_lv') || k.startsWith('hangeoreum_round') || k.startsWith('hangeoreum_case')) {
+        if (k.startsWith('hangeoreum_lv') || k.startsWith('hangeoreum_round') || k.startsWith('hangeoreum_case')
+          || k.startsWith('hg_script_') || (k.startsWith('hg_v2_') && k !== 'hg_v2_models' && k !== 'hg_v2_fast_model')) {
           localStorage.removeItem(k);
         }
       });
@@ -21941,6 +22031,7 @@ function getCurrentRoundData() {
 
   // AI 발음 재생 후 마이크 자동 활성화
   function playTargetTTSAndAutoListen() {
+    if (window.HGSCRIPT && HGSCRIPT.isActive()) return;
     const roundData = getCurrentRoundData();
     if (!roundData) return;
 

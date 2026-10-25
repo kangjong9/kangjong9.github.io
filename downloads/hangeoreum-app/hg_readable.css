@@ -4,6 +4,8 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
 #viewCanvas p, #viewOnboarding p, .modal-sheet p { line-height: 1.6; }
 button, select, input, textarea { font-size: max(1em, 14px); }
 button[onclick="goToInitialScreen()"], [id^="quickTier"] { white-space: nowrap; }
+/* T0~T5 빠른 버튼 6개가 폰 너비 한 줄에 들어가게 */
+[id^="quickTier"] { min-width: 0; padding: 4px 0 !important; font-size: 11.5px !important; letter-spacing: -0.4px; }
 
 /* 말하는 동안 파동 */
 #hgSpeakWave { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%) scale(.6); width: 150px; height: 150px;

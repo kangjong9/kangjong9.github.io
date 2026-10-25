@@ -135,7 +135,36 @@
     return s;
   }
 
-  const cacheKey = (lang, level, k) => `hg_v2_ai_${lang}_${level}_${k}`;
+  // ---------------------------------------------------------------- 1~10레벨 이어지는 맥락(스레드)
+  // 처음 학습을 시작한 세트의 맥락(예: 첫 만남 인사)을 출발점으로 삼아, 10레벨까지 이후 세트는 모두
+  // 같은 장면 안에서 다음 대화로 이어지게 만든다 (인사 → 안부 → 이름 → 출신 …). 출발점 이전 위치는 기존 방식.
+  const THREAD_TO = 10;
+  const anchorKey = (lang) => `hg_v2_anchor_${lang}`;
+  const getAnchor = (lang) => load(anchorKey(lang), null);
+  function isThreadPos(lang, level, k) {
+    const a = getAnchor(lang);
+    return !!a && level <= THREAD_TO && (level > a.level || (level === a.level && k > a.k));
+  }
+  function ensureAnchor(lang, level, k) {
+    if (level > THREAD_TO || getAnchor(lang)) return;
+    const s = getSetSync(lang, level, k);
+    if (s) save(anchorKey(lang), { level, k, title: s.title, situationKo: s.situationKo, keywords: s.keywords });
+  }
+  function threadTitles(lang, level, k) {
+    const a = getAnchor(lang);
+    const out = [];
+    for (let lv = a.level; lv <= level; lv++) {
+      for (let s = (lv === a.level ? a.k : 1); s <= SETS_PER_LEVEL; s++) {
+        if (lv === level && s >= k) return out.slice(-12);
+        const set = (lv === a.level && s === a.k) ? a : load(cacheKey(lang, lv, s), null);
+        if (set && set.title) out.push(set.title);
+      }
+    }
+    return out.slice(-12);
+  }
+
+  const cacheKey = (lang, level, k) => isThreadPos(lang, level, k) ? `hg_v2_th_${lang}_${level}_${k}` : `hg_v2_ai_${lang}_${level}_${k}`;
+  const needsAi = (lang, level, k) => k > 1 || isThreadPos(lang, level, k);
 
   function usedTargets(lang) { return load(`hg_v2_used_${lang}`, []); }
   function rememberTargets(lang, set) {
@@ -146,7 +175,11 @@
 
   /** 세트 데이터 즉시 반환 (AI 캐시 → 1세트는 내장 → 없으면 내장 응용) */
   function getSetSync(lang, level, k) {
-    if (k === 1) { const s = baseSet(lang, level); if (s) s.source = '📚 내장 기본 세트'; return s; }
+    if (k === 1) {
+      const ai = isThreadPos(lang, level, k) ? load(cacheKey(lang, level, k), null) : null;
+      if (ai) return ai;
+      const s = baseSet(lang, level); if (s) s.source = '📚 내장 기본 세트'; return s;
+    }
     return load(cacheKey(lang, level, k), null) || fallbackSet(lang, level, k);
   }
 
@@ -224,16 +257,24 @@
     const stepInBand = level - band.from + 1;
     const used = usedTargets(lang).slice(-80);
     const daily = (typeof currentStoryQuote !== 'undefined' && currentStoryQuote) ? currentStoryQuote : '';
+    const a = isThreadPos(lang, level, k) ? getAnchor(lang) : null;
+    const flow = a ? `- 1~${THREAD_TO}레벨은 하나로 이어지는 맥락입니다. 출발 맥락: "${a.title}" — ${a.situationKo} (키워드: ${(a.keywords || []).join(', ')})
+- 지금까지 이어진 흐름: ${threadTitles(lang, level, k).join(' → ') || a.title}
+- 직전 세트: "${prev ? prev.title : a.title}" — ${prev ? prev.situationKo : a.situationKo}
+  → 직전 세트 대화 바로 다음에 나올 법한 질문·대답으로 이어 가세요. 장소·상대·상황을 바꾸지 말고, 같은 만남·장면 안에서 대화를 한 걸음씩 넓힙니다.
+    (예: 첫 인사 → "어떻게 지냈어?" 안부 → "이름이 뭐야?" → 어디서 왔는지 → 무슨 일 하는지 → 취미 → 연락처 교환 → 다음 만남 약속)
+${daily ? `- 학습자가 오늘 체크인에서 한 말: "${daily}" (이어지는 대화 안에서 자연스러울 때만 반영)` : ''}`
+      : `- 직전 세트: "${prev ? prev.title : '없음'}" — ${prev ? prev.situationKo : ''}
+  → 직전 상황에서 자연스럽게 이어지되, 새로운 장면·새로운 주제로 전환하세요.
+${daily ? `- 학습자가 오늘 체크인에서 한 말: "${daily}" (주제 선택에 자연스럽게 반영)` : ''}`;
     return `당신은 한국인 학습자를 위한 ${LANG_NAME[lang]} 회화 커리큘럼 작가입니다.
 세계관: 안드로메다에서 지구로 유배 온 AI 튜터 '엑자일'이 학습자를 데리고 지구 곳곳을 다니며 회화를 가르칩니다.
 
 [이번 세트]
 - 레벨: Lv.${level} (구간 ${band.from}~${band.to} '${band.name}'의 ${stepInBand}/10단계 — 구간 안에서 단계가 오를수록 조금씩 더 어렵게)
 - 구간 난이도 기준: ${band.spec}
-- 이 레벨의 ${k}/5번째 세트 (같은 레벨의 다른 세트와 주제·표현이 겹치면 안 됨)
-- 직전 세트: "${prev ? prev.title : '없음'}" — ${prev ? prev.situationKo : ''}
-  → 직전 상황에서 자연스럽게 이어지되, 새로운 장면·새로운 주제로 전환하세요.
-${daily ? `- 학습자가 오늘 체크인에서 한 말: "${daily}" (주제 선택에 자연스럽게 반영)` : ''}
+- 이 레벨의 ${k}/5번째 세트 (${a ? '앞 세트와 표현이 겹치면 안 됨' : '같은 레벨의 다른 세트와 주제·표현이 겹치면 안 됨'})
+${flow}
 - 이미 학습한 표현(절대 반복 금지): ${used.join(' | ') || '없음'}
 
 [4라운드 구성] 하나의 연속된 상황 안에서 1→4라운드로 갈수록 길고 어려워집니다.
@@ -281,7 +322,7 @@ ${daily ? `- 학습자가 오늘 체크인에서 한 말: "${daily}" (주제 선
           }, 15000);
           const set = validateSet(JSON.parse(text.replace(/^```(json)?|```$/g, '').trim()), lang);
           if (set) {
-            set.source = '✨ Gemini AI 맥락 연결 생성';
+            set.source = isThreadPos(lang, level, k) ? '🔗 1~10레벨 이어지는 맥락 · Gemini' : '✨ Gemini AI 맥락 연결 생성';
             save(ck, set);
             return set;
           }
@@ -310,6 +351,7 @@ ${daily ? `- 학습자가 오늘 체크인에서 한 말: "${daily}" (주제 선
   function applyCurrent() {
     const lang = curLang();
     const k = getSetIdx();
+    ensureAnchor(lang, currentLevel, k);
     const set = getSetSync(lang, currentLevel, k);
     if (!set) return null;
     activeSessionCase = toSessionCase(set, lang, currentLevel, k);
@@ -329,7 +371,7 @@ ${daily ? `- 학습자가 오늘 체크인에서 한 말: "${daily}" (주제 선
     for (let i = 0; i < 2; i++) {
       pos = nextPos(pos.level, pos.k);
       if (!pos) return;
-      if (pos.k > 1) await generateSet(curLang(), pos.level, pos.k);
+      if (needsAi(curLang(), pos.level, pos.k)) await generateSet(curLang(), pos.level, pos.k);
     }
   }
 
@@ -380,6 +422,11 @@ ${daily ? `- 학습자가 오늘 체크인에서 한 말: "${daily}" (주제 선
     }
 
     if (currentLevel < 50) {
+      if (isThreadPos(lang, currentLevel + 1, 1) && !load(cacheKey(lang, currentLevel + 1, 1), null) && apiKey()) {
+        setNotice(`<span style="color:#6366f1; font-weight:800;">🔗 엑자일이 Lv.${currentLevel + 1}을 지금 대화에 이어 준비 중입니다...</span>`);
+        await generateSet(lang, currentLevel + 1, 1);
+        setNotice('');
+      }
       currentLevel++;
       setSetIdx(1);
       currentRound = 1;
@@ -414,7 +461,7 @@ ${daily ? `- 학습자가 오늘 체크인에서 한 말: "${daily}" (주제 선
   async function regenerateCurrent() {
     const lang = curLang();
     const k = getSetIdx();
-    if (k === 1 || !apiKey()) return false;
+    if (!needsAi(lang, currentLevel, k) || !apiKey()) return false;
     setNotice('<span style="color:#6366f1; font-weight:800;">🌌 이 세트를 새 맥락으로 다시 만드는 중...</span>');
     const set = await generateSet(lang, currentLevel, k, true);
     setNotice('');
@@ -573,7 +620,7 @@ ${convo}
   window.HGV2 = {
     SETS_PER_LEVEL, BANDS, PARTNER_PRESETS, TOPIC_ART, LANG_NAME, GEMINI_MODELS, cachedModels,
     bandOf, getSetIdx, setSetIdx, getSetSync, generateSet, applyCurrent, isSessionCurrent,
-    advanceAfterSet, goBack, regenerateCurrent, renderArt,
+    advanceAfterSet, goBack, regenerateCurrent, renderArt, getAnchor, isThreadPos,
     isFreeTalk, getPartner, setupFreeTalkView, partnerReply, speakPartner, openPartnerPicker,
     _validateSet: validateSet, _buildSetPrompt: buildSetPrompt
   };
