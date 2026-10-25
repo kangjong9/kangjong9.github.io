@@ -849,11 +849,12 @@
       <!-- 2) AI 튜터 음성 선택 카드 (답변: "마음에 드는 AI 튜터의 목소리를 골라줘.") -->
       <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:16px; padding:10px 14px; margin-bottom:10px;">
         <!-- 사람 여성 / 사람 남성 / 애니 여성 / 애니 남성 4대 탭 -->
+        <!-- 4대 TTS 엔진 모델 탭: 사람여성=Edge Neural, 사람남성=Gemini 3.8, 애니여성=ElevenLabs, 애니남성=Kokoro -->
         <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; margin-bottom:8px; background:#e2e8f0; padding:3px; border-radius:12px;" id="fourVoiceTabsGroup">
-          <button type="button" id="tabVoiceHF" class="btn-3d" style="min-height:38px; padding:4px 2px; font-size:12px; font-weight:900; background:#4f46e5; color:#fff;" onclick="switchFourVoiceTab('hf')">🌸 사람 여성</button>
-          <button type="button" id="tabVoiceHM" class="btn-3d" style="min-height:38px; padding:4px 2px; font-size:12px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('hm')">⚡ 사람 남성</button>
-          <button type="button" id="tabVoiceAF" class="btn-3d" style="min-height:38px; padding:4px 2px; font-size:12px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('af')">🧚 애니 여성</button>
-          <button type="button" id="tabVoiceAM" class="btn-3d" style="min-height:38px; padding:4px 2px; font-size:12px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('am')">⚔️ 애니 남성</button>
+          <button type="button" id="tabVoiceEdge" class="btn-3d" style="min-height:42px; padding:4px 2px; font-size:11.5px; font-weight:900; background:#4f46e5; color:#fff;" onclick="switchFourVoiceTab('edge')">🌊 Edge Neural</button>
+          <button type="button" id="tabVoiceGemini" class="btn-3d" style="min-height:42px; padding:4px 2px; font-size:11.5px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('gemini')">✨ Gemini 3.8</button>
+          <button type="button" id="tabVoiceEleven" class="btn-3d" style="min-height:42px; padding:4px 2px; font-size:11.5px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('eleven')">💎 ElevenLabs</button>
+          <button type="button" id="tabVoiceKokoro" class="btn-3d" style="min-height:42px; padding:4px 2px; font-size:11.5px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('kokoro')">🍃 Kokoro</button>
         </div>
 
         <!-- 히든 상태 및 재생 속도 조절 바 -->
@@ -5029,167 +5030,243 @@ const EXILE_VOICES = [
     });
   }
 
-    function renderVoicePresets() {
+    /* =========================================================
+     🎙️ 오픈 화면(온보딩 1단계) 4대 TTS 엔진 탭 & 목소리 선택기
+     사람여성 = Edge Neural (23종)
+     사람남성 = Gemini 3.8 (44종)
+     애니여성 = ElevenLabs (16종)
+     애니남성 = Kokoro-82M (7종)
+     ========================================================= */
+  let currentFourTab = localStorage.getItem('our_user_tts_engine') || 'edge';
+
+  function switchFourVoiceTab(tab) {
+    let model = tab;
+    if (tab === 'hf') model = 'edge';
+    else if (tab === 'hm') model = 'gemini';
+    else if (tab === 'af') model = 'eleven';
+    else if (tab === 'am') model = 'kokoro';
+
+    currentFourTab = model;
+    currentTTSEngineModel = model;
+    try {
+      localStorage.setItem('our_user_tts_engine', model);
+    } catch(e) {}
+
+    const tabStyles = {
+      edge: { id: 'tabVoiceEdge', legacyId: 'tabVoiceHF', color: '#4f46e5' },
+      gemini: { id: 'tabVoiceGemini', legacyId: 'tabVoiceHM', color: '#9333ea' },
+      eleven: { id: 'tabVoiceEleven', legacyId: 'tabVoiceAF', color: '#d97706' },
+      kokoro: { id: 'tabVoiceKokoro', legacyId: 'tabVoiceAM', color: '#16a34a' }
+    };
+
+    Object.keys(tabStyles).forEach(k => {
+      const cfg = tabStyles[k];
+      const btn = document.getElementById(cfg.id) || document.getElementById(cfg.legacyId);
+      if (btn) {
+        if (k === model) {
+          btn.style.background = cfg.color;
+          btn.style.color = '#ffffff';
+          btn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)';
+        } else {
+          btn.style.background = '#f8fafc';
+          btn.style.color = '#475569';
+          btn.style.boxShadow = 'none';
+        }
+      }
+    });
+
+    renderVoicePresets();
+  }
+
+  function renderVoicePresets() {
     const container = document.getElementById('voicePresetContainer');
     if (!container) return;
     container.innerHTML = '';
-    updateHiddenUnlockBadge();
 
-    let allList = getMasterVoicesList();
-    const isUnlocked = isAdminVoiceUnlocked();
+    const model = currentFourTab || currentTTSEngineModel || localStorage.getItem('our_user_tts_engine') || 'edge';
 
-    // 4대 탭별 필터링 (일반 모드 10개씩 총 40개, 관리자 모드 11개씩 총 44개)
-    let voices = allList.filter(v => {
-      // 1. 히든 음성 체크 (sub === 5 또는 id 끝이 H)
-      const isHidden = (v.sub === 5 || (v.id && v.id.endsWith('H')) || (v.voiceId && v.voiceId.endsWith('H')));
-      if (isHidden && !isUnlocked) {
-        return false;
-      }
-      // 2. 4대 탭 매칭
-      if (currentFourTab === 'hf') {
-        return v.category === 'human' && v.genderPresentation === 'female';
-      } else if (currentFourTab === 'hm') {
-        return v.category === 'human' && v.genderPresentation === 'male';
-      } else if (currentFourTab === 'af') {
-        return v.category === 'anime' && v.genderPresentation === 'female';
-      } else if (currentFourTab === 'am') {
-        return v.category === 'anime' && v.genderPresentation === 'male';
-      }
-      return true;
-    });
+    const MODEL_VOICES = {
+      edge: [
+        { id: 'ko-KR-SunHiNeural', name: '선희 (SunHi)', desc: '한국어 대표 표준 여성', icon: '👩‍🏫', badge: '100% 무료' },
+        { id: 'ko-KR-InJoonNeural', name: '인준 (InJoon)', desc: '한국어 대표 신뢰 남성', icon: '👨‍💼', badge: '100% 무료' },
+        { id: 'ko-KR-HyunsuMultilingualNeural', name: '현수 (Hyunsu)', desc: '한국어 다국어 청년', icon: '⚡', badge: '100% 무료' },
+        { id: 'en-US-JennyNeural', name: 'Jenny (US)', desc: '미국 대표 자연스러운 여성', icon: '🇺🇸', badge: '영어 튜터' },
+        { id: 'en-US-GuyNeural', name: 'Guy (US)', desc: '미국 대표 편안한 남성', icon: '🇺🇸', badge: '영어 튜터' },
+        { id: 'en-US-AriaNeural', name: 'Aria (US)', desc: '뉴스 앵커 스타일 여성', icon: '📰', badge: '영어 앵커' },
+        { id: 'en-US-ChristopherNeural', name: 'Christopher (US)', desc: '안정적인 멘토 남성', icon: '🎓', badge: '영어 멘토' },
+        { id: 'en-US-EricNeural', name: 'Eric (US)', desc: '활기찬 에너지 남성', icon: '⚡', badge: '영어 청년' },
+        { id: 'en-US-MichelleNeural', name: 'Michelle (US)', desc: '다정한 일상 대화 여성', icon: '🌸', badge: '일상 회화' },
+        { id: 'en-GB-SoniaNeural', name: 'Sonia (UK)', desc: '영국 대표 튜터 여성', icon: '🇬🇧', badge: '영국 발음' },
+        { id: 'en-GB-RyanNeural', name: 'Ryan (UK)', desc: '영국 대표 청년 남성', icon: '🇬🇧', badge: '영국 발음' },
+        { id: 'en-GB-LibbyNeural', name: 'Libby (UK)', desc: '또렷하고 맑은 영국 여성', icon: '🇬🇧', badge: '영국 발음' },
+        { id: 'en-GB-ThomasNeural', name: 'Thomas (UK)', desc: '지적인 영국 신사 남성', icon: '🇬🇧', badge: '영국 신사' },
+        { id: 'ja-JP-NanamiNeural', name: 'Nanami (JP)', desc: '일본어 대표 친절한 여성', icon: '🇯🇵', badge: '일본어' },
+        { id: 'ja-JP-KeitaNeural', name: 'Keita (JP)', desc: '일본어 대표 지적인 남성', icon: '🇯🇵', badge: '일본어' },
+        { id: 'zh-CN-XiaoxiaoNeural', name: 'Xiaoxiao (CN)', desc: '중국어 대표 표준 여성', icon: '🇨🇳', badge: '중국어' },
+        { id: 'zh-CN-YunxiNeural', name: 'Yunxi (CN)', desc: '중국어 대표 활기찬 청년', icon: '🇨🇳', badge: '중국어' },
+        { id: 'zh-CN-YunjianNeural', name: 'Yunjian (CN)', desc: '중국어 대표 다큐/내레이션', icon: '🇨🇳', badge: '중국어' },
+        { id: 'zh-CN-YunyangNeural', name: 'Yunyang (CN)', desc: '중국어 대표 뉴스 앵커', icon: '🇨🇳', badge: '중국어' },
+        { id: 'fr-FR-DeniseNeural', name: 'Denise (FR)', desc: '프랑스어 대표 우아한 여성', icon: '🇫🇷', badge: '프랑스어' },
+        { id: 'fr-FR-HenriNeural', name: 'Henri (FR)', desc: '프랑스어 대표 지적인 남성', icon: '🇫🇷', badge: '프랑스어' },
+        { id: 'de-DE-KatjaNeural', name: 'Katja (DE)', desc: '독일어 대표 표준 여성', icon: '🇩🇪', badge: '독일어' },
+        { id: 'es-ES-ElviraNeural', name: 'Elvira (ES)', desc: '스페인어 대표 표준 여성', icon: '🇪🇸', badge: '스페인어' }
+      ],
+      gemini: (typeof GeminiHumanVoiceEngine !== 'undefined' && GeminiHumanVoiceEngine.MASTER_VOICES_44)
+        ? GeminiHumanVoiceEngine.MASTER_VOICES_44.map(v => ({
+            id: v.id,
+            name: v.name || v.displayName,
+            desc: v.style || v.desc || (v.category === 'anime' ? '애니메이션 성우' : '실제 사람 신경망'),
+            icon: v.icon || '✨',
+            badge: v.category === 'anime' ? '애니 성우' : '실제 사람'
+          }))
+        : [
+            { id: 'HUMAN_F1', name: 'F1. 다정한 표준 튜터', desc: '따뜻하고 편안한 표준 톤', icon: '👩‍🏫', badge: '사람 여성' },
+            { id: 'HUMAN_M1', name: 'M1. 20대 표준 청년', desc: '자연스러운 일상 표준 한국어', icon: '👨‍🎓', badge: '사람 남성' },
+            { id: 'ANIME_F1', name: 'AF1. 루나 (상큼한 마법소녀)', desc: '용기를 주는 통통 튀는 음색', icon: '🎀', badge: '애니 여성' },
+            { id: 'ANIME_M1', name: 'AM1. 카이 (열혈 소년 용사)', desc: '포기를 모르는 열혈 주인공', icon: '🔥', badge: '애니 남성' }
+          ],
+      eleven: [
+        { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam (아담)', desc: '깊고 무게감 있는 대표 남성', icon: '👨', badge: '스튜디오급' },
+        { id: 'nPczCjzI2devNBz1zQrb', name: 'Brian (브라이언)', desc: '차분하고 깊이 있는 중저음', icon: '👨', badge: '스튜디오급' },
+        { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel (대니얼)', desc: '신뢰감 있는 영국 신사', icon: '🎩', badge: '스튜디오급' },
+        { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George (조지)', desc: '따뜻한 스토리텔러', icon: '📖', badge: '스튜디오급' },
+        { id: 'N2lVS1w4EtoT3dr4eOWO', name: 'Callum (칼럼)', desc: '개성 넘치는 허스키 보이스', icon: '⚡', badge: '스튜디오급' },
+        { id: 'IKne3meq5aSn9XLyUdCD', name: 'Charlie (찰리)', desc: '친근하고 발랄한 20대 청년', icon: '🎉', badge: '스튜디오급' },
+        { id: 'cjVigY5qzO86Huf0OWal', name: 'Eric (에릭)', desc: '또렷하고 자신감 넘치는 비즈니스', icon: '💼', badge: '스튜디오급' },
+        { id: 'iP95p4xoKVk53GoZ742B', name: 'Chris (크리스)', desc: '편안하고 자연스러운 일상 대화', icon: '☕', badge: '스튜디오급' },
+        { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Sarah (세라)', desc: '부드럽고 신뢰감 있는 대표 여성', icon: '👩', badge: '스튜디오급' },
+        { id: 'FGY2WhTYpPnrIDTdsKH5', name: 'Laura (로라)', desc: '밝고 상냥한 20대 여성', icon: '🌸', badge: '스튜디오급' },
+        { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'Alice (앨리스)', desc: '차분하고 지적인 어학 튜터', icon: '📚', badge: '스튜디오급' },
+        { id: 'cgSgspJ2msm6clMCkdW9', name: 'Jessica (제시카)', desc: '발랄하고 에너지 넘치는 밝은 톤', icon: '✨', badge: '스튜디오급' },
+        { id: 'pFZP5JQG7iQjIQuC4Bku', name: 'Lily (릴리)', desc: '따뜻하고 포근한 내레이션', icon: '🌿', badge: '스튜디오급' },
+        { id: 'XrExE9yKIg1WjnnlVkGX', name: 'Matilda (마틸다)', desc: '전문적이고 프로페셔널한 보컬', icon: '🎤', badge: '스튜디오급' },
+        { id: 'hpp4J3VqNfWAUOO0d1Us', name: 'Bella (벨라)', desc: '상냥하고 사랑스러운 톤', icon: '💖', badge: '스튜디오급' },
+        { id: 'SAz9YHcvj6GT2YYXdXww', name: 'River (리버)', desc: '차분하고 안정적인 내레이터', icon: '🌊', badge: '스튜디오급' }
+      ],
+      kokoro: [
+        { id: 'af_heart', name: 'Heart (최고 평점 Grade A / 대표 여성)', desc: '부드럽고 자연스러운 미국 대표 여성', icon: '💖', badge: 'Grade A' },
+        { id: 'af_bella', name: 'Bella (부드럽고 맑은 음색)', desc: '맑고 상냥한 미국 여성', icon: '🌸', badge: '맑은 음색' },
+        { id: 'af_sky', name: 'Sky (밝고 상쾌한 하이톤)', desc: '경쾌하고 통통 튀는 하이톤', icon: '☀️', badge: '하이톤' },
+        { id: 'am_adam', name: 'Adam (깊고 울림 있는 바리톤)', desc: '중후하고 신뢰감 넘치는 남성', icon: '👨', badge: '바리톤' },
+        { id: 'am_michael', name: 'Michael (지적이고 젠틀한 남성)', desc: '지적인 미국 젠틀맨', icon: '👔', badge: '젠틀맨' },
+        { id: 'bm_lewis', name: 'Lewis (지적인 영국 신사)', desc: '품격 있는 영국 발음 남성', icon: '🇬🇧', badge: '영국 신사' },
+        { id: 'intro', name: 'Intro (Kokoro-82M 공식 영문 오버뷰)', desc: '82M 파라미터 신경망 공식 소개', icon: '🎙️', badge: '공식 오버뷰' }
+      ]
+    };
 
-    if (!voices.length) return;
+    const voices = MODEL_VOICES[model] || MODEL_VOICES['edge'];
+    const savedVoiceId = localStorage.getItem('our_user_tts_voice');
+    let selectedVoice = voices.find(v => v.id === savedVoiceId) || voices[0];
 
-    // 현재 선택된 보이스 없으면 1번째 자동 지정
-    let selectedVoice = voices.find(v => (v.voiceId === currentSelectedVoiceId || v.id === currentSelectedVoiceId));
-    if (!selectedVoice) {
-      selectedVoice = voices[0];
-      VoiceEngine20.selectVoice(selectedVoice.voiceId || selectedVoice.id);
-    }
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'background:#ffffff; border:2px solid #6366f1; border-radius:16px; padding:12px; margin-top:4px;';
 
-    // 드롭다운 컨테이너 생성 (공간 컴팩트하게 위로 끌어올림)
-    const selectWrapper = document.createElement('div');
-    selectWrapper.style.cssText = 'background:#ffffff; border:2px solid #6366f1; border-radius:16px; padding:12px; margin-bottom:8px; box-shadow:0 4px 12px rgba(99,102,241,0.08);';
+    const modelTitles = {
+      edge: '🌊 Edge Neural (23종 · 100% 무료)',
+      gemini: '✨ Gemini 3.8 (44종 · Google 신경망)',
+      eleven: '💎 ElevenLabs (16종 · 스튜디오급)',
+      kokoro: '🍃 Kokoro-82M (7종 · 온디바이스)'
+    };
 
-    // 헤더 라벨: 일반 모드 40종 / 관리자 모드 44종 상태 명시
-    const labelRow = document.createElement('div');
-    labelRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;';
-    const modeBadge = isUnlocked
-      ? '<span style="font-size:11.5px; font-weight:900; color:#16a34a; background:#dcfce7; padding:2px 8px; border-radius:8px;">🔓 관리자 44종 전체 해금</span>'
-      : '<span style="font-size:11.5px; font-weight:800; color:#6366f1; background:#e0e7ff; padding:2px 8px; border-radius:8px;">일반 모드 40종</span>';
-
-    labelRow.innerHTML = `
-      <div style="font-size:13px; font-weight:800; color:#4338ca; display:flex; align-items:center; gap:6px;">
-        <span>🎙️ 목소리 선택 (드롭다운):</span>
+    const headerRow = document.createElement('div');
+    headerRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;';
+    headerRow.innerHTML = `
+      <div style="font-size:13px; font-weight:900; color:#4338ca;">
+        ${modelTitles[model]}
       </div>
-      <div style="display:flex; align-items:center; gap:6px;">
-        ${modeBadge}
-        <span style="font-size:11.5px; font-weight:800; color:#475569;">${voices.length}개 선택 가능</span>
+      <div style="font-size:11.5px; font-weight:800; color:#64748b;">
+        ${voices.length}개 선택 가능
       </div>
     `;
-    selectWrapper.appendChild(labelRow);
+    wrapper.appendChild(headerRow);
 
-    // 드롭다운 Select 박스
     const selectEl = document.createElement('select');
-    selectEl.id = 'voicePresetSelect';
-    selectEl.style.cssText = 'width:100%; padding:10px 12px; font-size:14.5px; font-weight:800; color:#1e293b; background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; outline:none; cursor:pointer; box-sizing:border-box; appearance:auto; -webkit-appearance:auto;';
+    selectEl.id = 'obVoicePresetSelect';
+    selectEl.style.cssText = 'width:100%; padding:10px 12px; font-size:14px; font-weight:800; color:#1e293b; background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; outline:none; cursor:pointer; box-sizing:border-box; margin-bottom:10px;';
 
     voices.forEach(v => {
       const opt = document.createElement('option');
-      opt.value = v.voiceId || v.id;
-      const isCur = (opt.value === selectedVoice.voiceId || opt.value === selectedVoice.id);
-      opt.selected = isCur;
-      const isHidden = (v.sub === 5 || (v.id && v.id.endsWith('H')));
-      const hiddenPrefix = isHidden ? '✨ [히든] ' : '';
-      opt.textContent = `${v.icon || '🎙️'} ${hiddenPrefix}${v.name || v.displayName} - ${v.style || v.desc}`;
+      opt.value = v.id;
+      opt.selected = (v.id === selectedVoice.id);
+      opt.textContent = `${v.icon || '🎙️'} ${v.name} - ${v.desc}`;
       selectEl.appendChild(opt);
     });
 
     selectEl.onchange = (e) => {
       soundTap();
       const chosenId = e.target.value;
-      VoiceEngine20.selectVoice(chosenId);
+      try {
+        localStorage.setItem('our_user_tts_engine', model);
+        localStorage.setItem('our_user_tts_voice', chosenId);
+        currentSelectedVoiceId = chosenId;
+        selectedExileVoiceId = chosenId;
+      } catch(err) {}
       renderVoicePresets();
       speakSampleVoice(chosenId);
     };
-    selectWrapper.appendChild(selectEl);
+    wrapper.appendChild(selectEl);
 
-    // 선택된 음성 상세 및 미리듣기 프리뷰 카드 (컴팩트 레이아웃)
     const previewCard = document.createElement('div');
-    previewCard.id = 'selectedVoicePreviewCard';
-    const isAnime = (selectedVoice.category === 'anime');
-    const isHidden = (selectedVoice.sub === 5 || (selectedVoice.id && selectedVoice.id.endsWith('H')));
-    previewCard.style.cssText = `margin-top:10px; background:${isHidden ? 'linear-gradient(135deg, #fdf2f8, #f5f3ff)' : '#f8faff'}; border:2px solid ${isHidden ? '#ec4899' : (isAnime ? '#f43f5e' : '#6366f1')}; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;`;
-
+    previewCard.style.cssText = 'background:linear-gradient(135deg, #f8faff, #f1f5f9); border:1.5px solid #818cf8; border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:8px;';
+    
     previewCard.innerHTML = `
       <div style="display:flex; align-items:center; gap:10px;">
-        <div style="font-size:32px; line-height:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1));">${selectedVoice.icon || '🎙️'}</div>
+        <div style="font-size:28px;">${selectedVoice.icon || '🎙️'}</div>
         <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-            <div style="font-size:15px; font-weight:900; color:#0f172a;">${selectedVoice.name || selectedVoice.displayName}</div>
-            ${isHidden ? '<span style="font-size:11px; font-weight:900; background:#fdf2f8; color:#db2777; border:1px solid #f472b6; padding:1px 6px; border-radius:6px;">✨ 히든 해금</span>' : ''}
-            <span style="font-size:11px; font-weight:800; background:#e0e7ff; color:#4338ca; padding:1px 6px; border-radius:6px;">선택됨 ✓</span>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <div style="font-size:14.5px; font-weight:900; color:#0f172a;">${selectedVoice.name}</div>
+            <span style="font-size:10.5px; font-weight:900; background:#e0e7ff; color:#4338ca; padding:1px 6px; border-radius:6px;">${selectedVoice.badge || '선택됨'}</span>
           </div>
-          <div style="font-size:12px; color:#64748b; margin-top:2px; line-height:1.35;">${selectedVoice.style || selectedVoice.desc}</div>
+          <div style="font-size:12px; color:#64748b; margin-top:2px;">${selectedVoice.desc}</div>
         </div>
       </div>
       <div style="display:flex; gap:6px;">
-        <button type="button" class="btn-3d btn-primary" style="flex:1; padding:9px 12px; font-size:13px; font-weight:900; background:${isAnime ? '#f43f5e' : '#4f46e5'}; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="speakSampleVoice('${selectedVoice.voiceId || selectedVoice.id}')">
-          <span>🔊 Gemini 3.8 Flash 샘플 미리듣기</span>
+        <button type="button" class="btn-3d btn-primary" style="flex:1; padding:9px 12px; font-size:13px; font-weight:900; background:#4f46e5; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="speakSampleVoice('${selectedVoice.id}')">
+          <span>🔊 이 목소리 샘플 듣기</span>
         </button>
       </div>
     `;
-    selectWrapper.appendChild(previewCard);
+    wrapper.appendChild(previewCard);
 
-    container.appendChild(selectWrapper);
-  }
-
-  let appHumanVoiceEngine = null;
-  function getAppHumanVoiceEngine() {
-    if (!appHumanVoiceEngine && typeof GeminiHumanVoiceEngine !== 'undefined') {
-      const liveKey = localStorage.getItem('hangeoreum_gemini_key') ||
-                      localStorage.getItem('google_ai_studio_api_key') ||
-                      localStorage.getItem('hangeoreum_tts_api_key') || '';
-      appHumanVoiceEngine = new GeminiHumanVoiceEngine({
-        apiKey: liveKey,
-        priorityModel: 'gemini-3.8-flash',
-        blockMechanicalTts: true // 기계음 원천 차단!
-      });
-    } else if (appHumanVoiceEngine) {
-      const liveKey = localStorage.getItem('hangeoreum_gemini_key') ||
-                      localStorage.getItem('google_ai_studio_api_key') ||
-                      localStorage.getItem('hangeoreum_tts_api_key') || '';
-      if (liveKey && appHumanVoiceEngine.apiKey !== liveKey) {
-        appHumanVoiceEngine.setApiKey(liveKey);
+    if (model === 'gemini') {
+      const gKey = localStorage.getItem('gemini_voice_api_key') || localStorage.getItem('hangeoreum_gemini_key') || '';
+      if (!gKey) {
+        const keyNotice = document.createElement('div');
+        keyNotice.style.cssText = 'margin-top:8px; background:#f0fdf4; border:1px solid #86efac; border-radius:10px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center;';
+        keyNotice.innerHTML = `
+          <div style="font-size:11.5px; color:#166534; font-weight:800;">🔑 무료 Gemini API 키가 필요합니다</div>
+          <button type="button" onclick="openSettingsModal()" style="background:#16a34a; color:#fff; border:none; border-radius:6px; padding:3px 8px; font-size:11px; font-weight:900; cursor:pointer;">설정에서 키 입력 ⚙️</button>
+        `;
+        wrapper.appendChild(keyNotice);
+      }
+    } else if (model === 'eleven') {
+      const eKey = localStorage.getItem('eleven_voice_api_key') || '';
+      if (!eKey) {
+        const keyNotice = document.createElement('div');
+        keyNotice.style.cssText = 'margin-top:8px; background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center;';
+        keyNotice.innerHTML = `
+          <div style="font-size:11.5px; color:#92400e; font-weight:800;">🔑 ElevenLabs 개인 API 키가 필요합니다</div>
+          <button type="button" onclick="openSettingsModal()" style="background:#d97706; color:#fff; border:none; border-radius:6px; padding:3px 8px; font-size:11px; font-weight:900; cursor:pointer;">설정에서 키 입력 ⚙️</button>
+        `;
+        wrapper.appendChild(keyNotice);
       }
     }
-    return appHumanVoiceEngine;
-  }
 
-  // 44종 마스터 보이스 목록 바인딩 (GeminiHumanVoiceEngine 내장 44종 우선)
-  function getMasterVoicesList() {
-    if (typeof ALL_VOICE_40 !== 'undefined' && ALL_VOICE_40.length >= 44) {
-      return ALL_VOICE_40;
-    }
-    if (typeof GeminiHumanVoiceEngine !== 'undefined' && GeminiHumanVoiceEngine.VOICES && GeminiHumanVoiceEngine.VOICES.length >= 44) {
-      return GeminiHumanVoiceEngine.VOICES;
-    }
-    return (typeof ALL_VOICE_40 !== 'undefined') ? ALL_VOICE_40 : [];
+    container.appendChild(wrapper);
   }
 
   async function speakSampleVoice(voiceId) {
-    const v = VoiceEngine20.getVoiceDetails(voiceId);
-    if (!v) return;
-    const txt = (v.samples && v.samples.ko) ? v.samples.ko.replace(/\{NAME\}/g, userName) : `안녕하세요 ${userName}님! 함께 공부해봐요.`;
-    
-    const engine = getAppHumanVoiceEngine();
-    if (engine && engine.apiKey) {
-      console.log('[speakSampleVoice] Gemini 3.8 Flash 사람 음성 직결:', v.name);
-      const ok = await engine.speak(v.id || v.voiceId, txt, 'ko');
-      if (ok) return;
-    }
-    // API 키 미설정 시에만 안전 폴백
-    speakTextWithFallback(txt, 'ko', { pitch: v.pitch, rate: (v.rate || v.speakingRate || 1.0) * globalSpeechRate });
+    const model = currentFourTab || currentTTSEngineModel || localStorage.getItem('our_user_tts_engine') || 'edge';
+    const txt = `안녕하세요 ${userName}님! 안드로메다 탈출을 위해 함께 즐겁게 어학 공부를 시작해 봐요!`;
+
+    try {
+      localStorage.setItem('our_user_tts_engine', model);
+      localStorage.setItem('our_user_tts_voice', voiceId);
+      currentSelectedVoiceId = voiceId;
+      selectedExileVoiceId = voiceId;
+    } catch(e) {}
+
+    speakTextWithFallback(txt, 'ko');
   }
 
   /* =========================================================
