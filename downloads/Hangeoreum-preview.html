@@ -1629,13 +1629,17 @@
 
       <div style="margin-top:auto; display:flex; flex-direction:column; gap:10px;">
 
-        <button id="btnMicRecord" class="btn-3d btn-indigo" onclick="startVoiceRecognition()">
-
-          <span style="font-size:22px;">🎙️</span>
-
-          <span id="btnMicText">마이크로 따라 말하기</span>
-
-        </button>
+        <!-- [옵빠야 요청] 마이크로 따라 말하기 버튼 완전 제거 & 전자동 핸즈프리 AI 상태 바 탑재 -->
+        <div id="handsFreeContainer" style="margin-bottom:8px; display:flex; flex-direction:column; gap:8px;">
+          <div id="handsFreeStateBar" onclick="triggerAutoMicListening()" style="cursor:pointer; width:100%; padding:15px 18px; border-radius:18px; font-weight:900; font-size:15.5px; display:flex; align-items:center; justify-content:center; gap:10px; background:linear-gradient(135deg, #4f46e5, #6366f1); color:#ffffff; box-shadow:0 8px 20px rgba(79,70,229,0.3); transition:all 0.3s ease;">
+            <span id="handsFreeStateIcon" style="font-size:24px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));">🤖</span>
+            <span id="handsFreeStateText">AI 엑자일 발음 지도 준비 중...</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:0 4px; font-size:12px; color:#64748b; font-weight:700;">
+            <span>✨ 전자동 AI 핸즈프리 모드 (버튼 조작 불필요)</span>
+            <span id="handsFreeIndicator" style="display:flex; align-items:center; gap:4px; color:#10b981; font-weight:800;">● LIVE AUTO</span>
+          </div>
+        </div>
 
 
 
@@ -18865,7 +18869,7 @@ function getCurrentRoundData() {
     }
 
     setTimeout(() => {
-      playTargetTTS();
+      playTargetTTSAndAutoListen();
     }, 250);
   }
 
@@ -19033,26 +19037,32 @@ function getCurrentRoundData() {
 
       badge.style.background = "#dcfce7";
       badge.style.color = "#166534";
-      badge.innerHTML = `🎉 통과 완료! (정확도 ${score}점)`;
+      badge.innerHTML = `🎉 발음 통과! (일치도 ${score}점)`;
 
-      polishText.innerHTML = `AI 엑자일 분석: <strong>"정확한 발음입니다! ${userName}의 조음 감각이 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>정답 문장: ${roundData.target}</span>`;
-      
+      polishText.innerHTML = `AI 엑자일 칭찬: <strong>"정확한 발음입니다! ${userName}님 아주 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>원문 발음: ${roundData.target}</span>`;
+
+      updateHandsFreeStatus('passed', `🎉 발음 통과 (${score}점)! 1.2초 후 다음으로 자동 진행...`);
       if (currentRound < 4) {
-        noticeEl.innerHTML = `<span style='color:#166534;'>✅ [통과 성공] 다음 변형 예문으로 도전할 수 있습니다! 우측 [다음 단계로 ➔]를 누르세요.</span>`;
+        noticeEl.innerHTML = `<span style='color:#166534;'>🎉 [관문 통과] ${score}점 달성! 1.2초 후 다음 관문으로 자동 이동합니다.</span>`;
       } else {
-        noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4단계 정복 완료!] 이번 레벨의 모든 따라하기를 완벽히 통과했습니다!</span>`;
+        noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4개 관문 올클리어] 축하합니다! 새로운 레벨과 맥락으로 자동 승급합니다!</span>`;
       }
 
       nextBtn.classList.remove('btn-disabled');
       nextBtn.disabled = false;
-      nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
+      nextBtn.innerHTML = `<span>다음 관문으로 자동 진행</span>`;
 
       try {
         localStorage.setItem(`hangeoreum_lv${currentLevel}_r${currentRound}`, '1');
       } catch(e) {}
 
+      // [옵빠야 요청] 사용자는 별도 컨트롤 없이 AI가 자동으로 다음 단계 진행!
+      setTimeout(() => {
+        if (typeof autoProceedNextRoundOrLevel === 'function') autoProceedNextRoundOrLevel();
+      }, 1200);
+
     } else {
-      // 틀리면 효과음 (wrong.mp3)
+      // 오답 효과음 (wrong.mp3)
       soundWrong();
       comboCount = 0;
       document.getElementById('comboBadge').textContent = `x0 COMBO`;
@@ -19060,15 +19070,20 @@ function getCurrentRoundData() {
 
       badge.style.background = "#fee2e2";
       badge.style.color = "#991b1b";
-      badge.innerHTML = `❌ 통과 실패 (정확도 ${score}점 / 합격 기준 70점)`;
+      badge.innerHTML = `재도전 권장 (${score}점 / 통과 기준 70점)`;
 
-      polishText.innerHTML = `AI 엑자일 코칭: <strong>"발음이 명확하지 않습니다. 원어민 음성을 다시 듣고 입을 크게 벌려 따라 해보세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발화: "${spokenText}"</span>`;
+      updateHandsFreeStatus('retry', `🔄 다시 듣고 따라해 볼까요? (${score}점)`);
+      polishText.innerHTML = `AI 엑자일 교정: <strong>"조금 더 또박또박 발음해 볼까요? 엑자일의 발음을 듣고 다시 도전하세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발음: "${spokenText}"</span>`;
 
-      noticeEl.innerHTML = `<span style='color:#dc2626;'>⛔ [진행 잠금] 70점 미만은 다음 단계로 절대 넘어갈 수 없습니다! [🔊 원어민 소리]를 듣고 다시 도전하세요!</span>`;
+      noticeEl.innerHTML = `<span style='color:#dc2626;'>⚠️ 70점 미만입니다. 1.5초 후 엑자일의 발음을 다시 들려드리고 마이크를 재활성화합니다!</span>`;
 
       nextBtn.classList.add('btn-disabled');
       nextBtn.disabled = true;
-      nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
+
+      // [옵빠야 요청] 실패 시 AI 발음을 다시 들려주고 마이크 자동 재활성화
+      setTimeout(() => {
+        if (typeof playTargetTTSAndAutoListen === 'function') playTargetTTSAndAutoListen();
+      }, 1500);
     }
 
     callAiPronunciationCoachIfAvailable(spokenText, roundData.target, score);
@@ -21152,6 +21167,156 @@ function getCurrentRoundData() {
     if (typeof closeSettingsModal === 'function') closeSettingsModal();
 
     alert('✨ 지금까지 학습한 모든 데이터가 깨끗하게 초기화되었습니다! 1레벨부터 새로운 마음으로 시작합니다.');
+  }
+
+
+
+  /* =========================================================
+     [옵빠야 지침 전담] 100% 전자동 핸즈프리 AI 학습 및 레벨 맥락 자동 생성 엔진
+     ========================================================= */
+
+  let autoListenTimer = null;
+  let isHandsFreeAutoMode = true; // 전자동 진행 모드 활성화
+
+  function updateHandsFreeStatus(state, text) {
+    const bar = document.getElementById('handsFreeStateBar');
+    const icon = document.getElementById('handsFreeStateIcon');
+    const txt = document.getElementById('handsFreeStateText');
+    if (!bar || !txt) return;
+
+    txt.textContent = text;
+
+    if (state === 'ai_speaking') {
+      bar.style.background = 'linear-gradient(135deg, #4f46e5, #6366f1)';
+      bar.style.boxShadow = '0 8px 20px rgba(79,70,229,0.35)';
+      if (icon) icon.textContent = '🤖';
+    } else if (state === 'mic_active') {
+      bar.style.background = 'linear-gradient(135deg, #dc2626, #ef4444)';
+      bar.style.boxShadow = '0 8px 24px rgba(239,68,68,0.4)';
+      if (icon) icon.textContent = '🎙️';
+    } else if (state === 'judging') {
+      bar.style.background = 'linear-gradient(135deg, #d97706, #f59e0b)';
+      bar.style.boxShadow = '0 8px 20px rgba(245,158,11,0.35)';
+      if (icon) icon.textContent = '⚡';
+    } else if (state === 'passed') {
+      bar.style.background = 'linear-gradient(135deg, #059669, #10b981)';
+      bar.style.boxShadow = '0 8px 24px rgba(16,185,129,0.4)';
+      if (icon) icon.textContent = '🎉';
+    } else if (state === 'retry') {
+      bar.style.background = 'linear-gradient(135deg, #e11d48, #f43f5e)';
+      bar.style.boxShadow = '0 8px 20px rgba(244,63,94,0.35)';
+      if (icon) icon.textContent = '🔄';
+    }
+  }
+
+  // AI 발음 재생 후 마이크 자동 활성화
+  function playTargetTTSAndAutoListen() {
+    const roundData = getCurrentRoundData();
+    if (!roundData) return;
+
+    if (autoListenTimer) clearTimeout(autoListenTimer);
+
+    updateHandsFreeStatus('ai_speaking', `🤖 AI 엑자일 발음 지도 중... 🔊`);
+
+    let speechFinished = false;
+    const onFinished = () => {
+      if (speechFinished) return;
+      speechFinished = true;
+      if (autoListenTimer) clearTimeout(autoListenTimer);
+
+      setTimeout(() => {
+        if (!isHandsFreeAutoMode) return;
+        triggerAutoMicListening();
+      }, 400);
+    };
+
+    const safetyTimeoutMs = Math.max(2600, (roundData.target || '').length * 170 + 1500);
+    autoListenTimer = setTimeout(onFinished, safetyTimeoutMs);
+
+    speakTextWithFallback(roundData.target, selectedLang, {
+      onComplete: onFinished
+    });
+  }
+
+  // 마이크 자동 트리거
+  function triggerAutoMicListening() {
+    updateHandsFreeStatus('mic_active', `🎙️ 듣고 있어요! 지금 따라 말씀하세요...`);
+    startVoiceRecognition();
+  }
+
+  // 1레벨 상승 시 레벨 맞춤 맥락 AI 자동 생성
+  async function autoGenerateLevelContext(level, lang) {
+    const noticeEl = document.getElementById('gatekeeperNotice');
+    if (noticeEl) {
+      noticeEl.innerHTML = `<span style="color:#6366f1; font-weight:800;">🌌 AI 엑자일이 Lv.${level} 맞춤 실전 맥락을 자동 생성 중입니다...</span>`;
+    }
+
+    // 1. Gemini AI 실시간 맥락 생성
+    const apiKey = getActiveApiKey();
+    if (apiKey && typeof requestGeminiDynamicCaseGeneration === 'function') {
+      try {
+        await requestGeminiDynamicCaseGeneration(level);
+        return;
+      } catch(e) {
+        console.warn('Gemini auto context generation, fallback to progressive library:', e);
+      }
+    }
+
+    // 2. 50단계 맞춤형 맥락 라이브러리에서 레벨 맞춤 자동 적용
+    if (typeof loadOrGenerateSessionCase === 'function') {
+      loadOrGenerateSessionCase(currentTheme, lang, level, true);
+    }
+  }
+
+  // 레벨업 자동 안내 토스트
+  function showLevelUpAutoToast(level) {
+    let toast = document.getElementById('levelUpAutoToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'levelUpAutoToast';
+      toast.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:99995; background:linear-gradient(135deg, #059669, #10b981); color:#fff; padding:14px 22px; border-radius:20px; font-weight:900; font-size:15.5px; box-shadow:0 10px 30px rgba(5,150,105,0.4); display:flex; align-items:center; gap:10px; transition:opacity 0.5s ease; pointer-events:none;';
+      document.body.appendChild(toast);
+    }
+    toast.innerHTML = `<span>🚀</span><span>LEVEL UP! Lv.${level} 승급 완료! AI가 새로운 실전 맥락을 생성했습니다.</span>`;
+    toast.style.opacity = '1';
+    toast.style.display = 'flex';
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => { toast.style.display = 'none'; }, 500);
+    }, 2800);
+  }
+
+  // 전자동 다음 라운드 또는 레벨 진행 (사용자 무버튼 진행)
+  function autoProceedNextRoundOrLevel() {
+    if (currentRound < 4) {
+      currentRound++;
+      renderCurrentRoundUI();
+    } else {
+      // 4개 관문 올클리어! 다음 레벨 자동 승급!
+      soundLevelUp();
+      if (currentLevel < 50) {
+        currentLevel++;
+        currentRound = 1;
+        roundPassed = [false, false, false, false];
+        const slider = document.getElementById('levelSlider');
+        if (slider) slider.value = currentLevel;
+
+        showLevelUpAutoToast(currentLevel);
+        autoGenerateLevelContext(currentLevel, selectedLang);
+        updateLevelUI();
+
+        // 엑자일이 레벨 승급 축하 및 새 맥락 안내 음성 송출 후 1관문 자동 시작
+        setTimeout(() => {
+          speakExileTutor(`Lv.${currentLevel} 외계 교화 임무로 승급했습니다! 새로운 맥락을 생성했으니 시키는 대로만 따라오세요!`, 'ko');
+          setTimeout(() => {
+            renderCurrentRoundUI();
+          }, 3200);
+        }, 500);
+
+      } else {
+        alert(`🏆 [50레벨 안드로메다 사면권 완전 정복!] 축하합니다, ${userName}님! 모든 지구 언어 훈련을 마스터하셨습니다!`);
+      }
+    }
   }
 
 </script>
