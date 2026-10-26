@@ -120,7 +120,7 @@ function initProjectFolders(content) {
       ["외장하드 안전제거[PC]", "safe-eject.svg"]
     ],
     "network": [
-      ["누리스튜디오 TTS엔진", "nuri-studio.png"],
+      ["누리보이스 스튜디오 TTS엔진", "nuri-studio.png"],
       ["포터블", "portable.svg"],
       ["현재 홈페이지", "homepage.png"]
     ],
@@ -140,11 +140,11 @@ function initProjectFolders(content) {
       ]
     },
 
-    "누리스튜디오 TTS엔진": {
-      tag: "누리스튜디오 TTS엔진 · 누리 보이스 · 5대 엔진 86종+ 목소리 · 일반/애니 캐릭터 모드 · 오프라인 대비 5계층",
+    "누리보이스 스튜디오 TTS엔진": {
+      tag: "누리보이스 스튜디오 TTS엔진 · 5대 엔진 86종+ 목소리 · 일반/애니 캐릭터 모드 · 오프라인 대비 5계층",
       desc: "글자를 사람의 숨결로 — 5대 엔진 86종이 넘는 목소리를 한 화면에서 골라 듣고, 애니 캐릭터 립싱크까지. 인터넷이 흔들려도 다음 엔진이 이어받아 끝까지 말해 주는 누리 보이스 TTS 엔진이에요.",
       links: [
-        { label: "🎙️ 누리스튜디오 TTS엔진 바로 열기 · 설치 없이 웹에서", url: "./nuri-studio/index.html", external: true, primary: true }
+        { label: "🎙️ 누리보이스 스튜디오 바로 열기 · 설치 없이 웹에서", url: "./nuri-studio/index.html", external: true, primary: true }
       ]
     },
     "보컬트레이너[앱]": {
