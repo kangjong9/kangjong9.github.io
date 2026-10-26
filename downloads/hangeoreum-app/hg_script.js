@@ -11,7 +11,7 @@
   const PICS = () => (window.HG_SCRIPT_PICS || {});
   const curLang = () => (typeof selectedLang !== 'undefined' && selectedLang) ? selectedLang : 'fr';
   const KEY = () => `hg_script_${curLang()}`;
-  const STT_LANG = { fr: 'fr-FR', cn: 'zh-CN', ja: 'ja-JP', en: 'en-US', es: 'es-ES' };
+  const STT_LANG = { fr: 'fr-FR', cn: 'zh-CN', ja: 'ja-JP', en: 'en-US', es: 'es-ES', ru: 'ru-RU' };
   const PHASE_NAME = { c: '글자 익히기', w: '단어 읽기' };
   const PASS_NAME = { 1: '원어+한글 · 엑자일 시범', 2: '원어만 · 엑자일 시범', 3: '원어만 · 혼자 읽기' };
   const MAX_AUTO_RETRY = 3;  // 같은 글자 연속 실패가 이만큼이면 자동 반복을 멈추고 다시/넘어가기를 고르게 한다
@@ -207,6 +207,7 @@
     v.innerHTML = `
       <div class="hs-head">
         <span class="hs-badge">🔤 입문 Lv.0 · ${esc(scriptName())}</span>
+        ${window.HGLETTERS ? '<button class="hs-badge" style="border:none;cursor:pointer;color:#fff;margin-left:6px" onclick="HGLETTERS.open()">📋 문자표 보기</button>' : ''}
         <div class="hs-title">${st.unit + 1}/${us.length}단원 · ${esc(u.t)}</div>
         <div class="hs-sub">${PHASE_NAME[st.phase]} · ${session.pos + 1}/${total}</div>
         <div class="hs-dots">${dots}</div>

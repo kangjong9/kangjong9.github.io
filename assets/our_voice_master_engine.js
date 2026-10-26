@@ -79,7 +79,11 @@
     { id: 'fr-FR-HenriNeural', name: 'Henri (FR - 프랑스어 지적 남성)', lang: 'fr-FR', gender: 'male', desc: '프랑스어 대표 지적인 남성' },
     // 🇪🇺 유럽 다국어 모델 (2종)
     { id: 'de-DE-KatjaNeural', name: 'Katja (DE - 독일어 대표 여성)', lang: 'de-DE', gender: 'female', desc: '독일어 대표 표준 여성' },
-    { id: 'es-ES-ElviraNeural', name: 'Elvira (ES - 스페인어 대표 여성)', lang: 'es-ES', gender: 'female', desc: '스페인어 대표 표준 여성' }
+    { id: 'es-ES-ElviraNeural', name: 'Elvira (ES - 스페인어 대표 여성)', lang: 'es-ES', gender: 'female', desc: '스페인어 대표 표준 여성' },
+    { id: 'es-ES-AlvaroNeural', name: 'Alvaro (ES - 스페인어 대표 남성)', lang: 'es-ES', gender: 'male', desc: '스페인어 대표 표준 남성' },
+    // 🇷🇺 러시아어 모델 (2종)
+    { id: 'ru-RU-SvetlanaNeural', name: 'Svetlana (RU - 러시아어 대표 여성)', lang: 'ru-RU', gender: 'female', desc: '러시아어 대표 표준 여성' },
+    { id: 'ru-RU-DmitryNeural', name: 'Dmitry (RU - 러시아어 대표 남성)', lang: 'ru-RU', gender: 'male', desc: '러시아어 대표 표준 남성' }
   ];
 
   const ELEVEN_VOICES = [

@@ -16,11 +16,13 @@
   <script src="curriculum_v2_cn.js"></script>
   <script src="curriculum_v2_en.js"></script>
   <script src="curriculum_v2_es.js"></script>
+  <script src="curriculum_v2_ru.js"></script>
   <script src="hg_sfx.js"></script>
   <script src="hg_v2.js"></script>
   <script src="script_data.js"></script>
   <script src="script_pics.js"></script>
   <script src="hg_script.js"></script>
+  <script src="hg_letters.js"></script>
   <script src="hg_resume.js"></script>
   <script src="hg_news.js"></script>
 
@@ -686,7 +688,13 @@
 
       <button onclick="goToInitialScreen()" title="초기화면 복귀 (단축키: Home / Ctrl+H)" style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:12px; padding:0 10px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; font-weight:800; color:#334155; gap:4px;">
 
-        <span>🏠</span><span style="display:inline-block;">처음으로</span>
+        <span>🏠</span><span class="hg-home-text" style="display:inline-block;">처음으로</span>
+
+      </button>
+
+      <button id="headerInterpreterBtn" onclick="openInterpreterComingSoon()" title="AI선생님 통역사 (추후 공개)" style="background:#f0fdfa; border:1.5px solid #99f6e4; border-radius:12px; padding:0 6px; height:40px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; font-size:10px; font-weight:900; color:#0f766e; line-height:1.15; white-space:nowrap;">
+
+        <span>🌐 AI선생님</span><span>통역사</span>
 
       </button>
 
@@ -955,6 +963,14 @@
             <div>
               <div style="font-size:18px; font-weight:900;">스페인어 (Español)</div>
               <div style="font-size:14px; color:#64748b;">마드리드 감성 회화 · 또박또박 모음 발음 코스</div>
+            </div>
+          </div>
+
+          <div class="choice-card" onclick="onSelectLang('ru', this)">
+            <span style="font-size:32px;">🇷🇺</span>
+            <div>
+              <div style="font-size:18px; font-weight:900;">러시아어 (Русский)</div>
+              <div style="font-size:14px; color:#64748b;">모스크바 생활 회화 · 키릴 문자부터 차근차근 코스</div>
             </div>
           </div>
 
@@ -1317,6 +1333,7 @@
         <button id="quickTier4" onclick="jumpLevel(31)" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:#f1f5f9; color:#64748b;">T4:고급문</button>
         <button id="quickTier5" onclick="jumpLevel(41)" style="flex:1; padding:3px 2px; border:none; border-radius:6px; font-size:10.5px; font-weight:800; cursor:pointer; background:rgba(244,63,94,0.1); color:#f43f5e;">T5:고급</button>
       </div>
+      <button id="quickLetters" onclick="window.HGLETTERS && HGLETTERS.open()" style="width:100%; margin-top:6px; padding:7px 4px; border:1.5px solid #99f6e4; border-radius:8px; font-size:13px; font-weight:900; cursor:pointer; background:#f0fdfa; color:#0f766e;">📋 문자표 보기 (표 → 플래시카드 → 퀴즈)</button>
     </div>
 
     <!-- 메인 드릴 뷰 -->
@@ -4935,7 +4952,7 @@ const EXILE_VOICES = [
   function getNuriVoiceList(engine, includeHidden = false) {
     const ov = (typeof OurVoiceMasterEngine !== 'undefined' && OurVoiceMasterEngine.VOICES) ? OurVoiceMasterEngine.VOICES : {};
     const unlocked = includeHidden || (typeof isAdminVoiceUnlocked === 'function' && isAdminVoiceUnlocked());
-    const LANG_GROUP = { 'ko-KR': '🇰🇷 한국어', 'en-US': '🇺🇸 미국 영어', 'en-GB': '🇬🇧 영국 영어', 'ja-JP': '🇯🇵 일본어', 'zh-CN': '🇨🇳 중국어', 'fr-FR': '🇫🇷 프랑스어', 'de-DE': '🇪🇺 유럽 다국어', 'es-ES': '🇪🇺 유럽 다국어' };
+    const LANG_GROUP = { 'ko-KR': '🇰🇷 한국어', 'en-US': '🇺🇸 미국 영어', 'en-GB': '🇬🇧 영국 영어', 'ja-JP': '🇯🇵 일본어', 'zh-CN': '🇨🇳 중국어', 'fr-FR': '🇫🇷 프랑스어', 'de-DE': '🇪🇺 유럽 다국어', 'es-ES': '🇪🇺 유럽 다국어', 'ru-RU': '🇪🇺 유럽 다국어' };
     const CAT_GROUP = { hf: '👩 실제 사람 여성', hm: '👨 실제 사람 남성', af: '🧚 애니메이션 성우 여성', am: '⚔️ 애니메이션 성우 남성' };
     if (engine === 'gemini') {
       const src = (typeof GeminiHumanVoiceEngine !== 'undefined' && GeminiHumanVoiceEngine.MASTER_VOICES_44) ? GeminiHumanVoiceEngine.MASTER_VOICES_44 : (ov.gemini || []);
@@ -4997,7 +5014,8 @@ const EXILE_VOICES = [
     ja: { female: 'ja-JP-NanamiNeural', male: 'ja-JP-KeitaNeural' },
     'zh-CN': { female: 'zh-CN-XiaoxiaoNeural', male: 'zh-CN-YunxiNeural' },
     en: { female: 'en-US-JennyNeural', male: 'en-US-GuyNeural' },
-    es: { female: 'es-ES-ElviraNeural', male: 'es-ES-AlvaroNeural' }
+    es: { female: 'es-ES-ElviraNeural', male: 'es-ES-AlvaroNeural' },
+    ru: { female: 'ru-RU-SvetlanaNeural', male: 'ru-RU-DmitryNeural' }
   };
 
   /** 강사 성별 (설정 화면에서 선택, 기본 여성) — 수업 원어민 목소리의 성별 */
@@ -5044,6 +5062,7 @@ const EXILE_VOICES = [
     if (lang === 'ja' || lang.startsWith('ja')) return 'ja';
     if (lang === 'en' || lang.startsWith('en')) return 'en';
     if (lang === 'es' || lang.startsWith('es')) return 'es';
+    if (lang === 'ru' || lang.startsWith('ru')) return 'ru';
     return 'ko';
   }
 
@@ -19134,6 +19153,7 @@ function getCurrentRoundData() {
       else if (selectedLang === 'ja') speechRecognizer.lang = 'ja-JP';
       else if (selectedLang === 'en') speechRecognizer.lang = 'en-US';
       else if (selectedLang === 'es') speechRecognizer.lang = 'es-ES';
+      else if (selectedLang === 'ru') speechRecognizer.lang = 'ru-RU';
       else speechRecognizer.lang = 'ko-KR';
 
       speechRecognizer.onstart = () => {
@@ -19772,7 +19792,7 @@ function getCurrentRoundData() {
     selectedLang = lang;
 
     const langLabel = document.getElementById('lessonLangLabel');
-    if (langLabel) langLabel.textContent = ({ fr: '🇫🇷 프랑스어', cn: '🇨🇳 중국어', ja: '🇯🇵 일본어', en: '🇺🇸 영어', es: '🇪🇸 스페인어' })[lang] || lang;
+    if (langLabel) langLabel.textContent = ({ fr: '🇫🇷 프랑스어', cn: '🇨🇳 중국어', ja: '🇯🇵 일본어', en: '🇺🇸 영어', es: '🇪🇸 스페인어', ru: '🇷🇺 러시아어' })[lang] || lang;
     ['fr', 'cn', 'ja'].forEach(l => {
 
       const btn = document.getElementById(`lang${l.toUpperCase()}`);
@@ -20041,6 +20061,7 @@ function getCurrentRoundData() {
       else if (curLang === 'ja') roleplayRecognizer.lang = 'ja-JP';
       else if (curLang === 'en') roleplayRecognizer.lang = 'en-US';
       else if (curLang === 'es') roleplayRecognizer.lang = 'es-ES';
+      else if (curLang === 'ru') roleplayRecognizer.lang = 'ru-RU';
       else roleplayRecognizer.lang = 'ko-KR';
 
       roleplayRecognizer.onstart = () => {
@@ -20152,7 +20173,7 @@ function getCurrentRoundData() {
         const scenarioTitle = document.getElementById('rpSessionCaseTitle')?.textContent || '일상 대화';
         const prompt = `당신은 ${scenarioTitle} 상황의 상대방 '${personaName}'입니다.
 학습자(${userName || '학습자'})가 방금 원어로 다음과 같이 말했습니다: "${userSpokenText}".
-이 말에 호응하여 실전 감각이 돋보이는 자연스러운 1~2문장의 ${curLang === 'fr' ? '프랑스어' : (curLang === 'cn' ? '중국어' : '일본어')} 답변을 작성하고, 괄호 안에 한국어 번역을 제공해 주세요.
+이 말에 호응하여 실전 감각이 돋보이는 자연스러운 1~2문장의 ${({ fr: '프랑스어', cn: '중국어', ja: '일본어', en: '영어', es: '스페인어', ru: '러시아어' })[curLang] || '일본어'} 답변을 작성하고, 괄호 안에 한국어 번역을 제공해 주세요.
 형식: [원어 답변] (한국어 번역)`;
         
         const res = await callGeminiFlashRaw(prompt, apiKey);
@@ -20189,6 +20210,15 @@ function getCurrentRoundData() {
         ];
         const r = replies[Math.floor(Math.random() * replies.length)];
         replyText = r.cn;
+        replyKo = r.ko;
+      } else if (curLang === 'ru') {
+        const replies = [
+          { t: "Отлично! Расскажи ещё.", ko: "좋네요! 더 얘기해 줘요." },
+          { t: "Правда? Я не знал.", ko: "정말요? 몰랐어요." },
+          { t: "Полностью согласен. Твоё произношение становится лучше!", ko: "완전 동의해요. 발음이 점점 좋아지네요!" }
+        ];
+        const r = replies[Math.floor(Math.random() * replies.length)];
+        replyText = r.t;
         replyKo = r.ko;
       } else if (curLang === 'en' || curLang === 'es') {
         const replies = curLang === 'en' ? [
@@ -21505,7 +21535,7 @@ function getCurrentRoundData() {
     if (hasPreviousStudy && localStorage.getItem('hangeoreum_onboarding_done') === '1' && resumeBanner && resumeInfo) {
       resumeBanner.classList.remove('hidden');
       resumeBanner.style.display = 'flex';
-      const langName = ({ fr: '프랑스어', cn: '중국어', ja: '일본어', en: '영어', es: '스페인어' })[selectedLang] || '프랑스어';
+      const langName = ({ fr: '프랑스어', cn: '중국어', ja: '일본어', en: '영어', es: '스페인어', ru: '러시아어' })[selectedLang] || '프랑스어';
       resumeInfo.textContent = `Lv. ${currentLevel} ${langName} · 따라하기 진행 중`;
     } else if (resumeBanner) {
       resumeBanner.classList.add('hidden');
@@ -22233,6 +22263,48 @@ function getCurrentRoundData() {
       </div>
     </div>
   </div>
+
+  <style>
+    /* 누름 반응: 누른 버튼이 살짝 눌리고 빛나며, 누른 자리에 물결이 퍼진다 */
+    .hg-pressed { animation: hgPress .32s ease-out; }
+    @keyframes hgPress { 0% { scale: 1; filter: brightness(1); } 35% { scale: .93; filter: brightness(1.18); } 100% { scale: 1; filter: brightness(1); } }
+    .hg-ripple { position: fixed; z-index: 2147483000; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%;
+      pointer-events: none; background: rgba(99,102,241,.35); border: 2px solid rgba(99,102,241,.7); animation: hgRipple .45s ease-out forwards; }
+    @keyframes hgRipple { to { transform: scale(5); opacity: 0; } }
+    .hg-toast { position: fixed; left: 50%; top: 42%; z-index: 2147483001; transform: translate(-50%, -50%) scale(.9); opacity: 0;
+      max-width: calc(100vw - 48px); padding: 16px 22px; border-radius: 16px; background: rgba(15,23,42,.94); color: #fff;
+      font-size: 16px; font-weight: 900; text-align: center; line-height: 1.5; box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      transition: opacity .2s, transform .2s; pointer-events: none; }
+    .hg-toast.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .hg-toast b { white-space: nowrap; }
+    /* 좁은 폰: 헤더 메뉴(처음으로·통역사·🔊·⚙️·⏻)가 한 줄에 들어가도록 제목·글자를 줄인다 */
+    @media (max-width: 430px) { .app-header > div:first-child > div:not(#headerAppAvatar) { display: none; } }
+    @media (max-width: 380px) { .app-header .hg-home-text { display: none !important; } }
+  </style>
+  <script>
+    (function () {
+      const PRESSABLE = 'button, [onclick], [role="button"], a[href], .choice-card, input[type="button"], input[type="submit"], label[for]';
+      document.addEventListener('pointerdown', (e) => {
+        const el = e.target.closest && e.target.closest(PRESSABLE);
+        if (!el || el.disabled) return;
+        el.classList.remove('hg-pressed'); void el.offsetWidth; el.classList.add('hg-pressed');
+        setTimeout(() => el.classList.remove('hg-pressed'), 340);
+        const r = document.createElement('span');
+        r.className = 'hg-ripple'; r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
+        document.body.appendChild(r); setTimeout(() => r.remove(), 480);
+      }, { passive: true, capture: true });
+
+      let toastTimer = null;
+      window.hgToast = function (msg, ms) {
+        let t = document.getElementById('hgToast');
+        if (!t) { t = document.createElement('div'); t.id = 'hgToast'; t.className = 'hg-toast'; document.body.appendChild(t); }
+        t.innerHTML = msg; requestAnimationFrame(() => t.classList.add('on'));
+        clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('on'), ms || 1800);
+      };
+      // 메인 메뉴 'AI선생님 통역사' — 해외여행용 실시간 통역, 아직 준비 중
+      window.openInterpreterComingSoon = function () { hgToast('<b>🌐 AI선생님 통역사</b><br><span style="font-size:14px; color:#99f6e4;">추후 공개 예정이에요</span>'); };
+    })();
+  </script>
 
 </body>
 

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한걸음 문자표</title>
+<!-- 한걸음 문자표 단독 페이지: 앱과 같은 공통 엔진(../hg_letters.js)과 언어별 데이터(<코드>/data.json)를 쓴다.
+     주소 뒤 ?lang=ja|cn|en|fr|es|ru 로 언어를 바로 연다. -->
+<style>html,body{margin:0;background:#f8fafc;font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="../hg_letters.js"></script>
+<script>
+  HGLETTERS.mount(document.getElementById('app'), { lang: new URLSearchParams(location.search).get('lang') || 'ja' });
+</script>
+</body>
+</html>

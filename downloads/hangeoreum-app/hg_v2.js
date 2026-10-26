@@ -15,9 +15,9 @@
 
   const SETS_PER_LEVEL = 5;
   const ROUND_LABELS = ['[1단계: 핵심 청크]', '[2단계: 기본 문장]', '[3단계: 맥락 확장]', '[4단계: 실전 발화]'];
-  const LANG_NAME = { fr: '프랑스어(French)', ja: '일본어(Japanese)', cn: '중국어 간체(Simplified Chinese)', en: '영어(American English)', es: '스페인어(Spanish, Spain)' };
+  const LANG_NAME = { fr: '프랑스어(French)', ja: '일본어(Japanese)', cn: '중국어 간체(Simplified Chinese)', en: '영어(American English)', es: '스페인어(Spanish, Spain)', ru: '러시아어(Russian)' };
 
-  // 레벨 주제별 장면 일러스트 (5개 언어 공통 주제 순서와 일치)
+  // 레벨 주제별 장면 일러스트 (6개 언어 공통 주제 순서와 일치)
   const TOPIC_ART = [
     '👋🙂', '🌏🙋', '🏷️💰', '☕🥐', '🗺️🚇', '🚄🎫', '🏨🔑', '🍽️🧾', '👕📏', '🙏👋',
     '⏰🌅', '🎧🚲', '👨‍👩‍👧📷', '☀️☔', '📅🕒', '🏠🪟', '🌶️🍲', '💼🎨', '🍎🧺', '📞💬',
@@ -83,6 +83,14 @@
       { id: 'es_carmen', name: 'Doña Carmen', role: '집주인', avatar: '🏠', gender: 'female', personality: '잔소리가 많지만 따뜻함', greeting: '¿Qué tal, hijo? ¿Te gusta el piso?', greetingKo: '어때요? 집은 마음에 들어요?' },
       { id: 'es_sofia', name: 'Sofía', role: '대학 친구', avatar: '🎒', gender: 'female', personality: '활발하고 장난스러움', greeting: '¡Ey! ¿Qué haces este finde?', greetingKo: '야! 이번 주말에 뭐 해?' },
       { id: 'es_diego', name: 'Diego', role: '타파스 바 주인', avatar: '🍤', gender: 'male', personality: '호탕하고 정이 많음', greeting: '¡Bienvenido! ¿Qué te apetece tomar?', greetingKo: '어서 와요! 뭐 드시고 싶어요?' }
+    ],
+    ru: [
+      { id: 'ru_anya', name: 'Аня (아냐)', role: '모스크바 카페 점원', avatar: '☕', gender: 'female', personality: '밝고 친절함', greeting: 'Здравствуйте! Что будете заказывать?', greetingKo: '안녕하세요! 무엇을 주문하시겠어요?' },
+      { id: 'ru_dmitry', name: 'Дмитрий (드미트리)', role: '회사 동료', avatar: '💼', gender: 'male', personality: '차분하고 꼼꼼함', greeting: 'Привет! Ты уже посмотрел отчёт?', greetingKo: '안녕! 보고서 벌써 봤어?' },
+      { id: 'ru_sergey', name: 'Сергей (세르게이)', role: '택시 기사', avatar: '🚕', gender: 'male', personality: '수다스럽고 유쾌함', greeting: 'Добрый вечер! Куда едем?', greetingKo: '안녕하세요! 어디로 갈까요?' },
+      { id: 'ru_galina', name: 'Галина Петровна (갈리나)', role: '집주인', avatar: '🏠', gender: 'female', personality: '잔소리가 많지만 따뜻함', greeting: 'Ну как, вам нравится квартира?', greetingKo: '어때요, 아파트는 마음에 들어요?' },
+      { id: 'ru_masha', name: 'Маша (마샤)', role: '대학 친구', avatar: '🎒', gender: 'female', personality: '호기심 많고 활발함', greeting: 'Привет! Что делаешь в выходные?', greetingKo: '안녕! 주말에 뭐 해?' },
+      { id: 'ru_ivan', name: 'Иван (이반)', role: '상트페테르부르크 가이드', avatar: '🗺️', gender: 'male', personality: '박식하고 열정적임', greeting: 'Добро пожаловать в Петербург! С чего начнём?', greetingKo: '페테르부르크에 오신 걸 환영해요! 어디부터 시작할까요?' }
     ]
   };
 
@@ -480,7 +488,8 @@ ${flow}
 
   function nativeVoice(gender) {
     const map = { fr: { female: 'fr-FR-DeniseNeural', male: 'fr-FR-HenriNeural' }, ja: { female: 'ja-JP-NanamiNeural', male: 'ja-JP-KeitaNeural' }, cn: { female: 'zh-CN-XiaoxiaoNeural', male: 'zh-CN-YunxiNeural' },
-      en: { female: 'en-US-JennyNeural', male: 'en-US-GuyNeural' }, es: { female: 'es-ES-ElviraNeural', male: 'es-ES-AlvaroNeural' } };
+      en: { female: 'en-US-JennyNeural', male: 'en-US-GuyNeural' }, es: { female: 'es-ES-ElviraNeural', male: 'es-ES-AlvaroNeural' },
+      ru: { female: 'ru-RU-SvetlanaNeural', male: 'ru-RU-DmitryNeural' } };
     return (map[curLang()] || map.fr)[gender === 'male' ? 'male' : 'female'];
   }
 
@@ -551,7 +560,7 @@ ${convo}
     const gender = document.querySelector('input[name="hgv2Gender"]:checked')?.value || 'female';
     const name = v('hgv2Name') || (gender === 'male' ? 'Alex' : 'Mia');
     const fallbackGreeting = { fr: ['Bonjour ! Enchanté de vous rencontrer.', '안녕하세요! 만나서 반가워요.'], ja: ['こんにちは！はじめまして。', '안녕하세요! 처음 뵙겠습니다.'], cn: ['你好！很高兴认识你。', '안녕하세요! 만나서 반가워요.'],
-      en: ['Hi there! Nice to meet you.', '안녕하세요! 만나서 반가워요.'], es: ['¡Hola! Encantado de conocerte.', '안녕하세요! 만나서 반가워요.'] }[curLang()] || ['Hello!', '안녕하세요!'];
+      en: ['Hi there! Nice to meet you.', '안녕하세요! 만나서 반가워요.'], es: ['¡Hola! Encantado de conocerte.', '안녕하세요! 만나서 반가워요.'], ru: ['Здравствуйте! Очень приятно.', '안녕하세요! 만나서 반가워요.'] }[curLang()] || ['Hello!', '안녕하세요!'];
     let greeting = fallbackGreeting[0], greetingKo = fallbackGreeting[1];
     if (apiKey()) {
       try {

@@ -54,7 +54,7 @@
     if (s.theme) currentTheme = s.theme;
     if (typeof applyDailyThemeUI === 'function') applyDailyThemeUI();
     const label = document.getElementById('lessonLangLabel');
-    if (label) label.textContent = ({ fr: '🇫🇷 프랑스어', cn: '🇨🇳 중국어', ja: '🇯🇵 일본어', en: '🇺🇸 영어', es: '🇪🇸 스페인어' })[selectedLang] || selectedLang;
+    if (label) label.textContent = ({ fr: '🇫🇷 프랑스어', cn: '🇨🇳 중국어', ja: '🇯🇵 일본어', en: '🇺🇸 영어', es: '🇪🇸 스페인어', ru: '🇷🇺 러시아어' })[selectedLang] || selectedLang;
     const slider = document.getElementById('levelSlider');
     if (slider) slider.value = currentLevel;
     if (typeof initOrGetSessionCase === 'function') initOrGetSessionCase(currentTheme, selectedLang, currentLevel, false);
