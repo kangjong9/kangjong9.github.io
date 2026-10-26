@@ -132,6 +132,7 @@ function initProjectFolders(content) {
   const projectDownloads = {
     "한걸음V1.0 Exile": {
       tag: "한걸음V1.0 Exile · 5개 언어 · 그림으로 배우는 입문 문자 3회차 · 오늘의 뉴스 회화 · 이어하기 · 누리 보이스",
+      desc: "안드로메다에서 유배 온 AI 튜터 엑자일과 배우는 5개 언어(영·일·중·프·스) 회화. 그림으로 익히는 입문 문자 3회차, 50레벨×5세트 AI 맥락 수업, 실제 기사로 하는 오늘의 뉴스 회화, 말하면 바로 발음 채점(입력 알림음·완료음), 그만둘 땐 저장하고 다음에 그 자리부터 이어하기.",
       links: [
         { label: "한걸음V1.0 Exile APK (1.3MB) · Android 8 이상", url: "./downloads/Hangeoreum-V1.0-Exile.apk", download: "Hangeoreum-V1.0-Exile.apk", primary: true },
         { label: "화면 시안 체험 · 입문 문자 3회차 & 오늘의 뉴스", url: "./downloads/Hangeoreum-preview.html", external: true },
