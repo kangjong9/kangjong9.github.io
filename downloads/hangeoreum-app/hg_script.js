@@ -168,6 +168,12 @@
       const e = (lp.w || {})[item.c];
       return e ? [{ e, w: '', m: '' }] : [];
     }
+    // 알파벳 기준 문자표: 엑자일이 읽는 예시 단어의 그림을 먼저 (그 글자로 시작하는 단어)
+    if (basis() === 'chart' && lp.ex) {
+      const s = String(item.s || '');
+      const word = [s.includes(', ') ? s.split(', ')[1] : '', item.p, s].find(x => x && lp.ex[x]);
+      if (word) { const [e, m] = lp.ex[word].split('|'); return [{ e, w: word, m: m || '' }]; }
+    }
     const raw = (lp.c || {})[`${item.c}#${item.s}`] || (lp.c || {})[item.c] || '';
     return raw ? raw.split(';').map(x => { const [e, w, m] = x.split('|'); return { e, w: w || '', m: m || '' }; }) : [];
   }
