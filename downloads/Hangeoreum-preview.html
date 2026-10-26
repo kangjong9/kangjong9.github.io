@@ -19242,7 +19242,7 @@ function getCurrentRoundData() {
     return str.toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af\s]/gu, '')
+      .replace(/[^a-z0-9\u0400-\u04ff\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af\s]/gu, '')  // \u0400-\u04ff: \ub7ec\uc2dc\uc544\uc5b4 \ud0a4\ub9b4 (\ube60\uc9c0\uba74 \ub7ec\uc2dc\uc544\uc5b4 \ubc1c\uc74c\uc774 \ub298 \ube48 \ubb38\uc7a5\uc73c\ub85c \ud310\uc815\ub410\ub2e4)
       .replace(/\s+/g, ' ')
       .trim();
   }
@@ -22153,6 +22153,10 @@ function getCurrentRoundData() {
 
   // 마이크 자동 트리거
   function triggerAutoMicListening() {
+    // 그사이 입문 문자로 바뀌었거나 수업 화면이 안 보이면 마이크를 켜지 않는다 (불필요한 마이크 켜짐 방지)
+    if (window.HGSCRIPT && HGSCRIPT.isActive()) return;
+    const drill = document.getElementById('viewDrill');
+    if (!drill || drill.classList.contains('hidden') || !drill.getClientRects().length) return;
     updateHandsFreeStatus('mic_active', `🎙️ 듣고 있어요! 지금 따라 말씀하세요...`);
     startVoiceRecognition();
   }
