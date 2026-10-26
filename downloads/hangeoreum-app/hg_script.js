@@ -422,24 +422,46 @@
     else demo();
   }
 
-  function judged(ok, heard) {
+  function judged(ok, heard, how) {
     if (!session) return;
     const my = speakSeq;
     if (ok && ok.near) {  // 1·2회차 근접 통과: 넘어가되 무엇이 달랐는지 알려 준다 (혼자 읽는 3회차는 정확해야 통과)
       sfx('sparkle');
-      session.fails = 0;
+      session.fails = 0; session.unsure = 0;
       const W = ok.want.toUpperCase(), N = ok.near.toUpperCase();
       const tip = /[vв]/.test(ok.want) ? `${W}는 윗니를 아랫입술에 살짝 대고 목을 울려 내요`
         : /[fф]/.test(ok.want) ? `${W}는 윗니를 아랫입술에 대고 바람만 내요`
         : /[bdgzбдгзж]/.test(ok.want) ? `${W}는 목을 울려 부드럽게, ${N}는 목을 울리지 않고 내요` : `${W}는 목을 울리지 않고, ${N}는 목을 울려 내요`;
       setStatus(`🙂 통과! 다만 ${N}처럼 들렸어요. ${tip}`, heard ? `들린 소리: ${esc(heard)}` : '');
+      // '연습 인정'은 정확 통과와 따로 기록해 나중에 복습할 수 있게 둔다 (Codex 자문 2026-10-26)
+      const st = load(), key = `${curLang()}:${(session.queue[session.pos] || {}).c}`;
+      st.practice = [...new Set([...(st.practice || []), key])].slice(-200);
+      save(st);
       flowTimer = setTimeout(() => { if (my === speakSeq) advance(); }, 2200);
       return;
     }
+    if (ok === 'unsure') {
+      // 못 들음·no-match는 오답이 아니라 '판정 불가' → 연속 실패 횟수에 넣지 않는다. 계속 못 들으면 멈추고 안내
+      session.unsure = (session.unsure || 0) + 1;
+      if (session.unsure >= MAX_AUTO_RETRY) {
+        session.paused = true;
+        setStatus('🎙️ 소리가 잘 안 들렸어요. 마이크에 조금 가까이, 또박또박 말해 보세요', '다시 하거나 넘어갈 수 있어요');
+        return;
+      }
+      setStatus('🎙️ 잘 못 들었어요. 한 번 더 말해 볼까요?');
+      flowTimer = setTimeout(() => { if (my === speakSeq) runItem(); }, 900);
+      return;
+    }
+    session.unsure = 0;
     if (ok) {
       sfx('sparkle');
-      session.fails = 0;
-      setStatus('🎯 통과! 잘 읽었어요', heard ? `들린 소리: ${esc(heard)}` : '');
+      session.fails = 0; session.unsure = 0;
+      if (how === 'word') {  // 예시 단어로만 통과 = '도움받아 통과' → 글자 이름은 나중에 복습
+        const st = load(), key = `${curLang()}:${(session.queue[session.pos] || {}).c}`;
+        st.wordOnly = [...new Set([...(st.wordOnly || []), key])].slice(-200);
+        save(st);
+      }
+      setStatus(how === 'word' ? '🎯 통과! 단어로 잘 읽었어요 (다음엔 글자 이름도 같이)' : '🎯 통과! 잘 읽었어요', heard ? `들린 소리: ${esc(heard)}` : '');
       flowTimer = setTimeout(() => { if (my === speakSeq) advance(); }, 800);
       return;
     }
@@ -505,8 +527,8 @@
     hide();
   }
 
-  function retry() { sfx('bubble'); if (session) session.fails = 0; runItem(); }
-  function pass() { sfx('coin8'); if (session) session.fails = 0; advance(); }
+  function retry() { sfx('bubble'); if (session) session.fails = session.unsure = 0; runItem(); }
+  function pass() { sfx('coin8'); if (session) session.fails = session.unsure = 0; advance(); }
 
   function advance() {
     if (!session) return;
@@ -517,6 +539,7 @@
     session.status = '';
     session.heard = '';
     session.fails = 0;
+    session.unsure = 0;
     if (session.pos < session.queue.length) {
       savePos();
       if (st.pass === 1) sfx('bubble');
@@ -834,8 +857,11 @@
       got = true;
       const alts = Array.from(ev.results[0] || []).map(a => a.transcript || '');
       const ok = isHit(alts, item, pic);
-      if (window.HGVOICE && HGVOICE.note) HGVOICE.note({ target: item.s || item.c, pass: ok });
-      judged(ok, alts[0] || '');
+      // '이름, 단어' 카드: 글자 이름으로 통과했는지, 예시 단어로만 통과했는지 따로 남긴다 (Codex·Copilot 자문 2026-10-26)
+      const name = String(item.s || '').includes(', ') ? item.s.split(', ')[0] : '';
+      const how = ok === true && name ? (alts.some(a => hitOne(curLang(), a, norm(name))) ? 'name' : 'word') : '';
+      if (window.HGVOICE && HGVOICE.note) HGVOICE.note({ target: item.s || item.c, pass: ok, how });
+      judged(ok, alts[0] || '', how);
     };
     r.onerror = (ev) => {
       if (recognizer !== r) return;
@@ -846,11 +872,11 @@
         setStatus('⚠️ 마이크 권한이 필요해요. 권한을 허용하거나, 따라 읽은 뒤 버튼을 눌러 주세요');
         return;
       }
-      judged(false, '');  // 못 들음·잡음 = 실패 → 반복
+      judged('unsure', '');  // 못 들음·잡음 = 판정 불가 → 오답 횟수에 넣지 않고 다시
     };
     r.onend = () => {
       try { isRecordingSTT = false; } catch (e) {}
-      if (recognizer === r) { recognizer = null; if (!got) judged(false, ''); }
+      if (recognizer === r) { recognizer = null; if (!got) judged('unsure', ''); }
     };
     try { r.start(); } catch (e) { recognizer = null; judged(false, ''); }
   }
