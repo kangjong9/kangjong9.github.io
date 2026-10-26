@@ -5037,6 +5037,42 @@ const EXILE_VOICES = [
     console.warn('[누리 보이스]', msg);
   }
 
+  // 앱 학습 언어 코드 → 누리 보이스 언어 코드
+  function nuriLangCode(lang = 'ko') {
+    if (lang === 'fr' || lang.startsWith('fr')) return 'fr';
+    if (lang === 'zh' || lang === 'cn' || lang.startsWith('zh')) return 'zh-CN';
+    if (lang === 'ja' || lang.startsWith('ja')) return 'ja';
+    if (lang === 'en' || lang.startsWith('en')) return 'en';
+    if (lang === 'es' || lang.startsWith('es')) return 'es';
+    return 'ko';
+  }
+
+  function getNuriMasterEngine() {
+    return (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
+  }
+
+  // 실제 재생할 엔진·목소리 (외국어 원어는 원어민 Edge 목소리)
+  function nuriSpeechSelection(gLang, options = {}) {
+    let sel = options.forceEngine
+      ? { engine: options.forceEngine, voice: options.forceVoice || NURI_ENGINE_DEFAULT_VOICES[options.forceEngine] }
+      : getNuriSelection();
+    if (!options.forceEngine && NURI_NATIVE_VOICES[gLang]) {
+      sel = { engine: 'edge', voice: NURI_NATIVE_VOICES[gLang][getNuriTutorGender()] };
+    }
+    return sel;
+  }
+
+  // 곧 읽을 문장을 미리 합성해 두기 (재생 없음, 무료 Edge 목소리만 — 엔진의 prefetch가 그 외는 건너뜀)
+  function prefetchSpeech(text, lang = 'ko') {
+    const masterEngine = getNuriMasterEngine();
+    if (!text || !masterEngine || typeof masterEngine.prefetch !== 'function') return Promise.resolve(false);
+    const clean = String(text).replace(/<[^>]*>/g, '').replace(/[#*`_~]/g, '').trim();
+    if (!clean) return Promise.resolve(false);
+    const gLang = nuriLangCode(lang);
+    const sel = nuriSpeechSelection(gLang);
+    return masterEngine.prefetch(clean, { engine: sel.engine, voice: sel.voice, lang: gLang, rate: 1.0 });
+  }
+
   function speakTextWithFallback(text, lang = 'ko', options = {}) {
     if (!text) return;
     const clean = text.replace(/<[^>]*>/g, '').replace(/[#*`_~]/g, '').trim();
@@ -5063,15 +5099,10 @@ const EXILE_VOICES = [
         setTimeout(() => { icon.style.transform = 'scale(1)'; }, 350);
       }
 
-      let gLang = 'ko';
-      if (lang === 'fr' || lang.startsWith('fr')) gLang = 'fr';
-      else if (lang === 'zh' || lang === 'cn' || lang.startsWith('zh')) gLang = 'zh-CN';
-      else if (lang === 'ja' || lang.startsWith('ja')) gLang = 'ja';
-      else if (lang === 'en' || lang.startsWith('en')) gLang = 'en';
-      else if (lang === 'es' || lang.startsWith('es')) gLang = 'es';
+      const gLang = nuriLangCode(lang);
 
       // 누리 보이스(OurVoiceMasterEngine) 단일 경로: 사용자가 선택한 엔진·목소리만 사용
-      const masterEngine = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : (typeof OurTTS !== 'undefined' ? OurTTS : null);
+      const masterEngine = getNuriMasterEngine();
       const onDoneCb = options.onDone || options.onComplete; // 기존 호출부의 onComplete도 같은 완료 신호로 처리
       const done = (ok) => { if (mySeq === globalTtsSeq && typeof onDoneCb === 'function') onDoneCb(ok); };
       if (!masterEngine) {
@@ -5079,12 +5110,7 @@ const EXILE_VOICES = [
         done(false);
         return;
       }
-      let sel = options.forceEngine
-        ? { engine: options.forceEngine, voice: options.forceVoice || NURI_ENGINE_DEFAULT_VOICES[options.forceEngine] }
-        : getNuriSelection();
-      if (!options.forceEngine && NURI_NATIVE_VOICES[gLang]) {
-        sel = { engine: 'edge', voice: NURI_NATIVE_VOICES[gLang][getNuriTutorGender()] };
-      }
+      const sel = nuriSpeechSelection(gLang, options);
 
       const gKey = localStorage.getItem('gemini_voice_api_key') || localStorage.getItem('hangeoreum_gemini_key') || '';
       const eKey = localStorage.getItem('eleven_voice_api_key') || '';
@@ -19051,7 +19077,22 @@ function getCurrentRoundData() {
 
     setTimeout(() => {
       playTargetTTSAndAutoListen();
-    }, 250);
+    }, 100);
+
+    prefetchUpcomingRounds();
+  }
+
+  // 같은 세트의 남은 관문 문장을 순서대로 미리 합성 → 다음 관문 음성이 대기 없이 바로 재생
+  let prefetchRoundsKey = '';
+  function prefetchUpcomingRounds() {
+    const rounds = activeSessionCase && activeSessionCase.rounds;
+    if (!rounds || activeSessionCase.lang !== selectedLang) return;
+    const key = `${activeSessionCase.id || ''}_${selectedLang}_${currentRound}`;
+    if (key === prefetchRoundsKey) return;
+    prefetchRoundsKey = key;
+    const lang = selectedLang;
+    const targets = rounds.slice(currentRound).map(r => r && r.target).filter(Boolean);
+    targets.reduce((chain, t) => chain.then(() => (selectedLang === lang ? prefetchSpeech(t, lang) : false)), Promise.resolve());
   }
 
 
@@ -19119,10 +19160,8 @@ function getCurrentRoundData() {
 
         updateHandsFreeStatus('judging', `⚡ AI가 발음을 정밀 분석·채점 중입니다...`);
 
-        // 핵심: 즉시 합격/불합격 판정 및 피드백 실행!
-        setTimeout(() => {
-          analyzePronunciationAndJudge(transcript);
-        }, 150);
+        // 핵심: 즉시 합격/불합격 판정 및 피드백 실행! (대기 없이 바로)
+        analyzePronunciationAndJudge(transcript);
       };
 
       speechRecognizer.onerror = (event) => {
@@ -19136,11 +19175,11 @@ function getCurrentRoundData() {
           updateHandsFreeStatus('retry', `⚠️ 마이크 권한이 필요합니다. 권한을 허용해 주세요.`);
         } else if (event.error === 'no-speech') {
           if (statusEl) statusEl.textContent = "음성이 감지되지 않았습니다. 조용한 곳에서 다시 또박또박 말씀해 보세요!";
-          updateHandsFreeStatus('retry', `🔄 음성 미감지 - 1.5초 후 AI 발음을 다시 들려드립니다.`);
+          updateHandsFreeStatus('retry', `🔄 음성 미감지 - 1초 후 AI 발음을 다시 들려드립니다.`);
           if (isHandsFreeAutoMode) {
             setTimeout(() => {
               if (isHandsFreeAutoMode) playTargetTTSAndAutoListen();
-            }, 1500);
+            }, 1000);
           }
         } else {
           if (statusEl) statusEl.textContent = `음성 감지 실패 (${event.error}). 조용한 곳에서 다시 말씀해 보세요!`;
@@ -19148,7 +19187,7 @@ function getCurrentRoundData() {
           if (isHandsFreeAutoMode) {
             setTimeout(() => {
               if (isHandsFreeAutoMode) playTargetTTSAndAutoListen();
-            }, 1600);
+            }, 1000);
           }
         }
       };
@@ -19297,7 +19336,7 @@ function getCurrentRoundData() {
 
       if (noticeEl) {
         if (currentRound < 4) {
-          noticeEl.innerHTML = `<span style='color:#166534;'>🎉 [합격 관문 통과] ${score}점 달성! 1.2초 후 다음 관문으로 자동 이동합니다.</span>`;
+          noticeEl.innerHTML = `<span style='color:#166534;'>🎉 [합격 관문 통과] ${score}점 달성! 잠시 후 다음 관문으로 자동 이동합니다.</span>`;
         } else {
           noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4개 관문 올클리어] 축하합니다! 새로운 레벨과 맥락으로 자동 승급합니다!</span>`;
         }
@@ -19316,7 +19355,7 @@ function getCurrentRoundData() {
       // 사용자는 별도 조작 없이 AI가 자동으로 다음 단계 진행!
       setTimeout(() => {
         if (typeof autoProceedNextRoundOrLevel === 'function') autoProceedNextRoundOrLevel();
-      }, 1200);
+      }, 800);
 
     } else {
       // 2. 불합격 (RETRY) 판정
@@ -19344,7 +19383,7 @@ function getCurrentRoundData() {
       }
 
       if (noticeEl) {
-        noticeEl.innerHTML = `<span style='color:#dc2626;'>⚠️ 60점 미만입니다. 1.5초 후 엑자일의 발음을 다시 들려드리고 마이크를 재활성화합니다!</span>`;
+        noticeEl.innerHTML = `<span style='color:#dc2626;'>⚠️ 60점 미만입니다. 1초 후 엑자일의 발음을 다시 들려드리고 마이크를 재활성화합니다!</span>`;
       }
 
       if (nextBtn) {
@@ -19355,7 +19394,7 @@ function getCurrentRoundData() {
       // 실패 시 엑자일 발음을 다시 들려주고 마이크 자동 재활성화
       setTimeout(() => {
         if (typeof playTargetTTSAndAutoListen === 'function') playTargetTTSAndAutoListen();
-      }, 1500);
+      }, 1000);
     }
 
     callAiPronunciationCoachIfAvailable(spokenText, roundData.target, score);
@@ -22066,10 +22105,11 @@ function getCurrentRoundData() {
       speechFinished = true;
       if (autoListenTimer) clearTimeout(autoListenTimer);
 
+      // 스피커 잔향이 마이크에 들어가지 않을 최소 간격만 둔다
       setTimeout(() => {
         if (!isHandsFreeAutoMode) return;
         triggerAutoMicListening();
-      }, 400);
+      }, 250);
     };
 
     // 정상 진행은 음성 완료 신호(onComplete)로 한다. 이 타이머는 응답이 아예 없을 때의 비상용(휴대폰 네트워크 지연 고려)

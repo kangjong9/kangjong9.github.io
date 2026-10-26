@@ -269,7 +269,7 @@
       sfx('sparkle');
       session.fails = 0;
       setStatus('🎯 통과! 잘 읽었어요', heard ? `들린 소리: ${esc(heard)}` : '');
-      flowTimer = setTimeout(() => { if (my === speakSeq) advance(); }, 1200);
+      flowTimer = setTimeout(() => { if (my === speakSeq) advance(); }, 800);
       return;
     }
     sfx('oops');
@@ -282,7 +282,7 @@
       return;
     }
     setStatus(`❌ 다시 해 봐요! ${st.pass < 3 ? '엑자일이 한 번 더 읽어 줄게요' : '삐 소리 뒤에 다시 읽어 보세요'}`, heardText);
-    flowTimer = setTimeout(() => { if (my === speakSeq) runItem(); }, 1500);  // 실패: 같은 글자, 같은 회차 처음부터
+    flowTimer = setTimeout(() => { if (my === speakSeq) runItem(); }, 1000);  // 실패: 같은 글자, 같은 회차 처음부터
   }
 
   /* ---------- 진행 ---------- */

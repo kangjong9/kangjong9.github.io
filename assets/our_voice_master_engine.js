@@ -827,6 +827,8 @@
       // 스마트 캐시 히트 검사 (0초 재생)
       if (opts.useCache) {
         const cacheKey = this.cache.makeKey(opts.engine, opts.voice, text, opts.rate);
+        // 같은 문장을 미리 합성하는 중이면 중복 요청하지 않고 그 결과를 기다린다
+        if (this._prefetching && this._prefetching.has(cacheKey)) await this._prefetching.get(cacheKey);
         const cachedBlob = await this.cache.get(cacheKey);
         if (isStale()) return canceledResult();
 
@@ -1124,6 +1126,46 @@
     }
 
     async _speakEdge(rawText, opts) {
+      const { blob, voiceKey, mode } = await this._synthEdge(rawText, opts);
+      if (opts.playToken !== undefined && opts.playToken !== this.currentPlayToken) throw new Error('CANCELED');
+
+      const audioUrl = URL.createObjectURL(blob);
+      await this._playAudioUrl(audioUrl, opts.playToken);
+      return { voice: voiceKey, spokenText: rawText, blob, mode };
+    }
+
+    /**
+     * 다음에 읽을 문장을 미리 합성해 캐시에 넣는다 (재생하지 않음).
+     * - 무료 Edge 엔진만 대상 (유료·한도 있는 Gemini/ElevenLabs는 미리 호출하지 않음)
+     * - speak()와 같은 캐시 키를 쓰므로 실제 재생 때 네트워크 대기 없이 바로 나온다
+     */
+    async prefetch(text, options = {}) {
+      const engine = options.engine || this.config.defaultEngine;
+      const voice = options.voice || this.config.defaultVoice;
+      const rate = options.rate || 1.0;
+      if (!text || !text.trim() || engine !== 'edge' || !this.config.enableCache) return false;
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) return false;
+      const key = this.cache.makeKey(engine, voice, text, rate);
+      if (!this._prefetching) this._prefetching = new Map();
+      if (this._prefetching.has(key)) return this._prefetching.get(key);
+      const job = (async () => {
+        try {
+          if (await this.cache.get(key)) return true;
+          const { blob } = await this._synthEdge(text, { voice, rate });
+          await this.cache.set(key, blob);
+          return true;
+        } catch (e) {
+          return false;
+        } finally {
+          this._prefetching.delete(key);
+        }
+      })();
+      this._prefetching.set(key, job);
+      return job;
+    }
+
+    /** Edge 합성만 수행 (재생 없음): 안드로이드 네이티브 → 포터블 서버 순 */
+    async _synthEdge(rawText, opts) {
       const voiceKey = OurVoiceMasterEngine.resolveEdgeVoice(opts.voice, rawText);
       let blob = null;
       let mode = '';
@@ -1152,12 +1194,8 @@
           } catch (e) { lastErr = e.message; }
         }
       }
-      if (opts.playToken !== undefined && opts.playToken !== this.currentPlayToken) throw new Error('CANCELED');
       if (!blob) throw new Error(`Edge Neural 합성 실패 (${voiceKey}): ${lastErr}`);
-
-      const audioUrl = URL.createObjectURL(blob);
-      await this._playAudioUrl(audioUrl, opts.playToken);
-      return { voice: voiceKey, spokenText: rawText, blob, mode };
+      return { blob, voiceKey, mode };
     }
 
     // -----------------------------------------------------------------------
