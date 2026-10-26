@@ -9,6 +9,8 @@
   <script src="../../assets/gemini_human_voice_engine.js"></script>
   <script src="../../assets/our_voice_master_engine.js"></script>
   <link rel="stylesheet" href="hg_readable.css">
+  <script src="hg_voice_io.js"></script>
+  <script src="hg_readable.js"></script>
   <script src="curriculum_v2_fr.js"></script>
   <script src="curriculum_v2_ja.js"></script>
   <script src="curriculum_v2_cn.js"></script>
@@ -17,7 +19,10 @@
   <script src="hg_sfx.js"></script>
   <script src="hg_v2.js"></script>
   <script src="script_data.js"></script>
+  <script src="script_pics.js"></script>
   <script src="hg_script.js"></script>
+  <script src="hg_resume.js"></script>
+  <script src="hg_news.js"></script>
 
   <meta charset="UTF-8">
 
@@ -2010,25 +2015,35 @@
 
       <div style="font-size:20px; font-weight:900; color:#0f172a; margin-bottom:8px;">한걸음 앱을 종료하시겠습니까?</div>
 
-      <p style="font-size:14px; color:#64748b; margin-bottom:20px; line-height:1.5;">
+      <p style="font-size:16px; color:#475569; margin-bottom:18px; line-height:1.6;">
 
-        학습 진도와 설정은 모두 안전하게 저장되었습니다.<br>안드로메다 엑자일이 다음 학습을 기다릴게요!
+        지금 하던 곳을 저장할까요?<br><b>저장하면 다음에 실행할 때 바로 여기서부터</b> 시작해요.
 
       </p>
 
-      <div style="display:flex; gap:10px;">
+      <div style="display:flex; flex-direction:column; gap:10px;">
 
-        <button class="btn-3d btn-secondary" style="flex:1;" onclick="closeExitConfirmModal()">
+        <button class="btn-3d btn-green" style="width:100%;" onclick="HGRESUME.saveAndExit()">
 
-          계속 공부하기
-
-        </button>
-
-        <button class="btn-3d" style="flex:1; background:#ef4444; color:#fff; box-shadow:0 5px 0 #b91c1c;" onclick="confirmExitApp()">
-
-          ⏻ 지금 종료하기
+          💾 저장하고 종료
 
         </button>
+
+        <div style="display:flex; gap:10px;">
+
+          <button class="btn-3d btn-secondary" style="flex:1;" onclick="closeExitConfirmModal()">
+
+            계속 공부하기
+
+          </button>
+
+          <button class="btn-3d" style="flex:1; background:#ef4444; color:#fff; box-shadow:0 5px 0 #b91c1c;" onclick="HGRESUME.exitWithoutSave()">
+
+            저장 안 하고 종료
+
+          </button>
+
+        </div>
 
       </div>
 
@@ -2121,6 +2136,14 @@
           <span>🍺</span>
 
           <span style="font-size:14px; font-weight:800;">"친구랑 시원한 맥주 한잔하고 싶어!" (#맥주 #친구)</span>
+
+        </button>
+
+        <button id="hgNewsQuickBtn" class="choice-card" style="padding:10px 14px;" onclick="HGNEWS.open()">
+
+          <span>📰</span>
+
+          <span style="font-size:14px; font-weight:800;">오늘의 뉴스 — 실제 기사로 회화하기 (#뉴스 #시사)</span>
 
         </button>
 
@@ -19038,8 +19061,7 @@ function getCurrentRoundData() {
   function startVoiceRecognition() {
     getAudioContext();
 
-    // 입력받기 전 효과음
-    soundMicStart();
+    // 입력 알림음·입력완료음은 hg_voice_io.js가 마이크 켜짐/최종 결과 시점에 한 번씩 울린다
 
     const statusEl = document.getElementById('sttStatusText');
     const feedbackEl = document.getElementById('userSpokenFeedback');
@@ -19085,9 +19107,6 @@ function getCurrentRoundData() {
         isRecordingSTT = false;
         waveBars.forEach(b => b.style.height = '8px');
         if (btnMic) btnMic.textContent = "마이크로 따라 말하기";
-
-        // 입력 완료 효과음
-        soundMicEnd();
 
         let transcript = '';
         if (event.results && event.results[0] && event.results[0][0]) {
@@ -19987,7 +20006,6 @@ function getCurrentRoundData() {
 
       roleplayRecognizer.onstart = () => {
         isRoleplayRecording = true;
-        soundMicStart();
         if (btnText) btnText.textContent = "듣고 있습니다... 원어로 말씀하세요!";
         if (btnIcon) btnIcon.textContent = "🔴";
         if (btn) btn.style.background = "linear-gradient(135deg, #dc2626, #ef4444)";
@@ -19996,7 +20014,6 @@ function getCurrentRoundData() {
 
       roleplayRecognizer.onresult = (event) => {
         isRoleplayRecording = false;
-        soundMicEnd();
         if (btnText) btnText.textContent = "원어로 소리내어 말하기";
         if (btnIcon) btnIcon.textContent = "🎙️";
         if (btn) btn.style.background = "";

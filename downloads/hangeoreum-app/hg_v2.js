@@ -622,6 +622,7 @@ ${convo}
     bandOf, getSetIdx, setSetIdx, getSetSync, generateSet, applyCurrent, isSessionCurrent,
     advanceAfterSet, goBack, regenerateCurrent, renderArt, getAnchor, isThreadPos,
     isFreeTalk, getPartner, setupFreeTalkView, partnerReply, speakPartner, openPartnerPicker,
-    _validateSet: validateSet, _buildSetPrompt: buildSetPrompt
+    _validateSet: validateSet, _buildSetPrompt: buildSetPrompt,
+    geminiCall, apiKey  // 오늘의 뉴스(hg_news.js)가 같은 모델 폴백 경로를 쓴다
   };
 })();

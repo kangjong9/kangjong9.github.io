@@ -130,10 +130,10 @@ function initProjectFolders(content) {
   };
   const projectDownloads = {
     "한걸음V1.0 Exile": {
-      tag: "한걸음V1.0 Exile · 5개 언어 · 입문 문자 배우기 · 50레벨×5세트 AI 맥락 · 누리 보이스",
+      tag: "한걸음V1.0 Exile · 5개 언어 · 그림으로 배우는 입문 문자 3회차 · 오늘의 뉴스 회화 · 이어하기 · 누리 보이스",
       links: [
         { label: "한걸음V1.0 Exile APK (1.0MB) · Android 8 이상", url: "./downloads/Hangeoreum-V1.0-Exile.apk", download: "Hangeoreum-V1.0-Exile.apk", primary: true },
-        { label: "화면 시안 체험 · 입문 문자 배우기 & 50레벨", url: "./downloads/Hangeoreum-preview.html", external: true },
+        { label: "화면 시안 체험 · 입문 문자 3회차 & 오늘의 뉴스", url: "./downloads/Hangeoreum-preview.html", external: true },
         { label: "사용 안내 · 안드로메다 유배 스토리 및 음성 코칭", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
       ]
     },
