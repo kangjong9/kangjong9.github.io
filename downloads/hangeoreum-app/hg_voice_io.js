@@ -23,6 +23,9 @@
   const FINAL_GRACE_MS = 800;
   const TAIL_LIMIT_MS = 4000;   // 말은 끝났는데 결과도 중간 결과도 없을 때의 안전 상한
   const CUE_GAP_MS = 260;       // 입력 알림음(약 0.2초)이 끝난 뒤 마이크를 연다
+  // 글자 하나·짧은 소리(목표 3자 이하)는 말 시작 후 이 시간만 듣고 바로 결과를 낸다. 주변 소음이 있으면 인식기가
+  // 말 끝을 못 잡아 8초 넘게 듣다가 '못 알아들음'으로 끝났다 (실기기 2026-10-26: '베' 한 번에 8초·no-match)
+  const SHORT_SPEECH_MS = 2500;
   const GATE_POLL_MS = 300;     // 마이크를 막는 창이 열리고 닫히는지 확인하는 간격
 
   const hasNative = () => !!(window.Native && typeof window.Native.call === 'function');
@@ -68,6 +71,11 @@
       catch (e) { this._fire('error', { error: 'aborted' }); this._fire('end'); nativeActive = null; }
     }
     stop() { this.abort(); }
+    // 그만 듣고 지금까지 들은 소리로 결과를 내게 한다 (abort와 달리 result/error가 온다)
+    finish() {
+      if (nativeActive !== this) return;
+      try { window.Native.call('sttFinish', JSON.stringify({ sid: this._sid })); } catch (e) { /* 무시 */ }
+    }
     abort() {
       if (nativeActive !== this) return;
       nativeActive = null;
@@ -210,10 +218,12 @@
         if (hasText(s.partial)) { s.usedPartial = true; this._finish('result', plainResult(s.partial)); }
         else this._finish('error', { error: 'no-speech' });
       };
+      const short = r.hints.length && [...r.hints[0].replace(/\s/g, '')].length <= 3;
       const began = () => {
         if (s.began) return;
         s.began = true;
         this._clearTimers();                         // 5초 안에 말 시작 → 끝날 때까지 기다림
+        if (short) later(() => { try { typeof r.finish === 'function' ? r.finish() : r.stop(); } catch (e) { /* 이미 끝남 */ } }, SHORT_SPEECH_MS);
       };
       const speechEnded = () => {
         if (!s.began) return;

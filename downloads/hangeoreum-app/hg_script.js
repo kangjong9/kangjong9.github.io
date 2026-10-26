@@ -62,7 +62,7 @@
     if (chartLoading[lang]) return chartLoading[lang];
     if (!window.HGLETTERS) return Promise.resolve(null);
     chartLoading[lang] = HGLETTERS.load(lang).then(d => {
-      chartCache[lang] = buildChart(d);
+      chartCache[lang] = buildChart(d, lang);
       chartLoading[lang] = null;
       // 이어하기로 문자표 코스가 켜져 있었으면 데이터가 온 뒤 화면을 연다
       if (curLang() === lang && basis() === 'chart' && load().active && typeof updateLevelUI === 'function') updateLevelUI();
@@ -70,10 +70,26 @@
     }).catch(e => { chartLoading[lang] = null; console.warn('문자표 데이터', e); return null; });
     return chartLoading[lang];
   }
-  function buildChart(d) {
+  function buildChart(d, lang) {
     const clean = s => String(s == null ? '' : s).replace(/\|/g, '/');
     const kor = it => (it.이름 != null && it.소리 != null) ? (it.이름 === it.소리 ? it.이름 : `${it.이름} / ${it.소리}`) : (it.한글발음 || '');
     const aux = it => [it.병음 && it.병음 !== it.글자 ? it.병음 : '', it.성조 || ''].filter(Boolean).join(' · ');
+    // 말할 대상: 읽기가 없는데 글자가 규칙 이름(한글·기호: '끝 자음 묵음', 'c · r · f · l')이거나 철자 조합(ch·gn·ou)이면
+    // TTS가 한국어나 철자를 읽고 그대로는 합격할 수 없다 → 예시 단어를 읽고 말하게 하고 카드 보조 표기로 보여 준다 (실기기 2026-10-26)
+    const say = it => {
+      // 프랑스어·스페인어·러시아어 글자 카드: 인식기가 글자 이름 한 음절('베'·'으')은 연속 빈 결과, 예시 단어('bébé')는 첫 번에 인식
+      // → 시범은 '이름, 단어'로 읽고 따라 말하게 한다. 영어(글자 이름 인식이 잘 됨)는 그대로 (실기기 2026-10-26)
+      // 읽기 없는 소리 카드(러시아어 'б'·'é')도 같은 이유로 '글자, 단어'
+      if (it.예시단어 && ['fr', 'es', 'ru'].includes(lang) && /^\S( \S)?$/.test(it.글자)) {
+        const nm = it.읽기 || it.글자;
+        return nm.includes(it.예시단어) ? nm : `${nm}, ${it.예시단어}`;  // 'hola, hola' 같은 되풀이 방지
+      }
+      if (it.읽기) return it.읽기;
+      const g = String(it.글자 || '');
+      const odd = /[가-힣ㄱ-ㅎ·→…\/()\[\]~]|^-|-$/.test(g) || /^[a-zà-ÿœ]{2,4}$/i.test(g);
+      return odd && it.예시단어 ? it.예시단어 : g;
+    };
+    const auxOf = it => aux(it) || (say(it) !== (it.읽기 || it.글자) ? it.예시단어 || say(it) : '');
     const out = { title: d.제목, units: [], stages: [] };
     d.단계.forEach(sg => {
       const first = out.units.length;
@@ -109,7 +125,8 @@
           out.units.push({
             t: `${t.제목} · ${label}`,
             tip: pi === 0 ? (t.설명 || sg.설명 || '') : `이번엔 ${label}!`,
-            c: p.items.map(it => [it.글자, kor(it), it.읽기 || it.글자, '', aux(it)].map(clean).join('|')),
+            // '이름, 단어' 카드는 1회차 한글 줄에 단어 발음도 ('베 / ㅂ · 바부쉬까') — 키릴 문자를 못 읽어도 따라 말하게
+            c: p.items.map(it => [it.글자, kor(it) + (it.예시발음 && say(it).endsWith(', ' + it.예시단어) ? ` · ${it.예시발음}` : ''), say(it), '', auxOf(it)].map(clean).join('|')),
             w, stage: sg.단계
           });
         });
@@ -408,6 +425,17 @@
   function judged(ok, heard) {
     if (!session) return;
     const my = speakSeq;
+    if (ok && ok.near) {  // 1·2회차 근접 통과: 넘어가되 무엇이 달랐는지 알려 준다 (혼자 읽는 3회차는 정확해야 통과)
+      sfx('sparkle');
+      session.fails = 0;
+      const W = ok.want.toUpperCase(), N = ok.near.toUpperCase();
+      const tip = /[vв]/.test(ok.want) ? `${W}는 윗니를 아랫입술에 살짝 대고 목을 울려 내요`
+        : /[fф]/.test(ok.want) ? `${W}는 윗니를 아랫입술에 대고 바람만 내요`
+        : /[bdgzбдгзж]/.test(ok.want) ? `${W}는 목을 울려 부드럽게, ${N}는 목을 울리지 않고 내요` : `${W}는 목을 울리지 않고, ${N}는 목을 울려 내요`;
+      setStatus(`🙂 통과! 다만 ${N}처럼 들렸어요. ${tip}`, heard ? `들린 소리: ${esc(heard)}` : '');
+      flowTimer = setTimeout(() => { if (my === speakSeq) advance(); }, 2200);
+      return;
+    }
     if (ok) {
       sfx('sparkle');
       session.fails = 0;
@@ -647,6 +675,9 @@
     st.active = true;
     save(st);
     session = null;
+    // 문자표 화면(기초 탭)에서 시작하면 수업 화면으로 옮겨야 마이크가 열린다. 수업 화면 밖에서는 micBlocked()가
+    // 'navigation'으로 막아 문자표 코스 전체가 '마이크 입력을 못 받는' 상태였다 (실기기 2026-10-26)
+    if (window.HGUI && HGUI.route() !== 'lesson') { HGUI.study('script'); return; }
     if (typeof updateLevelUI === 'function') updateLevelUI(); else show();
   }
 
@@ -683,7 +714,7 @@
     es: 'a:ah,ha;e:eh,he;i:y,hi;o:oh,ho;u:uh;be:b,ve,bebe;ce:c,se,sé;de:d,dé;efe:f;ge:g,je,he;hache:h,ache;jota:j;ka:k,ca,qa;ele:l,el;eme:m;ene:n;eñe:ñ;pe:p;cu:q,qu,ku;erre:r,ere;ese:s,es;te:t,té;uve:v,ube;uve doble:w,doble uve,doble ve;equis:x;ye:y,i griega,lle;zeta:z,ceta,seta',
     ru: 'бэ:бе,б;вэ:ве,в;гэ:ге,г;дэ:де,д;жэ:же,ж;зэ:зе,з;ка:к;эль:эл,ель,л;эм:ем,м;эн:ен,н;пэ:пе,п;эр:ер,р;эс:ес,с;тэ:те,т;эф:еф,ф;ха:х;цэ:це,ц;че:ч,чё;ша:ш;ща:щ;и краткое:и краткий,й;твёрдый знак:твердый,твёрдый,ъ;мягкий знак:мягкий,ь',
     ja: 'あ:亜,阿;い:胃,井,意,位,医;う:鵜,卯;え:絵,江,柄,会;お:尾,御,緒;か:蚊,課,可,科,化,火;き:木,気,器,機,黄,期;く:九,区,句,苦,9;け:毛;こ:子,個,粉,小,湖;さ:差,左,佐;し:市,死,詩,四,氏,師,4;す:酢,巣;せ:背,瀬,世;そ:祖,素;た:田,他,多;ち:血,地,知,値,千;つ:津;て:手;と:戸,都,十;な:名,菜,奈;に:二,荷,似,2;ぬ:奴;ね:根,音,寝;の:野,乃;は:歯,葉,刃,派,羽,波;ひ:日,火,比,非,灯;ふ:府,布,負,不,夫;へ:屁,経;ほ:帆,穂,歩,保;ま:間,魔,真,馬;み:身,実,見,三,3;む:無,六,夢;め:目,芽;も:藻,喪;や:矢,屋,夜,野;ゆ:湯,油;よ:世,夜,四,余;ら:等,羅;り:理,利,里;る:留,流;れ:例,礼,令;ろ:炉,路,呂;わ:輪,和,環;を:お,尾,御;ん:うん,運;が:我,画,蛾;ぎ:義,技;ぐ:具;げ:下,外;ご:後,五,語,碁,5;ざ:座;じ:字,時,地,次,事;ず:図,頭;ぜ:是;だ:打,駄;ぢ:じ,地;づ:ず,図;で:出;ど:度,土;ば:場,婆;び:美,微;ぶ:部,分;べ:辺;ぼ:母,簿;きゃ:客,脚;きゅ:急,九;きょ:去,巨,虚,今日;しゃ:者,社,写,車,斜;しゅ:主,種,酒,朱;しょ:書,所,諸,署;ちゃ:茶;ちゅ:中;ちょ:著;にょ:女;ひゃ:百;ひょ:表,票;みょ:妙;りゃ:略;りゅ:竜,龍;りょ:旅,料,両,量;ぎゃ:逆;ぎょ:魚;じゃ:蛇,邪;じゅ:十,受;じょ:女,序;びょ:秒,病',
-    cn: '妈:妈妈,抹;麻:嘛,蟆;马:码,蚂,玛;骂:蚂;诗:师,湿,失,狮,施;十:时,石,实,识,食,拾,10;使:始,史,驶;是:事,市,试,室,世,式,视,示,士;啊:阿,呀,a;我:哦,喔,窝,噢;饿:鹅,额,俄,恶;一:衣,医,依,1;五:无,屋,舞,乌,武,5;鱼:于,雨,语,余;二:而,儿,耳,2;爱:哎,唉;黑:嘿;好:号;狗:够;家:加,佳;谢谢:谢;小:笑,晓;六:刘,流,6;花:华,话;快:块;月:越,约;饭:范,反;忙:芒;门:们;听:厅;红:洪,虹;天:田;两:亮,俩;熊:雄;晚:万,碗;春:纯;黄:皇;远:院,元;云:运,允;八:吧,爸,巴,拔,8;怕:爬,趴;飞:非,菲;大:达,打;他:她,它,塔;你:呢,泥;来:啦,拉;哥哥:哥,歌,个;开:凯;喝:和,河,合,呵;鸡:机,几,基,级;七:期,起,气,7;西:洗,喜,系,息;中:种,钟,终;吃:迟,池;书:输,叔,舒;热:日;字:子,自;菜:才,财,彩;四:死,思,丝,4'
+    cn: '妈:妈妈,抹;麻:嘛,蟆;马:码,蚂,玛;骂:蚂;诗:师,湿,失,狮,施;十:时,石,实,识,食,拾,10;使:始,史,驶;是:事,市,试,室,世,式,视,示,士;啊:阿,呀,a;我:哦,喔,窝,噢;饿:鹅,额,俄,恶;一:衣,医,依,1;五:无,屋,舞,乌,武,5;鱼:于,雨,语,余;二:而,儿,耳,2;爱:哎,唉;黑:嘿;好:号;狗:够;家:加,佳;谢谢:谢;小:笑,晓;六:刘,流,6;花:华,话;快:块;月:越,约;饭:范,反;忙:芒;门:们;听:厅;红:洪,虹;天:田;两:亮,俩;熊:雄;晚:万,碗;春:纯;黄:皇;远:院,元;云:运,允;八:吧,爸,巴,拔,8;怕:爬,趴;飞:非,菲;大:达,打;他:她,它,塔;你:呢,泥;来:啦,拉;哥哥:哥,歌,个;开:凯;喝:和,河,合,呵;鸡:机,几,基,级;七:期,起,气,7;西:洗,喜,系,息;中:种,钟,终;吃:迟,池;书:输,叔,舒;热:日;字:子,自;菜:才,财,彩;四:死,思,丝,4;三:伞,散,3;九:酒,久,就,旧,9;人:仁,任;国:过,果,锅;上:尚;下:吓,夏;有:又,友,右;水:谁,睡;火:伙,或;口:扣;不:部,步,布'
   };
   /* 단어를 일본어 인식기는 한자로 돌려준다(ねこ→猫). 단어 판정 전에 한자 표기를 가나로 되돌린다(긴 것부터). */
   const JA_YOMI_SRC = '本を読む:ほんをよむ;有難う:ありがとう;有り難う:ありがとう;愛:あい;藍:あい;青:あお;秋:あき;朝:あさ;兄:あに;雨:あめ;飴:あめ;家:いえ;池:いけ;椅子:いす;糸:いと;犬:いぬ;上:うえ;嘘:うそ;海老:えび;海:うみ;駅:えき;鉛筆:えんぴつ;甥:おい;お菓子:おかし;御菓子:おかし;菓子:かし;お茶:おちゃ;顔:かお;家具:かぐ;傘:かさ;風邪:かぜ;風:かぜ;家族:かぞく;鞄:かばん;乾杯:かんぱい;学校:がっこう;菊:きく;聞く:きく;切手:きって;茸:きのこ;客:きゃく;胡瓜:きゅうり;今日:きょう;金魚:きんぎょ;逆:ぎゃく;牛乳:ぎゅうにゅう;銀行:ぎんこう;靴:くつ;熊:くま;車:くるま;煙:けむり;元気:げんき;鯉:こい;恋:こい;米:こめ;蒟蒻:こんにゃく;ご飯:ごはん;御飯:ごはん;魚:さかな;桜:さくら;三百:さんびゃく;300:さんびゃく;散歩:さんぽ;雑誌:ざっし;塩:しお;写真:しゃしん;宿題:しゅくだい;食事:しょくじ;白:しろ;城:しろ;時間:じかん;邪魔:じゃま;授業:じゅぎょう;上手:じょうず;寿司:すし;鮨:すし;雀:すずめ;世界:せかい;席:せき;咳:せき;外:そと;蕎麦:そば;空:そら;象:ぞう;蛸:たこ;凧:たこ;卵:たまご;玉子:たまご;蒲公英:たんぽぽ;大学:だいがく;地下鉄:ちかてつ;地図:ちず;注意:ちゅうい;一寸:ちょっと;月:つき;続く:つづく;手紙:てがみ;手:て;天気:てんき;天ぷら:てんぷら;天麩羅:てんぷら;電話:でんわ;時計:とけい;動物:どうぶつ;夏:なつ;肉:にく;日本:にほん;入学:にゅうがく;布:ぬの;猫:ねこ;海苔:のり;八百:はっぴゃく;800:はっぴゃく;鼻血:はなぢ;花:はな;鼻:はな;薔薇:ばら;飛行機:ひこうき;人:ひと;百:ひゃく;100:ひゃく;豹:ひょう;表:ひょう;平仮名:ひらがな;病院:びょういん;船:ふね;舟:ふね;豚:ぶた;臍:へそ;部屋:へや;弁当:べんとう;星:ほし;本:ほん;帽子:ぼうし;窓:まど;蜜柑:みかん;水:みず;耳:みみ;脈:みゃく;苗字:みょうじ;名字:みょうじ;虫:むし;娘:むすめ;目:め;桃:もも;森:もり;山:やま;雪:ゆき;夜:よる;来年:らいねん;略語:りゃくご;竜:りゅう;龍:りゅう;旅行:りょこう;林檎:りんご;留守:るす;歴史:れきし;蝋燭:ろうそく;私:わたし;三日月:みかづき;餃子:ぎょうざ;茗荷:みょうが;量:りょう;料:りょう;漁:りょう';
@@ -697,6 +728,11 @@
           const [k, v] = e.split(':');
           if (k && v) m[norm(k)] = (m[norm(k)] || []).concat(v.split(',').map(norm).filter(Boolean));
         });
+        // 라틴·키릴 언어는 거꾸로도 찾는다: 문자표 소리 칸의 대상이 'б'이면 이름 'бэ'와 그 별칭(бе)도 같은 소리 (한자·가나는 오인 합격 우려로 제외)
+        if (l === 'ru' || l === 'es' || l === 'fr') Object.keys(m).forEach(k => m[k].forEach(v => {
+          if (v === k || ALIAS_SRC[l].split(';').some(e => norm(e.split(':')[0]) === v)) return;
+          m[v] = (m[v] || []).concat(k, m[k].filter(x => x !== v));
+        }));
       });
     }
     return (ALIAS[lang] || {})[t] || [];
@@ -738,13 +774,38 @@
     if (t.includes(n) && n.length >= t.length * 0.6) return true;
     return editSim(n, t) >= (t.length <= 4 ? 0.75 : 0.6);  // 짧은 낱말은 한 글자 차이도 다른 글자(efe≠ese)
   }
+  /* 알파벳·키릴 글자 카드: 인식기는 글자 하나를 "PvP"·"pie"처럼 흐트러뜨려 돌려주므로 짧은 낱말의 첫 자음으로 본다.
+     초보자용 1회차는 유성·무성 짝(B↔P 등)도 '근접 통과'로 넘기고 차이를 알려 준다. 2·3회차는 같은 자음이어야 한다 (실기기 2026-10-26: 한국어 '베'가 P로 인식) */
+  const VOICE_PAIR = { b: 'p', p: 'b', d: 't', t: 'd', g: 'k', k: 'g', v: 'f', f: 'v', z: 's', s: 'z',
+    'б': 'п', 'п': 'б', 'д': 'т', 'т': 'д', 'г': 'к', 'к': 'г', 'в': 'ф', 'ф': 'в', 'з': 'с', 'с': 'з', 'ж': 'ш', 'ш': 'ж' };
+  const LIP_NEAR = { v: ['b', 'p'], f: ['p'], 'в': ['б', 'п'], 'ф': ['п'] };
+  const firstCons =(s) => (String(s).match(/[bcdfghjklmnpqrstvwxzбвгджзйклмнпрстфхцчшщ]/) || [])[0] || '';
+  function consonantHit(alts, item) {
+    if (!['en', 'fr', 'es', 'ru'].includes(curLang()) || !/^\S( \S)?$/.test(item.c || '')) return false;
+    const want = firstCons(String(item.c).toLowerCase());  // 카드 글자 자체의 자음 (말하기 대상 'e, petit'의 p가 아니라)
+    if (!want) return false;  // 모음 글자는 기존 별칭·단어 판정
+    // 짧은 말(글자 이름)은 첫 자음, 긴 단어는 그 자음으로 시작할 때만 ('déterminant' ← '데, 도미노')
+    const heard = alts.flatMap(a => String(a).toLowerCase().split(/[\s.,!?¡¿'"·\-_~()]+/)).map(norm)
+      .filter(w => w && (w.length <= 4 || firstCons(w) === w[0])).map(firstCons);
+    if (heard.includes(want)) return true;
+    // 스페인어 b·v는 같은 소리 ('ballena' → 'vayana')
+    if (curLang() === 'es' && (want === 'b' || want === 'v') && heard.includes(want === 'b' ? 'v' : 'b')) return true;
+    // 한국어에 없는 v·f는 b·p로 나기 쉽다 ('вода' → 'Пада', 실기기 2026-10-26)
+    const nearOf = [VOICE_PAIR[want], ...(LIP_NEAR[want] || [])].filter(Boolean);
+    // 딱딱한 c·q도 k 소리 ('gâteau' → 'catin'). 시범이 있는 1·2회차만 근접 통과, 혼자 읽는 3회차는 정확해야
+    const near = load().pass <= 2 && heard.find(h => nearOf.includes(h) || (nearOf.includes('k') && (h === 'c' || h === 'q')));
+    if (near) return { near, want };
+    return false;
+  }
   function isHit(alts, item, pic) {
     const lang = curLang();
-    const targets = [item.s, item.c, item.p, pic && pic.w].map(norm).filter(Boolean);
-    return alts.some(a => {
+    // '이름, 단어' 시범이면 이름만 말해도 정답 (모음 'a, ami' ← 'ah')
+    const targets = [item.s, String(item.s || '').split(', ')[0], item.c, item.p, pic && pic.w].map(norm).filter(Boolean);
+    const hit = alts.some(a => {
       const cand = lang === 'ja' ? [a, jaKana(a)] : [a];
       return cand.some(c => targets.some(t => hitOne(lang, c, t)));
     });
+    return hit || consonantHit(alts, item);
   }
 
   function stopListen() {
@@ -794,5 +855,5 @@
     try { r.start(); } catch (e) { recognizer = null; judged(false, ''); }
   }
 
-  window.HGSCRIPT = { scriptName, units, isActive, show, hide, start, leave, retry, pass, listen, skipToLevel1, load, save, pictures, choose, startChart, basis };
+  window.HGSCRIPT = { scriptName, units, isActive, show, hide, start, leave, retry, pass, listen, skipToLevel1, load, save, pictures, choose, startChart, basis, isHit };
 })();
