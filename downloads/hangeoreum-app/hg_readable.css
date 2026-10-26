@@ -20,12 +20,27 @@ div:has(> #quickTier0) { flex-wrap: wrap; }
   .app-header > div:first-child > div:last-child > div:nth-child(2) { display: none; }  /* 부제목은 좁은 폰에서 숨김 */
   .app-header button { padding-left: 8px !important; padding-right: 8px !important; }
 }
+/* 글자 크기 단계(html[data-hg-size], hg_readable.js): 큰 글자에서 4칸 탭이 넘치지 않게 좁은 폰은 2칸씩 */
+#fourVoiceTabsGroup { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+@media (max-width: 429px) { #fourVoiceTabsGroup { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
+html[data-hg-size="xlarge"] #fourVoiceTabsGroup { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+html[data-hg-size="large"] div:has(> #quickTier0) > [id^="quickTier"],
+html[data-hg-size="xlarge"] div:has(> #quickTier0) > [id^="quickTier"] { flex: 1 1 calc(33.33% - 4px) !important; }
+/* 오늘의 일상 테마 캡슐: 한 줄로 자르지 않고 넘치면 다음 줄로 */
+div:has(> #activeDailyThemeBadge) { flex-wrap: wrap; white-space: normal !important; row-gap: 4px; }
+
+/* 설치된 앱: 체험판용 폰 테두리 없이 기기 화면을 꽉 채운다 (넓은 화면은 가운데 560px) */
+html.hg-app body { padding: 0 !important; align-items: stretch !important; background: #fff !important; }
+html.hg-app .app-root { max-width: 560px !important; min-height: 100vh !important; border: none !important; border-radius: 0 !important; box-shadow: none !important; }
+
 /* 가로 넘침 방지 */
 html, body { max-width: 100%; overflow-x: hidden; }
 img, video, canvas { max-width: 100%; }
 #viewCanvas, #viewOnboarding, .modal-sheet { box-sizing: border-box; max-width: 100vw; }
 .modal-sheet { max-height: 92vh; overflow-y: auto; }
-#viewCanvas span, #viewCanvas div { overflow-wrap: anywhere; }
+#viewCanvas span, #viewCanvas div { overflow-wrap: break-word; }
+/* 한글은 낱말 중간에서 끊지 않는다 (러시 / 아어 같은 줄바꿈 방지 — 시인성) */
+#viewCanvas, #viewOnboarding, .modal-sheet, .hgl-ov, .app-header { word-break: keep-all; }
 
 /* 말하는 동안 파동 */
 #hgSpeakWave { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%) scale(.6); width: 150px; height: 150px;
