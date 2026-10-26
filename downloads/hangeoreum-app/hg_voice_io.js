@@ -18,7 +18,9 @@
       - 알림음이 마이크에 녹음돼 말 시작으로 잘못 잡히지 않게, 알림음을 먼저 울리고 끝난 뒤 마이크를 연다 */
 (function () {
   const NO_INPUT_MS = 5000;     // 마이크 켜짐 → 말 시작까지 허용 시간
-  const FINAL_GRACE_MS = 300;   // 말 끝 → 최종 결과 대기 상한 (넘으면 중간 결과로 판정)
+  // 말 끝 → 최종 결과 대기 상한 (넘으면 중간 결과로 판정). 300ms였을 때 기기 인식기의 중간 결과가 말 뒷부분이
+  // 빠진 채로 판정돼 '잘 못 알아듣는' 원인이 됐다 → 최종 결과가 보통 도착하는 800ms까지 기다린다 (2026-10-26)
+  const FINAL_GRACE_MS = 800;
   const TAIL_LIMIT_MS = 4000;   // 말은 끝났는데 결과도 중간 결과도 없을 때의 안전 상한
   const CUE_GAP_MS = 260;       // 입력 알림음(약 0.2초)이 끝난 뒤 마이크를 연다
   const GATE_POLL_MS = 300;     // 마이크를 막는 창이 열리고 닫히는지 확인하는 간격
@@ -31,6 +33,7 @@
   function micBlocked() {
     if (appPaused || document.hidden) return 'background';
     if (document.querySelector('.hgl-ov')) return 'letters';          // 문자표 화면이 덮고 있음
+    if (document.getElementById('hgVoiceLog')) return 'log';          // 마이크 진단 기록을 보는 중
     if (shown(document.getElementById('hgCelebrate'))) return 'celebrate';   // 축하 카드가 떠 있는 동안
     for (const m of document.querySelectorAll('.modal-backdrop')) {   // 설정·종료 확인 등 창
       if (!m.classList.contains('hidden') && shown(m)) return 'modal';
@@ -144,7 +147,7 @@
     // 그 사이 마이크를 막는 창이 열리면 실제 인식기는 조용히 닫았다가, 창이 닫히면 알림음부터 다시 연다.
     start() {
       this._quiet();
-      const s = this._s = { done: false, ended: false, started: false, began: false, partial: null, timers: [], r: null, opening: 0, seq: 0, poll: null };
+      const s = this._s = { t0: Date.now(), done: false, ended: false, started: false, began: false, partial: null, timers: [], r: null, opening: 0, seq: 0, poll: null };
       s.poll = setInterval(() => this._gate(), GATE_POLL_MS);
       this._gate();
     }
@@ -184,6 +187,7 @@
       this._clearTimers();
       const r = s.r; s.r = null; s.seq++;
       if (r) { try { r.abort(); } catch (e) { /* 이미 끝남 */ } }
+      record(this, kind, payload, s);
       if (kind === 'result') { cue('done'); this._emit('speechend'); this._emit('result', payload); }
       else if (kind === 'error') this._emit('error', payload);
       if (!s.ended) { s.ended = true; this._emit('end'); }
@@ -199,7 +203,7 @@
       const mine = () => s.r === r && s.seq === seq && !s.done;
       const later = (fn, ms) => s.timers.push(setTimeout(() => { if (mine()) fn(); }, ms));
       const fromPartialOrFail = () => {
-        if (hasText(s.partial)) this._finish('result', plainResult(s.partial));
+        if (hasText(s.partial)) { s.usedPartial = true; this._finish('result', plainResult(s.partial)); }
         else this._finish('error', { error: 'no-speech' });
       };
       const began = () => {
@@ -276,5 +280,48 @@
   }
   window.SpeechRecognition = HGSpeechRecognition;
   window.webkitSpeechRecognition = HGSpeechRecognition;
-  window.HGVOICE = { cue, native: hasNative, blocked: micBlocked, timing: { NO_INPUT_MS, FINAL_GRACE_MS, TAIL_LIMIT_MS, CUE_GAP_MS } };
+  /* ---------- 마이크 진단 기록 (⚙️ 설정 → 🎙️ 마이크 진단) ----------
+     실기기에서 '잘 못 알아듣는다'를 확인할 수 있게 최근 30번의 인식 결과를 남긴다:
+     언어·경로(기기/브라우저)·결과(들린 말 후보)·오류·걸린 시간·중간 결과 사용 여부, 화면이 붙인 점수(note) */
+  const LOG = [];
+  function record(rec, kind, payload, s) {
+    const alts = kind === 'result' ? Array.from((payload.results && payload.results[0]) || []).map(a => a.transcript) : [];
+    LOG.push({ at: new Date().toTimeString().slice(0, 8), lang: rec.lang, path: Base === NativeSpeechRecognition ? '기기' : '브라우저',
+      kind, alts, error: kind === 'error' ? (payload && payload.error) : '', ms: Date.now() - s.t0, partial: !!s.usedPartial });
+    if (LOG.length > 30) LOG.shift();
+  }
+  // 화면(수업·입문 문자)이 판정 뒤 붙이는 정보: 목표 문장·점수·합격 여부
+  function note(info) { const last = LOG[LOG.length - 1]; if (last) Object.assign(last, info); }
+  function showLog() {
+    if (document.getElementById('hgVoiceLog')) return;
+    const esc = (x) => String(x == null ? '' : x).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    const rows = LOG.slice().reverse().map(e => `<div style="border-bottom:1px solid #e2e8f0;padding:8px 0;font-size:15px;line-height:1.5">
+      <b>${esc(e.at)}</b> · ${esc(e.lang)} · ${esc(e.path)} · ${(e.ms / 1000).toFixed(1)}초${e.partial ? ' · 중간 결과로 판정' : ''}<br>
+      ${e.kind === 'result' ? `🗣️ 들린 말: <b>${esc(e.alts.join(' / '))}</b>` : (e.kind === 'error' ? `⚠️ ${esc(e.error === 'no-speech' ? '말소리 없음(5초)' : e.error)}` : '⏹ 취소')}
+      ${e.target ? `<br>🎯 목표: ${esc(e.target)}` : ''}${e.score != null ? ` · ${esc(e.score)}점` : ''}${e.pass != null ? (e.pass ? ' · ✅ 통과' : ' · ❌ 불합격') : ''}</div>`).join('')
+      || '<div style="padding:16px 0;font-size:15px;color:#475569">아직 기록이 없어요. 수업에서 한 번 말해 본 뒤 다시 열어 주세요.</div>';
+    const box = document.createElement('div');
+    box.id = 'hgVoiceLog';
+    box.style.cssText = 'position:fixed;inset:0;z-index:2147483002;background:rgba(15,23,42,.45);display:flex;align-items:flex-end;justify-content:center';
+    box.innerHTML = `<div style="background:#fff;width:100%;max-width:560px;max-height:85vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:16px 16px 24px;color:#0f172a">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><b style="font-size:18px">🎙️ 마이크 진단 (최근 ${LOG.length}번)</b>
+      <button type="button" data-x style="border:none;background:#e2e8f0;border-radius:10px;min-width:44px;min-height:44px;font-size:18px;font-weight:900;cursor:pointer">✕</button></div>
+      <div style="font-size:14px;color:#475569;margin:6px 0 4px;line-height:1.5">말한 내용이 어떻게 들렸는지 보여줘요. '말소리 없음'이 많으면 마이크·권한, 들린 말이 목표와 다르면 판정 문제예요.</div>${rows}</div>`;
+    box.addEventListener('click', (e) => { if (e.target === box || e.target.closest('[data-x]')) box.remove(); });
+    document.body.appendChild(box);
+  }
+  // ⚙️ 설정 창 맨 아래에 '🎙️ 마이크 진단' 버튼
+  function injectLogButton() {
+    const sheet = document.querySelector('#settingsModal .modal-sheet');
+    if (!sheet || document.getElementById('hgVoiceLogBtn')) return;
+    const b = document.createElement('button');
+    b.id = 'hgVoiceLogBtn'; b.type = 'button';
+    b.textContent = '🎙️ 마이크 진단 — 최근 인식 결과 보기';
+    b.style.cssText = 'width:100%;margin-top:14px;min-height:48px;border:1.5px solid #c7d2fe;border-radius:12px;background:#eef2ff;color:#3730a3;font-size:16px;font-weight:900;cursor:pointer';
+    b.addEventListener('click', showLog);
+    sheet.appendChild(b);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectLogButton); else injectLogButton();
+
+  window.HGVOICE = { cue, native: hasNative, blocked: micBlocked, log: LOG, note, showLog, timing: { NO_INPUT_MS, FINAL_GRACE_MS, TAIL_LIMIT_MS, CUE_GAP_MS } };
 })();
