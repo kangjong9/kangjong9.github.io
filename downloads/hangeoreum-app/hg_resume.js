@@ -8,7 +8,7 @@
 
   function canvasOpen() {
     const c = document.getElementById('viewCanvas');
-    return !!(c && !c.classList.contains('hidden'));
+    return !!(c && !c.classList.contains('hidden')) || !!(window.HGUI && HGUI.route() === 'home' && localStorage.getItem('hangeoreum_onboarding_done') === '1');
   }
 
   function snapshot() {
@@ -42,6 +42,8 @@
 
   /* 실행 직후: 저장본이 있으면 바로 그 자리로 */
   function restore() {
+    // V3.1 홈은 저장본을 소비하지 않고, 사용자의 이어하기 때 복원한다.
+    if (window.HGUI && HGUI.shouldDeferResume()) return false;
     const s = take();
     if (!s || !s.canvas || localStorage.getItem('hangeoreum_onboarding_done') !== '1') return false;
     try { if (typeof stopAllTTSAudio === 'function') stopAllTTSAudio(); } catch (e) { /* 무시 */ }

@@ -1,0 +1,123 @@
+/* V3.1 UI: legacy overrides stay inside hg-ui-active. */
+:root { --hg-ui-ink:#17324d; --hg-ui-muted:#5c7180; --hg-ui-teal:#087f8c; --hg-ui-mint:#e9f8f5; --hg-ui-coral:#e97556; --hg-ui-line:#dceae8; --hg-ui-shadow:0 8px 28px #153f4910; }
+body.hg-ui-active { background:#f2f8f7!important; color:var(--hg-ui-ink); padding:0!important; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; }
+.hg-ui-active .app-root, html.hg-app .hg-ui-active .app-root { width:100%!important; max-width:940px!important; min-height:100dvh!important; border:0!important; border-radius:0!important; box-shadow:none!important; background:#fcfefd!important; margin:0 auto; overflow:visible!important; padding-bottom:88px; }
+.hg-ui-active *, .hg-ui-active *::before, .hg-ui-active *::after { box-sizing:border-box; }
+.hg-ui-active [hidden], .hg-ui-active .hidden { display:none!important; }
+.hg-ui-active button, .hg-ui-active input, .hg-ui-active select, .hg-ui-active textarea { font:inherit; }
+.hg-ui-active button { cursor:pointer; touch-action:manipulation; }
+.hg-ui-active button:disabled { cursor:not-allowed; opacity:.5; }
+.hg-ui-active :focus-visible { outline:3px solid #c8653c!important; outline-offset:4px; }
+.hg-ui-active [data-hg-heading]:focus { outline:none!important; }
+.hg-ui-active h1,.hg-ui-active h2,.hg-ui-active p { word-break:keep-all; overflow-wrap:anywhere; }
+.hg-ui-header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px 12px; gap:16px; }
+.hg-ui-header>div { display:flex; gap:8px; }
+.hg-ui-brand { color:var(--hg-ui-teal); font-size:27px!important; font-weight:900!important; letter-spacing:-1.5px; background:none; border:0; padding:0; text-align:left; min-height:52px; }
+.hg-ui-brand span { display:block; color:var(--hg-ui-muted); font-size:11px; font-weight:500; letter-spacing:1px; }
+.hg-ui-icon-button { width:48px; min-height:48px; background:white; border:1px solid var(--hg-ui-line); border-radius:50%; color:var(--hg-ui-ink); font-weight:800!important; font-size:20px!important; }
+.hg-ui-page { padding:0 24px 24px; }
+.hg-ui-hero { display:grid; grid-template-columns:minmax(0,1fr) 130px; align-items:center; gap:4px; min-height:178px; padding:12px 0 20px; }
+.hg-ui-hero h1 { font-size:clamp(27px,6.2vw,38px); letter-spacing:-1.3px; line-height:1.25; margin:8px 0 12px; color:var(--hg-ui-ink); }
+.hg-ui-eyebrow { color:var(--hg-ui-teal); font-size:12px; font-weight:800; letter-spacing:.5px; margin:0 0 6px; }
+.hg-ui-muted { font-size:14px; color:var(--hg-ui-muted); line-height:1.7; margin:8px 0; }
+.hg-ui-fox { display:block; width:100%; height:auto; max-width:160px; filter:drop-shadow(0 8px 6px #cb793219); }
+.hg-ui-guide { margin:0; min-width:0; text-align:center; }
+.hg-ui-guide .hg-ui-fox { margin:0 auto; }
+.hg-ui-guide figcaption { color:var(--hg-ui-teal); font-size:13px; font-weight:900; letter-spacing:.3px; line-height:1.3; margin-top:2px; }
+.hg-ui-guide small { display:block; color:var(--hg-ui-muted); font-size:10.5px; font-weight:700; letter-spacing:0; word-break:keep-all; }
+.hg-ui-lesson-card { background:linear-gradient(125deg,#087f8c,#079d9e); color:white; border-radius:24px; padding:22px; box-shadow:0 12px 22px #087f8c20; }
+.hg-ui-lesson-card h2 { font-size:23px; margin:18px 0 8px; line-height:1.45; letter-spacing:-.6px; }
+.hg-ui-lesson-card p { font-size:13px; color:#e5fffb; margin:8px 0 20px; }
+.hg-ui-row { display:flex; justify-content:space-between; gap:10px; align-items:center; }
+.hg-ui-tag { border-radius:30px; display:inline-block; background:#e1f6f2; color:#166c6e; font-size:12px; padding:6px 12px; font-weight:800; }
+.hg-ui-lesson-card .hg-ui-tag { color:white; background:#ffffff20; }
+.hg-ui-link { background:none; border:0; color:var(--hg-ui-teal); min-height:48px; padding:8px 4px; font-size:13px!important; font-weight:700!important; }
+.hg-ui-lesson-card .hg-ui-link { color:white; }
+.hg-ui-primary,.hg-ui-secondary { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; min-height:52px; border-radius:16px; padding:14px 18px; font-size:15px!important; font-weight:800!important; line-height:1.4; text-align:center; }
+.hg-ui-primary { color:white; border:1px solid var(--hg-ui-teal); background:var(--hg-ui-teal); box-shadow:0 4px 0 #075e6b; }
+.hg-ui-primary:active { transform:translateY(2px); box-shadow:0 2px 0 #075e6b; }
+.hg-ui-secondary { color:var(--hg-ui-teal); background:white; border:1px solid var(--hg-ui-line); margin-top:10px; }
+.hg-ui-lesson-card .hg-ui-primary { background:white; color:var(--hg-ui-teal); box-shadow:none; border:0; }
+.hg-ui-section-title { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:4px; margin:26px 0 14px; }
+.hg-ui-section-title h2 { font-size:19px; margin:0; letter-spacing:-.6px; }
+.hg-ui-section-title span { font-size:11px; color:var(--hg-ui-muted); }
+.hg-ui-shortcuts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.hg-ui-shortcut { position:relative; border:1px solid #ffffff; border-radius:22px; padding:18px 14px; text-align:left; color:var(--hg-ui-ink); min-height:151px; }
+.hg-ui-shortcut strong { display:block; font-size:17px; letter-spacing:-.5px; margin:8px 0 5px; }
+.hg-ui-shortcut small { display:block; color:#536a79; font-size:12px; }
+.hg-ui-icon { width:38px; height:38px; border-radius:13px; background:#ffffffc9; display:flex; align-items:center; justify-content:center; color:var(--hg-ui-teal); font-size:22px; font-weight:800; box-shadow:0 3px 10px #365b5b09; }
+.hg-ui-arrow { position:absolute; right:15px; top:18px; font-size:20px; color:#628389; }
+.mint { background:#e4f7f0; }.sand { background:#fff5df; }.blue { background:#e9f3ff; }.coral { background:#ffedf0; }
+.hg-ui-note { background:#edf7f6; border-radius:14px; padding:13px 16px; color:#48666c; font-size:12px; line-height:1.7; margin:18px 0; }
+.hg-ui-language-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:16px 0 24px; }
+.hg-ui-language { min-width:0; min-height:200px; border-radius:22px; padding:18px 14px; background:white; border:2px solid #e7efee; box-shadow:var(--hg-ui-shadow); text-align:left; display:flex; flex-direction:column; align-items:flex-start; color:var(--hg-ui-ink); }
+.hg-ui-language:nth-child(3n+1) { background:linear-gradient(#eaf8fb,white 70%); }.hg-ui-language:nth-child(3n+2){background:linear-gradient(#fff0f1,white 70%);}.hg-ui-language:nth-child(3n){background:linear-gradient(#fff4df,white 70%);}
+.hg-ui-language[aria-pressed="true"] { border-color:var(--hg-ui-teal); box-shadow:0 0 0 2px #087f8c18; }
+.hg-ui-language strong { font-size:20px; margin:8px 0 2px; }.hg-ui-language>span:not(.hg-ui-flag) { font-size:12px; color:var(--hg-ui-muted); }
+.hg-ui-language small { font-size:12px; margin:12px 0 8px; }.hg-ui-language em { font-size:11px; font-style:normal; color:#536e75; margin-top:auto; }
+.hg-ui-flag { font-size:32px; }
+.hg-ui-search { display:block; font-size:12px; color:var(--hg-ui-muted); }.hg-ui-search input { width:100%; border:1px solid var(--hg-ui-line); background:white; border-radius:18px; min-height:52px; padding:12px 16px; margin-top:6px; }
+.hg-ui-card { border:1px solid var(--hg-ui-line); border-radius:24px; background:white; padding:22px; box-shadow:var(--hg-ui-shadow); }.hg-ui-card h2{font-size:22px;line-height:1.4;}
+.hg-ui-path { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:24px 0; }.hg-ui-path span { background:var(--hg-ui-mint); color:var(--hg-ui-teal); border-radius:14px; padding:14px 8px; font-size:13px; text-align:center; line-height:1.8; }
+.hg-ui-active #viewCanvas { padding:0 24px 24px!important; }.hg-ui-lesson-header { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 0 16px; }.hg-ui-lesson-header h1 { margin:4px 0; font-size:26px; letter-spacing:-.9px; line-height:1.3; }.hg-ui-lesson-header .hg-ui-fox { width:94px; }
+.hg-ui-mode-buttons { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 18px; }.hg-ui-mode-buttons .hg-ui-secondary {margin:0;}
+.hg-ui-advanced { background:white; border:1px solid var(--hg-ui-line); border-radius:16px; padding:0 14px 10px; margin:18px 0; color:var(--hg-ui-muted); font-size:13px; }
+.hg-ui-advanced summary { padding:15px 2px; cursor:pointer; min-height:48px; font-weight:700; }.hg-ui-global-tools {margin:10px 24px 20px;}.hg-ui-tools {display:grid;gap:8px;}.hg-ui-tools button{margin:0;}
+.hg-ui-active .hg-ui-advanced input[type="range"] {min-height:32px;}.hg-ui-active .hg-ui-advanced button {min-height:48px!important;}
+.hg-ui-active .hg-ui-phrase-card { border:1px solid var(--hg-ui-line)!important; border-radius:24px!important; padding:24px 20px!important; box-shadow:var(--hg-ui-shadow)!important; }
+.hg-ui-active #targetDisplay { font-size:clamp(26px,6.5vw,38px)!important; line-height:1.4!important; letter-spacing:-.7px; margin:20px 0 14px!important; color:var(--hg-ui-ink)!important; }
+.hg-ui-active #koreanPrompt { color:#536d7b!important; font-size:16px!important; line-height:1.6!important; }.hg-ui-active #targetPhonetic{color:var(--hg-ui-teal)!important;font-size:16px!important;}
+.hg-ui-active #buildUpNote { background:var(--hg-ui-mint)!important; color:#3b6468!important; border:0!important; padding:14px!important; font-size:13px!important; margin-top:16px; line-height:1.6; }
+.hg-ui-active #sessionContextBanner,.hg-ui-active #rpSessionContextBanner {background:#f1f8f7!important;border:1px solid var(--hg-ui-line)!important;color:var(--hg-ui-ink)!important;box-shadow:none!important;padding:14px!important;}
+.hg-ui-active #sessionContextBanner div,.hg-ui-active #sessionContextBanner span,.hg-ui-active #rpSessionContextBanner div{color:var(--hg-ui-ink)!important;}
+.hg-ui-active #sessionCaseSituation {white-space:normal!important;font-size:13px!important;line-height:1.6!important;overflow:visible!important;}
+.hg-ui-active #sessionContextBanner>div:first-child>div:last-child,.hg-ui-active #sessionCaseKeywords {display:none!important;}
+.hg-ui-active #sessionContextBanner>div:last-child>span{display:none;}
+.hg-ui-active #viewDrill button,.hg-ui-active #viewRoleplay button {min-height:48px!important;white-space:normal!important;}
+.hg-ui-active #viewDrill .btn-green,.hg-ui-active #viewRoleplay .btn-indigo {background:var(--hg-ui-teal)!important;border-color:#066b77!important;box-shadow:0 3px 0 #066b77!important;color:white!important;}
+.hg-ui-active #viewDrill .hg-ui-mic-panel{padding:20px!important;background:#eaf8f7!important;border:1px solid #ccebe7!important;border-radius:22px!important;}
+.hg-ui-active #waveContainer {display:none!important;} /* 기존 반복 CSS 파형은 실제 음량 그래프가 아니므로 노출하지 않는다. */
+.hg-ui-active #sttStatusText {font-size:15px!important;line-height:1.7!important;}.hg-ui-active #userSpokenFeedback{margin-top:10px;font-size:16px!important;}
+.hg-ui-active #handsFreeStateBar {min-height:64px;background:var(--hg-ui-teal)!important;border-radius:18px!important;box-shadow:none!important;}
+.hg-ui-active #handsFreeContainer>div:last-child {flex-wrap:wrap;gap:8px;font-size:11px!important;}
+.hg-ui-active .hg-ui-result-card{border:1px solid #b7ded5!important;border-radius:22px!important;padding:20px!important;}
+.hg-ui-active #coloredWords{display:none!important;} /* 전체 일치도를 단어별 발음 평가로 오인하지 않게 한다. */
+.hg-ui-active #polishText{padding:14px!important;line-height:1.8!important;background:#f5faf9!important;}
+.hg-ui-active #passFailBadge{white-space:normal;font-size:15px!important;line-height:1.6;}.hg-ui-active #comboBadge{display:none;}
+.hg-ui-active[data-hg-mode="words"] #handsFreeContainer,.hg-ui-active[data-hg-mode="words"] .hg-ui-mic-panel,.hg-ui-active[data-hg-mode="words"] #feedbackSheet {display:none!important;}
+.hg-ui-active #chatLog {max-height:450px!important;min-height:180px;background:#f7fbfa!important;border:1px solid var(--hg-ui-line)!important;padding:16px!important;}
+.hg-ui-active #chatLog>div>div:last-child {font-size:16px!important;line-height:1.6!important;max-width:90%!important;border-radius:20px!important;box-shadow:none!important;}
+.hg-ui-active #chatLog>div[style*="flex-end"]>div{background:#dff5ef!important;color:var(--hg-ui-ink)!important;}
+.hg-ui-active #rpInputArea {border:1px solid var(--hg-ui-line)!important;box-shadow:none!important;border-radius:22px!important;padding:18px!important;}
+.hg-ui-active #rpTextInput {min-width:0;min-height:48px;font-size:15px!important;}.hg-ui-active #rpMicStatus{line-height:1.5;}
+.hg-ui-rp-tools {display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}.hg-ui-rp-tools .hg-ui-note{flex:1 1 200px;margin:0;}.hg-ui-rp-tools button{width:auto;margin:0;}
+.hg-ui-active .hgl-ov{background:#f1f8f7!important;}.hg-ui-active .hgl-in{max-width:900px!important;}.hg-ui-active .hgl button{min-height:48px!important;}.hg-ui-active .hgl-head{background:#eff9f7!important;color:var(--hg-ui-ink)!important;}
+.hg-ui-active .hgl-c{border-radius:14px!important;}.hg-ui-active .hgl-chip.on,.hg-ui-active .hgl-step.on,.hg-ui-active .hgl-stage.on{background:#e0f5f0!important;color:#086971!important;border-color:var(--hg-ui-teal)!important;}
+.hg-ui-active #hgScriptView{font-size:16px;}.hg-ui-active #hgScriptView button{min-height:48px!important;}
+.hg-ui-active #viewOnboarding{padding:16px 24px!important;}.hg-ui-active #obStep2>div:last-child{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px!important;}
+.hg-ui-active #obStep2 .choice-card{min-width:0;display:flex;flex-direction:column;align-items:flex-start;padding:16px!important;border-radius:20px!important;background:#f4fbf9;border:2px solid var(--hg-ui-line);}
+.hg-ui-active #obStep2 .choice-card.selected{border-color:var(--hg-ui-teal)!important;background:#e3f6f0!important;}.hg-ui-active #obStep2 .choice-card div{font-size:14px!important;overflow-wrap:anywhere;}
+.hg-ui-active #viewOnboarding button {min-height:48px!important;}.hg-ui-active .modal-sheet button{min-height:48px!important;}.hg-ui-active .modal-sheet{border-radius:24px!important;max-width:720px!important;}
+.hg-ui-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:940px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--hg-ui-line);background:#fffffff5;backdrop-filter:blur(12px);padding:8px 12px max(10px,env(safe-area-inset-bottom));z-index:50;}
+.hg-ui-nav button{border:0;background:none;color:#70818b;min-height:54px;padding:4px 2px;font-size:11px!important;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;}.hg-ui-nav button span{font-size:21px;font-weight:700;line-height:1.1;}.hg-ui-nav [aria-current="page"]{color:var(--hg-ui-teal);background:#e6f6f1;border-radius:14px;}
+.hg-ui-status:empty{display:none;}.hg-ui-status{padding:12px 24px;color:#97562d;font-size:13px;}
+@media(min-width:700px){.hg-ui-page{padding:0 40px 32px;}.hg-ui-header{padding:24px 40px 16px;}.hg-ui-hero{grid-template-columns:1fr 170px;min-height:200px;}.hg-ui-hero h1{font-size:38px;}.hg-ui-shortcuts{grid-template-columns:repeat(4,minmax(0,1fr));}.hg-ui-language-grid{grid-template-columns:repeat(3,minmax(0,1fr));}.hg-ui-active #viewCanvas{padding:0 40px 32px!important;}.hg-ui-lesson-header .hg-ui-fox{width:120px;}.hg-ui-tools{grid-template-columns:repeat(3,minmax(0,1fr));}.hg-ui-active #obStep2>div:last-child{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:359px){.hg-ui-page{padding:0 16px 20px;}.hg-ui-header{padding:16px;}.hg-ui-hero{grid-template-columns:minmax(0,1fr) 94px;}.hg-ui-hero h1{font-size:26px;}.hg-ui-active #viewCanvas{padding:0 16px 20px!important;}.hg-ui-lesson-header .hg-ui-fox{width:70px;}.hg-ui-lesson-card{padding:18px;}.hg-ui-shortcut{padding:14px 12px;}.hg-ui-shortcut strong{font-size:16px;}.hg-ui-global-tools{margin:10px 16px;}}
+.hg-ui-active .hg-ui-global-tools .app-header {flex-wrap:wrap;gap:8px;}
+.hg-ui-active #rpSessionContextBanner button {background:var(--hg-ui-teal)!important;color:white!important;}
+.hg-ui-active #roundBadge {white-space:nowrap;flex-shrink:0;}
+.hg-ui-active[data-hg-mode="feedback"] #hgArtCard {display:none!important;}
+.hg-ui-active[data-hg-mode="feedback"] .hg-ui-phrase-card {padding:16px!important;}
+.hg-ui-active[data-hg-mode="feedback"] #targetDisplay {margin:10px 0!important;}
+.hg-ui-active #hgArtCard {background:#eff9f6!important;border-color:var(--hg-ui-line)!important;}
+@media(prefers-reduced-motion:reduce){.hg-ui-page *,.hg-ui-nav *{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
+@media(prefers-reduced-motion:reduce){.hg-ui-active .hg-ripple{display:none!important;}}
+/* 회화 머리줄: 좁은 화면(접힌 폴드 411px)에서 제목과 버튼이 한 줄에 눌리지 않게 줄바꿈 (실기기 2026-10-26) */
+.hg-ui-active #rpSessionContextBanner { flex-wrap:wrap; gap:8px; }
+.hg-ui-active #rpSessionContextBanner > div:first-child { flex:1 1 100%; min-width:0; }
+.hg-ui-active #rpSessionContextBanner > div:last-child { flex:1 1 100%; gap:8px; }
+.hg-ui-active #rpSessionContextBanner > div:last-child button { flex:1 1 0; min-height:48px; }
+.hg-ui-active #rpInputArea > div:first-child { flex-wrap:wrap; gap:4px 8px; }
+@media (min-width:600px) { .hg-ui-active #rpSessionContextBanner > div:first-child, .hg-ui-active #rpSessionContextBanner > div:last-child { flex:1 1 auto; } }
+/* 입력 중(키보드 표시)에는 하단 메뉴를 숨겨 입력칸·전송 버튼이 가려지지 않게 */
+.hg-ui-typing #hgUiNav { display:none!important; }

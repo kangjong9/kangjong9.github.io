@@ -1,67 +1,72 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="400" height="260" viewBox="0 0 400 260">
-  <!-- 홈페이지 프로젝트 카드(한걸음V1.0 Exile). 원본은 여기, publish_nuri_voice.py가 assets/projects/hangeoreum.svg로 배포한다.
-       카드는 화면에서 절반 가까이 줄어 보이므로 글자는 크게, 내용은 '안드로메다 유배 + 6개 언어 + TTS 엔진'만. -->
+  <!-- 홈페이지 프로젝트 카드(한걸음 Exile, UI 리뉴얼 V3.1 톤). 원본은 여기, publish_nuri_voice.py가 assets/projects/hangeoreum.svg로 배포한다.
+       카드는 화면에서 절반 가까이 줄어 보이므로 글자는 크게, 내용은 '안드로메다 유배 + 6개 언어 + TTS 엔진'만.
+       여우 그림은 app/src/main/assets/images/hg-guide-fox.svg를 그대로 넣었다(img로 표시되므로 외부 참조 불가). -->
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0B1026"/>
-      <stop offset=".55" stop-color="#1E1B4B"/>
-      <stop offset="1" stop-color="#3B0764"/>
-    </linearGradient>
-    <radialGradient id="galaxy" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="#FDF4FF" stop-opacity=".95"/>
-      <stop offset=".25" stop-color="#C4B5FD" stop-opacity=".6"/>
-      <stop offset="1" stop-color="#7C3AED" stop-opacity="0"/>
+    <radialGradient id="bg" cx=".25" cy=".1" r="1.1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset=".55" stop-color="#E9F8F5"/>
+      <stop offset="1" stop-color="#CDEDE6"/>
     </radialGradient>
-    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FDE047" stop-opacity=".55"/>
-      <stop offset="1" stop-color="#FDE047" stop-opacity="0"/>
-    </linearGradient>
   </defs>
-  <rect width="400" height="260" rx="24" fill="url(#sky)"/>
+  <rect width="400" height="260" rx="24" fill="url(#bg)"/>
 
-  <!-- 안드로메다 은하 -->
-  <g transform="rotate(-28 340 48)">
-    <ellipse cx="340" cy="48" rx="62" ry="17" fill="url(#galaxy)"/>
-    <ellipse cx="340" cy="48" rx="34" ry="8" fill="#F5D0FE" opacity=".55"/>
-  </g>
-  <!-- 별 -->
-  <g fill="#FFFFFF">
-    <circle cx="34" cy="30" r="1.6"/><circle cx="92" cy="18" r="1.1"/><circle cx="58" cy="70" r="1.2"/>
-    <circle cx="140" cy="40" r="1"/><circle cx="262" cy="22" r="1.3"/><circle cx="380" cy="104" r="1.2"/>
-    <circle cx="22" cy="118" r="1"/><circle cx="300" cy="86" r="1"/>
-  </g>
-  <path d="M60 40 L62 34 L64 40 L70 42 L64 44 L62 50 L60 44 L54 42 Z" fill="#FDE047"/>
+  <!-- 안드로메다 별빛 -->
+  <g fill="#087F8C" opacity=".28"><circle cx="30" cy="26" r="2.2"/><circle cx="378" cy="22" r="2.6"/><circle cx="152" cy="18" r="1.6"/><circle cx="388" cy="118" r="1.8"/></g>
+  <g fill="#E97556" opacity=".35"><circle cx="128" cy="40" r="1.8"/><circle cx="22" cy="190" r="1.6"/></g>
+  <path d="M352 50 L354 44 L356 50 L362 52 L356 54 L354 60 L352 54 L346 52 Z" fill="#087F8C" opacity=".45"/>
 
-  <!-- UFO (엑자일) -->
-  <path d="M187 44 L213 44 L226 74 L174 74 Z" fill="url(#beam)"/>
-  <ellipse cx="200" cy="30" rx="13" ry="11" fill="#38BDF8"/>
-  <ellipse cx="196" cy="26" rx="4" ry="3" fill="#E0F2FE"/>
-  <ellipse cx="200" cy="38" rx="32" ry="9" fill="#94A3B8"/>
-  <ellipse cx="200" cy="36" rx="32" ry="6" fill="#CBD5E1"/>
-  <g fill="#1E293B"><circle cx="180" cy="39" r="2"/><circle cx="190" cy="41" r="2"/><circle cx="200" cy="42" r="2"/><circle cx="210" cy="41" r="2"/><circle cx="220" cy="39" r="2"/></g>
+  <!-- Exile 여우 -->
+  <svg x="6" y="18" width="156" height="156" viewBox="0 0 260 260">
+ <defs>
+  <linearGradient id="fox-fur" x2=".8" y2="1"><stop stop-color="#ffce82"/><stop offset=".6" stop-color="#f39a43"/><stop offset="1" stop-color="#d66c32"/></linearGradient>
+  <linearGradient id="fox-scarf" x2="1" y2="1"><stop stop-color="#31c9c1"/><stop offset="1" stop-color="#087f8c"/></linearGradient>
+  <radialGradient id="fox-cream"><stop stop-color="#fffdf2"/><stop offset="1" stop-color="#f9dfb2"/></radialGradient>
+ </defs>
+ <ellipse cx="133" cy="242" rx="82" ry="10" fill="#17324d" opacity=".07"/>
+ <path d="M176 220Q245 232 236 161Q214 182 201 164Q206 198 173 191" fill="url(#fox-fur)"/>
+ <path d="M236 161Q242 185 231 206Q223 185 208 180L201 164Q218 175 236 161" fill="url(#fox-cream)"/>
+ <path d="M91 173Q75 210 89 238L166 239Q181 209 161 171" fill="url(#fox-fur)"/>
+ <ellipse cx="129" cy="218" rx="27" ry="26" fill="url(#fox-cream)"/>
+ <path d="M76 86Q33 62 46 13Q80 23 97 64M160 65Q190 17 224 22Q230 61 195 92" fill="url(#fox-fur)" stroke="#bd6534" stroke-width="5" stroke-linejoin="round"/>
+ <path d="M56 30Q58 65 82 75L86 61Q72 42 56 30M211 38Q192 45 177 68L192 79Q208 64 211 38" fill="#f8d2af"/>
+ <path d="M65 95Q71 53 124 51L134 36L144 53Q189 55 203 97L218 113L198 122Q201 170 134 180Q64 173 61 129L43 117Z" fill="url(#fox-fur)"/>
+ <path d="M58 118Q89 111 117 129Q128 136 140 127Q168 110 204 116Q200 168 133 178Q70 168 58 118" fill="url(#fox-cream)"/>
+ <ellipse cx="97" cy="113" rx="20" ry="25" fill="#fffaf0"/><ellipse cx="97" cy="116" rx="11" ry="17" fill="#583420"/><ellipse cx="98" cy="118" rx="7" ry="12" fill="#1d2028"/><ellipse cx="101" cy="109" rx="5" ry="6" fill="white"/>
+ <path d="M156 119Q167 104 178 118" fill="none" stroke="#593c2d" stroke-width="6" stroke-linecap="round"/>
+ <path d="M84 79Q95 71 106 78M157 79Q168 74 177 81" fill="none" stroke="#89502d" stroke-width="6" stroke-linecap="round"/>
+ <g fill="none" stroke="#234455" stroke-width="4"><circle cx="97" cy="115" r="31"/><circle cx="166" cy="115" r="31"/><path d="M128 113Q131 109 135 113M64 105L53 101M197 105L209 101"/></g>
+ <path d="M120 138Q132 128 144 138Q134 153 120 138" fill="#42332c"/>
+ <path d="M116 154Q134 165 151 151Q148 173 133 173Q120 169 116 154" fill="#66332c"/><path d="M127 168Q139 158 146 167Q137 177 127 168" fill="#ed8a83"/>
+ <ellipse cx="76" cy="142" rx="12" ry="6" fill="#e99580" opacity=".5"/><ellipse cx="187" cy="140" rx="11" ry="6" fill="#e99580" opacity=".5"/>
+ <path d="M82 174Q132 193 174 173L171 194L140 208L125 198L91 193Z" fill="url(#fox-scarf)"/>
+ <path d="M138 196L168 202L148 231L132 211" fill="url(#fox-scarf)"/>
+ <g fill="white"><ellipse cx="119" cy="191" rx="6" ry="5"/><circle cx="110" cy="184" r="3"/><circle cx="118" cy="181" r="3"/><circle cx="126" cy="184" r="3"/></g>
+ <path d="M88 199Q64 198 51 173L41 151" fill="none" stroke="url(#fox-fur)" stroke-width="25" stroke-linecap="round"/>
+ <ellipse cx="40" cy="147" rx="20" ry="25" transform="rotate(-25 40 147)" fill="url(#fox-fur)"/>
+ <g fill="#734330"><ellipse cx="41" cy="151" rx="8" ry="10"/><ellipse cx="27" cy="139" rx="4" ry="5"/><ellipse cx="37" cy="132" rx="4" ry="5"/><ellipse cx="48" cy="135" rx="4" ry="5"/></g>
+ <path d="M203 92Q219 119 204 146L174 153" fill="none" stroke="#254452" stroke-width="6" stroke-linecap="round"/><rect x="163" y="147" width="21" height="11" rx="5" fill="#254452"/>
+ <path d="M16 101L23 108M22 91L28 94M11 114L19 116" stroke="#0b9fa9" stroke-width="3" stroke-linecap="round"/>
+</svg>
 
-  <g font-family="'Pretendard','Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif" text-anchor="middle">
-    <text x="200" y="68" fill="#818CF8" font-size="11" font-weight="800" letter-spacing="2.5">ANDROMEDA EXILE AI PROJECT</text>
-    <text x="200" y="101" fill="#FFFFFF" font-size="30" font-weight="900" letter-spacing="-0.5">한걸음 V1.0 <tspan fill="#A5B4FC">Exile</tspan></text>
-    <text x="200" y="127" fill="#E0E7FF" font-size="15" font-weight="700">안드로메다에서 유배 온 AI 튜터 엑자일</text>
+  <g font-family="'Pretendard','Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif">
+    <text x="164" y="44" fill="#087F8C" font-size="10.5" font-weight="900" letter-spacing="1.6">ANDROMEDA EXILE AI</text>
+    <text x="162" y="82" fill="#17324D" font-size="32" font-weight="900" letter-spacing="-1">한걸음 <tspan fill="#087F8C">Exile</tspan></text>
+    <text x="164" y="106" fill="#5C7180" font-size="13.5" font-weight="700">안드로메다에서 유배 온</text>
+    <text x="164" y="125" fill="#5C7180" font-size="13.5" font-weight="700">안내 AI <tspan fill="#087F8C" font-weight="900">Exile</tspan>과 50단계</text>
 
     <!-- 6개 언어 -->
-    <g font-size="15" font-weight="800" fill="#0F172A">
-      <rect x="24" y="140" width="112" height="28" rx="14" fill="#FDE68A"/><text x="80" y="159">영어</text>
-      <rect x="144" y="140" width="112" height="28" rx="14" fill="#FBCFE8"/><text x="200" y="159">일본어</text>
-      <rect x="264" y="140" width="112" height="28" rx="14" fill="#FECACA"/><text x="320" y="159">중국어</text>
-      <rect x="24" y="174" width="112" height="28" rx="14" fill="#BFDBFE"/><text x="80" y="193">프랑스어</text>
-      <rect x="144" y="174" width="112" height="28" rx="14" fill="#FED7AA"/><text x="200" y="193">스페인어</text>
-      <rect x="264" y="174" width="112" height="28" rx="14" fill="#C7D2FE"/><text x="320" y="193">러시아어</text>
+    <g font-size="13" font-weight="800" fill="#17324D" text-anchor="middle">
+      <rect x="164" y="138" width="70" height="26" rx="13" fill="#FFF1C7"/><text x="199" y="156">영어</text><rect x="240" y="138" width="70" height="26" rx="13" fill="#FFE0E6"/><text x="275" y="156">일본어</text><rect x="316" y="138" width="70" height="26" rx="13" fill="#FFE3D6"/><text x="351" y="156">중국어</text><rect x="164" y="170" width="70" height="26" rx="13" fill="#DCEBFF"/><text x="199" y="188">프랑스어</text><rect x="240" y="170" width="70" height="26" rx="13" fill="#FFEBD1"/><text x="275" y="188">스페인어</text><rect x="316" y="170" width="70" height="26" rx="13" fill="#E3E4FF"/><text x="351" y="188">러시아어</text>
     </g>
 
     <!-- TTS 엔진 -->
-    <rect x="24" y="212" width="352" height="34" rx="12" fill="#38BDF8" fill-opacity=".16" stroke="#38BDF8" stroke-width="1.5"/>
-    <g fill="#7DD3FC" transform="translate(86 220)">
+    <rect x="18" y="208" width="364" height="36" rx="13" fill="#087F8C"/>
+    <g fill="#FFFFFF" transform="translate(98 217)">
       <rect x="0" y="0" width="8" height="12" rx="4"/>
-      <path d="M-3 8 A7 7 0 0 0 11 8" stroke="#7DD3FC" stroke-width="2" fill="none"/>
+      <path d="M-3 8 A7 7 0 0 0 11 8" stroke="#FFFFFF" stroke-width="2" fill="none"/>
       <rect x="3" y="15" width="2" height="4"/>
     </g>
-    <text x="208" y="235" fill="#FFFFFF" font-size="16" font-weight="900">누리 보이스 TTS 엔진 탑재</text>
+    <text x="212" y="232" fill="#FFFFFF" font-size="16" font-weight="900" text-anchor="middle">누리 보이스 TTS 엔진 탑재</text>
   </g>
 </svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" role="img" aria-label="안경과 청록 스카프를 한 학습 안내 친구 Exile">
+ <defs>
+  <linearGradient id="fur" x2=".8" y2="1"><stop stop-color="#ffce82"/><stop offset=".6" stop-color="#f39a43"/><stop offset="1" stop-color="#d66c32"/></linearGradient>
+  <linearGradient id="scarf" x2="1" y2="1"><stop stop-color="#31c9c1"/><stop offset="1" stop-color="#087f8c"/></linearGradient>
+  <radialGradient id="cream"><stop stop-color="#fffdf2"/><stop offset="1" stop-color="#f9dfb2"/></radialGradient>
+ </defs>
+ <ellipse cx="133" cy="242" rx="82" ry="10" fill="#17324d" opacity=".07"/>
+ <path d="M176 220Q245 232 236 161Q214 182 201 164Q206 198 173 191" fill="url(#fur)"/>
+ <path d="M236 161Q242 185 231 206Q223 185 208 180L201 164Q218 175 236 161" fill="url(#cream)"/>
+ <path d="M91 173Q75 210 89 238L166 239Q181 209 161 171" fill="url(#fur)"/>
+ <ellipse cx="129" cy="218" rx="27" ry="26" fill="url(#cream)"/>
+ <path d="M76 86Q33 62 46 13Q80 23 97 64M160 65Q190 17 224 22Q230 61 195 92" fill="url(#fur)" stroke="#bd6534" stroke-width="5" stroke-linejoin="round"/>
+ <path d="M56 30Q58 65 82 75L86 61Q72 42 56 30M211 38Q192 45 177 68L192 79Q208 64 211 38" fill="#f8d2af"/>
+ <path d="M65 95Q71 53 124 51L134 36L144 53Q189 55 203 97L218 113L198 122Q201 170 134 180Q64 173 61 129L43 117Z" fill="url(#fur)"/>
+ <path d="M58 118Q89 111 117 129Q128 136 140 127Q168 110 204 116Q200 168 133 178Q70 168 58 118" fill="url(#cream)"/>
+ <ellipse cx="97" cy="113" rx="20" ry="25" fill="#fffaf0"/><ellipse cx="97" cy="116" rx="11" ry="17" fill="#583420"/><ellipse cx="98" cy="118" rx="7" ry="12" fill="#1d2028"/><ellipse cx="101" cy="109" rx="5" ry="6" fill="white"/>
+ <path d="M156 119Q167 104 178 118" fill="none" stroke="#593c2d" stroke-width="6" stroke-linecap="round"/>
+ <path d="M84 79Q95 71 106 78M157 79Q168 74 177 81" fill="none" stroke="#89502d" stroke-width="6" stroke-linecap="round"/>
+ <g fill="none" stroke="#234455" stroke-width="4"><circle cx="97" cy="115" r="31"/><circle cx="166" cy="115" r="31"/><path d="M128 113Q131 109 135 113M64 105L53 101M197 105L209 101"/></g>
+ <path d="M120 138Q132 128 144 138Q134 153 120 138" fill="#42332c"/>
+ <path d="M116 154Q134 165 151 151Q148 173 133 173Q120 169 116 154" fill="#66332c"/><path d="M127 168Q139 158 146 167Q137 177 127 168" fill="#ed8a83"/>
+ <ellipse cx="76" cy="142" rx="12" ry="6" fill="#e99580" opacity=".5"/><ellipse cx="187" cy="140" rx="11" ry="6" fill="#e99580" opacity=".5"/>
+ <path d="M82 174Q132 193 174 173L171 194L140 208L125 198L91 193Z" fill="url(#scarf)"/>
+ <path d="M138 196L168 202L148 231L132 211" fill="url(#scarf)"/>
+ <g fill="white"><ellipse cx="119" cy="191" rx="6" ry="5"/><circle cx="110" cy="184" r="3"/><circle cx="118" cy="181" r="3"/><circle cx="126" cy="184" r="3"/></g>
+ <path d="M88 199Q64 198 51 173L41 151" fill="none" stroke="url(#fur)" stroke-width="25" stroke-linecap="round"/>
+ <ellipse cx="40" cy="147" rx="20" ry="25" transform="rotate(-25 40 147)" fill="url(#fur)"/>
+ <g fill="#734330"><ellipse cx="41" cy="151" rx="8" ry="10"/><ellipse cx="27" cy="139" rx="4" ry="5"/><ellipse cx="37" cy="132" rx="4" ry="5"/><ellipse cx="48" cy="135" rx="4" ry="5"/></g>
+ <path d="M203 92Q219 119 204 146L174 153" fill="none" stroke="#254452" stroke-width="6" stroke-linecap="round"/><rect x="163" y="147" width="21" height="11" rx="5" fill="#254452"/>
+ <path d="M16 101L23 108M22 91L28 94M11 114L19 116" stroke="#0b9fa9" stroke-width="3" stroke-linecap="round"/>
+</svg>

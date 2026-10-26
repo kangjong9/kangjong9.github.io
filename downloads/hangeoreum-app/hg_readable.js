@@ -9,7 +9,7 @@
    - 한 요소는 원래 크기(data-hg-fs)를 한 번만 기록한다 — 단계를 바꾸면 기록된 원래 크기로 다시 계산
    폰 너비에 따른 배치는 hg_readable.css의 미디어 쿼리가 맡는다. */
 (function () {
-  const ROOTS = '#viewCanvas, #viewOnboarding, #openingSplashView, .modal-sheet, #hgCelebrate, .hgl-ov';
+  const ROOTS = '#viewHome, #viewLanguages, #viewFoundation, #viewCanvas, #viewOnboarding, #openingSplashView, .modal-sheet, #hgCelebrate, .hgl-ov';
   const SKIP = 'svg, svg *, canvas, script, style, #hgSpeakWave, #hgSpeakWave *, #hgTextSizeRow, #hgTextSizeRow *';
   const LEVELS = { normal: ['보통', 1], large: ['크게', 1.12], xlarge: ['아주 크게', 1.25] };
   const KEY = 'hg_text_size';

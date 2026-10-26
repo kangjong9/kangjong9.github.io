@@ -9,6 +9,7 @@
   <script src="../../assets/gemini_human_voice_engine.js"></script>
   <script src="../../assets/our_voice_master_engine.js"></script>
   <link rel="stylesheet" href="hg_readable.css">
+  <link rel="stylesheet" href="hg_ui.css">
   <script src="hg_voice_io.js"></script>
   <script src="hg_readable.js"></script>
   <script src="curriculum_v2_fr.js"></script>
@@ -621,33 +622,37 @@
     <!-- =========================================================
        [옵빠야 지침] 우주 은하 감각적 오프닝 화면 (시각 말풍선/문자 배제 & 오직 음성 브리핑만 실행)
        ========================================================= -->
-  <div id="openingSplashView" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; color:#ffffff; transition:opacity 0.5s ease, visibility 0.5s ease; font-family:sans-serif;">
-    <div style="position:absolute; width:100%; height:100%; top:0; left:0; background:radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(0,0,0,0) 70%); pointer-events:none;"></div>
-    
-    <div style="max-width:440px; width:100%; text-align:center; position:relative; z-index:2;">
-      <div id="openingAiAvatar" onclick="handleAiAvatarTap(event)" style="cursor:pointer; display:inline-block; font-size:52px; margin-bottom:12px; filter:drop-shadow(0 0 16px rgba(129,140,248,0.6)); animation:pulse 2s infinite ease-in-out;" title="AI 엑자일 프로필 (연속 5번 터치 시 관리자 모드)">🛸</div>
-      <div style="font-size:13px; font-weight:800; letter-spacing:3px; color:#818cf8; text-transform:uppercase; margin-bottom:8px;">Andromeda Exile AI Project</div>
-      <h1 style="font-size:32px; font-weight:900; margin:0 0 14px 0; background:linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #818cf8 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 30px rgba(99,102,241,0.3);">한걸음 V1.0 Exile</h1>
+  <!-- 2026-10-26 리뉴얼 톤 맞춤: 어두운 우주 → 홈과 같은 민트·청록 + Exile 여우. id/onclick(관리자 5번 터치·음성 브리핑·건너뛰기)은 그대로 -->
+  <div id="openingSplashView" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:radial-gradient(ellipse at top, #ffffff 0%, #e9f8f5 55%, #d7f0ea 100%); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; box-sizing:border-box; color:#17324d; transition:opacity 0.5s ease, visibility 0.5s ease; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; overflow:hidden;">
+    <!-- 안드로메다 별빛: 옅은 청록 점 몇 개 -->
+    <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at 14% 18%, #087f8c33 0 2px, transparent 3px), radial-gradient(circle at 82% 12%, #087f8c2b 0 3px, transparent 4px), radial-gradient(circle at 90% 46%, #e9755633 0 2px, transparent 3px), radial-gradient(circle at 8% 62%, #087f8c22 0 3px, transparent 4px), radial-gradient(circle at 76% 84%, #087f8c26 0 2px, transparent 3px), radial-gradient(circle at 22% 90%, #e975562b 0 2px, transparent 3px);"></div>
 
-      <!-- 외계 AI 엑자일 교화 브리핑: 시각적 말풍선 없이 분위기 유지 & 음성 브리핑만 실행 -->
-      <div style="font-size:14px; color:#94a3b8; line-height:1.6; margin-bottom:24px;">
-        지구에서 250만 광년 떨어진 안드로메다 유배지...<br>
-        외계 AI <strong style="color:#a5b4fc;">엑자일</strong>과 함께 지구인 언어 50단계를 마스터하고<br>
-        자유를 향한 사면장을 획득하십시오!
+    <div style="max-width:420px; width:100%; text-align:center; position:relative; z-index:2;">
+      <div id="openingAiAvatar" onclick="handleAiAvatarTap(event)" style="cursor:pointer; display:inline-block; margin-bottom:6px; animation:pulse 2.4s infinite ease-in-out;" title="Exile 프로필 (연속 5번 터치 시 관리자 모드)">
+        <img src="images/hg-guide-fox.svg" alt="학습 안내 친구 Exile" style="display:block; width:150px; height:auto; filter:drop-shadow(0 10px 8px #cb793222);">
+      </div>
+      <div style="font-size:12px; font-weight:900; letter-spacing:2.5px; color:#087f8c; text-transform:uppercase; margin-bottom:8px;">Andromeda Exile AI Project</div>
+      <h1 style="font-size:32px; font-weight:900; letter-spacing:-1px; line-height:1.25; margin:0 0 12px 0; color:#17324d;">한걸음 <span style="color:#087f8c;">Exile</span></h1>
+
+      <!-- 외계 AI Exile 교화 브리핑: 시각적 말풍선 없이 분위기 유지 & 음성 브리핑만 실행 -->
+      <div style="font-size:14px; color:#5c7180; line-height:1.7; margin-bottom:22px; word-break:keep-all;">
+        지구에서 250만 광년 떨어진 안드로메다에서 유배 온<br>
+        안내 AI <strong style="color:#087f8c;">Exile</strong>과 함께 언어 50단계를 마스터하고<br>
+        Exile의 사면장을 받아 주세요!
       </div>
 
       <!-- 실시간 음성 브리핑 재생 상태 배지 (클릭 시 다시 듣기) -->
-      <div id="openingVoiceStatusBadge" onclick="speakOpeningBriefingVoiceOnly()" style="display:inline-flex; align-items:center; gap:8px; background:rgba(99,102,241,0.22); border:1.5px solid rgba(129,140,248,0.5); border-radius:14px; padding:10px 18px; font-size:13px; font-weight:800; color:#e0e7ff; margin-bottom:28px; cursor:pointer; box-shadow:0 4px 15px rgba(99,102,241,0.25);" title="클릭 시 엑자일 음성 브리핑 다시 듣기">
+      <div id="openingVoiceStatusBadge" onclick="speakOpeningBriefingVoiceOnly()" style="display:inline-flex; align-items:center; gap:8px; background:#ffffff; border:1.5px solid #dceae8; border-radius:14px; padding:10px 18px; font-size:13px; font-weight:800; color:#087f8c; margin-bottom:24px; cursor:pointer; box-shadow:0 8px 28px #153f4914;" title="클릭 시 Exile 음성 브리핑 다시 듣기">
         <span id="openingVoiceIcon">🔊</span>
-        <span id="openingVoiceText">AI 엑자일 음성 브리핑 듣는 중...</span>
+        <span id="openingVoiceText">Exile 음성 브리핑 듣는 중...</span>
       </div>
 
-      <button type="button" class="btn-3d" onclick="dismissOpeningSplash()" style="width:100%; padding:16px 20px; font-size:17px; font-weight:900; background:linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color:#ffffff; border-radius:16px; border:none; cursor:pointer; box-shadow:0 8px 24px rgba(79,70,229,0.4); display:flex; align-items:center; justify-content:center; gap:8px;">
-        <span>🚀 우주 교화 여정 시작하기</span>
+      <button type="button" class="btn-3d" onclick="dismissOpeningSplash()" style="width:100%; min-height:54px; padding:15px 20px; font-size:17px; font-weight:900; background:#087f8c; color:#ffffff; border-radius:16px; border:1px solid #087f8c; cursor:pointer; box-shadow:0 4px 0 #075e6b; display:flex; align-items:center; justify-content:center; gap:8px;">
+        <span>Exile과 첫걸음 시작하기</span>
       </button>
 
-      <div style="margin-top:16px;">
-        <button type="button" onclick="dismissOpeningSplash()" style="background:none; border:none; color:#64748b; font-size:12px; cursor:pointer; text-decoration:underline;">건너뛰기</button>
+      <div style="margin-top:14px;">
+        <button type="button" onclick="dismissOpeningSplash()" style="background:none; border:none; color:#5c7180; font-size:13px; min-height:44px; padding:0 16px; cursor:pointer; text-decoration:underline;">건너뛰기</button>
       </div>
     </div>
   </div>
@@ -1547,7 +1552,7 @@
 
       <p style="font-size:14px; color:#475569; margin-bottom:16px; line-height:1.5;">
 
-        Google AI Studio에서 발급받은 무료 <strong>Gemini API 키</strong>를 입력하면, 엑자일의 초정밀 실시간 AI 발음/상황 코칭이 활성화됩니다. 키가 없어도 내장 오프라인 분석 엔진으로 100% 정상 작동합니다!
+        Google AI Studio에서 발급받은 무료 <strong>Gemini API 키</strong>를 입력하면, 기존 AI 상황 코칭을 사용할 수 있습니다. 키가 없거나 연결되지 않으면 내장 연습 기능을 사용합니다. 음성인식·음성 재생 가능 여부는 기기와 공급자 상태에 따라 다릅니다. 문장 일치도는 정밀 발음 평가가 아닙니다.
 
       </p>
 
@@ -19155,6 +19160,7 @@ function getCurrentRoundData() {
       else if (selectedLang === 'es') speechRecognizer.lang = 'es-ES';
       else if (selectedLang === 'ru') speechRecognizer.lang = 'ru-RU';
       else speechRecognizer.lang = 'ko-KR';
+      { const hintRd = getCurrentRoundData(); speechRecognizer.hints = hintRd && hintRd.target ? [hintRd.target] : []; }  // 목표 문장 인식 힌트
 
       speechRecognizer.onstart = () => {
         isRecordingSTT = true;
@@ -19261,12 +19267,14 @@ function getCurrentRoundData() {
     if (!str) return '';
     lang = lang || (typeof selectedLang !== 'undefined' ? selectedLang : '');
     const nums = JUDGE_NUM[lang];
-    let s = String(str);
+    // 튜터 이름 Exile: 교재는 エグザイル·艾克赛尔·Эксайл로 적지만 인식기는 'EXILE'로 돌려준다 (실기기 2026-10-26: 「私は EXILE です」가 42%로 불합격)
+    let s = String(str).replace(/exile|エ[グク]ザイル|艾克[赛塞]尔|Экс[ао]йл|Экз[ао]йл/gi, ' exile ');
     if (nums) s = s.replace(/\d+/g, d => (+d <= 12 ? (lang === 'cn' || lang === 'ja' ? nums[+d] : ` ${nums[+d]} `) : d));
     if (lang === 'cn') s = s.replace(/[她它得地再作坐座事市试室嘛两又衣医狠象]/g, c => JUDGE_CN_SAME[c]);
     return s.toLowerCase()
       .normalize('NFD')
       .replace(/[̀-ͯ]/g, '')
+      .normalize('NFC')  // 탁점 재결합: NFD로 둔 채 비교하면 じ가 し+゛ 두 글자가 되어 はじめまして가 57점으로 떨어졌다 (실기기 2026-10-26)
       .replace(/[ァ-ヶ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60))  // 가타카나 → 히라가나
       .replace(/ー/g, '')
       .replace(/[^a-z0-9Ѐ-ӿ぀-ヿ㐀-䶿一-鿿가-힯\s]/gu, '')
@@ -19285,6 +19293,25 @@ function getCurrentRoundData() {
     }
     const maxLen = Math.max(a.length, b.length);
     return Math.round(((maxLen - prev[a.length]) / maxLen) * 100);
+  }
+
+  // 가나 문장(kana)과 한자 섞인 문장(mixed)의 편집 거리 점수 — mixed의 한자는 가나 1~3자와 비용 0으로 맞는다
+  function kanjiReadingScore(kana, mixed) {
+    const n = kana.length, m = mixed.length, INF = 1e9;
+    if (!n || !m) return 0;
+    const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(INF));
+    dp[0][0] = 0;
+    for (let i = 0; i <= n; i++) for (let j = 0; j <= m; j++) {
+      const v = dp[i][j];
+      if (v === INF) continue;
+      if (i < n) dp[i + 1][j] = Math.min(dp[i + 1][j], v + 1);
+      if (j >= m) continue;
+      dp[i][j + 1] = Math.min(dp[i][j + 1], v + 1);
+      if (/[㐀-䶿一-鿿]/.test(mixed[j])) {
+        for (let k = 1; k <= 3 && i + k <= n; k++) dp[i + k][j + 1] = Math.min(dp[i + k][j + 1], v);
+      } else if (i < n) dp[i + 1][j + 1] = Math.min(dp[i + 1][j + 1], v + (kana[i] === mixed[j] ? 0 : 1));
+    }
+    return Math.max(0, Math.round(((n - dp[n][m]) / n) * 100));
   }
 
   function calculateSimilarity(s1, s2) {
@@ -19306,6 +19333,11 @@ function getCurrentRoundData() {
     if (/[぀-ゟ]/.test(str1 + str2) && kanji.test(str1 + str2)) {
       const k1 = str1.replace(kanji, '').replace(/ /g, ''), k2 = str2.replace(kanji, '').replace(/ /g, '');
       if (k1.length >= 2 && k2.length >= 2) score = Math.max(score, levenshteinScore(k1, k2));
+      // 한자 한 글자를 가나 1~3자로 읽어 맞춰 본다(初めまして ↔ はじめまして). 한자가 가나보다 많으면 오인 합격을 막으려 생략
+      const a = str1.replace(/ /g, ''), b = str2.replace(/ /g, '');
+      const has = s => (s.match(/[㐀-䶿一-鿿]/g) || []).length;
+      const [kana, mixed] = has(a) ? [b, a] : [a, b];
+      if (!has(kana) && has(mixed) <= mixed.length - has(mixed)) score = Math.max(score, kanjiReadingScore(kana, mixed));
     }
 
     // 단어 일치율 보완 (어순 또는 조사 약간 상이한 경우 구제)
@@ -19370,22 +19402,22 @@ function getCurrentRoundData() {
         badge.style.background = "#dcfce7";
         badge.style.color = "#166534";
         badge.style.border = "1.5px solid #86efac";
-        badge.innerHTML = `🎉 [합격] 발음 통과! (일치도 ${score}점)`;
+        badge.innerHTML = `문장 일치도 ${score}% · 연습 통과`;
       }
 
       if (statusEl) {
-        statusEl.innerHTML = `<span style="color:#166534; font-weight:900;">🎉 [합격] ${score}점 획득! 완벽한 발음입니다.</span>`;
+        statusEl.innerHTML = `<span style="color:#166534; font-weight:900;">인식된 문장 일치도 ${score}% · 다음 연습을 진행할 수 있어요.</span>`;
       }
 
       if (polishText) {
-        polishText.innerHTML = `AI 엑자일 칭찬: <strong>"정확한 발음입니다! ${userName}님 아주 훌륭해요!"</strong><br><span style='color:#6366f1; font-size:13px;'>원문: ${roundData.target}</span>`;
+        polishText.innerHTML = `문장 연습 안내: <strong>"목표 문장과 인식 결과가 기준 이상 일치해요."</strong><br><span style='color:#6366f1; font-size:13px;'>원문: ${roundData.target}</span>`;
       }
 
-      updateHandsFreeStatus('passed', `🎉 [합격] 발음 통과 (${score}점)! 1.2초 후 다음으로 자동 진행...`);
+      updateHandsFreeStatus('passed', `문장 일치도 ${score}% · 연습 통과! 1.2초 후 다음으로 자동 진행...`);
 
       if (noticeEl) {
         if (currentRound < 4) {
-          noticeEl.innerHTML = `<span style='color:#166534;'>🎉 [합격 관문 통과] ${score}점 달성! 잠시 후 다음 관문으로 자동 이동합니다.</span>`;
+          noticeEl.innerHTML = `<span style='color:#166534;'>문장 일치도 ${score}% · 잠시 후 다음 연습으로 이동합니다.</span>`;
         } else {
           noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4개 관문 올클리어] 축하합니다! 새로운 레벨과 맥락으로 자동 승급합니다!</span>`;
         }
@@ -19418,17 +19450,17 @@ function getCurrentRoundData() {
         badge.style.background = "#fee2e2";
         badge.style.color = "#991b1b";
         badge.style.border = "1.5px solid #fca5a5";
-        badge.innerHTML = `⚠️ [불합격] 재도전 권장 (${score}점 / 60점 기준)`;
+        badge.innerHTML = `문장 일치도 ${score}% · 다시 연습 (60% 기준)`;
       }
 
       if (statusEl) {
-        statusEl.innerHTML = `<span style="color:#dc2626; font-weight:900;">⚠️ [불합격] ${score}점. 60점 이상이어야 통과됩니다.</span>`;
+        statusEl.innerHTML = `<span style="color:#dc2626; font-weight:900;">인식된 문장 일치도 ${score}%. 연습 통과 기준은 60%입니다.</span>`;
       }
 
       updateHandsFreeStatus('retry', `🔄 [불합격] 다시 듣고 따라해 볼까요? (${score}점)`);
 
       if (polishText) {
-        polishText.innerHTML = `AI 엑자일 교정: <strong>"조금 더 또박또박 발음해 볼까요? 엑자일의 발음을 듣고 다시 도전하세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 발음: "${spokenText || '(인식 실패)'}"</span>`;
+        polishText.innerHTML = `문장 연습 안내: <strong>"조금 더 또박또박 발음해 볼까요? 엑자일의 발음을 듣고 다시 도전하세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 문장: "${spokenText || '(인식 실패)'}"</span>`;
       }
 
       if (noticeEl) {
@@ -20009,6 +20041,7 @@ function getCurrentRoundData() {
 
       // 페르소나 첫 인사 음성 자동 발화
       setTimeout(() => {
+        if (window.HGUI && (!HGUI.canPractice() || HGUI.mode() !== 'roleplay')) return;
         speakTextWithFallback(rp.greetings, curLang);
       }, 300);
       return;
@@ -20046,6 +20079,7 @@ function getCurrentRoundData() {
 
     // 페르소나 첫 인사 음성 자동 발화
     setTimeout(() => {
+      if (window.HGUI && (!HGUI.canPractice() || HGUI.mode() !== 'roleplay')) return;
       speakTextWithFallback(sc.greetings || p.greetings, curLang);
     }, 300);
   }
@@ -20163,6 +20197,7 @@ function getCurrentRoundData() {
 
   // 원어 발화 수신 후 티키타카 대화 처리 엔진
   async function handleRoleplayUserTurn(userSpokenText) {
+    const uiTurnEpoch = window.HGUI ? HGUI.epoch() : 0;
     const curLang = (typeof selectedLang !== 'undefined' && selectedLang) ? selectedLang : 'fr';
     const chatLog = document.getElementById('chatLog');
     if (!chatLog) return;
@@ -20174,7 +20209,7 @@ function getCurrentRoundData() {
     userMsg.style.cssText = "display:flex; justify-content:flex-end; gap:8px;";
     userMsg.innerHTML = `
       <div style="background:linear-gradient(135deg, #4f46e5, #6366f1); color:#ffffff; padding:10px 14px; border-radius:14px; font-size:14px; font-weight:800; max-width:85%; text-align:left; box-shadow:0 3px 10px rgba(79,70,229,0.25);">
-        "${userSpokenText}"
+        "${window.HGUI ? HGUI.escape(userSpokenText) : userSpokenText}"
       </div>
     `;
     chatLog.appendChild(userMsg);
@@ -20196,7 +20231,9 @@ function getCurrentRoundData() {
     if (window.HGV2 && HGV2.isFreeTalk()) {
       try { const r = await HGV2.partnerReply(userSpokenText); if (r) { replyText = r.text; replyKo = r.ko || ''; } } catch (e) {}
     }
-    if (!replyText && apiKey && typeof callGeminiFlashRaw === 'function') {
+    // callGeminiFlashRaw는 정의된 적이 없어 키가 있어도 늘 내장 응답으로 떨어졌다 (실기기 2026-10-26)
+    // → 발음 코치와 같은 callGeminiCascade(Native 브리지 우선, 무료 모델 순서)로 연결
+    if (!replyText && apiKey && typeof callGeminiCascade === 'function') {
       try {
         const personaName = document.getElementById('personaName')?.textContent || '동료';
         const scenarioTitle = document.getElementById('rpSessionCaseTitle')?.textContent || '일상 대화';
@@ -20205,14 +20242,15 @@ function getCurrentRoundData() {
 이 말에 호응하여 실전 감각이 돋보이는 자연스러운 1~2문장의 ${({ fr: '프랑스어', cn: '중국어', ja: '일본어', en: '영어', es: '스페인어', ru: '러시아어' })[curLang] || '일본어'} 답변을 작성하고, 괄호 안에 한국어 번역을 제공해 주세요.
 형식: [원어 답변] (한국어 번역)`;
         
-        const res = await callGeminiFlashRaw(prompt, apiKey);
-        if (res && res.text) {
-          const match = res.text.match(/^([^(]+)(?:\(([^)]+)\))?/);
+        const res = await callGeminiCascade({ contents: [{ parts: [{ text: prompt }] }] });
+        const text = res && res.ok && res.reply ? res.reply.trim().replace(/^\[|\]/g, '') : '';
+        if (text) {
+          const match = text.match(/^([^(（]+)(?:[(（]([^)）]+)[)）])?/);
           if (match) {
             replyText = match[1].trim();
             replyKo = match[2] ? match[2].trim() : '';
           } else {
-            replyText = res.text.trim();
+            replyText = text;
           }
         }
       } catch(e) {
@@ -20220,6 +20258,7 @@ function getCurrentRoundData() {
       }
     }
 
+    const replySource = replyText ? 'AI 연결 응답' : (apiKey ? 'AI 연결 실패 · 내장 연습 응답' : 'API 키 없음 · 내장 연습 응답');
     if (!replyText) {
       // 오프라인 스마트 티키타카 응답 라이브러리
       if (curLang === 'fr') {
@@ -20274,6 +20313,12 @@ function getCurrentRoundData() {
       }
     }
 
+    if (window.HGUI && (HGUI.epoch() !== uiTurnEpoch || HGUI.route() !== 'lesson')) {
+      document.getElementById('rpTypingIndicator')?.remove();
+      return; // 화면을 떠난 뒤 도착한 응답은 재생하지 않는다.
+    }
+    const sourceLabel = document.getElementById('hgUiReplySource');
+    if (sourceLabel) sourceLabel.textContent = replySource;
     // 인디케이터 제거
     const ind = document.getElementById('rpTypingIndicator');
     if (ind) ind.remove();
@@ -20288,7 +20333,7 @@ function getCurrentRoundData() {
         <strong style="color:#0f172a;">${replyText}</strong>
         ${replyKo ? `<div style="font-size:12px; color:#64748b; margin-top:4px;">(${replyKo})</div>` : ''}
         <div style="margin-top:6px; font-size:11px; font-weight:800; color:#16a34a; display:flex; align-items:center; gap:4px;">
-          <span>✨ 원어 실전 대화 성공!</span>
+          <span>${replySource}</span>
         </div>
       </div>
     `;
@@ -21809,7 +21854,7 @@ function getCurrentRoundData() {
     openingBriefingPlayed = true;
     const badgeText = document.getElementById('openingVoiceText');
     const badgeIcon = document.getElementById('openingVoiceIcon');
-    if (badgeText) badgeText.textContent = "AI 엑자일 음성 브리핑 발화 중...";
+    if (badgeText) badgeText.textContent = "Exile 음성 브리핑 듣는 중...";
     if (badgeIcon) badgeIcon.textContent = "🔊";
 
     const text = "난 안드로메다에서 지구로 유배 온 AI 엑자일이야. 지구인 널 외국어 마스터로 키워야 고향으로 갈 수 있어.";
@@ -21823,7 +21868,7 @@ function getCurrentRoundData() {
           if (badgeIcon) badgeIcon.textContent = "🔇";
           return;
         }
-        if (badgeText) badgeText.textContent = "AI 엑자일 음성 브리핑 완료 (다시 듣기)";
+        if (badgeText) badgeText.textContent = "Exile 음성 브리핑 완료 (다시 듣기)";
         if (badgeIcon) badgeIcon.textContent = "✨";
       }
     });
@@ -22339,6 +22384,7 @@ function getCurrentRoundData() {
     })();
   </script>
 
+<script src="hg_ui.js"></script>
 </body>
 
 </html>

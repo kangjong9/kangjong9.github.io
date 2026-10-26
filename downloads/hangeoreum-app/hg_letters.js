@@ -36,9 +36,12 @@
   const sfx = n => { try { if (window.HGUX && HGUX.sfx) HGUX.sfx(n); } catch (e) { /* 효과음 없음 */ } };
 
   /* ---------- 소리: 앱이면 누리 보이스(원어민 Edge 목소리), 아니면 브라우저 음성 ---------- */
+  // Edge 일본어 목소리가 い/イ 한 글자를 '이키'처럼 읽는 문제 보정 (hg_script.js TTS_FIX와 같은 기준)
+  const TTS_FIX = { 'い': 'い。', 'イ': 'イ。' };
   function speak(text) {
     if (!text || !data) return;
-    const clean = String(text).replace(/[↗↘‾·→]/g, ' ').trim();
+    let clean = String(text).replace(/[↗↘‾·→]/g, ' ').trim();
+    clean = TTS_FIX[clean] || clean;
     if (typeof window.speakTextWithFallback === 'function') { window.speakTextWithFallback(clean, lang); return; }
     if (!('speechSynthesis' in window)) return;
     try {

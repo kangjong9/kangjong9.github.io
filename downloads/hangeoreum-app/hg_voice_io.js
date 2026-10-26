@@ -32,6 +32,7 @@
   const shown = (el) => !!(el && el.getClientRects().length);
   function micBlocked() {
     if (appPaused || document.hidden) return 'background';
+    if (window.HGUI && HGUI.route() !== 'lesson') return 'navigation';
     if (document.querySelector('.hgl-ov')) return 'letters';          // 문자표 화면이 덮고 있음
     if (document.getElementById('hgVoiceLog')) return 'log';          // 마이크 진단 기록을 보는 중
     if (shown(document.getElementById('hgCelebrate'))) return 'celebrate';   // 축하 카드가 떠 있는 동안
@@ -63,7 +64,7 @@
       if (nativeActive && nativeActive !== this) nativeActive.abort();
       nativeActive = this;
       this._sid = String(++nativeSeq);
-      try { window.Native.call('sttStart', JSON.stringify({ lang: this.lang, sid: this._sid })); }
+      try { window.Native.call('sttStart', JSON.stringify({ lang: this.lang, sid: this._sid, hints: this.hints || [] })); }
       catch (e) { this._fire('error', { error: 'aborted' }); this._fire('end'); nativeActive = null; }
     }
     stop() { this.abort(); }
@@ -118,7 +119,9 @@
   }
 
   /* ---------- 모든 음성인식 감싸기: 화면 코드에는 기존과 같은 모양으로 보인다 ---------- */
-  const Base = window.SpeechRecognition || window.webkitSpeechRecognition || (hasNative() ? NativeSpeechRecognition : null);
+  // 앱(Native 브리지)에서는 항상 기기 음성인식을 쓴다. Android WebView 155부터 webkitSpeechRecognition이 생겨서
+  // 그쪽이 먼저 잡히면 무음 대기·후보 5개·목표 힌트·세션 번호 보호가 모두 빠진 채로 듣게 된다 (실기기 2026-10-26)
+  const Base = hasNative() ? NativeSpeechRecognition : (window.SpeechRecognition || window.webkitSpeechRecognition || null);
   if (!Base) return;
 
   const plainResult = (res) => {
@@ -200,6 +203,7 @@
       r.continuous = false;
       r.interimResults = true;                       // 말 진행 상황(중간 결과)을 받아 말 끝 즉시 판정
       r.maxAlternatives = Math.max(1, this.maxAlternatives || 1);
+      r.hints = Array.isArray(this.hints) ? this.hints.filter(Boolean).map(String) : [];   // 목표 글자·문장 → 기기 인식 힌트
       const mine = () => s.r === r && s.seq === seq && !s.done;
       const later = (fn, ms) => s.timers.push(setTimeout(() => { if (mine()) fn(); }, ms));
       const fromPartialOrFail = () => {
@@ -247,6 +251,14 @@
         if (code === 'aborted' && micBlocked()) return;   // 창이 열려 닫힌 것 → 창이 닫히면 다시 연다
         // 말한 내용이 중간 결과로 남아 있으면(기기 인식기의 '일치 없음' 등) 그걸로 판정
         if (code !== 'not-allowed' && code !== 'service-not-allowed' && hasText(s.partial)) { this._finish('result', plainResult(s.partial)); return; }
+        // 말소리는 들렸는데 인식기가 글자로 못 바꿈(い 같은 짧은 한 음절에서 잦음, 실기기 2026-10-26):
+        // 바로 불합격하지 않고 알림음과 함께 한 번 더 듣는다. 두 번째도 못 알아들으면 기존대로 불합격
+        if (code === 'no-match') {
+          s.why = 'no-match';
+          if (!s.rematched) { s.rematched = true; this._suspend(); this._open(); return; }
+          this._finish('error', { error: 'no-speech' });
+          return;
+        }
         this._finish('error', { error: code || 'aborted' });
       };
       r.onend = () => { if (mine()) fromPartialOrFail(); };
@@ -287,7 +299,7 @@
   function record(rec, kind, payload, s) {
     const alts = kind === 'result' ? Array.from((payload.results && payload.results[0]) || []).map(a => a.transcript) : [];
     LOG.push({ at: new Date().toTimeString().slice(0, 8), lang: rec.lang, path: Base === NativeSpeechRecognition ? '기기' : '브라우저',
-      kind, alts, error: kind === 'error' ? (payload && payload.error) : '', ms: Date.now() - s.t0, partial: !!s.usedPartial });
+      kind, alts, error: kind === 'error' ? (s.why || (payload && payload.error)) : '', ms: Date.now() - s.t0, partial: !!s.usedPartial, rematched: !!s.rematched });
     if (LOG.length > 30) LOG.shift();
   }
   // 화면(수업·입문 문자)이 판정 뒤 붙이는 정보: 목표 문장·점수·합격 여부
@@ -296,8 +308,8 @@
     if (document.getElementById('hgVoiceLog')) return;
     const esc = (x) => String(x == null ? '' : x).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
     const rows = LOG.slice().reverse().map(e => `<div style="border-bottom:1px solid #e2e8f0;padding:8px 0;font-size:15px;line-height:1.5">
-      <b>${esc(e.at)}</b> · ${esc(e.lang)} · ${esc(e.path)} · ${(e.ms / 1000).toFixed(1)}초${e.partial ? ' · 중간 결과로 판정' : ''}<br>
-      ${e.kind === 'result' ? `🗣️ 들린 말: <b>${esc(e.alts.join(' / '))}</b>` : (e.kind === 'error' ? `⚠️ ${esc(e.error === 'no-speech' ? '말소리 없음(5초)' : e.error)}` : '⏹ 취소')}
+      <b>${esc(e.at)}</b> · ${esc(e.lang)} · ${esc(e.path)} · ${(e.ms / 1000).toFixed(1)}초${e.partial ? ' · 중간 결과로 판정' : ''}${e.rematched ? ' · 한 번 더 들음' : ''}<br>
+      ${e.kind === 'result' ? `🗣️ 들린 말: <b>${esc(e.alts.join(' / '))}</b>` : (e.kind === 'error' ? `⚠️ ${esc(e.error === 'no-speech' ? '말소리 없음(5초)' : e.error === 'no-match' ? '들렸지만 알아듣지 못함' : e.error)}` : '⏹ 취소')}
       ${e.target ? `<br>🎯 목표: ${esc(e.target)}` : ''}${e.score != null ? ` · ${esc(e.score)}점` : ''}${e.pass != null ? (e.pass ? ' · ✅ 통과' : ' · ❌ 불합격') : ''}</div>`).join('')
       || '<div style="padding:16px 0;font-size:15px;color:#475569">아직 기록이 없어요. 수업에서 한 번 말해 본 뒤 다시 열어 주세요.</div>';
     const box = document.createElement('div');

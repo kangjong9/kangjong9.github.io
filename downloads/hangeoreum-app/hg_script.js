@@ -26,6 +26,9 @@
   const PHASE_NAME = { c: '글자 익히기', w: '단어 읽기' };
   const PASS_NAME = { 1: '원어+한글 · 엑자일 시범', 2: '원어만 · 엑자일 시범', 3: '원어만 · 혼자 읽기' };
   const MAX_AUTO_RETRY = 3;  // 같은 글자 연속 실패가 이만큼이면 자동 반복을 멈추고 다시/넘어가기를 고르게 한다
+  // Edge 일본어 목소리는 い/イ 한 글자를 '이키'처럼 두 소리로 읽는다 → 끝에 。를 붙이면 '이' 한 소리 (2026-10-26 합성 비교).
+  // 모든 글자에 。를 붙이면 こ。 등이 오히려 길게 읽히므로 확인된 글자만 고친다.
+  const TTS_FIX = { 'い': 'い。', 'イ': 'イ。' };
 
   let session = null;  // { key, queue, pos, status, heard, fails, paused }
   let speakSeq = 0;
@@ -195,7 +198,7 @@
     let fired = false;
     const once = () => { if (fired) return; fired = true; clearTimeout(guard); if (onDone) onDone(); };
     const guard = setTimeout(once, 8000 + String(item && item.s || '').length * 300);
-    if (item && typeof speakTextWithFallback === 'function') speakTextWithFallback(item.s, curLang(), { onDone: once });
+    if (item && typeof speakTextWithFallback === 'function') speakTextWithFallback(TTS_FIX[item.s] || item.s, curLang(), { onDone: once });
     else setTimeout(once, 300);
   }
   function exileSay(msg, onDone) {
@@ -668,7 +671,7 @@
   });
 
   /* ---------- 발음 판정 (음성 인식) ---------- */
-  const norm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+  const norm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').normalize('NFC').toLowerCase()  // NFC: 탁점(が·じ) 재결합
     .replace(/[ァ-ヶ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60))  // 가타카나 → 히라가나로 맞춰 비교
     .replace(/[\s.,!?¡¿'"·\-_ー~()（）、。，！？]/g, '');
 
@@ -763,6 +766,7 @@
     r.lang = STT_LANG[curLang()] || 'en-US';
     r.interimResults = false;
     r.maxAlternatives = 5;
+    r.hints = [item.s, item.c, pic && pic.w].filter(Boolean);   // 한 음절도 알아듣게 목표 글자를 인식기에 힌트로
     r.onstart = () => { try { isRecordingSTT = true; } catch (e) {} setStatus('🎙️ 지금 읽어 보세요!'); };
     r.onresult = (ev) => {
       if (recognizer !== r) return;
