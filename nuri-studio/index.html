@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>누리 스튜디오 — 사람처럼 숨 쉬는 목소리 TTS</title>
+  <!-- Google Fonts & Tailwind CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Engine Scripts -->
+  <script src="../assets/gemini_human_voice_engine.js"></script>
+  <script src="../assets/our_voice_master_engine.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            neon: {
+              blue: '#38bdf8',
+              purple: '#c084fc',
+              emerald: '#34d399',
+              amber: '#fbbf24',
+              rose: '#fb7185',
+              pink: '#f472b6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #080c14;
+      color: #f1f5f9;
+      font-family: 'Pretendard', sans-serif;
+      overflow-x: hidden;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+    }
+    .glass-card:hover { border-color: rgba(255, 255, 255, 0.16); }
+    .neon-border-blue { box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+    .neon-border-purple { box-shadow: 0 0 15px rgba(192, 132, 252, 0.2); }
+    .neon-border-emerald { box-shadow: 0 0 15px rgba(52, 211, 153, 0.2); }
+    .neon-border-amber { box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
+    .neon-border-pink { box-shadow: 0 0 15px rgba(244, 114, 182, 0.25); }
+    
+    .wave-bar { transition: height 0.1s ease-in-out; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0b0f19; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 8px rgba(244, 114, 182, 0.4)); }
+      50% { opacity: 1; filter: drop-shadow(0 0 16px rgba(244, 114, 182, 0.8)); }
+    }
+    .character-glow { animation: pulse-glow 3s infinite ease-in-out; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-500 via-purple-500 to-sky-500 flex items-center justify-center shadow-lg shadow-pink-500/25">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-white via-slate-100 to-pink-200 bg-clip-text text-transparent">
+              Human Voice Master Studio
+            </h1>
+            <span class="px-2 py-0.5 text-xs font-bold rounded-full bg-pink-500/10 text-pink-400 border border-pink-500/30">
+              v3.0.0 주헌법 제20조 5항 완결판
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">5대 전 엔진(86종+) · 5계층 서킷브레이커 · 오프라인 자립 · 2D 캐릭터 60FPS RMS 립싱크</p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher (주헌법 제20조 5항) & Health Badges -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- 2대 모드 원클릭 토글 스위치 -->
+        <div class="flex items-center p-1 rounded-xl bg-slate-900 border border-slate-800 text-xs shadow-inner">
+          <button id="modeHumanBtn" onclick="switchStudioMode('human')" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-black font-bold transition shadow-md flex items-center gap-1">
+            <span>👤</span>
+            <span>일반 사람 음성 모드</span>
+          </button>
+          <button id="modeAnimeBtn" onclick="switchStudioMode('anime')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-semibold transition flex items-center gap-1">
+            <span>✨</span>
+            <span>애니 캐릭터 모드</span>
+          </button>
+        </div>
+
+        <!-- 3대 실시간 상태 지표 -->
+        <div class="hidden sm:flex items-center gap-1.5 text-[11px] font-mono">
+          <span id="cacheHeaderBadge" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            ⚡ 캐시 110x
+          </span>
+          <span id="circuitHeaderBadge" class="px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/30 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+            🛡️ 5계층 무중단
+          </span>
+          <span id="offlineHeaderBadge" class="px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 flex items-center gap-1">
+            📴 오프라인 자립
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- QUICK INTRO BAR -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 w-full">
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+      <div class="p-2.5 rounded-xl bg-slate-900/80 border border-sky-500/30 flex items-center gap-2">
+        <span class="text-base">🚀</span>
+        <div>
+          <strong class="text-sky-300 block">1. Edge (23종)</strong>
+          <span class="text-[11px] text-slate-400">무료 키 불필요 24kHz</span>
+        </div>
+      </div>
+      <div class="p-2.5 rounded-xl bg-slate-900/80 border border-purple-500/30 flex items-center gap-2">
+        <span class="text-base">💎</span>
+        <div>
+          <strong class="text-purple-300 block">2. Gemini (44종)</strong>
+          <span class="text-[11px] text-slate-400">44종 풀 매트릭스 WAV</span>
+        </div>
+      </div>
+      <div class="p-2.5 rounded-xl bg-slate-900/80 border border-amber-500/30 flex items-center gap-2">
+        <span class="text-base">🎁</span>
+        <div>
+          <strong class="text-amber-300 block">3. ElevenLabs</strong>
+          <span class="text-[11px] text-slate-400">16종 + 계정 실시간 동기화</span>
+        </div>
+      </div>
+      <div class="p-2.5 rounded-xl bg-slate-900/80 border border-emerald-500/30 flex items-center gap-2">
+        <span class="text-base">🌿</span>
+        <div>
+          <strong class="text-emerald-300 block">4. Kokoro (7종)</strong>
+          <span class="text-[11px] text-slate-400">오픈소스 1위 기계음 0%</span>
+        </div>
+      </div>
+      <div class="p-2.5 rounded-xl bg-slate-900/80 border border-indigo-500/30 flex items-center gap-2">
+        <span class="text-base">🛡️</span>
+        <div>
+          <strong class="text-indigo-300 block">5. OS 오프라인 자립</strong>
+          <span class="text-[11px] text-slate-400">서버 단절 0초 무중단</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN WORKSPACE CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-4 w-full space-y-5 flex-1">
+
+    <!-- ========================================================================= -->
+    <!-- GLOBAL TEXT CONTROLLER & MASTER ACTIONS BAR                               -->
+    <!-- ========================================================================= -->
+    <section class="glass-card rounded-2xl p-4 sm:p-5 border border-slate-700/60 shadow-xl">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-2.5">
+        <div class="flex items-center space-x-2">
+          <span class="p-1.5 rounded-lg bg-pink-500/20 text-pink-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+          </span>
+          <h2 class="font-bold text-slate-100 text-sm sm:text-base">발화 테스트 문장 선택 및 실시간 입력</h2>
+        </div>
+
+        <!-- 문장 프리셋 -->
+        <div class="flex flex-wrap items-center gap-1 text-xs">
+          <span class="text-slate-400 mr-1 text-[11px]">프리셋:</span>
+          <button onclick="applyPreset(1)" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition">
+            💬 일상 대화
+          </button>
+          <button onclick="applyPreset(2)" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition">
+            📢 뉴스 앵커
+          </button>
+          <button onclick="applyPreset(3)" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition">
+            🎓 어학 튜터
+          </button>
+          <button onclick="applyPreset(4)" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition">
+            🎭 감정 연기
+          </button>
+          <button onclick="applyPreset(5)" class="px-2.5 py-1 rounded-md bg-pink-950/60 hover:bg-pink-900/80 text-pink-300 border border-pink-700/50 transition">
+            🧚 요정 루나
+          </button>
+          <button onclick="applyPreset(6)" class="px-2.5 py-1 rounded-md bg-sky-950/60 hover:bg-sky-900/80 text-sky-300 border border-sky-700/50 transition">
+            ⚔️ 소년 카이
+          </button>
+          <button onclick="applyPreset(7)" class="px-2.5 py-1 rounded-md bg-purple-950/60 hover:bg-purple-900/80 text-purple-300 border border-purple-700/50 transition">
+            🛡️ 수호대장 바론
+          </button>
+        </div>
+      </div>
+
+      <!-- 입력창 & 파형 애니메이션 -->
+      <div class="relative">
+        <textarea id="targetText" rows="2" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500 font-sans transition resize-none" placeholder="테스트할 문장을 입력하세요...">안녕하세요 옵빠야! 우리만의 독자적인 통합 TTS 음성엔진과 2D 캐릭터 실시간 립싱크 테스트 중입니다. 기계음 없는 생생한 사람 목소리와 캐릭터 반응을 느껴보세요!</textarea>
+        
+        <div id="playingWave" class="hidden absolute bottom-3 right-4 flex items-end space-x-1 h-6">
+          <div class="wave-bar w-1 bg-pink-400 rounded-full h-3 animate-pulse"></div>
+          <div class="wave-bar w-1 bg-pink-400 rounded-full h-5 animate-bounce"></div>
+          <div class="wave-bar w-1 bg-pink-400 rounded-full h-2 animate-pulse"></div>
+          <div class="wave-bar w-1 bg-pink-400 rounded-full h-6 animate-bounce"></div>
+          <div class="wave-bar w-1 bg-pink-400 rounded-full h-4 animate-pulse"></div>
+        </div>
+      </div>
+
+      <!-- MASTER ACTIONS BAR: 5계층 자동 스마트 발화 / 오프라인 / 캐시 / 즉시 정지 -->
+      <div class="mt-3 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2.5">
+        
+        <div class="flex items-center gap-2">
+          <!-- 1. Auto 5-Tier Fallback Button -->
+          <button onclick="playAutoSmart()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-600 hover:from-emerald-400 hover:to-sky-500 text-black font-extrabold text-xs shadow-lg shadow-emerald-500/25 flex items-center gap-1.5 transition active:scale-95">
+            <svg class="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"></path></svg>
+            ⚡ Auto 5계층 스마트 발화 (무중단 순차 폴백)
+          </button>
+
+          <!-- 2. 완전 오프라인 자립 발화 버튼 -->
+          <button onclick="playOfflineStandalone()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 hover:text-white border border-indigo-500/40 text-xs font-bold transition flex items-center gap-1.5">
+            <span>📴</span>
+            <span>완전 오프라인 자립 발화</span>
+          </button>
+
+          <!-- 3. 스마트 캐시 0초 재생 버튼 -->
+          <button onclick="playCachedDirectly()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 hover:text-white border border-emerald-500/40 text-xs font-semibold transition flex items-center gap-1.5">
+            <span>⚡</span>
+            <span>캐시 즉시 재생</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="text-xs text-slate-400 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-pink-400 animate-ping"></span>
+            <span>상태: <strong id="currentPlayingName" class="text-pink-400 font-mono">준비 완료 (Ready)</strong></span>
+          </div>
+
+          <!-- 4. 즉시 정지 / Barge-in 버튼 (300ms 립싱크 닫힘) -->
+          <button onclick="stopAllAudio()" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
+            발화 중단 (Stop / Barge-in)
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 2-COLUMN MAIN WORKSPACE (좌측 캐릭터 & 프리셋 + 우측 5대 엔진 매트릭스)       -->
+    <!-- ========================================================================= -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+      <!-- ======================================================================= -->
+      <!-- [좌측 패널]: 2D 캐릭터 캔버스 & 6대 애니 프리셋 & 스마트 모니터 (4컬럼)   -->
+      <!-- ======================================================================= -->
+      <div class="lg:col-span-4 space-y-4">
+        
+        <!-- 1. 2D 캐릭터 인터랙션 캔버스 카드 -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-500/30 neon-border-pink flex flex-col items-center space-y-3">
+          <div class="w-full flex items-center justify-between text-xs text-slate-300 border-b border-slate-800 pb-2">
+            <div class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-pink-400 animate-pulse"></span>
+              <strong class="text-pink-300">✨ 2D 캐릭터 캔버스</strong>
+            </div>
+            <span id="canvasFpsBadge" class="px-2 py-0.5 rounded bg-pink-500/10 text-pink-400 border border-pink-500/30 text-[10px] font-mono">
+              60FPS RMS LipSync
+            </span>
+          </div>
+
+          <!-- HTML5 Canvas Element -->
+          <div class="relative character-glow">
+            <canvas id="charCanvas" width="280" height="260" class="rounded-2xl border border-pink-500/30 shadow-2xl bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950"></canvas>
+            <div id="lipSyncFloatingBadge" class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-slate-950/80 border border-pink-500/40 text-[10px] font-mono text-pink-300">
+              LIP: CLOSED (0)
+            </div>
+          </div>
+
+          <!-- 8대 상태 머신 수동 테스트 버튼 -->
+          <div class="w-full space-y-1.5 pt-1">
+            <div class="flex items-center justify-between text-[11px] text-slate-400">
+              <span class="font-semibold text-slate-300">8대 상태 머신 수동 테스트:</span>
+              <span id="charStateName" class="text-pink-400 font-mono font-bold">STATE: IDLE</span>
+            </div>
+            <div class="grid grid-cols-4 gap-1 text-[10px] font-mono text-center">
+              <button onclick="setCharState('IDLE')" class="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">IDLE</button>
+              <button onclick="setCharState('LISTENING')" class="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">LISTEN</button>
+              <button onclick="setCharState('THINKING')" class="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">THINK</button>
+              <button onclick="setCharState('SPEAKING')" class="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">SPEAK</button>
+              <button onclick="setCharState('HAPPY')" class="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">HAPPY</button>
+              <button onclick="setCharState('CALM')" class="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">CALM</button>
+              <button onclick="setCharState('INTERRUPTED')" class="p-1 rounded bg-rose-950 text-rose-300 hover:bg-rose-900 transition">STOP</button>
+              <button onclick="setCharState('ERROR')" class="p-1 rounded bg-rose-950 text-rose-300 hover:bg-rose-900 transition">ERROR</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 6대 공식 애니메이션 프리셋 카드 (주헌법 제20조 5항) -->
+        <div id="animePresetsCard" class="glass-card rounded-2xl p-4 border border-purple-500/30 neon-border-purple space-y-2.5">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="flex items-center space-x-1.5">
+              <span class="text-base">🌸</span>
+              <strong class="text-purple-300 text-xs sm:text-sm">6대 공식 애니메이션 프리셋</strong>
+            </div>
+            <span class="text-[10px] text-purple-400 font-mono">원클릭 페르소나</span>
+          </div>
+
+          <p class="text-[11px] text-slate-400">
+            원클릭 시 캐릭터 페르소나 피치·속도·전용 보이스가 자동 적용되며 즉시 캔버스 립싱크 발화합니다.
+          </p>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <!-- 1. 루나 -->
+            <button onclick="playAnimePreset('ANIME_F_CUTE')" class="preset-card p-2 rounded-xl bg-slate-900/90 hover:bg-pink-950/40 border border-pink-500/30 hover:border-pink-500 text-left transition group">
+              <div class="flex items-center justify-between">
+                <strong class="text-pink-300 font-bold">🧚 요정 루나</strong>
+                <span class="text-[10px] text-pink-400">P 1.35</span>
+              </div>
+              <span class="text-[10px] text-slate-400 block mt-0.5">귀엽고 깜찍한 마법소녀</span>
+            </button>
+
+            <!-- 2. 세라 -->
+            <button onclick="playAnimePreset('ANIME_F_SOFT')" class="preset-card p-2 rounded-xl bg-slate-900/90 hover:bg-purple-950/40 border border-purple-500/30 hover:border-purple-500 text-left transition group">
+              <div class="flex items-center justify-between">
+                <strong class="text-purple-300 font-bold">🍵 멘토 세라</strong>
+                <span class="text-[10px] text-purple-400">P 1.15</span>
+              </div>
+              <span class="text-[10px] text-slate-400 block mt-0.5">상냥하고 포근한 힐러</span>
+            </button>
+
+            <!-- 3. 밍크 -->
+            <button onclick="playAnimePreset('ANIME_F_BRIGHT')" class="preset-card p-2 rounded-xl bg-slate-900/90 hover:bg-pink-950/40 border border-pink-500/30 hover:border-pink-500 text-left transition group">
+              <div class="flex items-center justify-between">
+                <strong class="text-pink-300 font-bold">🌸 아이돌 밍크</strong>
+                <span class="text-[10px] text-pink-400">P 1.45</span>
+              </div>
+              <span class="text-[10px] text-slate-400 block mt-0.5">통통 튀는 에너지 비타민</span>
+            </button>
+
+            <!-- 4. 카이 -->
+            <button onclick="playAnimePreset('ANIME_M_YOUTH')" class="preset-card p-2 rounded-xl bg-slate-900/90 hover:bg-sky-950/40 border border-sky-500/30 hover:border-sky-500 text-left transition group">
+              <div class="flex items-center justify-between">
+                <strong class="text-sky-300 font-bold">⚔️ 소년 카이</strong>
+                <span class="text-[10px] text-sky-400">P 1.10</span>
+              </div>
+              <span class="text-[10px] text-slate-400 block mt-0.5">열정 소년 만화 주인공</span>
+            </button>
+
+            <!-- 5. 레오 -->
+            <button onclick="playAnimePreset('ANIME_M_CALM')" class="preset-card p-2 rounded-xl bg-slate-900/90 hover:bg-indigo-950/40 border border-indigo-500/30 hover:border-indigo-500 text-left transition group">
+              <div class="flex items-center justify-between">
+                <strong class="text-indigo-300 font-bold">☕ 연구원 레오</strong>
+                <span class="text-[10px] text-indigo-400">P 0.90</span>
+              </div>
+              <span class="text-[10px] text-slate-400 block mt-0.5">지적인 중저음 청년</span>
+            </button>
+
+            <!-- 6. 바론 -->
+            <button onclick="playAnimePreset('ANIME_M_DEEP')" class="preset-card p-2 rounded-xl bg-slate-900/90 hover:bg-amber-950/40 border border-amber-500/30 hover:border-amber-500 text-left transition group">
+              <div class="flex items-center justify-between">
+                <strong class="text-amber-300 font-bold">🛡️ 대장 바론</strong>
+                <span class="text-[10px] text-amber-400">P 0.75</span>
+              </div>
+              <span class="text-[10px] text-slate-400 block mt-0.5">묵직한 바리톤 수호자</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. 스마트 로컬 캐시 & 서킷 브레이커 인스펙터 -->
+        <div class="glass-card rounded-2xl p-4 border border-slate-700/60 space-y-2 text-xs">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+            <span class="font-bold text-slate-200 flex items-center gap-1.5">
+              <span>💾</span>
+              <span>스마트 캐시 & 서킷 브레이커</span>
+            </span>
+            <button onclick="clearStudioCache()" class="text-[10px] text-rose-400 hover:underline">
+              캐시 비우기
+            </button>
+          </div>
+
+          <div class="space-y-1 font-mono text-[11px]">
+            <div class="flex items-center justify-between text-slate-400">
+              <span>오디오 캐시 보관:</span>
+              <span id="cacheStatText" class="text-emerald-400 font-bold">0개 (0KB)</span>
+            </div>
+            <div class="flex items-center justify-between text-slate-400">
+              <span>동일 문장 속도:</span>
+              <span class="text-emerald-400 font-bold">0초 즉각 재생 (110배 고속)</span>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-800">
+            <span class="text-[10px] text-slate-400 block mb-1">5계층 서킷 브레이커 실시간 헬스:</span>
+            <div class="grid grid-cols-5 gap-1 text-[9px] text-center font-mono">
+              <div class="p-1 rounded bg-slate-900 border border-purple-500/40 text-purple-300">1.Gemini</div>
+              <div class="p-1 rounded bg-slate-900 border border-amber-500/40 text-amber-300">2.Eleven</div>
+              <div class="p-1 rounded bg-slate-900 border border-sky-500/40 text-sky-300">3.Edge</div>
+              <div class="p-1 rounded bg-slate-900 border border-emerald-500/40 text-emerald-300">4.Kokoro</div>
+              <div class="p-1 rounded bg-slate-900 border border-indigo-500/40 text-indigo-300">5.System</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ======================================================================= -->
+      <!-- [우측 패널]: 5대 전 엔진 매트릭스 카드 (8컬럼)                             -->
+      <!-- ======================================================================= -->
+      <div class="lg:col-span-8 space-y-4">
+        
+        <!-- 4-ENGINE MATRIX GRID (2x2) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <!-- ================= 1. MICROSOFT EDGE NEURAL (23종) ================= -->
+          <div class="glass-card rounded-2xl p-4 border border-sky-500/30 flex flex-col justify-between neon-border-blue transition">
+            <div>
+              <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-xs">1</span>
+                  <div>
+                    <h3 class="font-bold text-slate-100 text-sm flex items-center gap-1.5">
+                      Microsoft Edge Neural Voice
+                    </h3>
+                    <p class="text-[11px] text-sky-400">100% 무료 · 키 불필요 · 24kHz MP3 실시간 스트리밍</p>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-sky-500/10 text-sky-400 border border-sky-500/30">
+                  키 불필요
+                </span>
+              </div>
+
+              <div class="mt-2.5 space-y-1.5">
+                <label class="text-[11px] text-slate-300 font-medium block">Microsoft 공식 신경망 모델 (23종):</label>
+                <select id="edgeVoiceSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-sans">
+                  <optgroup label="🇰🇷 한국어 공식 실존 신경망 모델 (3종)">
+                    <option value="ko-KR-SunHiNeural" selected>선희 (ko-KR-SunHiNeural - 표준 여성)</option>
+                    <option value="ko-KR-InJoonNeural">인준 (ko-KR-InJoonNeural - 표준 남성)</option>
+                    <option value="ko-KR-HyunsuMultilingualNeural">현수 (ko-KR-HyunsuMultilingualNeural - 다국어 청년)</option>
+                  </optgroup>
+                  <optgroup label="🇺🇸 미국 영어 공식 모델 (6종)">
+                    <option value="en-US-JennyNeural">Jenny (en-US-JennyNeural - 미국 대표 여성)</option>
+                    <option value="en-US-GuyNeural">Guy (en-US-GuyNeural - 미국 대표 남성)</option>
+                    <option value="en-US-AriaNeural">Aria (en-US-AriaNeural - 뉴스 앵커)</option>
+                    <option value="en-US-ChristopherNeural">Christopher (en-US-ChristopherNeural)</option>
+                    <option value="en-US-EricNeural">Eric (en-US-EricNeural)</option>
+                    <option value="en-US-MichelleNeural">Michelle (en-US-MichelleNeural)</option>
+                  </optgroup>
+                  <optgroup label="🇬🇧 영국 영어 모델 (4종)">
+                    <option value="en-GB-SoniaNeural">Sonia (en-GB-SoniaNeural)</option>
+                    <option value="en-GB-RyanNeural">Ryan (en-GB-RyanNeural)</option>
+                    <option value="en-GB-LibbyNeural">Libby (en-GB-LibbyNeural)</option>
+                    <option value="en-GB-ThomasNeural">Thomas (en-GB-ThomasNeural)</option>
+                  </optgroup>
+                  <optgroup label="🇯🇵 일본어 모델 (2종)">
+                    <option value="ja-JP-NanamiNeural">Nanami (ja-JP-NanamiNeural)</option>
+                    <option value="ja-JP-KeitaNeural">Keita (ja-JP-KeitaNeural)</option>
+                  </optgroup>
+                  <optgroup label="🇨🇳 중국어 보통화 모델 (4종)">
+                    <option value="zh-CN-XiaoxiaoNeural">Xiaoxiao (zh-CN-XiaoxiaoNeural)</option>
+                    <option value="zh-CN-YunxiNeural">Yunxi (zh-CN-YunxiNeural)</option>
+                    <option value="zh-CN-YunjianNeural">Yunjian (zh-CN-YunjianNeural)</option>
+                    <option value="zh-CN-YunyangNeural">Yunyang (zh-CN-YunyangNeural)</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between">
+              <span id="edgeStatus" class="text-[10px] text-sky-400 font-mono">MS Edge 24kHz Ready</span>
+              <button onclick="playEngine1()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold text-xs shadow-md shadow-sky-500/25 flex items-center gap-1 transition active:scale-95">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
+                1번 Edge 발화
+              </button>
+            </div>
+          </div>
+
+          <!-- ================= 2. GOOGLE AI STUDIO (GEMINI 3.8 FLASH) 44종 ================= -->
+          <div class="glass-card rounded-2xl p-4 border border-purple-500/30 flex flex-col justify-between neon-border-purple transition">
+            <div>
+              <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-xs">2</span>
+                  <div>
+                    <h3 class="font-bold text-slate-100 text-sm flex items-center gap-1.5">
+                      Google AI Studio (Gemini 3.8)
+                    </h3>
+                    <p class="text-[11px] text-purple-400">44종 풀 매트릭스 완전 흡수 · 24kHz WAV</p>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-purple-500/10 text-purple-400 border border-purple-500/30">
+                  44종 전원
+                </span>
+              </div>
+
+              <!-- Key Input -->
+              <div class="mt-2 space-y-1">
+                <div class="flex items-center justify-between">
+                  <label class="text-[11px] text-slate-300 font-medium">Google API Key (무료 키 입력):</label>
+                  <button onclick="diagnoseGeminiKey()" class="text-[10px] text-purple-400 hover:underline">실전 진단</button>
+                </div>
+                <input type="password" id="geminiApiKey" placeholder="AIzaSy... (입력 즉시 로컬 저장)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono">
+              </div>
+
+              <!-- Category filter tabs -->
+              <div class="mt-2 space-y-1">
+                <div class="grid grid-cols-4 gap-1 text-[10px]">
+                  <button type="button" onclick="filterVoiceCategory('all')" id="tab_all" class="cat-tab px-1 py-0.5 rounded bg-purple-600 text-white font-semibold text-center transition">전체(44)</button>
+                  <button type="button" onclick="filterVoiceCategory('hf')" id="tab_hf" class="cat-tab px-1 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white text-center transition">여성(11)</button>
+                  <button type="button" onclick="filterVoiceCategory('hm')" id="tab_hm" class="cat-tab px-1 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white text-center transition">남성(11)</button>
+                  <button type="button" onclick="filterVoiceCategory('anime')" id="tab_anime" class="cat-tab px-1 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white text-center transition">애니(22)</button>
+                </div>
+                <select id="geminiVoiceSelect" onchange="onVoiceChange(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-sans">
+                  <!-- Dynamically populated with all 44 voices -->
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between">
+              <span id="geminiEngineStatus" class="text-[10px] text-purple-400 font-mono">Gemini 44종 Ready</span>
+              <button onclick="playEngine2()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white font-semibold text-xs shadow-md shadow-purple-500/25 flex items-center gap-1 transition active:scale-95">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
+                2번 Gemini 발화
+              </button>
+            </div>
+          </div>
+
+          <!-- ================= 3. ELEVENLABS (16종 + 계정 실시간 동기화) ================= -->
+          <div class="glass-card rounded-2xl p-4 border border-amber-500/30 flex flex-col justify-between neon-border-amber transition">
+            <div>
+              <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs">3</span>
+                  <div>
+                    <h3 class="font-bold text-slate-100 text-sm flex items-center gap-1.5">
+                      ElevenLabs (일레븐랩스)
+                    </h3>
+                    <p class="text-[11px] text-amber-400">극사실주의 호흡 · 실시간 계정 보이스 동기화</p>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                  월 1만자 무료
+                </span>
+              </div>
+
+              <!-- Key Input -->
+              <div class="mt-2 space-y-1">
+                <div class="flex items-center justify-between">
+                  <label class="text-[11px] text-slate-300 font-medium">ElevenLabs API Key:</label>
+                  <button onclick="syncElevenVoices()" class="text-[10px] text-amber-400 hover:underline flex items-center gap-1">
+                    🔄 내 보이스 동기화
+                  </button>
+                </div>
+                <input type="password" id="elevenApiKey" placeholder="sk_... (입력 즉시 로컬 저장)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono">
+              </div>
+
+              <!-- Selector -->
+              <div class="mt-2 space-y-1">
+                <select id="elevenVoiceSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-sans">
+                  <optgroup label="👨 실제 사람 남성 (8종)">
+                    <option value="pNInz6obpgDQGcFmaJgB" selected>Adam (아담 - 대표 남성)</option>
+                    <option value="nPczCjzI2devNBz1zQrb">Brian (브라이언 - 중저음)</option>
+                    <option value="onwK4e9ZLuTAKqWW03F9">Daniel (대니얼 - 아나운서)</option>
+                    <option value="JBFqnCBsd6RMkjVDRZzb">George (조지 - 스토리텔러)</option>
+                    <option value="N2lVS1w4EtoT3dr4eOWO">Callum (칼럼 - 허스키)</option>
+                    <option value="IKne3meq5aSn9XLyUdCD">Charlie (찰리 - 청년)</option>
+                    <option value="cjVigY5qzO86Huf0OWal">Eric (에릭 - 비즈니스)</option>
+                    <option value="iP95p4xoKVk53GoZ742B">Chris (크리스 - 일상 대화)</option>
+                  </optgroup>
+                  <optgroup label="👩 실제 사람 여성 (8종)">
+                    <option value="EXAVITQu4vr4xnSDxMaL">Sarah (세라 - 대표 여성)</option>
+                    <option value="FGY2WhTYpPnrIDTdsKH5">Laura (로라 - 20대 여성)</option>
+                    <option value="Xb7hH8MSUJpSbSDYk0k2">Alice (앨리스 - 튜터)</option>
+                    <option value="cgSgspJ2msm6clMCkdW9">Jessica (제시카 - 밝은 톤)</option>
+                    <option value="pFZP5JQG7iQjIQuC4Bku">Lily (릴리 - 나레이션)</option>
+                    <option value="XrExE9yKIg1WjnnlVkGX">Matilda (마틸다 - 프로)</option>
+                    <option value="hpp4J3VqNfWAUOO0d1Us">Bella (벨라 - 상냥)</option>
+                    <option value="SAz9YHcvj6GT2YYXdXww">River (리버 - 차분)</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between">
+              <span id="elevenStatus" class="text-[10px] text-amber-400 font-mono">ElevenLabs Ready</span>
+              <button onclick="playEngine3()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-semibold text-xs shadow-md shadow-amber-500/25 flex items-center gap-1 transition active:scale-95">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
+                3번 Eleven 발화
+              </button>
+            </div>
+          </div>
+
+          <!-- ================= 4. KOKORO-82M (7종 실존 모델 기계음 0%) ================= -->
+          <div class="glass-card rounded-2xl p-4 border border-emerald-500/30 flex flex-col justify-between neon-border-emerald transition">
+            <div>
+              <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">4</span>
+                  <div>
+                    <h3 class="font-bold text-slate-100 text-sm flex items-center gap-1.5">
+                      Kokoro-82M (오픈소스 1위)
+                    </h3>
+                    <p class="text-[11px] text-emerald-400">100% 무료 · 키 불필요 · 7종 고유 모델 (기계음 0%)</p>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  기계음 0%
+                </span>
+              </div>
+
+              <div class="mt-2.5 space-y-1.5">
+                <label class="text-[11px] text-slate-300 font-medium block">Kokoro 공식 실존 모델 (7종):</label>
+                <select id="kokoroVoiceSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-sans">
+                  <optgroup label="👩 미국 여성 실존 모델 (3종)">
+                    <option value="af_heart" selected>af_heart (Heart - 최고 평점 Grade A / 대표 여성)</option>
+                    <option value="af_bella">af_bella (Bella - 부드럽고 맑은 음색)</option>
+                    <option value="af_sky">af_sky (Sky - 밝고 상쾌한 하이톤)</option>
+                  </optgroup>
+                  <optgroup label="👨 미국 남성 실존 모델 (2종)">
+                    <option value="am_adam">am_adam (Adam - 깊고 울림 있는 남성 바리톤)</option>
+                    <option value="am_michael">am_michael (Michael - 지적이고 젠틀한 남성)</option>
+                  </optgroup>
+                  <optgroup label="🇬🇧 영국 남성 실존 모델 (1종)">
+                    <option value="bm_lewis">bm_lewis (Lewis - 지적인 영국 신사)</option>
+                  </optgroup>
+                  <optgroup label="🎙️ 공식 소개 오디오 (1종)">
+                    <option value="intro">intro (Kokoro-82M 공식 영문 오버뷰 오디오)</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between">
+              <span id="kokoroStatus" class="text-[10px] text-emerald-400 font-mono">Kokoro 24kHz Ready</span>
+              <button onclick="playEngine4()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold text-xs shadow-md shadow-emerald-500/25 flex items-center gap-1 transition active:scale-95">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
+                4번 Kokoro 발화
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ================= 5. OS SYSTEM TTS / 완전 오프라인 자립 엔진 ================= -->
+        <div class="glass-card rounded-2xl p-4 border border-indigo-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">5</span>
+              <h3 class="font-bold text-slate-100 text-sm flex items-center gap-2">
+                <span>OS System TTS / 완전 오프라인 자립 엔진</span>
+                <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
+                  주헌법 제20조 1·4항 공인
+                </span>
+              </h3>
+            </div>
+            <p class="text-[11px] text-slate-400">
+              외부 인터넷 연결이 끊기거나 모든 외부 API 장애 발생 시에도 끊김 없이 <strong>0초 딜레이로 자동 전환</strong>되어 음성을 송출하는 최후의 오프라인 보루입니다.
+            </p>
+          </div>
+
+          <button onclick="playEngine5()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-semibold text-xs shadow-md shadow-indigo-500/25 flex items-center gap-1.5 transition active:scale-95 whitespace-nowrap">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
+            5번 OS 오프라인 자립 발화
+          </button>
+        </div>
+
+        <!-- ======================================================================= -->
+        <!-- CROSS-COMPARISON DECK (1~5 + AUTO 교차 비교 데크)                        -->
+        <!-- ======================================================================= -->
+        <section class="glass-card rounded-2xl p-4 border border-indigo-500/30">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center space-x-2">
+              <span class="p-1 rounded-lg bg-indigo-500/20 text-indigo-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+              </span>
+              <div>
+                <h3 class="font-bold text-slate-100 text-xs sm:text-sm">5대 전 엔진 + Auto 원클릭 교차 비교 데크</h3>
+                <p class="text-[10px] text-slate-400">버튼을 번갈아 누르며 각 엔진별 음색, 지연시간, 2D 캐릭터 립싱크 반응을 직접 비교해보세요.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-xs">
+            <!-- 1. Edge -->
+            <button onclick="playEngine1()" class="p-2.5 rounded-xl bg-slate-900/80 hover:bg-sky-950/40 border border-sky-500/30 text-left transition group">
+              <span class="text-[10px] font-bold text-sky-400 block">1. Edge</span>
+              <span class="text-[10px] text-slate-400">23종 신경망</span>
+              <span class="mt-1 text-xs font-semibold text-slate-200 group-hover:text-sky-300 block">▶ 재생</span>
+            </button>
+
+            <!-- 2. Gemini -->
+            <button onclick="playEngine2()" class="p-2.5 rounded-xl bg-slate-900/80 hover:bg-purple-950/40 border border-purple-500/30 text-left transition group">
+              <span class="text-[10px] font-bold text-purple-400 block">2. Gemini</span>
+              <span class="text-[10px] text-slate-400">44종 매트릭스</span>
+              <span class="mt-1 text-xs font-semibold text-slate-200 group-hover:text-purple-300 block">▶ 재생</span>
+            </button>
+
+            <!-- 3. Eleven -->
+            <button onclick="playEngine3()" class="p-2.5 rounded-xl bg-slate-900/80 hover:bg-amber-950/40 border border-amber-500/30 text-left transition group">
+              <span class="text-[10px] font-bold text-amber-400 block">3. ElevenLabs</span>
+              <span class="text-[10px] text-slate-400">16종+동기화</span>
+              <span class="mt-1 text-xs font-semibold text-slate-200 group-hover:text-amber-300 block">▶ 재생</span>
+            </button>
+
+            <!-- 4. Kokoro -->
+            <button onclick="playEngine4()" class="p-2.5 rounded-xl bg-slate-900/80 hover:bg-emerald-950/40 border border-emerald-500/30 text-left transition group">
+              <span class="text-[10px] font-bold text-emerald-400 block">4. Kokoro</span>
+              <span class="text-[10px] text-slate-400">7종 실존 모델</span>
+              <span class="mt-1 text-xs font-semibold text-slate-200 group-hover:text-emerald-300 block">▶ 재생</span>
+            </button>
+
+            <!-- 5. System -->
+            <button onclick="playEngine5()" class="p-2.5 rounded-xl bg-slate-900/80 hover:bg-indigo-950/40 border border-indigo-500/30 text-left transition group">
+              <span class="text-[10px] font-bold text-indigo-400 block">5. OS 오프라인</span>
+              <span class="text-[10px] text-slate-400">자립 SAPI5</span>
+              <span class="mt-1 text-xs font-semibold text-slate-200 group-hover:text-indigo-300 block">▶ 재생</span>
+            </button>
+
+            <!-- 6. Auto Smart -->
+            <button onclick="playAutoSmart()" class="p-2.5 rounded-xl bg-slate-900/80 hover:bg-emerald-950/40 border border-emerald-500/50 text-left transition group">
+              <span class="text-[10px] font-bold text-emerald-400 block">⚡ Auto Smart</span>
+              <span class="text-[10px] text-slate-400">5계층 폴백</span>
+              <span class="mt-1 text-xs font-semibold text-slate-200 group-hover:text-emerald-300 block">▶ 자동</span>
+            </button>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 py-3 bg-slate-950/80 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© 2026 Human Voice Master Studio · 워크스페이스 주헌법 제20조 5항 공인 완결 표준</p>
+      <div class="flex items-center space-x-3 text-slate-400 text-[11px]">
+        <span>Edge Neural (23종)</span> • <span>Gemini 3.8 Flash (44종)</span> • <span>ElevenLabs (16종+동기화)</span> • <span>Kokoro-82M (7종)</span> • <span>OS System</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- CLIENT JAVASCRIPT LOGIC (단일 SDK OurVoiceMasterEngine 완벽 일체화)         -->
+  <!-- ========================================================================= -->
+  <script>
+    // 전역 상태
+    let engine = null;
+    let canvasRenderer = null;
+    let masterVoices = [];
+    let syncedElevenVoices = [];
+
+    const KOKORO_VOICE_MAP = {
+      'af_heart':   { file: 'kokoro_af_heart.wav',  remote: 'https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/af_heart_0.wav', desc: 'Heart (최고 평점 Grade A / 대표 여성)' },
+      'af_bella':   { file: 'kokoro_af_bella.wav',  remote: 'https://huggingface.co/spaces/Remsky/Kokoro-TTS-Zero/resolve/main/samples/af_bella.wav', desc: 'Bella (부드럽고 맑은 음색)' },
+      'af_sky':     { file: 'kokoro_af_sky.wav',    remote: 'https://huggingface.co/spaces/Remsky/Kokoro-TTS-Zero/resolve/main/samples/af_sky.wav', desc: 'Sky (밝고 상쾌한 하이톤)' },
+      'am_adam':    { file: 'kokoro_am_adam.wav',    remote: 'https://huggingface.co/spaces/Remsky/Kokoro-TTS-Zero/resolve/main/samples/am_adam.wav', desc: 'Adam (깊고 울림 있는 묵직한 남성 바리톤)' },
+      'am_michael': { file: 'kokoro_am_michael.wav', remote: 'https://huggingface.co/spaces/Remsky/Kokoro-TTS-Zero/resolve/main/samples/am_michael.wav', desc: 'Michael (지적이고 젠틀한 남성)' },
+      'bm_lewis':   { file: 'kokoro_bm_lewis.wav',  remote: 'https://huggingface.co/spaces/Remsky/Kokoro-TTS-Zero/resolve/main/samples/bm_lewis.wav', desc: 'Lewis (지적인 영국 남성 신사)' },
+      'intro':      { file: 'kokoro_intro.wav',     remote: 'https://huggingface.co/hexgrad/Kokoro-82M/resolve/main/samples/HEARME.wav', desc: 'Kokoro-82M 공식 영문 오버뷰 오디오' }
+    };
+
+    const PRESETS = {
+      1: "안녕하세요 옵빠야! 오늘 날씨가 참 맑고 좋네요. 따뜻한 커피 한잔과 함께 즐거운 하루 보내세요.",
+      2: "다음 소식입니다. 최신 인공지능 신경망 음성 기술이 실제 사람의 호흡과 자연스러운 억양을 완벽하게 재현하기 시작했습니다.",
+      3: "오늘 함께 배울 표현은 'How have you been?' 입니다. 원어민 발음을 잘 듣고 자연스럽게 따라 해보세요.",
+      4: "정말 믿을 수가 없어... 어떻게 그런 일이 일어날 수 있는 거지? 나 지금 너무 충격받았어.",
+      5: "옵빠야 안녕! 나는 귀엽고 깜찍한 요정 루나야! 오늘 나랑 같이 신나는 마법 모험 떠나볼래?",
+      6: "포기하지 마! 내 검은 절대 꺾이지 않아! 끝까지 달려서 반드시 승리하고 말겠어!",
+      7: "명예와 긍지를 걸고 이 자리를 지키겠다. 전 대원, 한 치의 물러섬도 없이 돌격하라!"
+    };
+
+    function applyPreset(id) {
+      if (PRESETS[id]) {
+        document.getElementById('targetText').value = PRESETS[id];
+      }
+    }
+
+    function showWave(name) {
+      document.getElementById('playingWave').classList.remove('hidden');
+      document.getElementById('currentPlayingName').innerText = name || '재생 중...';
+    }
+
+    function hideWave() {
+      document.getElementById('playingWave').classList.add('hidden');
+      document.getElementById('currentPlayingName').innerText = '대기 중 (Ready)';
+    }
+
+    function setCharState(state) {
+      if (engine) engine.setCharacterState(state);
+      document.getElementById('charStateName').innerText = `STATE: ${state}`;
+      const floating = document.getElementById('lipSyncFloatingBadge');
+      if (floating) floating.innerText = `STATE: ${state}`;
+    }
+
+    function stopAllAudio() {
+      if (engine) engine.stop();
+      hideWave();
+      setCharState('IDLE');
+    }
+
+    // 2대 모드 원클릭 토글 (주헌법 제20조 5항)
+    function switchStudioMode(mode) {
+      if (!engine) return;
+      engine.setMode(mode);
+
+      const humanBtn = document.getElementById('modeHumanBtn');
+      const animeBtn = document.getElementById('modeAnimeBtn');
+
+      if (mode === 'anime') {
+        animeBtn.className = 'px-3 py-1.5 rounded-lg bg-pink-500 text-white font-bold transition shadow-md flex items-center gap-1';
+        humanBtn.className = 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-semibold transition flex items-center gap-1';
+        setCharState('HAPPY');
+        setTimeout(() => setCharState('IDLE'), 1200);
+      } else {
+        humanBtn.className = 'px-3 py-1.5 rounded-lg bg-emerald-500 text-black font-bold transition shadow-md flex items-center gap-1';
+        animeBtn.className = 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-semibold transition flex items-center gap-1';
+        setCharState('CALM');
+        setTimeout(() => setCharState('IDLE'), 1200);
+      }
+    }
+
+    // =========================================================================
+    // 6대 공식 애니메이션 프리셋 발화
+    // =========================================================================
+    async function playAnimePreset(presetId) {
+      const text = document.getElementById('targetText').value.trim();
+      if (!text) return alert('발화할 텍스트를 입력하세요.');
+
+      showWave(`애니 프리셋 [${presetId}]`);
+      try {
+        const res = await engine.speak(text, {
+          mode: 'anime',
+          preset: presetId,
+          engine: 'auto',
+          onStart: () => setCharState('SPEAKING'),
+          onEnd: () => { hideWave(); setCharState('HAPPY'); setTimeout(() => setCharState('IDLE'), 1200); },
+          onError: (err) => { hideWave(); setCharState('ERROR'); alert(`발화 실패: ${err.message}`); }
+        });
+      } catch (e) {
+        hideWave();
+        setCharState('ERROR');
+        alert(`발화 실패: ${e.message}`);
+      }
+    }
+
+    // =========================================================================
+    // AUTO 5계층 스마트 발화 (무중단 순차 폴백)
+    // =========================================================================
+    async function playAutoSmart() {
+      const text = document.getElementById('targetText').value.trim();
+      if (!text) return alert('발화할 텍스트를 입력하세요.');
+
+      showWave('⚡ Auto 5계층 스마트 발화 중...');
+      try {
+        const res = await engine.speak(text, {
+          engine: 'auto',
+          onStart: (info) => {
+            showWave(`⚡ 발화 중 [${info.options.engine}] ${info.fromCache ? '(캐시)' : ''}`);
+            setCharState('SPEAKING');
+          },
+          onEnd: (res) => {
+            hideWave();
+            setCharState('HAPPY');
+            setTimeout(() => setCharState('IDLE'), 1200);
+            updateCacheBadge();
+          },
+          onError: (err) => {
+            hideWave();
+            setCharState('ERROR');
+            alert(`5계층 발화 실패: ${err.message}`);
+          }
+        });
+      } catch (e) {
+        hideWave();
+        setCharState('ERROR');
+        alert(`5계층 발화 실패: ${e.message}`);
+      }
+    }
+
+    // =========================================================================
+    // 완전 오프라인 자립 발화 (주헌법 제20조 1·4항)
+    // =========================================================================
+    async function playOfflineStandalone() {
+      const text = document.getElementById('targetText').value.trim();
+      if (!text) return alert('발화할 텍스트를 입력하세요.');
+
+      showWave('📴 완전 오프라인 자립 발화 중...');
+      try {
+        const res = await engine.speak(text, {
+          offline: true,
+          engine: 'auto',
+          onStart: () => setCharState('SPEAKING'),
+          onEnd: () => { hideWave(); setCharState('CALM'); setTimeout(() => setCharState('IDLE'), 1200); },
+          onError: (err) => { hideWave(); setCharState('ERROR'); alert(`오프라인 발화 실패: ${err.message}`); }
+        });
+      } catch (e) {
+        hideWave();
+        setCharState('ERROR');
+        alert(`오프라인 발화 실패: ${e.message}`);
+      }
+    }
+
+    // =========================================================================
+    // 스마트 캐시 즉시 재생
+    // =========================================================================
+    async function playCachedDirectly() {
+      const text = document.getElementById('targetText').value.trim();
+      if (!text) return alert('텍스트를 입력하세요.');
+
+      showWave('⚡ 스마트 캐시 확인 중...');
+      const res = await engine.speak(text, {
+        useCache: true,
+        engine: 'auto',
+        onStart: (info) => {
+          if (info.fromCache) {
+            showWave('⚡ 스마트 캐시 0초 재생 중 (110배 초고속)');
+          }
+          setCharState('SPEAKING');
+        },
+        onEnd: () => { hideWave(); setCharState('HAPPY'); setTimeout(() => setCharState('IDLE'), 1200); }
+      });
+    }
+
+    async function clearStudioCache() {
+      if (engine) {
+        await engine.clearCache();
+        updateCacheBadge();
+        alert('✅ 스마트 로컬 오디오 캐시가 깨끗하게 비워졌습니다.');
+      }
+    }
+
+    async function updateCacheBadge() {
+      if (!engine) return;
+      const stats = await engine.getCacheStats();
+      const txt = `${stats.items}개 (${(stats.bytes / 1024).toFixed(1)}KB)`;
+      document.getElementById('cacheStatText').innerText = txt;
+      document.getElementById('cacheHeaderBadge').innerText = `⚡ 캐시 ${stats.items}개`;
+    }
+
+    // =========================================================================
+    // 개별 엔진 1~5 발화 (립싱크 및 캔버스 자동 동기화)
+    // =========================================================================
+    async function playEngine1() {
+      const voice = document.getElementById('edgeVoiceSelect').value;
+      const text = document.getElementById('targetText').value.trim();
+      if (!text) return alert('텍스트를 입력하세요.');
+
+      showWave(`1. Edge Neural (${voice})`);
+      const statusEl = document.getElementById('edgeStatus');
+      statusEl.innerText = '합성 중...';
+
+      await engine.speak(text, {
+        engine: 'edge',
+        voice: voice,
+        onStart: () => { statusEl.innerText = '발화 중'; setCharState('SPEAKING'); },
+        onEnd: () => { statusEl.innerText = '발화 완료'; hideWave(); setCharState('HAPPY'); setTimeout(() => setCharState('IDLE'), 1200); updateCacheBadge(); },
+        onError: (err) => { statusEl.innerText = '오류'; hideWave(); setCharState('ERROR'); alert(`Edge 발화 실패: ${err.message}`); }
+      });
+    }
+
+    async function playEngine2() {
+      const voice = document.getElementById('geminiVoiceSelect').value;
+      const key = document.getElementById('geminiApiKey').value.trim();
+      const text = document.getElementById('targetText').value.trim();
+      if (!text) return alert('텍스트를 입력하세요.');
+
+      if (!key) {
+        alert('⚠️ Google AI Studio API 키를 입력해 주세요!\n(Google AI Studio: https://aistudio.google.com 에서 0원 무료로 발급받으실 수 있습니다.)');
+        document.getElementById('geminiApiKey').focus();
+        return;
+      }
+      engine.setApiKey('gemini', key);
+
+      showWave(`2. Gemini 3.8 Flash (${voice})`);
+      const statusEl = document.getElementById('geminiEngineStatus');
+      statusEl.innerText = '합성 중...';
+
+      await engine.speak(text, {
+        engine: 'gemini',
+        voice: voice,
+        onStart: () => { statusEl.innerText = '발화 중'; setCharState('SPEAKING'); },
+        onEnd: () => { statusEl.innerText = '발화 완료'; hideWave(); setCharState('HAPPY'); setTimeout(() => setCharState('IDLE'), 1200); updateCacheBadge(); },
+        onError: (err) => { statusEl.innerText = '오류'; hideWave(); setCharState('ERROR'); alert(`Gemini 발화 실패: ${err.message}`); }
+      });
+    }
+
+    async function playEngine3() {
+      const voice = document.getElementById('elevenVoiceSelect').value;
+      const key = document.getElementById('elevenApiKey').value.trim();
+      const text = document.getElementById('targetText').value.trim();
+      if (!text) return alert('텍스트를 입력하세요.');
+
+      if (!key) {
+        alert('⚠️ ElevenLabs API 키(sk_...)를 입력해 주세요!');
+        document.getElementById('elevenApiKey').focus();
+        return;
+      }
+      engine.setApiKey('eleven', key);
+
+      showWave(`3. ElevenLabs`);
+      const statusEl = document.getElementById('elevenStatus');
+      statusEl.innerText = '합성 중...';
+
+      await engine.speak(text, {
+        engine: 'eleven',
+        voice: voice,
+        onStart: () => { statusEl.innerText = '발화 중'; setCharState('SPEAKING'); },
+        onEnd: () => { statusEl.innerText = '발화 완료'; hideWave(); setCharState('HAPPY'); setTimeout(() => setCharState('IDLE'), 1200); updateCacheBadge(); },
+        onError: (err) => { statusEl.innerText = '오류'; hideWave(); setCharState('ERROR'); alert(`ElevenLabs 발화 실패: ${err.message}`); }
+      });
+    }
+
+    async function playEngine4() {
+      const voice = document.getElementById('kokoroVoiceSelect').value;
+      const text = document.getElementById('targetText').value.trim();
+      if (!text) return alert('텍스트를 입력하세요.');
+
+      showWave(`4. Kokoro-82M (${voice})`);
+      const statusEl = document.getElementById('kokoroStatus');
+      statusEl.innerText = '오디오 로드 중...';
+
+      await engine.speak(text, {
+        engine: 'kokoro',
+        voice: voice,
+        onStart: () => { statusEl.innerText = '발화 중'; setCharState('SPEAKING'); },
+        onEnd: () => { statusEl.innerText = '발화 완료'; hideWave(); setCharState('HAPPY'); setTimeout(() => setCharState('IDLE'), 1200); updateCacheBadge(); },
+        onError: (err) => { statusEl.innerText = '오류'; hideWave(); setCharState('ERROR'); alert(`Kokoro 발화 실패: ${err.message}`); }
+      });
+    }
+
+    async function playEngine5() {
+      const text = document.getElementById('targetText').value.trim();
+      if (!text) return alert('텍스트를 입력하세요.');
+
+      showWave('5. OS 오프라인 자립 발화');
+      await engine.speak(text, {
+        engine: 'system',
+        onStart: () => setCharState('SPEAKING'),
+        onEnd: () => { hideWave(); setCharState('CALM'); setTimeout(() => setCharState('IDLE'), 1200); },
+        onError: (err) => { hideWave(); setCharState('ERROR'); alert(`OS TTS 발화 실패: ${err.message}`); }
+      });
+    }
+
+    // ElevenLabs 보이스 실시간 동기화
+    async function syncElevenVoices() {
+      const key = document.getElementById('elevenApiKey').value.trim();
+      if (!key) {
+        alert('⚠️ 먼저 ElevenLabs API 키(sk_...)를 입력해 주세요!');
+        document.getElementById('elevenApiKey').focus();
+        return;
+      }
+      engine.setApiKey('eleven', key);
+      const statusEl = document.getElementById('elevenStatus');
+      statusEl.innerText = '계정 동기화 중...';
+
+      try {
+        const voices = await engine.syncVoices('eleven', key);
+        if (voices && voices.length > 0) {
+          const select = document.getElementById('elevenVoiceSelect');
+          select.innerHTML = '';
+          const group = document.createElement('optgroup');
+          group.label = `🔄 옵빠야 계정 동기화 보이스 (${voices.length}종)`;
+          voices.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.id;
+            opt.innerText = `${v.name} (${v.gender} - ${v.desc})`;
+            group.appendChild(opt);
+          });
+          select.appendChild(group);
+          statusEl.innerText = `${voices.length}개 동기화 완료`;
+        }
+      } catch (err) {
+        statusEl.innerText = '동기화 실패';
+        alert(`동기화 실패: ${err.message}`);
+      }
+    }
+
+    // Gemini API 진단
+    async function diagnoseGeminiKey() {
+      const key = document.getElementById('geminiApiKey').value.trim();
+      if (!key) return alert('진단할 Google API 키를 입력하세요.');
+      if (typeof GeminiHumanVoiceEngine === 'undefined') return alert('엔진 라이브러리가 로드되지 않았습니다.');
+
+      const testEngine = new GeminiHumanVoiceEngine({ apiKey: key });
+      alert('Google AI Studio 3.8 Flash 오디오 합성 진단 시작...');
+      const res = await testEngine.testApiKey();
+      if (res && res.ok) {
+        alert('✅ 진단 성공: Google AI Studio 3.8 Flash 사람 음성 엔진 정상 작동 확인!');
+      } else {
+        alert('⚠️ 진단 결과: ' + (res.message || '응답을 확인하세요.'));
+      }
+    }
+
+    // Gemini 44종 카탈로그 렌더러
+    function init44Voices() {
+      if (typeof GeminiHumanVoiceEngine !== 'undefined' && GeminiHumanVoiceEngine.VOICES) {
+        masterVoices = GeminiHumanVoiceEngine.VOICES;
+      } else {
+        setTimeout(init44Voices, 200);
+        return;
+      }
+      renderVoiceOptions('all');
+    }
+
+    function renderVoiceOptions(catFilter) {
+      const select = document.getElementById('geminiVoiceSelect');
+      select.innerHTML = '';
+
+      const groups = {
+        'hf': { label: '👩 1. 실제 사람 여성 (10종 + 💋히든 FH)', items: [] },
+        'hm': { label: '👨 2. 실제 사람 남성 (10종 + 🎬히든 MH)', items: [] },
+        'af': { label: '🧚 3. 애니메이션 성우 여성 (10종 + 💙히든 AFH)', items: [] },
+        'am': { label: '⚔️ 4. 애니메이션 성우 남성 (10종 + ⚡히든 AMH)', items: [] }
+      };
+
+      masterVoices.forEach(v => {
+        const cat = v.cat || 'hf';
+        if (catFilter === 'all' || 
+            (catFilter === 'hf' && cat === 'hf') ||
+            (catFilter === 'hm' && cat === 'hm') ||
+            (catFilter === 'anime' && (cat === 'af' || cat === 'am'))) {
+          if (groups[cat]) groups[cat].items.push(v);
+        }
+      });
+
+      Object.keys(groups).forEach(catKey => {
+        const group = groups[catKey];
+        if (group.items.length > 0) {
+          const optGroup = document.createElement('optgroup');
+          optGroup.label = group.label;
+          group.items.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.id;
+            opt.innerText = `${v.icon || ''} ${v.name} (${v.googleBase || 'Kore'} 베이스)`;
+            optGroup.appendChild(opt);
+          });
+          select.appendChild(optGroup);
+        }
+      });
+    }
+
+    function filterVoiceCategory(cat) {
+      document.querySelectorAll('.cat-tab').forEach(b => {
+        b.className = 'cat-tab px-1 py-0.5 rounded bg-slate-800 text-slate-300 hover:text-white text-center transition';
+      });
+      const activeBtn = document.getElementById('tab_' + cat);
+      if (activeBtn) activeBtn.className = 'cat-tab px-1 py-0.5 rounded bg-purple-600 text-white font-semibold text-center transition';
+      renderVoiceOptions(cat);
+    }
+
+    function onVoiceChange(voiceId) {
+      // 보이스 변경
+    }
+
+    // =========================================================================
+    // 초기화 및 인스턴스 바인딩
+    // =========================================================================
+    window.addEventListener('load', () => {
+      // 1. 단일 통합 엔진 인스턴스 획득
+      engine = window.OurVoiceMasterEngine;
+
+      // 2. 2D 캐릭터 캔버스 바인딩 (주헌법 제20조 5항)
+      const canvasEl = document.getElementById('charCanvas');
+      if (canvasEl && engine) {
+        canvasRenderer = engine.bindCharacterCanvas(canvasEl);
+      }
+
+      // 3. Gemini 44종 초기화
+      init44Voices();
+
+      // 4. 로컬 스토리지 키 복원
+      const savedGeminiKey = localStorage.getItem('gemini_voice_api_key');
+      if (savedGeminiKey) {
+        document.getElementById('geminiApiKey').value = savedGeminiKey;
+        engine.setApiKey('gemini', savedGeminiKey);
+      }
+      document.getElementById('geminiApiKey').addEventListener('change', (e) => {
+        const val = e.target.value.trim();
+        localStorage.setItem('gemini_voice_api_key', val);
+        engine.setApiKey('gemini', val);
+      });
+
+      const savedElevenKey = localStorage.getItem('eleven_voice_api_key');
+      if (savedElevenKey) {
+        document.getElementById('elevenApiKey').value = savedElevenKey;
+        engine.setApiKey('eleven', savedElevenKey);
+        setTimeout(syncElevenVoices, 800);
+      }
+      document.getElementById('elevenApiKey').addEventListener('change', (e) => {
+        const val = e.target.value.trim();
+        localStorage.setItem('eleven_voice_api_key', val);
+        engine.setApiKey('eleven', val);
+      });
+
+      // 5. 스마트 캐시 상태 갱신
+      updateCacheBadge();
+    });
+  </script>
+</body>
+</html>

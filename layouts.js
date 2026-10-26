@@ -120,6 +120,7 @@ function initProjectFolders(content) {
       ["외장하드 안전제거[PC]", "safe-eject.svg"]
     ],
     "network": [
+      ["누리 스튜디오", "nuri-studio.svg"],
       ["포터블", "portable.svg"],
       ["현재 홈페이지", "homepage.png"]
     ],
@@ -132,12 +133,19 @@ function initProjectFolders(content) {
     "한걸음V1.0 Exile": {
       tag: "한걸음V1.0 Exile · 5개 언어 · 그림으로 배우는 입문 문자 3회차 · 오늘의 뉴스 회화 · 이어하기 · 누리 보이스",
       links: [
-        { label: "한걸음V1.0 Exile APK (1.0MB) · Android 8 이상", url: "./downloads/Hangeoreum-V1.0-Exile.apk", download: "Hangeoreum-V1.0-Exile.apk", primary: true },
+        { label: "한걸음V1.0 Exile APK (1.3MB) · Android 8 이상", url: "./downloads/Hangeoreum-V1.0-Exile.apk", download: "Hangeoreum-V1.0-Exile.apk", primary: true },
         { label: "화면 시안 체험 · 입문 문자 3회차 & 오늘의 뉴스", url: "./downloads/Hangeoreum-preview.html", external: true },
         { label: "사용 안내 · 안드로메다 유배 스토리 및 음성 코칭", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
       ]
     },
 
+    "누리 스튜디오": {
+      tag: "누리 스튜디오 · 누리 보이스 TTS · 5대 엔진 86종+ 목소리 · 일반/애니 캐릭터 모드 · 오프라인 대비 5계층",
+      desc: "글자를 사람의 숨결로 — 5대 엔진 86종이 넘는 목소리를 한 화면에서 골라 듣고, 애니 캐릭터 립싱크까지. 인터넷이 흔들려도 다음 엔진이 이어받아 끝까지 말해 주는 누리 보이스 스튜디오예요.",
+      links: [
+        { label: "🎙️ 누리 스튜디오 바로 열기 · 설치 없이 웹에서", url: "./nuri-studio/index.html", external: true, primary: true }
+      ]
+    },
     "보컬트레이너[앱]": {
       tag: "VocalMate 0.12.0-dev · 노래방 녹음 코칭·리프·화음 연습 · Android 8 이상 · 실기기 미검증 개발판",
       links: [
@@ -225,6 +233,13 @@ function initProjectFolders(content) {
         const caption = document.createElement('figcaption');
         caption.textContent = name;
         card.append(image, caption);
+        if (projectDownloads[name] && projectDownloads[name].desc) {
+          const desc = document.createElement('p');
+          desc.className = 'project-desc';
+          desc.textContent = projectDownloads[name].desc;
+          desc.style.cssText = 'margin:6px 0 0; font-size:12px; line-height:1.55; font-weight:600; color:var(--ink); opacity:.85; text-align:left;';
+          card.append(desc);
+        }
         if (projectDownloads[name]) {
           card.style.cursor = 'pointer';
           card.title = `${name} 다운로드`;
