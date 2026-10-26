@@ -167,6 +167,7 @@
   }
 
   function body() {
+    if (!root) return;  // 퀴즈 다음 문제 타이머가 문자표를 닫은 뒤에 와도 오류 없이 끝낸다
     const b = root.querySelector('#hglBody');
     if (!b) return;
     if (!data) { b.innerHTML = '<div class="hgl-err">불러오는 중…</div>'; return; }

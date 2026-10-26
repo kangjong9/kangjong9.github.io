@@ -44,7 +44,7 @@
   };
   const packAsk = (lang, download) => { try { window.Native.call('sttModelDownload', JSON.stringify({ lang, download })); } catch (e) { /* 구버전 앱 */ } };
   // 앱 언어 → 폰 안 인식팩 언어 (중국어는 폰 안 인식기가 zh-CN 대신 cmn-Hans-CN을 쓴다)
-  const PACK_LANG = { fr: 'fr-FR', es: 'es-ES', ru: 'ru-RU', cn: 'cmn-Hans-CN' };
+  const PACK_LANG = { fr: 'fr-FR', es: 'es-ES', ru: 'ru-RU', cn: 'cmn-Hans-CN', en: 'en-US', ja: 'ja-JP' };
   window.HGSTTPACK = {
     langOf: (app) => PACK_LANG[app] || '',
     has: (lang) => PACK.installed.includes(String(lang).toLowerCase()),
@@ -66,7 +66,7 @@
   };
   if (hasNative()) {
     setTimeout(() => packAsk('fr-FR', false), 1500);   // 받아진 언어 목록은 언어와 무관하게 한 번에 온다
-    // fr·es·ru·cn을 고르면(또는 그 언어로 앱을 열면) 팩이 없을 때 바로 받는다 (옵빠야 지시 2026-10-27). 언어마다 한 번만 요청
+    // fr·es·ru·cn(10-28부터 en·ja도)을 고르면(또는 그 언어로 앱을 열면) 팩이 없을 때 바로 받는다 (옵빠야 지시 2026-10-27). 언어마다 한 번만 요청
     const asked = new Set();
     setInterval(() => {
       const lang = PACK_LANG[window.selectedLang];
