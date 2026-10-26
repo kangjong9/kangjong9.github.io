@@ -136,6 +136,7 @@
     $('hgUiFeedbackNotice').hidden = mode !== 'feedback';
   }
   function back() {
+    if (window.HGREVIEW && HGREVIEW.isOpen()) { HGREVIEW.close(); return; }
     if (document.querySelector('.hgl-ov')) { HGLETTERS.close(); return; }
     const extras = ['hgv2Picker','hgVoiceLog','hgCelebrate'];
     for (const id of extras) { if ($(id)) { $(id).remove(); stopMedia(); return; } }
@@ -188,7 +189,7 @@
     Array.from(canvas.children).filter(e=>e!==lessonHeader && e.id!=='viewDrill' && e.id!=='viewRoleplay' && e.id!=='hgScriptView').forEach(e=>advanced.append(e));canvas.append(advanced);
     const modes=document.createElement('div');modes.id='hgUiModeButtons';modes.className='hg-ui-mode-buttons';modes.innerHTML='<button class="hg-ui-secondary" data-hg="words">표현 익히기</button><button class="hg-ui-primary" data-hg="feedback">따라 말하기</button>';
     lessonHeader.after(modes);
-    const feedback=document.createElement('p');feedback.id='hgUiFeedbackNotice';feedback.className='hg-ui-note';feedback.textContent='음성인식 결과와 목표 문장의 일치도를 확인합니다. 음소·억양·자연스러움을 측정한 점수가 아닙니다.';modes.after(feedback);
+    const feedback=document.createElement('p');feedback.id='hgUiFeedbackNotice';feedback.className='hg-ui-note';feedback.textContent='시범을 듣고 따라 말하면 짧게 확인하고 이어가요. 종합 안내는 문자 카테고리와 10레벨 구간을 마칠 때 제공해요.';modes.after(feedback);
     const targetCard=$('targetDisplay').parentElement;targetCard.classList.add('hg-ui-phrase-card');
     const micPanel=$('sttStatusText').parentElement;micPanel.classList.add('hg-ui-mic-panel');
     $('feedbackSheet').classList.add('hg-ui-result-card');$('sttStatusText').setAttribute('aria-live','polite');$('userSpokenFeedback').setAttribute('aria-live','polite');

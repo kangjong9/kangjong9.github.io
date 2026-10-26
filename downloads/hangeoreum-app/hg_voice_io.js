@@ -6,9 +6,9 @@
       - 사용자 입력이 끝나 최종 결과가 확정된 순간(final result) → 입력완료음 1번
       을 확실하게 울린다. 각 화면 코드는 효과음을 따로 울리지 않는다.
    3) 모든 강의 공통 판정 타이밍 (옵빠야 지시 2026-10-26)
-      - 마이크가 켜진 뒤 NO_INPUT_MS(5초) 안에 말이 시작되지 않으면 → 'no-speech' 오류 = 불합격
-        (각 화면이 기존대로 AI 시범 → 다시 입력 → 평가 → 판정을 반복)
-      - 5초 안에 말이 시작되면 시간 제한 없이 말이 끝날 때까지 기다린다
+      - 마이크가 켜진 뒤 NO_INPUT_MS(4초) 안에 말이 시작되지 않으면 → 'no-speech' = 인식 불가
+        (각 화면이 기존대로 AI 시범 → 다시 입력을 반복하며, 발음 오답으로 단정하지 않는다)
+      - 말이 시작되면 자연스러운 말 끝을 기다리되, 문자/따라 읽기/자유 회화별 종료 상한을 둔다
       - 말이 끝나는 순간 바로 평가로 넘긴다: 최종 결과를 FINAL_GRACE_MS까지만 기다리고,
         그때까지 안 오면 마지막 중간 결과로 즉시 판정한다
    4) 불필요한 마이크 켜짐 방지 (2026-10-26)
@@ -17,11 +17,11 @@
       - 문자표·설정 등 창이 떠 있거나 앱이 뒤로 가 있으면 마이크를 켜지 않고 기다렸다가, 닫히면 그때 켠다
       - 알림음이 마이크에 녹음돼 말 시작으로 잘못 잡히지 않게, 알림음을 먼저 울리고 끝난 뒤 마이크를 연다 */
 (function () {
-  const NO_INPUT_MS = 5000;     // 마이크 켜짐 → 말 시작까지 허용 시간
+  const NO_INPUT_MS = 4000;     // 말 시작 대기. 무입력은 오답이 아니라 다시 듣기 안내.
   // 말 끝 → 최종 결과 대기 상한 (넘으면 중간 결과로 판정). 300ms였을 때 기기 인식기의 중간 결과가 말 뒷부분이
   // 빠진 채로 판정돼 '잘 못 알아듣는' 원인이 됐다 → 최종 결과가 보통 도착하는 800ms까지 기다린다 (2026-10-26)
   const FINAL_GRACE_MS = 800;
-  const TAIL_LIMIT_MS = 4000;   // 말은 끝났는데 결과도 중간 결과도 없을 때의 안전 상한
+  const TAIL_LIMIT_MS = 1500;   // 말 끝 뒤 최종/중간 결과가 없으면 판정 불가로 종료
   const CUE_GAP_MS = 260;       // 입력 알림음(약 0.2초)이 끝난 뒤 마이크를 연다
   // 글자 하나·짧은 소리(목표 3자 이하)는 말 시작 후 이 시간만 듣고 바로 결과를 낸다. 주변 소음이 있으면 인식기가
   // 말 끝을 못 잡아 8초 넘게 듣다가 '못 알아들음'으로 끝났다 (실기기 2026-10-26: '베' 한 번에 8초·no-match)
@@ -29,6 +29,52 @@
   const GATE_POLL_MS = 300;     // 마이크를 막는 창이 열리고 닫히는지 확인하는 간격
 
   const hasNative = () => !!(window.Native && typeof window.Native.call === 'function');
+
+  /* ---------- 폰 안(온디바이스) 인식팩 (2026-10-27) ----------
+     한 글자 카드는 폰 안 인식팩이 있으면 그쪽으로 듣는다(MainActivity letterOnDevice). 무료, 구글이 받아 준다.
+     state: { installed:[...소문자 locale], supported:[...], busy:lang|'' } — 바뀌면 'hg-stt-pack' 이벤트 */
+  const PACK = { installed: [], supported: [], known: false, busy: '' };
+  window.HGSttModel = (o) => {
+    if (!o) return;
+    if (Array.isArray(o.installed)) PACK.installed = o.installed.map(s => String(s).toLowerCase());
+    if (Array.isArray(o.supported)) PACK.supported = o.supported.map(s => String(s).toLowerCase());
+    PACK.known = !o.error || PACK.known;
+    if (PACK.busy && PACK.installed.includes(PACK.busy)) PACK.busy = '';
+    try { window.dispatchEvent(new CustomEvent('hg-stt-pack', { detail: o })); } catch (e) { /* 무시 */ }
+  };
+  const packAsk = (lang, download) => { try { window.Native.call('sttModelDownload', JSON.stringify({ lang, download })); } catch (e) { /* 구버전 앱 */ } };
+  // 앱 언어 → 폰 안 인식팩 언어 (중국어는 폰 안 인식기가 zh-CN 대신 cmn-Hans-CN을 쓴다)
+  const PACK_LANG = { fr: 'fr-FR', es: 'es-ES', ru: 'ru-RU', cn: 'cmn-Hans-CN' };
+  window.HGSTTPACK = {
+    langOf: (app) => PACK_LANG[app] || '',
+    has: (lang) => PACK.installed.includes(String(lang).toLowerCase()),
+    // 받을 수 있는데 아직 없음 (상태를 모르면 false → 안내하지 않는다)
+    missing: (lang) => hasNative() && PACK.known && PACK.supported.includes(String(lang).toLowerCase()) && !PACK.installed.includes(String(lang).toLowerCase()),
+    busy: () => PACK.busy,
+    get(lang) {
+      if (!hasNative() || PACK.busy) return;
+      PACK.busy = String(lang).toLowerCase();
+      packAsk(lang, true);
+      // 다운로드는 조용히 진행된다 → 몇 초마다 다시 확인 (최대 3분)
+      let n = 0;
+      const t = setInterval(() => {
+        if (!PACK.busy || ++n > 36) { clearInterval(t); if (PACK.busy) { PACK.busy = ''; window.HGSttModel({}); } return; }
+        packAsk(lang, false);
+      }, 5000);
+    },
+    refresh: (lang) => { if (hasNative()) packAsk(lang || 'fr-FR', false); },
+  };
+  if (hasNative()) {
+    setTimeout(() => packAsk('fr-FR', false), 1500);   // 받아진 언어 목록은 언어와 무관하게 한 번에 온다
+    // fr·es·ru·cn을 고르면(또는 그 언어로 앱을 열면) 팩이 없을 때 바로 받는다 (옵빠야 지시 2026-10-27). 언어마다 한 번만 요청
+    const asked = new Set();
+    setInterval(() => {
+      const lang = PACK_LANG[window.selectedLang];
+      if (!lang || asked.has(lang) || !PACK.known || PACK.busy) return;
+      asked.add(lang);
+      if (window.HGSTTPACK.missing(lang)) window.HGSTTPACK.get(lang);
+    }, 3000);
+  }
 
   /* ---------- 마이크를 켜면 안 되는 때 ---------- */
   let appPaused = false;
@@ -67,7 +113,9 @@
       if (nativeActive && nativeActive !== this) nativeActive.abort();
       nativeActive = this;
       this._sid = String(++nativeSeq);
-      try { window.Native.call('sttStart', JSON.stringify({ lang: this.lang, sid: this._sid, hints: this.hints || [] })); }
+      let lab = '';   // 진단 전용 인식기 설정(MainActivity sttLab). 평소엔 비어 있어 기존 동작
+      try { lab = localStorage.getItem('hg_stt_lab') || ''; } catch (e) { /* 저장 불가 */ }
+      try { window.Native.call('sttStart', JSON.stringify({ lang: this.lang, sid: this._sid, hints: this.hints || [], shortUtterance: !!this.shortUtterance, lab, letterOnDevice: !!this.letterOnDevice })); }
       catch (e) { this._fire('error', { error: 'aborted' }); this._fire('end'); nativeActive = null; }
     }
     stop() { this.abort(); }
@@ -175,7 +223,7 @@
       this._clearTimers();
       s.seq++; s.opening = 0;
       const r = s.r; s.r = null;
-      s.began = false; s.partial = null;          // 다시 열면 처음부터 듣는다 (5초 기준도 새로)
+      s.began = false; s.partial = null;          // 다시 열면 무입력 대기도 새로 시작한다
       if (r) { try { r.abort(); } catch (e) { /* 이미 끝남 */ } }
     }
     _open() {
@@ -200,7 +248,8 @@
       if (r) { try { r.abort(); } catch (e) { /* 이미 끝남 */ } }
       record(this, kind, payload, s);
       if (kind === 'result') { cue('done'); this._emit('speechend'); this._emit('result', payload); }
-      else if (kind === 'error') this._emit('error', payload);
+      // heard: 말소리는 감지됐지만 글자로 못 바꿈(no-match 포함) ↔ 무음. 화면 안내만 다르게, 통과로 치지 않는다
+      else if (kind === 'error') this._emit('error', Object.assign({}, payload, { heard: !!(s.began || s.why === 'no-match') }));
       if (!s.ended) { s.ended = true; this._emit('end'); }
     }
     _listen(seq) {
@@ -212,6 +261,8 @@
       r.interimResults = true;                       // 말 진행 상황(중간 결과)을 받아 말 끝 즉시 판정
       r.maxAlternatives = Math.max(1, this.maxAlternatives || 1);
       r.hints = Array.isArray(this.hints) ? this.hints.filter(Boolean).map(String) : [];   // 목표 글자·문장 → 기기 인식 힌트
+      r.shortUtterance = !!this.shortUtterance;
+      r.letterOnDevice = !!this.letterOnDevice;
       const mine = () => s.r === r && s.seq === seq && !s.done;
       const later = (fn, ms) => s.timers.push(setTimeout(() => { if (mine()) fn(); }, ms));
       const fromPartialOrFail = () => {
@@ -219,11 +270,20 @@
         else this._finish('error', { error: 'no-speech' });
       };
       const short = r.hints.length && [...r.hints[0].replace(/\s/g, '')].length <= 3;
+      const maxSpeech = this.practiceMode === 'letters' ? 4500 : this.practiceMode === 'drill' ? Math.min(12000, Math.max(5000, (r.hints[0] || '').length * 220)) : 45000;
+      let finishing = false;
+      const requestFinish = () => {
+        if (finishing) return;
+        finishing = true;
+        try { typeof r.finish === 'function' ? r.finish() : r.stop(); } catch (_) {}
+        later(fromPartialOrFail, TAIL_LIMIT_MS);
+      };
       const began = () => {
         if (s.began) return;
         s.began = true;
-        this._clearTimers();                         // 5초 안에 말 시작 → 끝날 때까지 기다림
-        if (short) later(() => { try { typeof r.finish === 'function' ? r.finish() : r.stop(); } catch (e) { /* 이미 끝남 */ } }, SHORT_SPEECH_MS);
+        this._clearTimers();
+        // 이름+예시 단어 카드도 반드시 상한 적용. 말 끝 이벤트가 누락되어도 무한 청취하지 않는다.
+        later(requestFinish, short ? SHORT_SPEECH_MS : maxSpeech);
       };
       const speechEnded = () => {
         if (!s.began) return;
@@ -236,8 +296,9 @@
 
       r.onstart = () => {
         if (!mine()) return;
+        this._clearTimers();
         if (!s.started) { s.started = true; this._emit('start'); }
-        later(() => this._finish('error', { error: 'no-speech' }), NO_INPUT_MS);   // 5초 무입력 = 불합격
+        later(() => this._finish('error', { error: 'no-speech' }), NO_INPUT_MS);   // 무입력은 인식 불가
       };
       r.onspeechstart = () => { if (mine()) began(); };
       r.onspeechend = () => { if (mine()) speechEnded(); };
@@ -261,17 +322,16 @@
         if (code === 'aborted' && micBlocked()) return;   // 창이 열려 닫힌 것 → 창이 닫히면 다시 연다
         // 말한 내용이 중간 결과로 남아 있으면(기기 인식기의 '일치 없음' 등) 그걸로 판정
         if (code !== 'not-allowed' && code !== 'service-not-allowed' && hasText(s.partial)) { this._finish('result', plainResult(s.partial)); return; }
-        // 말소리는 들렸는데 인식기가 글자로 못 바꿈(い 같은 짧은 한 음절에서 잦음, 실기기 2026-10-26):
-        // 바로 불합격하지 않고 알림음과 함께 한 번 더 듣는다. 두 번째도 못 알아들으면 기존대로 불합격
+        // 내부에서 몰래 두 번 듣지 않는다. 화면에 판정 불가를 알리고 사용자가 흐름을 알 수 있게 한다.
         if (code === 'no-match') {
           s.why = 'no-match';
-          if (!s.rematched) { s.rematched = true; this._suspend(); this._open(); return; }
           this._finish('error', { error: 'no-speech' });
           return;
         }
         this._finish('error', { error: code || 'aborted' });
       };
       r.onend = () => { if (mine()) fromPartialOrFail(); };
+      later(() => this._finish('error', { error: 'audio-capture' }), 4000); // 인식기 시작 콜백 누락 보호
       try { r.start(); }
       catch (e) { s.r = null; this._finish('error', { error: 'aborted' }); }
     }
@@ -319,7 +379,7 @@
     const esc = (x) => String(x == null ? '' : x).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
     const rows = LOG.slice().reverse().map(e => `<div style="border-bottom:1px solid #e2e8f0;padding:8px 0;font-size:15px;line-height:1.5">
       <b>${esc(e.at)}</b> · ${esc(e.lang)} · ${esc(e.path)} · ${(e.ms / 1000).toFixed(1)}초${e.partial ? ' · 중간 결과로 판정' : ''}${e.rematched ? ' · 한 번 더 들음' : ''}<br>
-      ${e.kind === 'result' ? `🗣️ 들린 말: <b>${esc(e.alts.join(' / '))}</b>` : (e.kind === 'error' ? `⚠️ ${esc(e.error === 'no-speech' ? '말소리 없음(5초)' : e.error === 'no-match' ? '들렸지만 알아듣지 못함' : e.error)}` : '⏹ 취소')}
+      ${e.kind === 'result' ? `🗣️ 들린 말: <b>${esc(e.alts.join(' / '))}</b>` : (e.kind === 'error' ? `⚠️ ${esc(e.error === 'no-speech' ? '인식 결과 없음' : e.error === 'no-match' ? '들렸지만 알아듣지 못함' : e.error)}` : '⏹ 취소')}
       ${e.target ? `<br>🎯 목표: ${esc(e.target)}` : ''}${e.score != null ? ` · ${esc(e.score)}점` : ''}${e.pass != null ? (e.pass ? ' · ✅ 통과' : ' · ❌ 불합격') : ''}</div>`).join('')
       || '<div style="padding:16px 0;font-size:15px;color:#475569">아직 기록이 없어요. 수업에서 한 번 말해 본 뒤 다시 열어 주세요.</div>';
     const box = document.createElement('div');

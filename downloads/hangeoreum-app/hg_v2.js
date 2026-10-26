@@ -411,6 +411,12 @@ ${flow}
   async function advanceAfterSet() {
     const lang = curLang();
     const k = getSetIdx();
+    const completedLevel = currentLevel;
+    if (k === SETS_PER_LEVEL && completedLevel % 10 === 0 && window.HGREVIEW) {
+      if (HGREVIEW.isOpen()) return;
+      const proceed = await HGREVIEW.checkpoint({lang,kind:'levels',level:completedLevel}, `Lv.${completedLevel - 9}~${completedLevel}`);
+      if (!proceed || lang !== curLang() || currentLevel !== completedLevel || getSetIdx() !== k) return;
+    }
 
     if (k < SETS_PER_LEVEL) {
       const nk = k + 1;

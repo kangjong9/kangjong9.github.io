@@ -6,10 +6,11 @@
   <base href="hangeoreum-app/">
   <!-- 누리 보이스(Nuri Voice) TTS 엔진: GitHub Pages(kangjong9.github.io/assets)의 최신본으로 구동 -->
   <!-- 원본은 02. Apps/14. Human Voice TTS Studio, 앱 탑재본은 오프라인·접속 실패 시에만 쓰는 동일 사본(deploy_engine_to_apps.py) -->
-  <script src="../../assets/gemini_human_voice_engine.js"></script>
-  <script src="../../assets/our_voice_master_engine.js"></script>
+  <script src="gemini_human_voice_engine.js"></script>
+  <script src="our_voice_master_engine.js"></script>
   <link rel="stylesheet" href="hg_readable.css">
   <link rel="stylesheet" href="hg_ui.css">
+  <script src="hg_review.js"></script>
   <script src="hg_voice_io.js"></script>
   <script src="hg_readable.js"></script>
   <script src="curriculum_v2_fr.js"></script>
@@ -19151,6 +19152,8 @@ function getCurrentRoundData() {
       speechRecognizer.continuous = false;
       speechRecognizer.interimResults = false;
       speechRecognizer.maxAlternatives = 5;   // 후보 여러 개 중 목표 문장에 가장 가까운 것으로 판정
+      speechRecognizer.practiceMode = 'drill';
+      const thisRecognizer = speechRecognizer;
 
       // 학습 언어에 맞춰 STT 언어 지정
       if (selectedLang === 'fr') speechRecognizer.lang = 'fr-FR';
@@ -19163,6 +19166,7 @@ function getCurrentRoundData() {
       { const hintRd = getCurrentRoundData(); speechRecognizer.hints = hintRd && hintRd.target ? [hintRd.target] : []; }  // 목표 문장 인식 힌트
 
       speechRecognizer.onstart = () => {
+        if (speechRecognizer !== thisRecognizer) return;
         isRecordingSTT = true;
         if (btnMic) btnMic.textContent = "듣고 있습니다... 소리내어 말하세요!";
         updateHandsFreeStatus('mic_active', `🎙️ 마이크 켜짐! 목표 문장을 소리내어 따라하세요...`);
@@ -19171,6 +19175,7 @@ function getCurrentRoundData() {
       };
 
       speechRecognizer.onresult = (event) => {
+        if (speechRecognizer !== thisRecognizer) return;
         isRecordingSTT = false;
         waveBars.forEach(b => b.style.height = '8px');
         if (btnMic) btnMic.textContent = "마이크로 따라 말하기";
@@ -19180,25 +19185,27 @@ function getCurrentRoundData() {
         let transcript = alts[0] || '';
         if (rd && rd.target) {
           transcript = alts.reduce((best, a) => (calculateSimilarity(rd.target, a) > calculateSimilarity(rd.target, best) ? a : best), transcript);
-          const sc = calculateSimilarity(rd.target, transcript);
-          if (window.HGVOICE && HGVOICE.note) HGVOICE.note({ target: rd.target, score: sc, pass: sc >= 60 });
+          const check = HGREVIEW.assess(rd.target, transcript);
+          if (window.HGVOICE && HGVOICE.note) HGVOICE.note({ target: rd.target, pass: check.accepted, outcome: check.outcome });
         }
 
         if (feedbackEl) {
           feedbackEl.innerHTML = `🗣️ 인식된 목소리: <strong>"${transcript || '(음성 없음)'}"</strong>`;
         }
 
-        updateHandsFreeStatus('judging', `⚡ AI가 발음을 정밀 분석·채점 중입니다...`);
+        updateHandsFreeStatus('judging', `들은 표현을 확인하고 있어요…`);
 
         // 핵심: 즉시 합격/불합격 판정 및 피드백 실행! (대기 없이 바로)
         analyzePronunciationAndJudge(transcript);
       };
 
       speechRecognizer.onerror = (event) => {
+        if (speechRecognizer !== thisRecognizer) return;
         isRecordingSTT = false;
         waveBars.forEach(b => b.style.height = '8px');
         if (btnMic) btnMic.textContent = "마이크로 따라 말하기 (다시 시도)";
         console.warn("Speech recognition error:", event.error);
+        HGREVIEW.record({lang:selectedLang,kind:'levels',level:currentLevel},'unsure','');
 
         if (event.error === 'not-allowed') {
           if (statusEl) statusEl.textContent = "마이크 권한이 꺼져 있습니다. 스마트폰 설정 > 애플리케이션 > 한걸음에서 마이크 권한을 허용해 주세요.";
@@ -19223,6 +19230,7 @@ function getCurrentRoundData() {
       };
 
       speechRecognizer.onend = () => {
+        if (speechRecognizer !== thisRecognizer) return;
         isRecordingSTT = false;
         waveBars.forEach(b => b.style.height = '8px');
         if (btnMic) btnMic.textContent = "마이크로 따라 말하기";
@@ -19353,132 +19361,39 @@ function getCurrentRoundData() {
   }
 
   function analyzePronunciationAndJudge(spokenText) {
-    const roundData = getCurrentRoundData();
-    if (!roundData || !roundData.target) {
-      console.warn("No roundData found for analysis");
-      return;
-    }
-
-    const score = calculateSimilarity(roundData.target, spokenText || '');
-
-    const sheet = document.getElementById('feedbackSheet');
+    const rd = getCurrentRoundData();
+    if (!rd || !rd.target) return;
+    const result = HGREVIEW.assess(rd.target, spokenText);
+    HGREVIEW.record({lang:selectedLang,kind:'levels',level:currentLevel}, result.outcome, rd.target);
     const badge = document.getElementById('passFailBadge');
-    const wordsContainer = document.getElementById('coloredWords');
-    const polishText = document.getElementById('polishText');
-    const noticeEl = document.getElementById('gatekeeperNotice');
-    const nextBtn = document.getElementById('btnNextRound');
-    const statusEl = document.getElementById('sttStatusText');
-
-    if (sheet) {
-      sheet.style.display = 'block';
-      sheet.classList.remove('hidden');
+    const sheet = document.getElementById('feedbackSheet');
+    const status = document.getElementById('sttStatusText');
+    const note = document.getElementById('gatekeeperNotice');
+    const next = document.getElementById('btnNextRound');
+    const polish = document.getElementById('polishText');
+    if (sheet) { sheet.style.display='block'; sheet.classList.remove('hidden'); }
+    const msg = result.outcome === 'unsure' ? '잘 듣지 못했어요. 한 번 더 말해 주세요.'
+      : result.accepted ? '좋아요! 다음 표현으로 이어가요.' : '다른 표현으로 들렸어요. 한 번 더 따라해 볼까요?';
+    if (badge) { badge.textContent=msg; badge.style.background=result.accepted?'#dcfce7':'#f1f5f9'; badge.style.color='#173f35'; }
+    if (status) status.textContent=msg;
+    if (note) note.textContent=result.accepted?'잠시 후 다음 연습으로 이어집니다.':'시범을 듣고 다시 말해 보세요.';
+    if (polish) polish.textContent='종합 안내는 문자 카테고리와 10레벨 구간을 마칠 때 제공해요.';
+    const words=document.getElementById('coloredWords'); if(words) words.textContent='';
+    if (result.outcome !== 'unsure') {
+      roundPassed[currentRound-1]=result.accepted;
+      if(result.accepted) { soundCorrect(); comboCount++; try {localStorage.setItem(`hangeoreum_lv${currentLevel}_r${currentRound}`,'1');}catch(_){} }
+      else { soundWrong(); comboCount=0; }
+      const combo=document.getElementById('comboBadge'); if(combo) combo.textContent=`x${comboCount} COMBO`;
     }
-
-    if (wordsContainer) {
-      wordsContainer.innerHTML = '';
-      const targetWords = roundData.target.split(/\s+/);
-      targetWords.forEach(w => {
-        const span = document.createElement('span');
-        span.textContent = w;
-        if (score >= 60) {
-          span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#dcfce7; color:#166534; border:1.5px solid #86efac; font-size:14px;";
-        } else {
-          span.style.cssText = "padding:3px 10px; border-radius:8px; font-weight:800; background:#fee2e2; color:#991b1b; border:1.5px solid #fca5a5; font-size:14px;";
-        }
-        wordsContainer.appendChild(span);
-      });
-    }
-
-    // [옵빠야 요청] 사용자가 말을 하면 입력을 받아 명확하게 합격/불합격 판단!
-    if (score >= 60) {
-      // 1. 합격 (PASS) 판정
-      soundCorrect();
-      comboCount++;
-      const comboBadge = document.getElementById('comboBadge');
-      if (comboBadge) comboBadge.textContent = `x${comboCount} COMBO`;
-      roundPassed[currentRound - 1] = true;
-
-      if (badge) {
-        badge.style.background = "#dcfce7";
-        badge.style.color = "#166534";
-        badge.style.border = "1.5px solid #86efac";
-        badge.innerHTML = `문장 일치도 ${score}% · 연습 통과`;
-      }
-
-      if (statusEl) {
-        statusEl.innerHTML = `<span style="color:#166534; font-weight:900;">인식된 문장 일치도 ${score}% · 다음 연습을 진행할 수 있어요.</span>`;
-      }
-
-      if (polishText) {
-        polishText.innerHTML = `문장 연습 안내: <strong>"목표 문장과 인식 결과가 기준 이상 일치해요."</strong><br><span style='color:#6366f1; font-size:13px;'>원문: ${roundData.target}</span>`;
-      }
-
-      updateHandsFreeStatus('passed', `문장 일치도 ${score}% · 연습 통과! 1.2초 후 다음으로 자동 진행...`);
-
-      if (noticeEl) {
-        if (currentRound < 4) {
-          noticeEl.innerHTML = `<span style='color:#166534;'>문장 일치도 ${score}% · 잠시 후 다음 연습으로 이동합니다.</span>`;
-        } else {
-          noticeEl.innerHTML = `<span style='color:#166534;'>🏆 [4개 관문 올클리어] 축하합니다! 새로운 레벨과 맥락으로 자동 승급합니다!</span>`;
-        }
-      }
-
-      if (nextBtn) {
-        nextBtn.classList.remove('btn-disabled');
-        nextBtn.disabled = false;
-        nextBtn.innerHTML = `<span>다음 관문으로 자동 진행</span>`;
-      }
-
-      try {
-        localStorage.setItem(`hangeoreum_lv${currentLevel}_r${currentRound}`, '1');
-      } catch(e) {}
-
-      // 사용자는 별도 조작 없이 AI가 자동으로 다음 단계 진행!
-      setTimeout(() => {
-        if (typeof autoProceedNextRoundOrLevel === 'function') autoProceedNextRoundOrLevel();
-      }, 800);
-
-    } else {
-      // 2. 불합격 (RETRY) 판정
-      soundWrong();
-      comboCount = 0;
-      const comboBadge = document.getElementById('comboBadge');
-      if (comboBadge) comboBadge.textContent = `x0 COMBO`;
-      roundPassed[currentRound - 1] = false;
-
-      if (badge) {
-        badge.style.background = "#fee2e2";
-        badge.style.color = "#991b1b";
-        badge.style.border = "1.5px solid #fca5a5";
-        badge.innerHTML = `문장 일치도 ${score}% · 다시 연습 (60% 기준)`;
-      }
-
-      if (statusEl) {
-        statusEl.innerHTML = `<span style="color:#dc2626; font-weight:900;">인식된 문장 일치도 ${score}%. 연습 통과 기준은 60%입니다.</span>`;
-      }
-
-      updateHandsFreeStatus('retry', `🔄 [불합격] 다시 듣고 따라해 볼까요? (${score}점)`);
-
-      if (polishText) {
-        polishText.innerHTML = `문장 연습 안내: <strong>"조금 더 또박또박 발음해 볼까요? 엑자일의 발음을 듣고 다시 도전하세요!"</strong><br><span style='color:#dc2626; font-size:13px;'>인식된 문장: "${spokenText || '(인식 실패)'}"</span>`;
-      }
-
-      if (noticeEl) {
-        noticeEl.innerHTML = `<span style='color:#dc2626;'>⚠️ 60점 미만입니다. 1초 후 엑자일의 발음을 다시 들려드리고 마이크를 재활성화합니다!</span>`;
-      }
-
-      if (nextBtn) {
-        nextBtn.classList.add('btn-disabled');
-        nextBtn.disabled = true;
-      }
-
-      // 실패 시 엑자일 발음을 다시 들려주고 마이크 자동 재활성화
-      setTimeout(() => {
-        if (typeof playTargetTTSAndAutoListen === 'function') playTargetTTSAndAutoListen();
-      }, 1000);
-    }
-
-    callAiPronunciationCoachIfAvailable(spokenText, roundData.target, score);
+    if(next) { next.disabled=!roundPassed[currentRound-1]; next.classList.toggle('btn-disabled',next.disabled); next.textContent='다음 단계로 ➔'; }
+    updateHandsFreeStatus(result.accepted?'passed':'retry',msg);
+    const position=`${selectedLang}/${currentLevel}/${currentRound}/${HGV2.getSetIdx()}`;
+    const epoch=window.HGUI ? HGUI.epoch() : 0;
+    setTimeout(()=>{
+      if(position!==`${selectedLang}/${currentLevel}/${currentRound}/${HGV2.getSetIdx()}` || (window.HGUI && (epoch!==HGUI.epoch() || !HGUI.canPractice()))) return;
+      if(result.accepted) autoProceedNextRoundOrLevel(); else playTargetTTSAndAutoListen();
+    }, result.accepted ? 350 : 650);
+    // 매 문제의 원격 AI 채점/설명은 호출하지 않는다. HGREVIEW가 구간 종료 때만 종합한다.
   }
 
   function proceedNextRoundOrLevel() {
@@ -20798,7 +20713,7 @@ function getCurrentRoundData() {
 
   /* 계단식 무중단 호출 파이프라인 (Native 직접 통신 1순위 + 브라우저 CORS 프록시 우회) */
 
-  async function callGeminiCascade(payload, startModel = null) {
+  async function callGeminiCascade(payload, startModel = null, options = {}) {
 
     const generalApiKey = getGeneralApiKey();
 
@@ -20816,7 +20731,7 @@ function getCurrentRoundData() {
 
     // 1순위: Android Native HttpsURLConnection 브릿지 (CORS 및 WebView 인터셉트 원천 차단)
 
-    if (window.Native && typeof window.Native.call === 'function') {
+    if (!options.webOnly && window.Native && typeof window.Native.call === 'function') {
 
       try {
 
@@ -20884,7 +20799,9 @@ function getCurrentRoundData() {
     if (!window._exhaustedLlmModels) window._exhaustedLlmModels = new Map();
     const now = Date.now();
 
+    if (options.maxModels) candidateModels = candidateModels.slice(0, options.maxModels);
     for (let i = 0; i < candidateModels.length; i++) {
+      if (options.signal && options.signal.aborted) return { ok: false, error: 'cancelled' };
       const currentModel = candidateModels[i];
 
       // 1. 이미 404 미지원 모델은 0초 만에 스킵
@@ -20898,15 +20815,17 @@ function getCurrentRoundData() {
         continue;
       }
 
-      const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${config.apiKey}`;
+      const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent`;
       const controller = new AbortController();
       const tid = setTimeout(() => controller.abort(), 12000); // 정상 응답이 잘리지 않게 12초
+      const cancel = () => controller.abort();
+      if (options.signal) options.signal.addEventListener('abort', cancel, { once: true });
 
       // A. 직접 fetch 시도
       try {
         const res = await fetch(directUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': config.apiKey },
           body: JSON.stringify(/2\.5/.test(currentModel)
             ? { ...payload, generationConfig: { ...(payload.generationConfig || {}), thinkingConfig: { thinkingBudget: 0 } } }
             : payload),
@@ -20950,25 +20869,11 @@ function getCurrentRoundData() {
         lastError = `[${currentModel} HTTP ${res.status}] ${errText.substring(0, 100)}`;
       } catch(netErr) {
         clearTimeout(tid);
-        // B. CORS Failed to fetch 발생 시 공용 CORS 프록시로 즉시 자동 우회
-        console.warn(`Direct fetch failed (${netErr.message}), trying CORS proxy fallback on ${currentModel}...`);
-        try {
-          const proxyUrl = `https://corsproxy.io/?` + encodeURIComponent(directUrl);
-          const proxyRes = await fetch(proxyUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          if (proxyRes.ok) {
-            const data = await proxyRes.json();
-            const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-            window._fastActiveLlmModel = currentModel;
-            try { localStorage.setItem('hangeoreum_fast_llm_model', currentModel); } catch(e) {}
-            return { ok: true, model: currentModel, fallbackUsed: true, reply: replyText };
-          }
-        } catch(proxyErr) {
-          lastError = `[${currentModel} Network Error] ${netErr.message}`;
-        }
+        // 키·학습 내용을 제3자 프록시로 보내지 않는다. 연결 실패는 내장 요약/응답으로 복귀한다.
+        return { ok: false, error: 'AI 연결을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.' };
+      } finally {
+        clearTimeout(tid);
+        if (options.signal) options.signal.removeEventListener('abort', cancel);
       }
     }
 
@@ -22146,6 +22051,7 @@ function getCurrentRoundData() {
       if (typeof updateObStepUI === 'function') updateObStepUI();
     }
 
+    localStorage.removeItem('hg_review_v1');
     alert('✨ 지금까지 학습한 모든 데이터가 깨끗하게 초기화되었습니다!\n처음 화면에서 새로운 마음으로 시작합니다.');
   }
 
@@ -22204,21 +22110,26 @@ function getCurrentRoundData() {
     updateHandsFreeStatus('ai_speaking', `🤖 AI 엑자일 발음 지도 중... 🔊`);
 
     let speechFinished = false;
+    const spokenPosition = `${selectedLang}:${currentLevel}:${currentRound}:${window.HGV2 ? HGV2.getSetIdx() : 1}`;
+    const spokenEpoch = window.HGUI && HGUI.epoch ? HGUI.epoch() : null;
+    const stillCurrent = () => spokenPosition === `${selectedLang}:${currentLevel}:${currentRound}:${window.HGV2 ? HGV2.getSetIdx() : 1}` &&
+      (spokenEpoch === null || (window.HGUI && HGUI.epoch && HGUI.epoch() === spokenEpoch));
     const onFinished = () => {
       if (speechFinished) return;
       speechFinished = true;
+      if (!stillCurrent()) return;
       if (autoListenTimer) clearTimeout(autoListenTimer);
 
       // 스피커 잔향이 마이크에 들어가지 않을 최소 간격만 둔다
       setTimeout(() => {
-        if (!isHandsFreeAutoMode) return;
+        if (!isHandsFreeAutoMode || !stillCurrent()) return;
         triggerAutoMicListening();
       }, 250);
     };
 
     // 정상 진행은 음성 완료 신호(onComplete)로 한다. 이 타이머는 응답이 아예 없을 때의 비상용(휴대폰 네트워크 지연 고려)
     const safetyTimeoutMs = 20000 + (roundData.target || '').length * 170;
-    autoListenTimer = setTimeout(onFinished, safetyTimeoutMs);
+    autoListenTimer = setTimeout(() => { if (stillCurrent()) { stopAllTTSAudio(); onFinished(); } }, safetyTimeoutMs);
 
     speakTextWithFallback(roundData.target, selectedLang, {
       onComplete: onFinished

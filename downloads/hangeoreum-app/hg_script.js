@@ -318,6 +318,24 @@
 
   function sttAvailable() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
 
+  // 한 글자(모음 a 등) 카드: 인터넷 인식기는 '아' 한 소리를 거의 못 알아듣고(실기기 0/9), 폰 안 인식팩 + 힌트 끔은 5/6
+  // ('오'·'이'는 oh·I로 불합격). 실기기로 확인한 프랑스어와 같은 구조의 es·ru·cn. 영어·일본어는 기존 인식 유지.
+  // 언어를 고르면 팩이 없을 때 자동으로 받는다(hg_voice_io). 아래 안내는 자동 요청이 실패했을 때 다시 받는 버튼.
+  const DEVICE_LETTER_LANGS = ['fr', 'es', 'ru', 'cn'];
+  function letterTarget(item) {
+    const s = String(item.s || item.c || '');
+    return DEVICE_LETTER_LANGS.includes(curLang()) && !s.includes(', ') && [...s.replace(/\s/g, '')].length <= 2;
+  }
+  function packPrompt() {
+    const P = window.HGSTTPACK, lang = P && P.langOf(curLang());
+    if (!P || !lang || !DEVICE_LETTER_LANGS.includes(curLang())) return '';
+    if (P.busy()) return '<div class="hs-pack">📥 짧은 글자 인식팩을 받는 중이에요… (잠시만요)</div>';
+    if (!P.missing(lang)) return '';
+    return `<div class="hs-pack">🎙️ '아'처럼 짧은 글자는 폰 안 인식팩이 있으면 훨씬 잘 알아들어요 (무료·약 40~50MB, Wi-Fi 권장)
+      <button class="hs-btn blue" style="margin-top:8px" onclick="HGSTTPACK.get('${lang}')">📥 인식팩 받기</button></div>`;
+  }
+  window.addEventListener('hg-stt-pack', () => { if (session) render(); });
+
   function render() {
     const v = ensureView();
     if (!v || !session) return;
@@ -368,6 +386,7 @@
       <div class="hs-bar"><div style="width:${Math.round((session.pos / total) * 100)}%"></div></div>
       <div class="hs-card">${card}</div>
       ${btns}
+      ${packPrompt()}
       <button class="hs-skip" onclick="HGSCRIPT.skipToLevel1()">문자는 이미 읽을 수 있어요 → Lv.1로 건너뛰기</button>`;
   }
 
@@ -430,6 +449,9 @@
 
   function judged(ok, heard, how) {
     if (!session) return;
+    const progress = load(), stage = basis() === 'chart' ? stageAt(progress.unit) : null;
+    if (window.HGREVIEW) HGREVIEW.record({lang:curLang(),kind:'letters',basis:basis(),stage:stage ? stage.n : progress.unit},
+      ok === 'unsure' ? 'unsure' : ok && ok.near || how === 'word' ? 'assisted' : ok ? 'confirmed' : 'retry', (session.queue[session.pos] || {}).c);
     const my = speakSeq;
     if (ok && ok.near) {  // 1·2회차 근접 통과: 넘어가되 무엇이 달랐는지 알려 준다 (혼자 읽는 3회차는 정확해야 통과)
       sfx('sparkle');
@@ -438,23 +460,25 @@
       const tip = /[vв]/.test(ok.want) ? `${W}는 윗니를 아랫입술에 살짝 대고 목을 울려 내요`
         : /[fф]/.test(ok.want) ? `${W}는 윗니를 아랫입술에 대고 바람만 내요`
         : /[bdgzбдгзж]/.test(ok.want) ? `${W}는 목을 울려 부드럽게, ${N}는 목을 울리지 않고 내요` : `${W}는 목을 울리지 않고, ${N}는 목을 울려 내요`;
-      setStatus(`🙂 통과! 다만 ${N}처럼 들렸어요. ${tip}`, heard ? `들린 소리: ${esc(heard)}` : '');
+      setStatus(ok.same ? '🙂 비슷하게 인식됐어요. 연습을 이어갈게요.' : `🙂 연습을 이어갈게요. 인식 결과는 ${N}에 가까웠어요. ${tip}`, heard ? `들린 소리: ${esc(heard)}` : '');
       // '연습 인정'은 정확 통과와 따로 기록해 나중에 복습할 수 있게 둔다 (Codex 자문 2026-10-26)
       const st = load(), key = `${curLang()}:${(session.queue[session.pos] || {}).c}`;
       st.practice = [...new Set([...(st.practice || []), key])].slice(-200);
       save(st);
-      flowTimer = setTimeout(() => { if (my === speakSeq) advance(); }, 2200);
+      flowTimer = setTimeout(() => { if (my === speakSeq) advance(); }, 900);
       return;
     }
     if (ok === 'unsure') {
       // 못 들음·no-match는 오답이 아니라 '판정 불가' → 연속 실패 횟수에 넣지 않는다. 계속 못 들으면 멈추고 안내
       session.unsure = (session.unsure || 0) + 1;
+      // how==='heard': 말소리는 감지됐는데 인식기가 글자로 못 바꿈 → '소리가 안 들렸다'고 하지 않는다
       if (session.unsure >= MAX_AUTO_RETRY) {
         session.paused = true;
-        setStatus('🎙️ 소리가 잘 안 들렸어요. 마이크에 조금 가까이, 또박또박 말해 보세요', '다시 하거나 넘어갈 수 있어요');
+        setStatus(how === 'heard' ? '🎙️ 목소리는 들렸는데 인식기가 이 짧은 소리를 알아듣지 못했어요. 엑자일 소리를 다시 듣고 또렷하게 말해 보세요'
+          : '🎙️ 소리가 잘 안 들렸어요. 마이크에 조금 가까이, 또박또박 말해 보세요', '다시 하거나 넘어갈 수 있어요');
         return;
       }
-      setStatus('🎙️ 잘 못 들었어요. 한 번 더 말해 볼까요?');
+      setStatus(how === 'heard' ? '🎙️ 목소리는 들렸는데 알아듣지 못했어요. 한 번 더 말해 볼까요?' : '🎙️ 소리가 안 들렸어요. 한 번 더 말해 볼까요?');
       flowTimer = setTimeout(() => { if (my === speakSeq) runItem(); }, 900);
       return;
     }
@@ -468,7 +492,7 @@
         save(st);
       }
       setStatus(how === 'word' ? '🎯 통과! 단어로 잘 읽었어요 (다음엔 글자 이름도 같이)' : '🎯 통과! 잘 읽었어요', heard ? `들린 소리: ${esc(heard)}` : '');
-      flowTimer = setTimeout(() => { if (my === speakSeq) advance(); }, 800);
+      flowTimer = setTimeout(() => { if (my === speakSeq) advance(); }, 350);
       return;
     }
     sfx('oops');
@@ -534,7 +558,15 @@
   }
 
   function retry() { sfx('bubble'); if (session) session.fails = session.unsure = 0; runItem(); }
-  function pass() { sfx('coin8'); if (session) session.fails = session.unsure = 0; advance(); }
+  function pass() {
+    sfx('coin8');
+    if (session) {
+      const st=load(), sg=basis()==='chart'?stageAt(st.unit):null;
+      if(window.HGREVIEW) HGREVIEW.record({lang:curLang(),kind:'letters',basis:basis(),stage:sg?sg.n:st.unit},'skipped',(session.queue[session.pos]||{}).c);
+      session.fails = session.unsure = 0;
+    }
+    advance();
+  }
 
   function advance() {
     if (!session) return;
@@ -571,18 +603,23 @@
     show();
   }
 
-  function unitDone(st) {
+  async function unitDone(st) {
     const u = units()[st.unit];
     const sg = basis() === 'chart' ? stageAt(st.unit) : null;
     st.unit++; st.phase = 'c'; st.pass = 1; st.order = null; st.pos = 0;
     const stageDone = sg && st.unit > sg.last;
     if (stageDone) { st.mastered = st.mastered || []; if (!st.mastered.includes(sg.n)) st.mastered.push(sg.n); }
     save(st);
+    if (window.HGREVIEW && (stageDone || !sg)) {
+      clearFlow(); stopListen();
+      const proceed = await HGREVIEW.checkpoint({lang:curLang(),kind:'letters',basis:basis(),stage:sg ? sg.n : st.unit - 1}, sg ? `${sg.n}단계 ${sg.title}` : u.t);
+      if (!proceed || !isActive()) return;
+    }
     if (st.unit >= units().length) { finishAll(); return; }
     sfx('fanfare');
     if (stageDone) {
       const next = stageAt(st.unit);
-      if (window.HGUX && HGUX.celebrate) HGUX.celebrate(`🏅 ${sg.n}단계 마스터!`, `${josa(sg.title, '을', '를')} 모두 읽을 수 있어요.${next ? ` 이제 ${next.n}단계 ${josa(next.title, '이', '가')} 열렸어요!` : ''}`, true);
+      if (window.HGUX && HGUX.celebrate) HGUX.celebrate(`🏅 ${sg.n}단계 연습 완료!`, `글자 이름·예시 단어를 연습했어요.${next ? ` 이제 ${next.n}단계 ${josa(next.title, '이', '가')} 열렸어요!` : ''}`, true);
     } else if (window.HGUX && HGUX.celebrate) HGUX.celebrate(`🔤 ${u.t} 완료!`, '글자도 단어도 세 번씩 읽었어요. 다음 묶음으로!', false);
     session = null;
     setTimeout(() => { if (isActive()) show(); }, 900);
@@ -816,7 +853,7 @@
     // 짧은 말(글자 이름)은 첫 자음, 긴 단어는 그 자음으로 시작할 때만 ('déterminant' ← '데, 도미노')
     const heard = alts.flatMap(a => String(a).toLowerCase().split(/[\s.,!?¡¿'"·\-_~()]+/)).map(norm)
       .filter(w => w && (w.length <= 4 || firstCons(w) === w[0])).map(firstCons);
-    if (heard.includes(want)) return true;
+    if (load().pass <= 2 && heard.includes(want)) return { near: want, want, same: true };
     // 스페인어 b·v는 같은 소리 ('ballena' → 'vayana')
     if (curLang() === 'es' && (want === 'b' || want === 'v') && heard.includes(want === 'b' ? 'v' : 'b')) return true;
     // 한국어에 없는 v·f는 b·p로 나기 쉽다 ('вода' → 'Пада', 실기기 2026-10-26)
@@ -856,7 +893,10 @@
     r.lang = STT_LANG[curLang()] || 'en-US';
     r.interimResults = false;
     r.maxAlternatives = 5;
+    r.practiceMode = 'letters';
+    r.shortUtterance = st.phase === 'c';  // 이름+예시 힌트 길이와 무관하게 문자 이름은 짧은 말로 인식
     r.hints = [item.s, item.c, pic && pic.w].filter(Boolean);   // 한 음절도 알아듣게 목표 글자를 인식기에 힌트로
+    r.letterOnDevice = st.phase === 'c' && letterTarget(item);  // 폰 안 인식팩이 있으면 그쪽으로(힌트 없이) 듣는다
     r.onstart = () => { try { isRecordingSTT = true; } catch (e) {} setStatus('🎙️ 지금 읽어 보세요!'); };
     r.onresult = (ev) => {
       if (recognizer !== r) return;
@@ -878,13 +918,13 @@
         setStatus('⚠️ 마이크 권한이 필요해요. 권한을 허용하거나, 따라 읽은 뒤 버튼을 눌러 주세요');
         return;
       }
-      judged('unsure', '');  // 못 들음·잡음 = 판정 불가 → 오답 횟수에 넣지 않고 다시
+      judged('unsure', '', ev && ev.heard ? 'heard' : '');  // 못 들음·잡음 = 판정 불가 → 오답 횟수에 넣지 않고 다시
     };
     r.onend = () => {
       try { isRecordingSTT = false; } catch (e) {}
       if (recognizer === r) { recognizer = null; if (!got) judged('unsure', ''); }
     };
-    try { r.start(); } catch (e) { recognizer = null; judged(false, ''); }
+    try { r.start(); } catch (e) { recognizer = null; judged('unsure', ''); }
   }
 
   window.HGSCRIPT = { scriptName, units, isActive, show, hide, start, leave, retry, pass, listen, skipToLevel1, load, save, pictures, choose, startChart, basis, isHit };
