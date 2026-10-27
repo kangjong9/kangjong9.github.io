@@ -131,13 +131,15 @@ function initProjectFolders(content) {
   };
   const projectDownloads = {
     "레이더 툴킷[앱]": {
-      tag: "레이더 툴킷 1.0.1 · Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판",
-      desc: "트리거 지연·북방위 정렬 계산, 결과 복사, IPv4 멀티캐스트 송수신을 한 앱에 담았습니다. Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판.",
+      tag: "레이더 툴킷 1.0.2 · Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판",
+      desc: "방위차 입력과 +/− 선택으로 북방위 결과를 바로 계산합니다. 지연 계산·결과 복사·IPv4 멀티캐스트 송수신을 지원합니다. Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판.",
       links: [
-        { label: "레이더 툴킷 APK · 1.0.1 (60.5KB)", url: "./downloads/Radar-Toolkit-1.0.1.apk", download: "Radar-Toolkit-1.0.1.apk", primary: true },
+        { label: "레이더 툴킷 APK · 1.0.2 (60.5KB)", url: "./downloads/Radar-Toolkit-1.0.2.apk", download: "Radar-Toolkit-1.0.2.apk", primary: true },
         { label: "설치·사용 안내", url: "./downloads/Radar-Toolkit-guide.txt", download: "Radar-Toolkit-guide.txt", primary: false }
       ]
     },
+
+
 
 
 
