@@ -131,21 +131,21 @@ function initProjectFolders(content) {
   };
   const projectDownloads = {
     "레이더 툴킷[앱]": {
-      tag: "레이더 툴킷 1.0.5 · Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판",
+      tag: "레이더 툴킷 1.0.6 · Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판",
       desc: "멀티캐스트 송신·수신을 독립 실행하고 각각 IP·포트를 설정합니다. TDELAY·북방위 계산과 역산에 소수점 0~10자리(기본 10)를 공통 적용하고 표시값 그대로 복사합니다. Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판.",
       links: [
-        { label: "레이더 툴킷 APK · 1.0.5 (72.5KB)", url: "./downloads/Radar-Toolkit-1.0.5.apk", download: "Radar-Toolkit-1.0.5.apk", primary: true },
+        { label: "레이더 툴킷 APK · 1.0.6 (72.5KB)", url: "./downloads/Radar-Toolkit-1.0.6.apk", download: "Radar-Toolkit-1.0.6.apk", primary: true },
         { label: "설치·사용 안내", url: "./downloads/Radar-Toolkit-guide.txt", download: "Radar-Toolkit-guide.txt", primary: false }
       ]
     },
     "레이더 툴킷[PC]": {
-      "tag": "레이더 툴킷 PC 1.0.2 · Windows 10/11 64비트 · 포터블 ZIP",
+      "tag": "레이더 툴킷 PC 1.0.3 · Windows 10/11 64비트 · 포터블 ZIP",
       "desc": "Windows 10/11 64비트용 포터블 앱입니다. TDELAY·북방위 계산·역산에 소수점 0~10자리(기본 10)를 공통 적용하고 표시값 그대로 복사합니다. 멀티캐스트 송신·수신을 독립 실행합니다. 수신 IP·포트 설정 및 업데이트 확인을 지원합니다. Windows 10 별도 실측·현장 장비 통신은 미검증입니다.",
       "links": [
         {
-          "label": "PC ZIP · 1.0.2 (13.3MB)",
-          "url": "./downloads/radar-toolkit-pc/Radar-Toolkit-PC-1.0.2.zip",
-          "download": "Radar-Toolkit-PC-1.0.2.zip",
+          "label": "PC ZIP · 1.0.3 (13.3MB)",
+          "url": "./downloads/radar-toolkit-pc/Radar-Toolkit-PC-1.0.3.zip",
+          "download": "Radar-Toolkit-PC-1.0.3.zip",
           "primary": true
         },
         {
@@ -156,6 +156,9 @@ function initProjectFolders(content) {
         }
       ]
     },
+
+
+
 
 
 

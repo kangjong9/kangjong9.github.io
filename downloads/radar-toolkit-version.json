@@ -1,8 +1,8 @@
 {
-  "versionCode": 6,
-  "versionName": "1.0.5",
-  "apk": "https://kangjong9.github.io/downloads/Radar-Toolkit-1.0.5.apk",
+  "versionCode": 7,
+  "versionName": "1.0.6",
+  "apk": "https://kangjong9.github.io/downloads/Radar-Toolkit-1.0.6.apk",
   "size": 74202,
-  "sha256": "5ceab7b0565f14dc4fe9803653d3d5d1a1621102590f59bb4004ccd47dacfe1c",
-  "notes": "소수점 0~10자리 선택(기본 10): 계산·역산 공통 적용 및 표시값과 복사값 일치"
+  "sha256": "87a0f324af214c701d1a4933b988c9cbd70506a080bdff572469646af9f23680",
+  "notes": "지연 계산 입력명을 대상의 실제 거리에서 거리차로 변경했습니다. 소수점 0~10자리 선택과 계산·역산 기능은 유지합니다."
 }

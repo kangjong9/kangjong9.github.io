@@ -1,8 +1,8 @@
 {
-  "versionCode": 3,
-  "versionName": "1.0.2",
-  "url": "https://kangjong9.github.io/downloads/radar-toolkit-pc/Radar-Toolkit-PC-1.0.2.zip",
-  "size": 13895485,
-  "sha256": "8071bc02d0b3efae03b565fdd72fc74c171af579917d1ae450e2661c0e5deeac",
-  "notes": "소수점 0~10자리 선택(기본 10): 계산·역산 공통 적용 및 표시값과 복사값 일치"
+  "versionCode": 4,
+  "versionName": "1.0.3",
+  "url": "https://kangjong9.github.io/downloads/radar-toolkit-pc/Radar-Toolkit-PC-1.0.3.zip",
+  "size": 13895786,
+  "sha256": "4f0fabf409149f441d508d0cd7296d08b25fb70f913ceaf2951c1a9b8f84a299",
+  "notes": "지연 계산 입력명을 대상의 실제 거리에서 거리차로 변경했습니다. 소수점 0~10자리 선택과 계산·역산 기능은 유지합니다."
 }
