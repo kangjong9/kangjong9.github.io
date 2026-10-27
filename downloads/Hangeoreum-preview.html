@@ -27,6 +27,10 @@
   <script src="hg_letters.js"></script>
   <script src="hg_resume.js"></script>
   <script src="hg_news.js"></script>
+  <script src="hg_daily.js"></script>
+  <script src="hg_chatgpt.js"></script>
+  <script src="hg_llm.js"></script>
+  <script src="hg_dialog.js"></script>
 
   <meta charset="UTF-8">
 
@@ -652,9 +656,6 @@
         <span>Exile과 첫걸음 시작하기</span>
       </button>
 
-      <div style="margin-top:14px;">
-        <button type="button" onclick="dismissOpeningSplash()" style="background:none; border:none; color:#5c7180; font-size:13px; min-height:44px; padding:0 16px; cursor:pointer; text-decoration:underline;">건너뛰기</button>
-      </div>
     </div>
   </div>
 
@@ -799,49 +800,15 @@
         <!-- [옵빠야 요청] 관리자 키 넣는 프사쪽 말풍선: 지정 텍스트만 표시 & 공간 최소화하여 아래 영역 끌어올림 -->
     <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
       <div class="tutor-avatar-wrap" id="tutorAvatarWrap" onclick="handleAiAvatarTap(event)" style="cursor:pointer; position:relative; flex-shrink:0;" title="AI 엑자일 프로필 (연속 5번 터치 시 관리자 모드)">
-        <svg id="exileAvatarSvg" width="56" height="56" viewBox="0 0 108 108" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%; box-shadow:0 3px 10px rgba(79,70,229,0.3); display:block;">
-  <path d="M16,6 C10.48,6 6,10.48 6,16 L6,92 C6,97.52 10.48,102 16,102 L92,102 C97.52,102 102,97.52 102,92 L102,16 C102,10.48 97.52,6 92,6 Z" fill="#4F46E5"/>
-  <path d="M54,54m-44,0a44,44 0 1,0 88,0a44,44 0 1,0 -88,0" fill="#6366F1"/>
-  <path d="M22,24 L24,18 L26,24 L32,26 L26,28 L24,34 L22,28 L16,26 Z" fill="#FDE047"/>
-  <path d="M86,22 L87.5,17.5 L89,22 L93.5,23.5 L89,25 L87.5,29.5 L86,25 L81.5,23.5 Z" fill="#F472B6"/>
-  <path d="M88,82 L89.5,78 L91,82 L95,83.5 L91,85 L89.5,89 L88,85 L84,83.5 Z" fill="#38BDF8"/>
-  <path d="M24,44 C16,56 16,78 28,84 C36,88 38,70 32,54 Z" fill="#F472B6"/>
-  <path d="M84,44 C92,56 92,78 80,84 C72,88 70,70 76,54 Z" fill="#F472B6"/>
-  <path d="M26,46m-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0" fill="#A855F7"/>
-  <path d="M82,46m-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0" fill="#A855F7"/>
-  <path d="M48,70 L60,70 L60,78 L48,78 Z" fill="#FFE0D0"/>
-  <path d="M34,100 L44,76 L64,76 L74,100 Z" fill="#312E81"/>
-  <path d="M46,76 L54,88 L62,76 Z" fill="#FFFFFF"/>
-  <path d="M52,78 L56,78 L58,92 L54,95 L50,92 Z" fill="#EC4899"/>
-  <path d="M54,36 C38,36 34,48 34,60 C34,74 46,82 54,82 C62,82 74,74 74,60 C74,48 70,36 54,36 Z" fill="#FFF0E6"/>
-  <path d="M37,64 C37,61.8 40.6,60 45,60 C49.4,60 53,61.8 53,64 C53,66.2 49.4,68 45,68 C40.6,68 37,66.2 37,64 Z" fill="#FF99AA"/>
-  <path d="M55,64 C55,61.8 58.6,60 63,60 C67.4,60 71,61.8 71,64 C71,66.2 67.4,68 63,68 C58.6,68 55,66.2 55,64 Z" fill="#FF99AA"/>
-  <path d="M40,50 C40,46 48,46 48,50 C48,58 40,58 40,50 Z" fill="#1E1B4B"/>
-  <path d="M41,52 C41,49 47,49 47,52 C47,57 41,57 41,52 Z" fill="#7C3AED"/>
-  <path d="M42,50m-2,0a2,2 0 1,0 4,0a2,2 0 1,0 -4,0" fill="#FFFFFF"/>
-  <path d="M45,54m-1,0a1,1 0 1,0 2,0a1,1 0 1,0 -2,0" fill="#FFFFFF"/>
-  <path d="M39,48 C42,45 47,45 49,48 L48,49 C46,47 42,47 40,49 Z" fill="#0F172A"/>
-  <path d="M59,54 C62,49 68,49 71,54 L69.5,55 C67,51 63,51 60.5,55 Z" fill="#0F172A"/>
-  <path id="avatarMouth" d="M49,69 C49,75 59,75 59,69 Z" fill="#E11D48"/>
-  <path d="M51,69 L57,69 L55,71 L53,71 Z" fill="#FFFFFF"/>
-  <path d="M51.5,72 C52.5,74 55.5,74 56.5,72 Z" fill="#FB7185"/>
-  <path d="M54,26 C36,26 32,36 32,46 L36,54 L40,44 L46,52 L50,42 L54,54 L58,42 L64,52 L68,44 L72,54 L76,46 C76,36 72,26 54,26 Z" fill="#F472B6"/>
-  <path d="M42,32 C46,30 62,30 66,32 L65,34 C61,32 47,32 43,34 Z" fill="#FBCFE8"/>
-  <path d="M30,42 C30,22 78,22 78,42 L74,42 C74,26 34,26 34,42 Z" fill="#F59E0B"/>
-  <path d="M26,50m-6,0a6,8 0 1,0 12,0a6,8 0 1,0 -12,0" fill="#FACC15"/>
-  <path d="M82,50m-6,0a6,8 0 1,0 12,0a6,8 0 1,0 -12,0" fill="#FACC15"/>
-  <path d="M26,48 L27,46 L28,48 L30,48.5 L28,49 L27,51 L26,49 L24,48.5 Z" fill="#EA580C"/>
-  <path d="M82,48 L83,46 L84,48 L86,48.5 L84,49 L83,51 L82,49 L80,48.5 Z" fill="#EA580C"/>
-  <path d="M28,54 C32,66 42,72 48,70 L48,68 C43,69 34,64 30,53 Z" fill="#475569"/>
-  <path d="M48,70m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" fill="#EA580C"/>
-</svg>
+        <!-- 2026-10-27 옵빠야 지시: LIVE 프로필을 옛 엑자일 그림에서 현재 엑자일(여우) 그림으로 교체 -->
+        <img id="exileAvatarSvg" src="images/hg-guide-fox.svg" alt="Exile" width="56" height="56" style="width:56px; height:56px; object-fit:cover; object-position:50% 18%; border-radius:50%; background:#fff7ed; border:2px solid #fed7aa; box-shadow:0 3px 10px rgba(203,121,50,0.25); display:block; transition:transform .2s;">
         <div style="position:absolute; bottom:-3px; right:-2px; background:#10b981; color:#fff; font-size:9px; font-weight:900; padding:1px 5px; border-radius:6px; border:1.5px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,0.15);">LIVE</div>
       </div>
 
       <div style="flex:1;">
         <div class="speech-bubble" style="padding:9px 13px; border-radius:14px; background:#ffffff; border:1.5px solid #c7d2fe; box-shadow:0 3px 8px rgba(79,70,229,0.06);">
           <div id="obTutorSpeech" style="font-size:13.5px; font-weight:800; color:#1e293b; line-height:1.45;">
-            내가 너를 뭐로 부르면 될까?<br>마음에 드는 AI 튜터의 목소리를 골라줘.
+            내가 너를 뭐로 부르면 될까?<br>아래 호칭에 이름을 선택해줘.
           </div>
         </div>
       </div>
@@ -878,6 +845,9 @@
           <button type="button" id="tabVoiceGemini" class="btn-3d" style="min-height:42px; padding:4px 2px; font-size:11.5px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('gemini')">✨ Gemini 3.8</button>
           <button type="button" id="tabVoiceEleven" class="btn-3d" style="min-height:42px; padding:4px 2px; font-size:11.5px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('eleven')">💎 ElevenLabs</button>
           <button type="button" id="tabVoiceKokoro" class="btn-3d" style="min-height:42px; padding:4px 2px; font-size:11.5px; font-weight:900; background:#f8fafc; color:#475569;" onclick="switchFourVoiceTab('kokoro')">🍃 Kokoro</button>
+          <!-- 2026-10-27 옵빠야 지시: 누리보이스에 추가될 TTS 엔진 2개(ElevenLabs 아래 줄) — 누리 보강 전까지 '개발중'으로 비활성 -->
+          <button type="button" id="tabVoicePiper" class="btn-3d" disabled aria-disabled="true" style="min-height:42px; padding:4px 2px; font-size:11.5px; font-weight:900; background:#f8fafc; color:#94a3b8;">🎵 Piper <small style="font-size:10px; font-weight:800;">개발중</small></button>
+          <button type="button" id="tabVoiceMelo" class="btn-3d" disabled aria-disabled="true" style="min-height:42px; padding:4px 2px; font-size:11.5px; font-weight:900; background:#f8fafc; color:#94a3b8;">🎶 MeloTTS <small style="font-size:10px; font-weight:800;">개발중</small></button>
         </div>
 
         <!-- 히든 상태 및 재생 속도 조절 바 -->
@@ -899,6 +869,8 @@
           <!-- JS 동적 렌더링 -->
         </div>
       </div>
+      <!-- 2026-10-27 옵빠야 지시: Exile 소개 문구는 '처음으로' 첫 화면 호칭 칸 아래 빈자리에 -->
+      <p class="hg-ui-note ob-exile-note">Exile은 안드로메다에서 지구로 유배 온 안내 AI예요. 내가 50단계를 마스터하면 Exile도 사면을 받아 고향 안드로메다로 돌아갈 수 있어요. 수업 음성은 설정에서 고른 목소리를 사용합니다.</p>
     </div>
     <!-- STEP 1 종료 -->
 
@@ -979,6 +951,15 @@
               <div style="font-size:14px; color:#64748b;">모스크바 생활 회화 · 키릴 문자부터 차근차근 코스</div>
             </div>
           </div>
+
+          <!-- 2026-10-27 옵빠야 지시: 추가 예정 언어는 활성처럼 보이고, 누르면 분기 팝업(hg_ui confirmLanguage)에서 '개발중' -->
+          <div class="choice-card ob-lang-card ob-lang-new" data-ob-decorated="1" data-language="pt"><div class="ob-lang-title"><span class="ob-lang-flag">🇵🇹</span><span class="ob-lang-name">포르투갈어 (Português)</span><span class="ob-lang-pos">새 언어</span></div><div class="ob-lang-desc">리스본 생활 회화 · 포르투갈식/브라질식 선택 코스</div></div>
+          <div class="choice-card ob-lang-card ob-lang-new" data-ob-decorated="1" data-language="it"><div class="ob-lang-title"><span class="ob-lang-flag">🇮🇹</span><span class="ob-lang-name">이탈리아어 (Italiano)</span><span class="ob-lang-pos">새 언어</span></div><div class="ob-lang-desc">로마 생활 회화 · 노래하듯 또렷한 발음 코스</div></div>
+          <div class="choice-card ob-lang-card ob-lang-new" data-ob-decorated="1" data-language="de"><div class="ob-lang-title"><span class="ob-lang-flag">🇩🇪</span><span class="ob-lang-name">독일어 (Deutsch)</span><span class="ob-lang-pos">새 언어</span></div><div class="ob-lang-desc">베를린 생활 회화 · 명사 성별·격 차근차근 코스</div></div>
+          <div class="choice-card ob-lang-card ob-lang-new" data-ob-decorated="1" data-language="no"><div class="ob-lang-title"><span class="ob-lang-flag">🇳🇴</span><span class="ob-lang-name">노르웨이어 (Norsk)</span><span class="ob-lang-pos">새 언어</span></div><div class="ob-lang-desc">오슬로 생활 회화 · 노래하는 듯한 억양 코스</div></div>
+          <div class="choice-card ob-lang-card ob-lang-new" data-ob-decorated="1" data-language="da"><div class="ob-lang-title"><span class="ob-lang-flag">🇩🇰</span><span class="ob-lang-name">덴마크어 (Dansk)</span><span class="ob-lang-pos">새 언어</span></div><div class="ob-lang-desc">코펜하겐 생활 회화 · 부드러운 발음 코스</div></div>
+          <div class="choice-card ob-lang-card ob-lang-new" data-ob-decorated="1" data-language="el"><div class="ob-lang-title"><span class="ob-lang-flag">🇬🇷</span><span class="ob-lang-name">그리스어 (Ελληνικά)</span><span class="ob-lang-pos">새 언어</span></div><div class="ob-lang-desc">아테네 생활 회화 · 그리스 문자부터 차근차근 코스</div></div>
+          <!-- 2026-10-27 옵빠야 지시: 홈 맨 아래에 있던 Exile 소개 문구를 언어 선택 아래로 이동 (목록 grid의 마지막 칸) -->
 
         </div>
 
@@ -1543,43 +1524,13 @@
 
     <div class="modal-sheet">
 
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
-
-        <div style="display:flex; align-items:center; gap:8px;">
-
-          <span style="font-size:24px;">⚙️</span>
-
-          <div style="font-size:19px; font-weight:900; color:#0f172a;">Google Gemini API 설정</div>
-
-        </div>
-
-        <button onclick="closeSettingsModal()" style="background:#f1f5f9; border:none; border-radius:50%; width:32px; height:32px; font-size:16px; cursor:pointer; font-weight:900;">✕</button>
-
-      </div>
 
 
 
-      <p style="font-size:14px; color:#475569; margin-bottom:16px; line-height:1.5;">
-
-        Google AI Studio에서 발급받은 무료 <strong>Gemini API 키</strong>를 입력하면, 기존 AI 상황 코칭을 사용할 수 있습니다. 키가 없거나 연결되지 않으면 내장 연습 기능을 사용합니다. 음성인식·음성 재생 가능 여부는 기기와 공급자 상태에 따라 다릅니다. 문장 일치도는 정밀 발음 평가가 아닙니다.
-
-      </p>
-
-
-
-            <!-- [🎙️ 4대 신경망 음성(TTS) 엔진 모델 & 개인 API 키 분기 시스템] -->
-      <div style="margin-bottom:18px; background:linear-gradient(135deg, #f8faff, #f1f5f9); border:2px solid #6366f1; border-radius:18px; padding:16px; box-shadow:0 4px 12px rgba(99,102,241,0.08);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span style="font-size:22px;">🎙️</span>
-            <div style="font-size:16px; font-weight:900; color:#1e1b4b;">누리 보이스 (Nuri Voice) · 4대 음성 엔진 설정</div>
-          </div>
-          <span id="activeEngineBadge" style="font-size:11.5px; font-weight:900; background:#4f46e5; color:#fff; padding:3px 9px; border-radius:10px;">Edge 23종</span>
-        </div>
-
-        <p style="font-size:12.5px; color:#475569; margin-bottom:12px; line-height:1.45;">
-          원하는 음성 엔진 모델을 선택하면, 해당 모델의 모든 보이스가 앱 전체에 실시간 동기화됩니다.
-        </p>
+      <!-- 강사 성별 -->
+      <div style="margin-bottom:18px; background:linear-gradient(135deg, #f8faff, #f1f5f9); border:1.5px solid #c7d2fe; border-radius:18px; padding:16px; box-shadow:0 4px 12px rgba(99,102,241,0.08);">
+        <!-- 2026-10-28 옵빠야 지시: 튜터 설정(음성 엔진·목소리·키)은 AI 튜터 화면에서. 설정에는 강사 성별만 남김 -->
+        <div style="font-size:16px; font-weight:900; color:#1e1b4b; margin-bottom:10px;">🎙️ 강사 목소리</div>
 
         <!-- 강사 성별: 수업 중 외국어 문장을 읽는 원어민 목소리의 성별 -->
         <label style="font-size:13px; font-weight:900; color:#334155; margin-bottom:6px; display:block;">강사 성별 (수업 원어민 목소리)</label>
@@ -1587,82 +1538,7 @@
           <button type="button" id="btnTutorFemale" onclick="setNuriTutorGender('female')" style="padding:9px 8px; border-radius:12px; border:2px solid #cbd5e1; background:#fff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer;">👩 여성 강사</button>
           <button type="button" id="btnTutorMale" onclick="setNuriTutorGender('male')" style="padding:9px 8px; border-radius:12px; border:2px solid #cbd5e1; background:#fff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer;">👨 남성 강사</button>
         </div>
-        <p style="font-size:11.5px; color:#64748b; margin-bottom:12px; line-height:1.4;">엑자일의 한국어 대사는 아래에서 고른 목소리, 수업 외국어 문장은 이 성별의 원어민 신경망 목소리(프랑스어·일본어·중국어)로 나옵니다.</p>
-
-        <!-- 1단계: 4대 모델 선택 버튼 그리드 -->
-        <label style="font-size:13px; font-weight:900; color:#334155; margin-bottom:6px; display:block;">1단계: 음성 엔진 모델 선택 (1~4번)</label>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px;">
-          <button type="button" id="btnModelEdge" onclick="switchTTSEngineModel('edge')" style="padding:10px 8px; border-radius:12px; border:2px solid #4f46e5; background:#eef2ff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
-            <span style="display:flex; align-items:center; gap:5px;"><span style="font-size:16px;">🌊</span> 1. Edge Neural</span>
-            <span style="font-size:11px; color:#16a34a; font-weight:800;">100% 무료 · 23종</span>
-          </button>
-          
-          <button type="button" id="btnModelGemini" onclick="switchTTSEngineModel('gemini')" style="padding:10px 8px; border-radius:12px; border:1.5px solid #cbd5e1; background:#ffffff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
-            <span style="display:flex; align-items:center; gap:5px;"><span style="font-size:16px;">✨</span> 2. Gemini 3.8</span>
-            <span style="font-size:11px; color:#4f46e5; font-weight:800;">Google 음성 · 44종</span>
-          </button>
-
-          <button type="button" id="btnModelEleven" onclick="switchTTSEngineModel('eleven')" style="padding:10px 8px; border-radius:12px; border:1.5px solid #cbd5e1; background:#ffffff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
-            <span style="display:flex; align-items:center; gap:5px;"><span style="font-size:16px;">💎</span> 3. ElevenLabs</span>
-            <span style="font-size:11px; color:#d97706; font-weight:800;">스튜디오급 · 16종</span>
-          </button>
-
-          <button type="button" id="btnModelKokoro" onclick="switchTTSEngineModel('kokoro')" style="padding:10px 8px; border-radius:12px; border:1.5px solid #cbd5e1; background:#ffffff; font-weight:900; font-size:13px; color:#1e293b; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
-            <span style="display:flex; align-items:center; gap:5px;"><span style="font-size:16px;">⚡</span> 4. Kokoro-82M</span>
-            <span style="font-size:11px; color:#16a34a; font-weight:800;">온디바이스 · 7종</span>
-          </button>
-        </div>
-
-        <!-- 2단계: 세부 목소리 선택 드롭다운 (선택한 모델의 전체 보이스 동적 바인딩) -->
-        <div style="margin-bottom:12px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <label style="font-size:13px; font-weight:900; color:#334155;">2단계: 세부 목소리 선택</label>
-            <span id="voiceCountBadge" style="font-size:11.5px; font-weight:800; color:#4f46e5;">23개 음성 선택 가능</span>
-          </div>
-          <select id="engineVoiceSelect" onchange="onVoiceSelectionChange(this.value)" style="width:100%; padding:10px 12px; font-size:13.5px; font-weight:800; color:#1e293b; background:#fff; border:2px solid #cbd5e1; border-radius:12px; outline:none; cursor:pointer;">
-            <!-- JS 동적 로드 -->
-          </select>
-        </div>
-
-        <!-- 3단계: 개인 API 키 유도 입력 컨테이너 (Gemini / ElevenLabs 선택 시에만 펼쳐짐) -->
-        <div id="engineApiKeyContainer" style="margin-bottom:12px;">
-          <!-- Edge / Kokoro 100% 무료 안내 배너 -->
-          <div id="freeEngineNotice" style="background:#dcfce7; border:1.5px solid #86efac; border-radius:12px; padding:10px 14px; display:flex; align-items:center; gap:8px;">
-            <span style="font-size:20px;">🎉</span>
-            <div style="font-size:12.5px; font-weight:800; color:#166534; line-height:1.45;">
-              별도의 API 키가 필요 없습니다! <strong>100% 완전 무료 · 무제한</strong>으로 즉시 발화됩니다.
-            </div>
-          </div>
-
-          <!-- Gemini 개인 무료 키 입력 유도 박스 -->
-          <div id="geminiKeyBox" style="display:none; background:#f0fdf4; border:2px solid #86efac; border-radius:14px; padding:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-size:13.5px; font-weight:900; color:#166534;">🔑 Google Gemini 개인 무료 API 키</span>
-              <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size:12px; font-weight:900; color:#2563eb; text-decoration:underline;">무료 키 1초 발급 ↗</a>
-            </div>
-            <div style="font-size:11.5px; color:#15803d; margin-bottom:8px; line-height:1.4;">
-              💡 <strong>개인 키 안내</strong>: 개발자의 키가 아닌 사용자 본인의 Google AI Studio 무료 키를 입력하셔야 무제한으로 사용하실 수 있습니다. 키는 기기(로컬 브라우저)에만 안전하게 보관됩니다.
-            </div>
-            <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy... (본인의 Google AI Studio 무료 키 입력)" style="width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid #86efac; font-size:13px; font-family:monospace; background:#fff; outline:none;">
-          </div>
-
-          <!-- ElevenLabs 개인 키 입력 유도 박스 -->
-          <div id="elevenKeyBox" style="display:none; background:#fffbeb; border:2px solid #fde68a; border-radius:14px; padding:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-size:13.5px; font-weight:900; color:#92400e;">🔑 ElevenLabs 개인 API 키</span>
-              <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" style="font-size:12px; font-weight:900; color:#2563eb; text-decoration:underline;">무료 키 발급 ↗</a>
-            </div>
-            <div style="font-size:11.5px; color:#b45309; margin-bottom:8px; line-height:1.4;">
-              💡 <strong>개인 키 안내</strong>: ElevenLabs 무료 계정에서 발급받은 본인의 API Key를 입력하세요. 키는 스마트폰 기기에만 안전하게 저장됩니다.
-            </div>
-            <input type="password" id="elevenApiKeyInput" placeholder="sk_... (본인의 ElevenLabs API 키 입력)" style="width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid #fcd34d; font-size:13px; font-family:monospace; background:#fff; outline:none;">
-          </div>
-        </div>
-
-        <!-- 4단계: 즉시 미리듣기 테스트 버튼 -->
-        <button type="button" class="btn-3d btn-primary" onclick="testSelectedVoiceSpeech()" style="width:100%; padding:10px 12px; font-size:13.5px; font-weight:900; background:#4f46e5; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px;">
-          <span>🔊 선택한 음성 즉시 미리듣기 (테스트)</span>
-        </button>
+        <p style="font-size:11.5px; color:#64748b; margin-bottom:0; line-height:1.4;">수업 외국어 문장은 이 성별의 원어민 목소리로, 엑자일의 한국어 대사는 AI 튜터에서 고른 목소리로 나옵니다.</p>
       </div>
 
       <!-- 🎵 효과음 맞춤 지정 메뉴 -->
@@ -1858,56 +1734,8 @@
 
 
 
-      <!-- 모델 자동 Fallback 안내 문구 (모델 선택창은 불필요하므로 삭제) -->
-
-      <div style="margin-bottom:16px; background:#f0fdf4; border:1.5px solid #bbf7d0; border-radius:14px; padding:12px;">
-
-        <div style="font-size:13px; font-weight:800; color:#166534; display:flex; align-items:center; gap:6px;">
-
-          <span>⚡</span> Gemini 3.8 Flash 디폴트 및 무중단 자동 Fallback 탑재
-
-        </div>
-
-        <div style="font-size:12px; color:#15803d; margin-top:4px; line-height:1.45;">
-
-          별도의 복잡한 모델 선택 없이 최신 <strong>Gemini 3.8 Flash</strong>로 자동 동작하며, 사용량 소진(429) 시 3.7 ➔ 3.6 ➔ 3.5 ➔ 2.5 ➔ 2.0으로 끊김 없이 자동 전환됩니다.
-
-        </div>
-
-      </div>
-
-
-
-      <div id="apiTestStatus" style="font-size:14px; font-weight:800; margin-bottom:14px; min-height:20px;"></div>
-
-
-
+      <!-- 2026-10-28 옵빠야 지시: Gemini 키·연결 테스트·저장·삭제는 위 학습 AI의 Gemini 칸으로, AI 음성 화면 이동은 헤더 AI 튜터로 -->
       <div style="display:flex; flex-direction:column; gap:8px;">
-
-        <button class="btn-3d btn-primary" onclick="closeSettingsModal(); returnToOnboardingView();" style="background:#4f46e5; color:#ffffff; font-weight:900; padding:12px 14px;">
-
-          <span>🎙️ AI 음성 선택 화면으로 이동 (40종 전체 열기)</span>
-
-        </button>
-
-        <button class="btn-3d btn-secondary" onclick="testApiConnection()">
-
-          <span>🧪 연결 테스트 (계단식 Fallback 검증)</span>
-
-        </button>
-
-        <button class="btn-3d btn-green" onclick="saveApiSettings()">
-
-          <span>💾 설정 저장하기 (기기에 안전 보관)</span>
-
-        </button>
-
-        <button class="btn-3d btn-secondary" onclick="clearApiSettings()" style="color:#ef4444;">
-
-          <span>🗑️ 키 삭제 (내장 오프라인 모드)</span>
-
-        </button>
-
         <button class="btn-3d btn-secondary" onclick="resetAllLearnedDataCompletely()" style="color:#b91c1c; border:2px solid #f87171; background:#fef2f2; font-weight:900; padding:13px 14px; margin-top:6px; box-shadow:0 2px 6px rgba(239,68,68,0.15);">
           <span>🗑️ 지금까지 학습한 모든 데이터 완전 초기화 (새로 시작)</span>
         </button>
@@ -2142,33 +1970,18 @@
 
 
 
-      <div style="font-size:13px; font-weight:800; color:#64748b; margin-bottom:8px;">⚡ 빠른 선택:</div>
+      <!-- 빠른 선택 3개는 hg_daily.js가 창을 열 때마다 지금 시간대·계절·레벨에 맞춰 새로 채운다 (고정 문장 아님) -->
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+
+        <div style="font-size:13px; font-weight:800; color:#64748b;">⚡ 빠른 선택: <span id="hgDailySrc" style="color:#0d9488;"></span></div>
+
+        <button type="button" onclick="HGDAILY.refresh()" style="flex:none; min-height:34px; padding:4px 12px; border:1.5px solid #99f6e4; border-radius:999px; background:#f0fdfa; color:#0f766e; font-size:13px; font-weight:900; cursor:pointer;">🔄 다른 상황</button>
+
+      </div>
 
       <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
 
-        <button class="choice-card" style="padding:10px 14px;" onclick="selectQuickDaily('오늘 회사에서 야근해서 너무 피곤해...', 'work')">
-
-          <span>💼</span>
-
-          <span style="font-size:14px; font-weight:800;">"오늘 야근해서 너무 피곤해..." (#야근 #퇴근)</span>
-
-        </button>
-
-        <button class="choice-card" style="padding:10px 14px;" onclick="selectQuickDaily('분위기 좋은 카페에서 따뜻한 라떼 한잔 마셨어', 'cafe')">
-
-          <span>☕</span>
-
-          <span style="font-size:14px; font-weight:800;">"카페에서 따뜻한 라떼 한잔 마셨어" (#카페 #힐링)</span>
-
-        </button>
-
-        <button class="choice-card" style="padding:10px 14px;" onclick="selectQuickDaily('친구 만나서 시원한 맥주랑 맛있는 안주 먹고 싶다!', 'beer')">
-
-          <span>🍺</span>
-
-          <span style="font-size:14px; font-weight:800;">"친구랑 시원한 맥주 한잔하고 싶어!" (#맥주 #친구)</span>
-
-        </button>
+        <div id="hgDailyQuick" style="display:flex; flex-direction:column; gap:8px;"></div>
 
         <button id="hgNewsQuickBtn" class="choice-card" style="padding:10px 14px;" onclick="HGNEWS.open()">
 
@@ -5391,19 +5204,22 @@ const EXILE_VOICES = [
 
     const wrapper = document.createElement('div');
     wrapper.style.cssText = 'background:#ffffff; border:2px solid #6366f1; border-radius:16px; padding:12px; margin-top:4px;';
+    wrapper.className = 'ob-nuri-box';  // AI튜터 설정 화면에서는 hg_ui.css가 이 박스 테두리를 없앰
 
+    // 2026-10-27 옵빠야 지시: 괄호 속 설명은 이름 아래 줄에(괄호 없이)
     const modelTitles = {
-      edge: `🌊 누리 보이스 · Edge Neural (${voices.length}종 · 100% 무료)`,
-      gemini: `✨ 누리 보이스 · Gemini 3.8 (${voices.length}종 · Google 신경망)`,
-      eleven: `💎 누리 보이스 · ElevenLabs (${voices.length}종 · 스튜디오급)`,
-      kokoro: `🍃 누리 보이스 · Kokoro-82M (${voices.length}종 · 온디바이스 영어 · 한글은 읽지 않고 원어만)`
+      edge: [`🌊 누리 보이스 · Edge Neural`, `${voices.length}종 · 100% 무료`],
+      gemini: [`✨ 누리 보이스 · Gemini 3.8`, `${voices.length}종 · Google 신경망`],
+      eleven: [`💎 누리 보이스 · ElevenLabs`, `${voices.length}종 · 스튜디오급`],
+      kokoro: [`🍃 누리 보이스 · Kokoro-82M`, `${voices.length}종 · 온디바이스 영어 · 한글은 읽지 않고 원어만`]
     };
 
     const headerRow = document.createElement('div');
     headerRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;';
     headerRow.innerHTML = `
       <div style="font-size:13px; font-weight:900; color:#4338ca;">
-        ${modelTitles[model]}
+        ${modelTitles[model][0]}
+        <div style="font-size:11.5px; font-weight:800; color:#6366f1; margin-top:2px;">${modelTitles[model][1]}</div>
       </div>
       <div style="font-size:11.5px; font-weight:800; color:#64748b;">
         ${voices.length}개 선택 가능
@@ -5455,31 +5271,52 @@ const EXILE_VOICES = [
     `;
     wrapper.appendChild(previewCard);
 
-    if (model === 'gemini') {
-      const gKey = localStorage.getItem('gemini_voice_api_key') || localStorage.getItem('hangeoreum_gemini_key') || '';
-      if (!gKey) {
-        const keyNotice = document.createElement('div');
-        keyNotice.style.cssText = 'margin-top:8px; background:#f0fdf4; border:1px solid #86efac; border-radius:10px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center;';
-        keyNotice.innerHTML = `
-          <div style="font-size:11.5px; color:#166534; font-weight:800;">🔑 무료 Gemini API 키가 필요합니다</div>
-          <button type="button" onclick="openSettingsModal()" style="background:#16a34a; color:#fff; border:none; border-radius:6px; padding:3px 8px; font-size:11px; font-weight:900; cursor:pointer;">설정에서 키 입력 ⚙️</button>
-        `;
-        wrapper.appendChild(keyNotice);
-      }
-    } else if (model === 'eleven') {
-      const eKey = localStorage.getItem('eleven_voice_api_key') || '';
-      if (!eKey) {
-        const keyNotice = document.createElement('div');
-        keyNotice.style.cssText = 'margin-top:8px; background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center;';
-        keyNotice.innerHTML = `
-          <div style="font-size:11.5px; color:#92400e; font-weight:800;">🔑 ElevenLabs 개인 API 키가 필요합니다</div>
-          <button type="button" onclick="openSettingsModal()" style="background:#d97706; color:#fff; border:none; border-radius:6px; padding:3px 8px; font-size:11px; font-weight:900; cursor:pointer;">설정에서 키 입력 ⚙️</button>
-        `;
-        wrapper.appendChild(keyNotice);
-      }
-    }
+    // 2026-10-27 옵빠야 지시: Gemini·ElevenLabs는 API 키가 없을 때만 그 자리에 키 입력칸을 띄움(저장 위치는 설정과 같음)
+    // 키를 바꿀 때는 그 탭을 두 번 터치 → 입력칸이 다시 나옴
+    if (voiceKeyEdit !== model) voiceKeyEdit = '';
+    if ((model === 'gemini' || model === 'eleven') && (!getVoiceKey(model) || voiceKeyEdit === model)) wrapper.insertBefore(buildVoiceKeyRow(model), selectEl);
 
     container.appendChild(wrapper);
+  }
+
+  let voiceKeyEdit = '', voiceKeyTap = {id: '', t: 0};
+  document.addEventListener('click', e => {  // Gemini·ElevenLabs 탭 두 번 터치(0.45초 안) = 키 바꾸기
+    const tab = e.target.closest('#tabVoiceGemini, #tabVoiceEleven'); if (!tab) return;
+    const now = Date.now(), twice = voiceKeyTap.id === tab.id && now - voiceKeyTap.t < 450;
+    voiceKeyTap = {id: tab.id, t: twice ? 0 : now};
+    if (!twice) return;
+    voiceKeyEdit = tab.id === 'tabVoiceGemini' ? 'gemini' : 'eleven';
+    renderVoicePresets();
+    setTimeout(() => document.getElementById('obVoiceKeyInput')?.focus(), 50);
+  });
+  function getVoiceKey(model) {
+    return model === 'gemini' ? (localStorage.getItem('gemini_voice_api_key') || localStorage.getItem('hangeoreum_gemini_key') || '') : (localStorage.getItem('eleven_voice_api_key') || '');
+  }
+  function buildVoiceKeyRow(model) {
+    const isG = model === 'gemini';
+    const saved = getVoiceKey(model);
+    const row = document.createElement('div');
+    row.className = 'ob-voice-key';
+    row.style.cssText = 'display:flex; gap:6px; align-items:center; margin-bottom:10px;';
+    row.innerHTML = `<input type="password" id="obVoiceKeyInput" autocomplete="off" spellcheck="false" aria-label="${isG ? 'Gemini' : 'ElevenLabs'} API 키"
+        placeholder="🔑 ${isG ? 'Gemini' : 'ElevenLabs'} ${saved ? '새 API 키 입력' : 'API 키 입력'}" style="flex:1; min-width:0; padding:10px 12px; font-size:14px; font-weight:700; border:1.5px solid #cbd5e1; border-radius:10px; background:#fff; outline:none;">
+      <button type="button" id="obVoiceKeySave" class="btn-3d" style="flex:none; min-height:42px; padding:0 14px; font-size:13px; font-weight:900; background:${isG ? '#9333ea' : '#d97706'}; color:#fff; border-radius:10px;">저장</button>`;
+    const input = row.querySelector('input'), btn = row.querySelector('button');
+    // 키 바꾸기(두 번 터치)일 때 칸은 비워 둠 — 기존 키는 화면에 내보이지 않음
+    const save = () => {
+      const k = input.value.trim();
+      if (!k) { input.focus(); return; }
+      if (isG) { localStorage.setItem('gemini_voice_api_key', k); localStorage.setItem('hangeoreum_gemini_key', k); }
+      else localStorage.setItem('eleven_voice_api_key', k);
+      const settingsInput = document.getElementById(isG ? 'geminiApiKeyInput' : 'elevenApiKeyInput');
+      if (settingsInput) settingsInput.value = k;  // 설정 화면 칸도 같은 키로
+      const engine = (typeof OurVoiceMasterEngine !== 'undefined') ? OurVoiceMasterEngine : null;
+      if (engine && engine.setApiKey) engine.setApiKey(model, k);
+      soundTap(); voiceKeyEdit = ''; renderVoicePresets();  // 키가 생겼으니 입력칸은 사라짐
+    };
+    btn.onclick = save;
+    input.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); save(); } };  // 칸이 사라진 뒤 전역 Enter(다음 단계)로 번지지 않게
+    return row;
   }
 
   async function speakSampleVoice(voiceId) {
@@ -18838,6 +18675,7 @@ const EXILE_VOICES = [
   let activeSessionCase = null;
 
   function applySessionCaseToUI(caseObj) {
+    setTimeout(() => window.HGAI?.mount(), 0);
     if (!caseObj) return;
     const titleEl = document.getElementById('sessionCaseTitle');
     if (titleEl) titleEl.textContent = caseObj.title || '실시간 몰입 상황';
@@ -19096,9 +18934,10 @@ function getCurrentRoundData() {
     document.getElementById('userSpokenFeedback').textContent = '';
     document.getElementById('sttStatusText').textContent = "원어민 발음을 듣고 [🎙️ 마이크로 말하기]를 눌러 따라해보세요!";
 
-    // 다음 단계로 버튼 잠금 가드!
+    // 다음 단계로 버튼 잠금 가드! (통과했거나, 전에 이미 진행했던 곳이면 열림)
+    if (window.HGV2 && HGV2.noteFar) HGV2.noteFar();
     const nextBtn = document.getElementById('btnNextRound');
-    if (roundPassed[currentRound - 1]) {
+    if (roundPassed[currentRound - 1] || (window.HGV2 && HGV2.behindFar && HGV2.behindFar())) {
       nextBtn.classList.remove('btn-disabled');
       nextBtn.disabled = false;
       nextBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
@@ -19405,6 +19244,13 @@ function getCurrentRoundData() {
   }
 
   function proceedNextRoundOrLevel() {
+    // 뒤로 갔다가 다시 앞으로: 전에 진행했던 곳까지는 통과 없이 이동
+    if (!roundPassed[currentRound - 1] && window.HGV2 && HGV2.behindFar && HGV2.behindFar()) {
+      soundTap();
+      const moved = HGV2.forward();
+      if (moved === 'round') renderCurrentRoundUI(); else if (moved) updateLevelUI();
+      return;
+    }
     if (!roundPassed[currentRound - 1]) {
       soundWrong();
       alert("현재 단계를 60점 이상으로 통과해야만 다음 단계로 넘어갈 수 있습니다!");
@@ -19473,7 +19319,7 @@ function getCurrentRoundData() {
 
   function getObDialogues() {
     return {
-      1: `내가 너를 뭐로 부르면 될까?<br>마음에 드는 AI 튜터의 목소리를 골라줘.`,  
+      1: `내가 너를 뭐로 부르면 될까?<br>아래 호칭에 이름을 선택해줘.`,  
       2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
       3: `좋아 <strong>${userName}</strong>! 먼저 제0문, <strong>${window.HGSCRIPT ? HGSCRIPT.scriptName(selectedLang) : '문자'}</strong>를 읽을 수 있어?`,
       4: `제1문! 외국 식당에서 원하는 메뉴나 물을 요청할 때<br>단어가 바로 나와 <strong>${userName}</strong>?`,
@@ -19615,6 +19461,9 @@ function getCurrentRoundData() {
   function updateObMainBtn() {
     const mainBtn = document.getElementById('obMainActionBtn');
     if (!mainBtn) return;
+    // 2026-10-27 옵빠야 지시: 1단계 '호칭 및 음성 설정 완료 → 언어 선택' 버튼 삭제
+    // (호칭 저장 → AI 튜터 설정 화면 → 뒤로 나오면 자동으로 언어 선택 단계, hg_ui.js closeTutorVoice)
+    mainBtn.style.display = obStep === 1 ? 'none' : '';
     if (obStep === 1) {
       mainBtn.innerHTML = `<span>호칭 및 음성 설정 완료 ➔ 언어 선택</span>`;
     } else if (obStep === 7 || (obStep === 3 && obScriptAnswer === 0)) {
@@ -19629,6 +19478,35 @@ function getCurrentRoundData() {
     }
   }
 
+  // 2026-10-27 옵빠야 지시: '마스터할 외국어' 카드 = 한 줄에 한 언어, 언어당 두 줄
+  // (1줄 국기·언어(원어)·학습 위치(레벨·라운드) / 2줄 간략 소개)
+  function decorateObLangCards() {
+    let pos = {};
+    try { pos = JSON.parse(localStorage.getItem('hg_ui_positions_v1') || '{}') || {}; } catch (e) {}
+    document.querySelectorAll('#obStep2 .choice-card').forEach(card => {
+      const code = ((card.getAttribute('onclick') || '').match(/onSelectLang\('(\w+)'/) || [])[1];
+      if (!code) return;  // 개발중 카드(onclick 없음)는 그대로
+      if (!card.dataset.obDecorated) {
+        const flag = card.querySelector(':scope > span'), info = card.querySelector(':scope > div');
+        const name = info && info.children[0], desc = info && info.children[1];
+        if (!flag || !name || !desc) return;
+        card.dataset.obDecorated = '1';
+        card.classList.add('ob-lang-card');
+        card.innerHTML = `<div class="ob-lang-title"><span class="ob-lang-flag">${flag.textContent}</span><span class="ob-lang-name">${name.textContent}</span><span class="ob-lang-pos"></span></div>`
+          + `<div class="ob-lang-desc">${desc.textContent}</div>`;
+      }
+      const p = pos[code], letters = localStorage.getItem('hg_letters_' + code);
+      card.querySelector('.ob-lang-pos').textContent = p ? (p.script ? '문자 입문 중' : `Lv.${p.level} · 라운드 ${p.round}`) : letters ? '문자 학습 중' : '처음 시작';
+      card.dataset.obCode = code;
+    });
+    // 2026-10-27 옵빠야 지시 순서: 영어·일본어·중국어·프랑스어·스페인어·러시아어 → (개발중) 포르투갈어·이탈리아어·독일어·노르웨이어·덴마크어·그리스어
+    const firstDev = document.querySelector('#obStep2 .ob-lang-new');
+    if (firstDev) ['en', 'ja', 'cn', 'fr', 'es', 'ru'].forEach(c => {
+      const card = document.querySelector(`#obStep2 .choice-card[data-ob-code="${c}"]`);
+      if (card) firstDev.before(card);
+    });
+  }
+
   function updateObStepUI() {
     for (let i = 1; i <= 8; i++) {
       const view = document.getElementById(`obStep${i}`);
@@ -19637,6 +19515,8 @@ function getCurrentRoundData() {
         else view.classList.add('hidden');
       }
     }
+
+    if (obStep === 2) decorateObLangCards();
 
     const progressPercent = (obStep / 8) * 100;
     document.getElementById('obProgressFill').style.width = `${progressPercent}%`;
@@ -19721,12 +19601,22 @@ function getCurrentRoundData() {
   function openDailyCheckinModal() {
     soundTap();
     document.getElementById('dailyCheckinModal').classList.remove('hidden');
+    if (window.HGDAILY) HGDAILY.onOpen();  // 빠른 선택 3개를 지금 상황에 맞춰 새로
     setTimeout(() => {
-      speakExileTutor(`지구인 ${userName}! 오늘 하루는 어땠어? 편하게 이야기해 줘!`, 'ko');
+      speakExileTutor(window.HGDAILY ? HGDAILY.greeting(userName) : `지구인 ${userName}! 오늘 하루는 어땠어? 편하게 이야기해 줘!`, 'ko');
     }, 300);
   }
-  function closeDailyCheckinModal() {
-    document.getElementById('dailyCheckinModal').classList.add('hidden');
+  // resume=false: 닫은 쪽(시작 버튼·오늘의 뉴스)이 updateLevelUI로 직접 수업을 시작하는 경우
+  function closeDailyCheckinModal(resume) {
+    const el = document.getElementById('dailyCheckinModal');
+    const wasOpen = !el.classList.contains('hidden');
+    el.classList.add('hidden');
+    if (resume === false || !wasOpen) return;
+    // ✕·폰 뒤로가기로 닫으면, 창이 떠 있는 동안 멈춰 둔 수업(문자·문장)을 손대지 않아도 이어서 시작한다
+    // (전에는 시작 버튼으로 닫을 때만 재개돼서 '처음부터 다시 듣기'를 눌러야 핸즈프리가 시작됐다)
+    if (window.HGUI && HGUI.route && HGUI.route() !== 'lesson') return;
+    if (typeof stopAllTTSAudio === 'function') stopAllTTSAudio();
+    setTimeout(() => { if (el.classList.contains('hidden') && typeof updateLevelUI === 'function') updateLevelUI(); }, 150);
   }
 
   function selectQuickDaily(quote, themeKey) {
@@ -19741,7 +19631,10 @@ function getCurrentRoundData() {
     const inputVal = inputEl ? inputEl.value.trim() : '';
     if (inputVal) {
       currentStoryQuote = inputVal;
-      if (inputVal.includes('카페') || inputVal.includes('커피') || inputVal.includes('라떼') || inputVal.includes('힐링')) {
+      if (window.HGDAILY) HGDAILY.remember(inputVal);  // 다음 빠른 선택의 취향 참고
+      if (window.HGDAILY) {
+        currentTheme = HGDAILY.themeOf(inputVal);
+      } else if (inputVal.includes('카페') || inputVal.includes('커피') || inputVal.includes('라떼') || inputVal.includes('힐링')) {
         currentTheme = 'cafe';
       } else if (inputVal.includes('친구') || inputVal.includes('맥주') || inputVal.includes('치맥') || inputVal.includes('술') || inputVal.includes('고기')) {
         currentTheme = 'beer';
@@ -19764,7 +19657,7 @@ function getCurrentRoundData() {
 
     soundLevelUp();
     applyDailyThemeUI();
-    closeDailyCheckinModal();
+    closeDailyCheckinModal(false);
     currentRound = 1;
     roundPassed = [false, false, false, false];
     updateLevelUI();
@@ -19796,8 +19689,10 @@ function getCurrentRoundData() {
   function applyDailyThemeUI() {
     const t = THEMED_DATA[currentTheme];
     document.getElementById('activeDailyStoryQuote').textContent = `"${currentStoryQuote}"`;
-    document.getElementById('activeDailyThemeBadge').textContent = t.themeName;
-    document.getElementById('activeDailyKeywords').textContent = t.keywords;
+    // 동적 빠른 선택에서 고른 문장이면 그 상황 이름·태그를, 아니면 기존 테마 이름·키워드를 보인다
+    const pick = window.HGDAILY ? HGDAILY.badgeFor(currentStoryQuote) : null;
+    document.getElementById('activeDailyThemeBadge').textContent = pick && pick.l ? `${pick.e} [${pick.l}]` : t.themeName;
+    document.getElementById('activeDailyKeywords').textContent = pick && pick.t ? pick.t : t.keywords;
   }
 
 /* =========================================================
@@ -20184,14 +20079,15 @@ function getCurrentRoundData() {
     // 3. Gemini 또는 오프라인 맞춤형 실전 원어 응답 도출
     let replyText = "";
     let replyKo = "";
+    let replyProvider = "";
 
     const apiKey = getActiveApiKey();
     if (window.HGV2 && HGV2.isFreeTalk()) {
-      try { const r = await HGV2.partnerReply(userSpokenText); if (r) { replyText = r.text; replyKo = r.ko || ''; } } catch (e) {}
+      try { const r = await HGV2.partnerReply(userSpokenText); if (r) { replyText = r.text; replyKo = r.ko || ''; replyProvider=r.provider||'AI'; } } catch (e) {}
     }
     // callGeminiFlashRaw는 정의된 적이 없어 키가 있어도 늘 내장 응답으로 떨어졌다 (실기기 2026-10-26)
     // → 발음 코치와 같은 callGeminiCascade(Native 브리지 우선, 무료 모델 순서)로 연결
-    if (!replyText && apiKey && typeof callGeminiCascade === 'function') {
+    if (!replyText && (apiKey || window.HGLLM?.ready()) && typeof callGeminiCascade === 'function') {
       try {
         const personaName = document.getElementById('personaName')?.textContent || '동료';
         const scenarioTitle = document.getElementById('rpSessionCaseTitle')?.textContent || '일상 대화';
@@ -20203,6 +20099,7 @@ function getCurrentRoundData() {
         const res = await callGeminiCascade({ contents: [{ parts: [{ text: prompt }] }] });
         const text = res && res.ok && res.reply ? res.reply.trim().replace(/^\[|\]/g, '') : '';
         if (text) {
+          replyProvider=window.HGLLM?.LABEL[res.provider]||'AI';
           const match = text.match(/^([^(（]+)(?:[(（]([^)）]+)[)）])?/);
           if (match) {
             replyText = match[1].trim();
@@ -20216,7 +20113,7 @@ function getCurrentRoundData() {
       }
     }
 
-    const replySource = replyText ? 'AI 연결 응답' : (apiKey ? 'AI 연결 실패 · 내장 연습 응답' : 'API 키 없음 · 내장 연습 응답');
+    const replySource = replyText ? (['Chat-Gpt','Claude','Gemini'].includes(replyProvider) ? replyProvider : 'AI 연결 응답') : '내장 연습 응답';
     if (!replyText) {
       // 오프라인 스마트 티키타카 응답 라이브러리
       if (curLang === 'fr') {
@@ -20288,13 +20185,14 @@ function getCurrentRoundData() {
     replyMsg.innerHTML = `
       <div style="width:32px; height:32px; border-radius:50%; background:#e0e7ff; display:flex; align-items:center; justify-content:center; font-size:16px;">${personaAvatar}</div>
       <div style="background:#ffffff; border:1.5px solid #86efac; padding:10px 14px; border-radius:14px; font-size:14px; text-align:left; max-width:85%; box-shadow:0 3px 10px rgba(16,185,129,0.12);">
-        <strong style="color:#0f172a;">${replyText}</strong>
-        ${replyKo ? `<div style="font-size:12px; color:#64748b; margin-top:4px;">(${replyKo})</div>` : ''}
+        <strong style="color:#0f172a;">${window.HGUI ? HGUI.escape(replyText) : replyText}</strong>
+        ${replyKo ? `<div style="font-size:12px; color:#64748b; margin-top:4px;">(${window.HGUI ? HGUI.escape(replyKo) : replyKo})</div>` : ''}
         <div style="margin-top:6px; font-size:11px; font-weight:800; color:#16a34a; display:flex; align-items:center; gap:4px;">
           <span>${replySource}</span>
         </div>
       </div>
     `;
+    window.HGAI?.badge(replyMsg.lastElementChild, ['Chat-Gpt','Claude','Gemini'].includes(replySource) ? replySource : '');
     chatLog.appendChild(replyMsg);
     chatLog.scrollTop = chatLog.scrollHeight;
     soundCorrect();
@@ -20757,6 +20655,16 @@ function getCurrentRoundData() {
   /* 계단식 무중단 호출 파이프라인 (Native 직접 통신 1순위 + 브라우저 CORS 프록시 우회) */
 
   async function callGeminiCascade(payload, startModel = null, options = {}) {
+    // 설정에서 고른 구독 AI(ChatGPT·Claude) 우선
+    const llm = !options.geminiOnly && window.HGLLM ? HGLLM.active() : null;
+    if (llm) {
+      try { return {ok:true,reply:await llm.api.request(payload,options),model:llm.api.model(),provider:llm.id,fallbackUsed:false}; }
+      catch(e) {
+        // 2026-10-28 옵빠야 지시: 구독 AI 한도·오류 → 무료 Gemini(아래 경로) → 키가 없으면 호출부의 내장 응답
+        if (HGLLM.isCancel(e)) return {ok:false,error:e.message,provider:llm.id};
+        console.warn(`[HG] ${llm.label} 실패 → 무료 Gemini`, e.message);
+      }
+    }
 
     const generalApiKey = getGeneralApiKey();
 
@@ -20794,7 +20702,7 @@ function getCurrentRoundData() {
 
           return {
 
-            ok: true,
+            ok: true, provider: 'gemini',
 
             model: parsed.model || 'gemini-1.5-flash',
 
@@ -20906,7 +20814,7 @@ function getCurrentRoundData() {
           window._fastActiveLlmModel = currentModel;
           try { localStorage.setItem('hangeoreum_fast_llm_model', currentModel); } catch(e) {}
 
-          return { ok: true, model: currentModel, fallbackUsed: (i > 0), reply: replyText };
+          return { ok: true, provider: 'gemini', model: currentModel, fallbackUsed: (i > 0), reply: replyText };
         }
         const errText = await res.text();
         lastError = `[${currentModel} HTTP ${res.status}] ${errText.substring(0, 100)}`;
@@ -20998,7 +20906,7 @@ function getCurrentRoundData() {
 
       contents: [{ parts: [{ text: "안녕! 엑자일 테스트야." }] }]
 
-    });
+    }, null, {geminiOnly:true});
 
 
 
@@ -21028,7 +20936,7 @@ function getCurrentRoundData() {
 
     const config = getGeminiConfig();
 
-    if (!config || !config.apiKey) return;
+    if (!(window.HGLLM?.ready()) && (!config || !config.apiKey)) return;
 
 
 
@@ -21042,7 +20950,7 @@ function getCurrentRoundData() {
 
 정확도 점수: ${score}점
 
-학습자에게 한국어로 1~2문장으로 따뜻하고 유쾌하게 발음 및 억양 조언을 제공하세요.`;
+인식된 텍스트만 보고 한국어 1~2문장으로 표현·문법·말하기 연습 조언을 제공하세요. 실제 음성을 듣지 않았으므로 발음·억양을 평가하지 말고, 인식 오류를 학습자의 잘못으로 단정하지 마세요.`;
 
 
 
@@ -21058,7 +20966,8 @@ function getCurrentRoundData() {
 
         let tag = result.fallbackUsed ? `<span style='font-size:11px; color:#d97706;'>[${result.model} Fallback]</span> ` : `<span style='font-size:11px; color:#4f46e5;'>[${result.model}]</span> `;
 
-        document.getElementById('polishText').innerHTML = `AI 엑자일 정밀 피드백: ${tag}<strong>"${result.reply.trim()}"</strong>`;
+        document.getElementById('polishText').textContent = result.reply.trim();
+        window.HGAI?.badge(document.getElementById('polishText'), window.HGLLM?.LABEL[result.provider] || '');
 
       }
 
@@ -21122,7 +21031,8 @@ function getCurrentRoundData() {
 
       if (el && !el.classList.contains('hidden')) {
 
-        el.classList.add('hidden');
+        if (mId === 'dailyCheckinModal') closeDailyCheckinModal();  // 멈춰 둔 수업 재개 포함
+        else el.classList.add('hidden');
 
         return;
 
@@ -21140,16 +21050,22 @@ function getCurrentRoundData() {
 
   /* 초기화면 이동 (처음으로) */
 
-  function goToInitialScreen() {
+  // 2026-10-27 옵빠야 지시: '처음으로'는 오프닝 다음 화면(호칭·튜터 목소리 1단계)으로 바로, 오프닝은 'Exile 오프닝'(withOpening)에서만
+  function goToInitialScreen(withOpening) {
 
     soundTap();
 
     returnToOnboardingView();
 
-    // 오픈화면(스플래시)부터 다시 보여 준다
     try { stopAllTTSAudio(); globalTtsSeq++; } catch (e) {}
     if (window.HGUX) HGUX.sfx('whoosh');
     const splash = document.getElementById('openingSplashView');
+    if (!withOpening) {
+      if (splash) { splash.style.opacity = '0'; splash.style.visibility = 'hidden'; splash.style.display = 'none'; }
+      setTimeout(() => speakExileTutor("내가 너를 뭐로 부르면 될까? 아래 호칭에 이름을 선택해줘.", 'ko'), 350);
+      return;
+    }
+    // 오픈화면(스플래시)부터 다시 보여 준다
     if (splash) {
       splash.style.display = 'flex';
       void splash.offsetWidth;
@@ -21258,6 +21174,9 @@ function getCurrentRoundData() {
       }
 
 
+
+      // 수업 화면 스와이프는 hg_ui.js(슬라이드 모션·진행했던 곳까지 이동)가 맡는다 — 여기서도 처리하면 한 번에 두 칸 이동했다
+      if (window.HGUI && !document.getElementById('viewCanvas').classList.contains('hidden')) return;
 
       const diffX = x - touchStartX;
 
@@ -21830,7 +21749,7 @@ function getCurrentRoundData() {
     setTimeout(() => {
       splash.style.display = 'none';
       if (obStep === 1) {
-        speakExileTutor("내가 너를 뭐로 부르면 될까? 마음에 드는 AI 튜터의 목소리를 골라줘.", 'ko');
+        speakExileTutor("내가 너를 뭐로 부르면 될까? 아래 호칭에 이름을 선택해줘.", 'ko');
       }
     }, 500);
     try { localStorage.setItem('hangeoreum_opening_seen', 'true'); } catch(e){}
@@ -22051,8 +21970,12 @@ function getCurrentRoundData() {
       // 2. hangeoreum_lv 및 hangeoreum_round 로 저장된 동적 관문 키 전수 삭제
       const allKeys = Object.keys(localStorage);
       allKeys.forEach(k => {
+        // 2026-10-27 옵빠야 지시: 완전 초기화 = 지금까지 배운 것 전부 (언어별 위치·가장 멀리 간 위치·문자 기록·다이얼로그·주제 기록·복습·이어하기)
+        // 설정(호칭·목소리·API 키·글자 크기·언어 변형 선택)은 남긴다
         if (k.startsWith('hangeoreum_lv') || k.startsWith('hangeoreum_round') || k.startsWith('hangeoreum_case')
-          || k.startsWith('hg_script_') || (k.startsWith('hg_v2_') && k !== 'hg_v2_models' && k !== 'hg_v2_fast_model')) {
+          || k.startsWith('hg_script_') || (k.startsWith('hg_v2_') && k !== 'hg_v2_models' && k !== 'hg_v2_fast_model')
+          || k === 'hg_ui_positions_v1' || k.startsWith('hg_far_') || k.startsWith('hg_letters_') || k.startsWith('hg_dlg_')
+          || k.startsWith('hg_daily_') || k === 'hg_resume_snapshot' || k.startsWith('hg_review_v') || k === 'hg_ai_learning_cache_v1' || k === 'hangeoreum_daily_quote') {
           localStorage.removeItem(k);
         }
       });
@@ -22148,6 +22071,9 @@ function getCurrentRoundData() {
     const checkin = document.getElementById('dailyCheckinModal');
     if (checkin && !checkin.classList.contains('hidden')) return;
 
+    // 새 세트 첫 라운드면 먼저 '오늘의 다이얼로그'(2~3명 채팅형 대화)를 들려주고, 끝나면 이 함수가 다시 불린다
+    if (window.HGDIALOG && HGDIALOG.intercept()) return;
+
     if (autoListenTimer) clearTimeout(autoListenTimer);
 
     updateHandsFreeStatus('ai_speaking', `🤖 AI 엑자일 발음 지도 중... 🔊`);
@@ -22199,7 +22125,7 @@ function getCurrentRoundData() {
 
     // 1. Gemini AI 실시간 맥락 생성
     const apiKey = getActiveApiKey();
-    if (apiKey && typeof requestGeminiDynamicCaseGeneration === 'function') {
+    if ((apiKey || window.HGLLM?.ready()) && typeof requestGeminiDynamicCaseGeneration === 'function') {
       try {
         await requestGeminiDynamicCaseGeneration(level);
         return;

@@ -184,7 +184,7 @@ function initProjectFolders(content) {
     "한걸음V1.0 Exile": {
       tag: "한걸음V1.0 Exile · 안드로메다에서 유배 온 안내 AI Exile · 6개 언어 · 누리 보이스 TTS 엔진",
       links: [
-        { label: "한걸음V1.0 Exile APK (1.6MB) · Android 8 이상", url: "./downloads/Hangeoreum-V1.0-Exile.apk", download: "Hangeoreum-V1.0-Exile.apk", primary: true },
+        { label: "한걸음V1.0 Exile APK (1.7MB) · Android 8 이상", url: "./downloads/Hangeoreum-V1.0-Exile.apk", download: "Hangeoreum-V1.0-Exile.apk", primary: true },
         { label: "화면 시안 체험 · 6개 언어 문자표 & 입문 문자 & 오늘의 뉴스", url: "./downloads/Hangeoreum-preview.html", external: true },
         { label: "사용 안내 · 안드로메다 유배 스토리 및 음성 코칭", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
       ]

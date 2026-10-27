@@ -1,8 +1,8 @@
 {
-  "versionCode": 13,
-  "versionName": "1.0.4",
+  "versionCode": 15,
+  "versionName": "1.0.6",
   "apk": "https://kangjong9.github.io/downloads/Hangeoreum-V1.0-Exile.apk",
-  "sha256": "fbf1d873d7258f636d0f18b01da93295ee30a969d217e805065daa2110af7113",
-  "size": 1692311,
-  "notes": "마이크 권한 안내가 화면에 보이도록 수정, 백그라운드 전환 시 오류 수정"
+  "sha256": "6e833ee0062ddd7f2ff93c858d1512ebc636ed6f812c1cbeedbafd217c89622c",
+  "size": 1761353,
+  "notes": "학습 AI 선택(ChatGPT·Claude), 한도 도달 시 무료 Gemini로 이어가기, 설정 화면 개편, 다이얼로그 빠른 시작"
 }

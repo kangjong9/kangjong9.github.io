@@ -16,7 +16,7 @@
   const esc = (s) => String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const lang = () => (typeof selectedLang !== 'undefined' && selectedLang) ? selectedLang : 'fr';
   const hasNative = () => !!(window.Native && typeof window.Native.call === 'function');
-  const apiKey = () => (window.HGV2 && HGV2.apiKey ? HGV2.apiKey() : '');
+  const apiKey = () => !!(window.HGV2 && HGV2.aiAvailable && HGV2.aiAvailable());
 
   function box() {
     let el = document.getElementById('hgNewsBox');
@@ -79,6 +79,7 @@
   async function open() {
     if (typeof soundTap === 'function') soundTap();
     if (busy) return;
+    const provider=HGV2.aiName();
     busy = true;
     show('📡 오늘의 실제 뉴스를 불러오는 중이에요...');
     try {
@@ -138,7 +139,8 @@ ${picked.map((a, i) => `${i + 1}. ${a.title}${a.source ? ` (${a.source})` : ''}`
   async function start() {
     const picked = articles.filter(a => a.pick);
     if (!picked.length || busy) return;
-    if (!apiKey()) { renderList('기사로 회화를 만들려면 설정에서 Gemini API 키(무료)를 입력해 주세요.'); return; }
+    if (!apiKey()) { renderList('기사로 회화를 만들려면 설정에서 ChatGPT를 연결해 주세요.'); return; }
+    const provider=HGV2.aiName();
     busy = true;
     show('🌌 엑자일이 기사 내용으로 오늘의 회화를 만드는 중이에요... (10초 정도)');
     try {
@@ -148,6 +150,7 @@ ${picked.map((a, i) => `${i + 1}. ${a.title}${a.source ? ` (${a.source})` : ''}`
         set = HGV2._validateSet(JSON.parse(text.replace(/^```(json)?|```$/g, '').trim()), lang());
       }
       if (!set) throw new Error('회화 세트를 만들지 못했어요. 다시 시도해 주세요.');
+      set.provider=provider;
       apply(set, picked);
     } catch (e) {
       renderList(`⚠️ ${esc(e.message)}`);
@@ -164,12 +167,12 @@ ${picked.map((a, i) => `${i + 1}. ${a.title}${a.source ? ` (${a.source})` : ''}`
       id: `v2_${L}_${lv}_${k}`, title: set.title, situationKo: set.situationKo, keywords: set.keywords, art: set.art || '📰',
       rounds: set.rounds.map((r, i) => ({ round: i + 1, type: `${ROUND_LABELS[i]} · 오늘의 뉴스`, ...r })),
       theme: currentTheme, lang: L, level: lv, set: k, news: picked.map(a => a.title),
-      source: '📰 오늘의 뉴스 · 실제 기사 맥락 · Gemini'
+      source: '📰 오늘의 뉴스 · 실제 기사 맥락 · ' + (set.provider || 'AI')
     };
     if (typeof applySessionCaseToUI === 'function') applySessionCaseToUI(activeSessionCase);
     const q = document.getElementById('activeDailyStoryQuote');
     if (q) q.textContent = `"${currentStoryQuote}"`;
-    if (typeof closeDailyCheckinModal === 'function') closeDailyCheckinModal();
+    if (typeof closeDailyCheckinModal === 'function') closeDailyCheckinModal(false);  // 아래 updateLevelUI가 수업 시작
     const b = document.getElementById('hgNewsBox');
     if (b) b.style.display = 'none';
     currentRound = 1;

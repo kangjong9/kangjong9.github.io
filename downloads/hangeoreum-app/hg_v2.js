@@ -222,7 +222,22 @@
   }
   const cachedModels = () => (load('hg_v2_models', null) || {}).list || [];
 
-  async function geminiCall(body, timeoutMs) {
+  // 설정에서 고른 구독 AI(ChatGPT·Claude, HGLLM) → 없으면 무료 Gemini 키
+  const llm = () => window.HGLLM ? HGLLM.active() : null;
+  const aiAvailable = () => !!llm() || !!apiKey();
+  const aiName = () => llm()?.label || 'Gemini';
+  // 마지막으로 실제 답을 준 AI (출처 배지·세트 출처 표시용)
+  let lastProvider = '';
+  // 2026-10-28 옵빠야 지시: ChatGPT 한도·오류 → 무료 Gemini(키가 있을 때) → 그것도 안 되면 호출부의 로컬(내장) 학습
+  async function geminiCall(body, timeoutMs, options = {}) {
+    const ai = !options.geminiOnly && llm();
+    if (ai) {
+      try { const text = await ai.api.request(body, options); lastProvider = ai.label; return text; }
+      catch (e) {
+        if (HGLLM.isCancel(e) || !apiKey()) throw e;
+        console.warn(`[HGV2] ${ai.label} 실패 → 무료 Gemini`, e.message);
+      }
+    }
     const key = apiKey();
     if (!key) throw new Error('NO_KEY');
     let lastErr = 'Gemini 응답 없음';
@@ -249,7 +264,7 @@
         if (!res.ok) { lastErr = `${model} HTTP ${res.status}`; continue; } // 404 미지원·429 한도 → 다음 모델
         const data = await res.json();
         const text = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
-        if (text) { if (good !== model) save('hg_v2_fast_model', model); return text; }
+        if (text) { if (good !== model) save('hg_v2_fast_model', model); lastProvider = 'Gemini'; return text; }
         lastErr = `${model} 빈 응답`;
       } catch (e) {
         clearTimeout(tid);
@@ -281,6 +296,7 @@ ${daily ? `- 학습자가 오늘 체크인에서 한 말: "${daily}" (주제 선
 [이번 세트]
 - 레벨: Lv.${level} (구간 ${band.from}~${band.to} '${band.name}'의 ${stepInBand}/10단계 — 구간 안에서 단계가 오를수록 조금씩 더 어렵게)
 - 구간 난이도 기준: ${band.spec}
+${window.HGREVIEW && HGREVIEW.learningContext ? HGREVIEW.learningContext(lang, level) : ""}
 - 이 레벨의 ${k}/5번째 세트 (${a ? '앞 세트와 표현이 겹치면 안 됨' : '같은 레벨의 다른 세트와 주제·표현이 겹치면 안 됨'})
 ${flow}
 - 이미 학습한 표현(절대 반복 금지): ${used.join(' | ') || '없음'}
@@ -315,11 +331,11 @@ ${flow}
 
   const pending = {};
   /** k번째 세트를 AI로 생성해 캐시 (이미 있거나 진행 중이면 재사용). 실패 시 null */
-  function generateSet(lang, level, k, force) {
+  function generateSet(lang, level, k, force, background = false) {
     const ck = cacheKey(lang, level, k);
     if (!force && load(ck, null)) return Promise.resolve(load(ck, null));
     if (pending[ck]) return pending[ck];
-    if (!apiKey()) return Promise.resolve(null);
+    if (!aiAvailable()) return Promise.resolve(null);
     const prev = k > 1 ? getSetSync(lang, level, k - 1) : (level > 1 ? getSetSync(lang, level - 1, SETS_PER_LEVEL) : null);
     pending[ck] = (async () => {
       for (let attempt = 0; attempt < 2; attempt++) {
@@ -327,16 +343,18 @@ ${flow}
           const text = await geminiCall({
             contents: [{ parts: [{ text: buildSetPrompt(lang, level, k, prev) }] }],
             generationConfig: { responseMimeType: 'application/json', temperature: 0.95 }
-          }, 15000);
+          }, 15000, {background});
           const set = validateSet(JSON.parse(text.replace(/^```(json)?|```$/g, '').trim()), lang);
           if (set) {
-            set.source = isThreadPos(lang, level, k) ? '🔗 1~10레벨 이어지는 맥락 · Gemini' : '✨ Gemini AI 맥락 연결 생성';
+            const provider = lastProvider || aiName();
+            set.source = isThreadPos(lang, level, k) ? '🔗 1~10레벨 이어지는 맥락 · ' + provider : '✨ ' + provider + ' AI 맥락 연결 생성';
             save(ck, set);
             return set;
           }
         } catch (e) {
           console.warn('[HGV2] 세트 생성 실패', e.message);
-          if (/NO_KEY|API 키 오류/.test(e.message)) break;
+          if (/NO_KEY|API 키 오류/.test(e.message) || (window.HGLLM && HGLLM.isCancel(e))) break;
+          if (!apiKey()) break; // 구독 AI만 있고 실패 → 내장 세트로
         }
       }
       return null;
@@ -375,11 +393,15 @@ ${flow}
 
   // 다음 2개 세트를 미리 순서대로 만들어 둬서 넘어갈 때 기다림이 없게 한다
   async function prefetchNext() {
+    // GPT 연결 시 '오늘의 다이얼로그' 대본도 미리 만들어 새 세트 시작 때 기다리지 않게 한다 (지금 세트 → 다음 세트 순)
+    const dialog = (set, level, k) => { if (set && window.HGDIALOG && HGDIALOG.prefetch) HGDIALOG.prefetch(toSessionCase(set, curLang(), level, k)); };
+    if (activeSessionCase) dialog(getSetSync(curLang(), currentLevel, getSetIdx()), currentLevel, getSetIdx());
     let pos = { level: currentLevel, k: getSetIdx() };
     for (let i = 0; i < 2; i++) {
       pos = nextPos(pos.level, pos.k);
       if (!pos) return;
-      if (needsAi(curLang(), pos.level, pos.k)) await generateSet(curLang(), pos.level, pos.k);
+      const set = needsAi(curLang(), pos.level, pos.k) ? await generateSet(curLang(), pos.level, pos.k, false, true) : getSetSync(curLang(), pos.level, pos.k);
+      if (i === 0) dialog(set, pos.level, pos.k);
     }
   }
 
@@ -420,7 +442,7 @@ ${flow}
 
     if (k < SETS_PER_LEVEL) {
       const nk = k + 1;
-      if (!load(cacheKey(lang, currentLevel, nk), null) && apiKey()) {
+      if (!load(cacheKey(lang, currentLevel, nk), null) && aiAvailable()) {
         setNotice(`<span style="color:#6366f1; font-weight:800;">🌌 엑자일이 다음 세트(${nk}/5)를 맥락에 이어 준비 중입니다...</span>`);
         await generateSet(lang, currentLevel, nk);
       }
@@ -436,7 +458,7 @@ ${flow}
     }
 
     if (currentLevel < 50) {
-      if (isThreadPos(lang, currentLevel + 1, 1) && !load(cacheKey(lang, currentLevel + 1, 1), null) && apiKey()) {
+      if (isThreadPos(lang, currentLevel + 1, 1) && !load(cacheKey(lang, currentLevel + 1, 1), null) && aiAvailable()) {
         setNotice(`<span style="color:#6366f1; font-weight:800;">🔗 엑자일이 Lv.${currentLevel + 1}을 지금 대화에 이어 준비 중입니다...</span>`);
         await generateSet(lang, currentLevel + 1, 1);
         setNotice('');
@@ -463,6 +485,35 @@ ${flow}
     openPartnerPicker();
   }
 
+  // ---------------------------------------------------------------- 가장 멀리 진행한 위치 (뒤로 갔다가 다시 앞으로)
+  // 2026-10-27: 이전 단계로 돌아가면 통과 기록(roundPassed)이 지금 세트 것만 남아 다시 앞으로 갈 수 없던 문제 → 언어별 최원 위치 기억
+  const farKey = (lang) => `hg_far_${lang}`;
+  const posVal = (lv, k, r) => (lv * 10 + k) * 10 + r;
+  function noteFar() {
+    const v = posVal(currentLevel, getSetIdx(), currentRound);
+    if (v > load(farKey(curLang()), 0)) save(farKey(curLang()), v);
+  }
+  function behindFar() { return posVal(currentLevel, getSetIdx(), currentRound) < load(farKey(curLang()), 0); }
+  /** 이미 진행했던 곳이면 통과 없이 한 단계 앞으로. 반환: 'round' | 'set' | 'level' | false */
+  function forward() {
+    if (!behindFar()) return false;
+    if (currentRound < 4) { currentRound++; return 'round'; }
+    const k = getSetIdx();
+    currentRound = 1;
+    roundPassed = [false, false, false, false];
+    if (k < SETS_PER_LEVEL) { setSetIdx(k + 1); applyCurrent(); return 'set'; }
+    if (currentLevel < 50) {
+      currentLevel++;
+      setSetIdx(1);
+      try { localStorage.setItem('hangeoreum_level', currentLevel); } catch (e) {}
+      const slider = document.getElementById('levelSlider');
+      if (slider) slider.value = currentLevel;
+      applyCurrent();
+      return 'level';
+    }
+    return false;
+  }
+
   /** 이전 라운드 또는 이전 세트로 */
   function goBack() {
     if (currentRound > 1) { currentRound--; return true; }
@@ -475,7 +526,7 @@ ${flow}
   async function regenerateCurrent() {
     const lang = curLang();
     const k = getSetIdx();
-    if (!needsAi(lang, currentLevel, k) || !apiKey()) return false;
+    if (!needsAi(lang, currentLevel, k) || !aiAvailable()) return false;
     setNotice('<span style="color:#6366f1; font-weight:800;">🌌 이 세트를 새 맥락으로 다시 만드는 중...</span>');
     const set = await generateSet(lang, currentLevel, k, true);
     setNotice('');
@@ -530,13 +581,14 @@ ${flow}
           </div>
         </div>`;
     }
+    window.HGAI?.badge(log?.lastElementChild?.lastElementChild, ['Chat-Gpt', 'Claude', 'Gemini'].includes(p.provider) ? p.provider : '');
     setTimeout(() => speakPartner(p.greeting), 300);
   }
 
   /** 학습자 발화에 대한 상대 AI 답변 {text, ko} (키 없으면 null → 기존 오프라인 답변 사용) */
   async function partnerReply(userText) {
     const p = getPartner();
-    if (!p || !apiKey()) return null;
+    if (!p || !aiAvailable()) return null;
     chatHistory.push({ role: 'learner', text: userText });
     const convo = chatHistory.slice(-12).map(m => `${m.role === 'partner' ? p.name : '학습자'}: ${m.text}`).join('\n');
     const prompt = `당신은 ${LANG_NAME[curLang()]} 원어민 '${p.name}'(${p.role}, 성격: ${p.personality})입니다. 한국인 학습자와 실전 회화를 이어 갑니다.
@@ -547,7 +599,7 @@ ${convo}
     try {
       const raw = await geminiCall({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.9, maxOutputTokens: 300 } }, 12000);
       const obj = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
-      if (obj && obj.text) { chatHistory.push({ role: 'partner', text: obj.text }); return { text: String(obj.text), ko: String(obj.ko || '') }; }
+      if (obj && obj.text) { chatHistory.push({ role: 'partner', text: obj.text }); return { text: String(obj.text), ko: String(obj.ko || ''), provider: lastProvider }; }
     } catch (e) { console.warn('[HGV2] 롤플레잉 답변 실패', e.message); }
     return null;
   }
@@ -567,15 +619,15 @@ ${convo}
     const name = v('hgv2Name') || (gender === 'male' ? 'Alex' : 'Mia');
     const fallbackGreeting = { fr: ['Bonjour ! Enchanté de vous rencontrer.', '안녕하세요! 만나서 반가워요.'], ja: ['こんにちは！はじめまして。', '안녕하세요! 처음 뵙겠습니다.'], cn: ['你好！很高兴认识你。', '안녕하세요! 만나서 반가워요.'],
       en: ['Hi there! Nice to meet you.', '안녕하세요! 만나서 반가워요.'], es: ['¡Hola! Encantado de conocerte.', '안녕하세요! 만나서 반가워요.'], ru: ['Здравствуйте! Очень приятно.', '안녕하세요! 만나서 반가워요.'] }[curLang()] || ['Hello!', '안녕하세요!'];
-    let greeting = fallbackGreeting[0], greetingKo = fallbackGreeting[1];
-    if (apiKey()) {
+    let greeting = fallbackGreeting[0], greetingKo = fallbackGreeting[1], provider = 'builtin';
+    if (aiAvailable()) {
       try {
         const raw = await geminiCall({ contents: [{ parts: [{ text: `${LANG_NAME[curLang()]} 원어민 '${name}'(${role}, 성격: ${personality})가 한국인 학습자에게 건네는 자연스러운 첫마디 1문장. JSON만: {"text":"원어","ko":"한국어 번역"}` }] }], generationConfig: { responseMimeType: 'application/json' } }, 15000);
         const o = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
-        if (o && o.text) { greeting = o.text; greetingKo = o.ko || ''; }
+        if (o && o.text) { greeting = o.text; greetingKo = o.ko || ''; provider=lastProvider; }
       } catch (e) {}
     }
-    choosePartner({ id: `custom_${Date.now()}`, name, role, personality, gender, avatar: gender === 'male' ? '🧑' : '👩', greeting, greetingKo });
+    choosePartner({ id: `custom_${Date.now()}`, name, role, personality, gender, avatar: gender === 'male' ? '🧑' : '👩', greeting, greetingKo, provider });
   }
 
   function openPartnerPicker() {
@@ -587,7 +639,7 @@ ${convo}
     wrap.innerHTML = `
       <div style="background:#fff; border-radius:20px; max-width:440px; width:100%; max-height:90vh; overflow:auto; padding:18px; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
         <div style="font-size:17px; font-weight:900; color:#1e1b4b; margin-bottom:4px;">🗣️ 실전 롤플레잉 대화 상대 고르기</div>
-        <div style="font-size:12.5px; color:#64748b; margin-bottom:12px;">상대는 원어민 목소리로 말합니다. ${apiKey() ? '' : '(Gemini 키가 없으면 정해진 답변만 합니다)'}</div>
+        <div style="font-size:12.5px; color:#64748b; margin-bottom:12px;">상대는 원어민 목소리로 말합니다. ${aiAvailable() ? '' : '(AI 연결이 없으면 내장 답변을 사용합니다)'}</div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px;">
           ${list.map((p, i) => `<button type="button" data-i="${i}" class="hgv2-preset" style="text-align:left; padding:10px; border-radius:14px; border:2px solid #e2e8f0; background:#f8fafc; cursor:pointer;">
             <div style="font-size:20px;">${p.avatar}</div>
@@ -634,10 +686,10 @@ ${convo}
 
   window.HGV2 = {
     SETS_PER_LEVEL, BANDS, PARTNER_PRESETS, TOPIC_ART, LANG_NAME, GEMINI_MODELS, cachedModels,
-    bandOf, getSetIdx, setSetIdx, getSetSync, generateSet, applyCurrent, isSessionCurrent,
-    advanceAfterSet, goBack, regenerateCurrent, renderArt, getAnchor, isThreadPos,
+    lastProvider: () => lastProvider, bandOf, getSetIdx, setSetIdx, getSetSync, generateSet, applyCurrent, isSessionCurrent,
+    advanceAfterSet, goBack, noteFar, behindFar, forward, regenerateCurrent, renderArt, getAnchor, isThreadPos,
     isFreeTalk, getPartner, setupFreeTalkView, partnerReply, speakPartner, openPartnerPicker,
     _validateSet: validateSet, _buildSetPrompt: buildSetPrompt,
-    geminiCall, apiKey  // 오늘의 뉴스(hg_news.js)가 같은 모델 폴백 경로를 쓴다
+    geminiCall, apiKey, aiAvailable, aiName  // 오늘의 뉴스(hg_news.js)가 같은 모델 폴백 경로를 쓴다
   };
 })();

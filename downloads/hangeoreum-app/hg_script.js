@@ -204,11 +204,13 @@
       save(st);
     }
     const pos = Math.min(Math.max(0, st.pos || 0), items.length - 1);
-    session = { key: stateKey(st), queue: order.map(i => items[i]), pos, status: '', heard: '', fails: 0, paused: false };
+    // maxPos: 이 회차에서 가장 멀리 진행한 위치 — '◀ 이전 글자'로 돌아가도 '다음 글자 ▶'로 여기까지는 다시 갈 수 있다
+    session = { key: stateKey(st), queue: order.map(i => items[i]), pos, maxPos: pos, status: '', heard: '', fails: 0, paused: false };
   }
   function savePos() {
     const st = load();
-    if (session && st.orderKey === session.key) { st.pos = session.pos; save(st); }
+    // 이어하기 위치는 가장 멀리 간 곳으로 저장 (앞 글자로 돌아가 복습해도 진도는 줄지 않음)
+    if (session && st.orderKey === session.key) { st.pos = Math.max(session.pos, session.maxPos || 0); save(st); }
   }
 
   function isActive() { return choosing || (load().active === true && units().length > 0); }
@@ -285,6 +287,9 @@
 #hgScriptView .hs-row{display:flex;gap:8px}
 #hgScriptView .hs-btn{flex:1;border:none;border-radius:14px;padding:15px 6px;font-size:clamp(16px,4.6vw,18px);font-weight:900;cursor:pointer;color:#fff;background:#14b8a6;box-shadow:0 3px 0 #0f766e}
 #hgScriptView .hs-btn.gray{background:#e2e8f0;color:#1e293b;box-shadow:0 3px 0 #cbd5e1}
+#hgScriptView .hs-nav{margin-top:8px}
+#hgScriptView .hs-nav .hs-btn{padding:11px 6px;font-size:clamp(15px,4.2vw,16px);background:#fff;border:1.5px solid #cbd5e1;box-shadow:none}
+#hgScriptView .hs-btn:disabled{opacity:.4;cursor:default}
 #hgScriptView .hs-btn.blue{background:#6366f1;box-shadow:0 3px 0 #4338ca}
 #hgScriptView .hs-stages{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
 #hgScriptView .hs-st{font-size:13px;font-weight:800;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.15)}
@@ -377,6 +382,11 @@
       btns = `<div class="hs-row"><button class="hs-btn gray" onclick="HGSCRIPT.retry()">${st.pass < 3 ? '🔊 처음부터 다시 듣기' : '🎙️ 다시 읽기'}</button></div>`;
     }
 
+    const canPrev = session.pos > 0, canNext = session.pos < Math.min(session.maxPos || 0, total - 1);
+    const nav = `<div class="hs-row hs-nav">
+        <button class="hs-btn gray" ${canPrev ? '' : 'disabled'} onclick="HGSCRIPT.prev()">◀ 이전 글자</button>
+        <button class="hs-btn gray" ${canNext ? '' : 'disabled'} onclick="HGSCRIPT.next()">다음 글자 ▶</button></div>`;
+
     v.innerHTML = `
       <div class="hs-head">
         <span class="hs-badge">${basis() === 'chart' ? '📋 문자표 기준' : '🔤 입문 단원'} · ${esc(scriptName())}</span>
@@ -390,6 +400,7 @@
       <div class="hs-bar"><div style="width:${Math.round((session.pos / total) * 100)}%"></div></div>
       <div class="hs-card">${card}</div>
       ${btns}
+      ${nav}
       ${packPrompt()}
       <button class="hs-skip" onclick="HGSCRIPT.skipToLevel1()">문자는 이미 읽을 수 있어요 → Lv.1로 건너뛰기</button>`;
   }
@@ -539,6 +550,9 @@
     if (b) { b.style.background = 'rgba(20,184,166,0.1)'; b.style.color = '#0f766e'; }
     clearFlow();
     stopListen();
+    // 홈·설정·백그라운드로 멈췄다 돌아오면 show()가 그 글자부터 시범을 다시 시작하게 표시
+    // (전에는 세션이 남아 화면만 그려지고 '처음부터 다시 듣기'를 눌러야 핸즈프리가 재개됐다)
+    if (session) { speakSeq++; session.needVoice = true; session.status = ''; }
   }
 
   function start(opts) {
@@ -562,6 +576,29 @@
   }
 
   function retry() { sfx('bubble'); if (session) session.fails = session.unsure = 0; runItem(); }
+
+  // 수업 중 ◀ 이전 글자 / 다음 글자 ▶ (다음은 이미 진행한 곳까지만). 옮긴 글자부터 시범 → 따라 읽기가 다시 자동으로 이어진다
+  function go(delta) {
+    if (!session) return;
+    const to = session.pos + delta;
+    if (to < 0 || to > (session.maxPos || 0) || to >= session.queue.length) return;
+    sfx('bubble');
+    clearFlow();
+    stopListen();
+    if (typeof stopAllTTSAudio === 'function') stopAllTTSAudio();
+    session.pos = to;
+    session.status = ''; session.heard = ''; session.fails = 0; session.unsure = 0;
+    savePos();
+    render();
+    runItem();
+  }
+  function prev() { go(-1); }
+  function next() { go(1); }
+  /** 스와이프용: 지금 이전/다음 글자로 갈 수 있는지 */
+  function navState() {
+    if (!session || choosing) return { prev: false, next: false };
+    return { prev: session.pos > 0, next: session.pos < Math.min(session.maxPos || 0, session.queue.length - 1) };
+  }
   function pass() {
     sfx('coin8');
     if (session) {
@@ -583,6 +620,7 @@
     session.fails = 0;
     session.unsure = 0;
     if (session.pos < session.queue.length) {
+      session.maxPos = Math.max(session.maxPos || 0, session.pos);
       savePos();
       if (st.pass === 1) sfx('bubble');
       render();
@@ -766,8 +804,9 @@
       session.needVoice = true;
       session.status = '';
     } else if (e.detail === 'close' && isActive()) {
+      // 문자표를 열 때 HGUI.stopMedia가 수업 화면을 숨기므로, 수업 화면에서 열었던 경우는 경로로 판단해 다시 보인다
       const v = document.getElementById('hgScriptView');
-      if (v && v.style.display !== 'none') show();
+      if (window.HGUI ? HGUI.route() === 'lesson' : (v && v.style.display !== 'none')) show();
     }
   });
 
@@ -943,5 +982,5 @@
     try { r.start(); } catch (e) { recognizer = null; judged('unsure', ''); }
   }
 
-  window.HGSCRIPT = { scriptName, units, isActive, show, hide, start, leave, retry, pass, listen, skipToLevel1, load, save, pictures, choose, startChart, basis, isHit };
+  window.HGSCRIPT = { scriptName, units, isActive, show, hide, start, leave, retry, pass, prev, next, navState, listen, skipToLevel1, load, save, pictures, choose, startChart, basis, isHit };
 })();

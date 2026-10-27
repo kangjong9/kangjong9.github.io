@@ -10,7 +10,8 @@
    폰 너비에 따른 배치는 hg_readable.css의 미디어 쿼리가 맡는다. */
 (function () {
   const ROOTS = '#viewHome, #viewLanguages, #viewFoundation, #viewCanvas, #viewOnboarding, #openingSplashView, .modal-sheet, #hgCelebrate, .hgl-ov';
-  const SKIP = 'svg, svg *, canvas, script, style, #hgSpeakWave, #hgSpeakWave *, #hgTextSizeRow, #hgTextSizeRow *';
+  // 여우 말풍선(.hg-ui-fox-bubble)은 빈칸에 맞춰 hg_ui.js fitBubbles가 크기를 정하므로 키우지 않음
+  const SKIP = 'svg, svg *, canvas, script, style, #hgSpeakWave, #hgSpeakWave *, #hgTextSizeRow, #hgTextSizeRow *, .hg-ui-fox-bubble';
   const LEVELS = { normal: ['보통', 1], large: ['크게', 1.12], xlarge: ['아주 크게', 1.25] };
   const KEY = 'hg_text_size';
 
