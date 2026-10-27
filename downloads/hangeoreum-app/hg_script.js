@@ -126,7 +126,8 @@
             t: `${t.제목} · ${label}`,
             tip: pi === 0 ? (t.설명 || sg.설명 || '') : `이번엔 ${label}!`,
             // '이름, 단어' 카드는 1회차 한글 줄에 단어 발음도 ('베 / ㅂ · 바부쉬까') — 키릴 문자를 못 읽어도 따라 말하게
-            c: p.items.map(it => [it.글자, kor(it) + (it.예시발음 && say(it).endsWith(', ' + it.예시단어) ? ` · ${it.예시발음}` : ''), say(it), '', auxOf(it)].map(clean).join('|')),
+            // 6번째 칸 = 예시 단어: 엑자일이 읽지 않는 카드(일본어·중국어·스페인어 음절 줄)도 그 단어 그림을 찾게 (2026-10-27)
+            c: p.items.map(it => [it.글자, kor(it) + (it.예시발음 && say(it).endsWith(', ' + it.예시단어) ? ` · ${it.예시발음}` : ''), say(it), '', auxOf(it), it.예시단어 || ''].map(clean).join('|')),
             w, stage: sg.단계
           });
         });
@@ -157,8 +158,8 @@
   function save(st) { try { localStorage.setItem(KEY(), JSON.stringify(st)); } catch (e) {} }
 
   function parse(line) {
-    const [c, k, s, m, p] = line.split('|');
-    return { c, k: k || '', s: s || c, m: m || '', p: p || '' };
+    const [c, k, s, m, p, x] = line.split('|');
+    return { c, k: k || '', s: s || c, m: m || '', p: p || '', x: x || '' };
   }
 
   /* 회차별 그림: 글자는 서로 다른 그림 3개, 단어는 그 단어 그림 하나 */
@@ -175,6 +176,8 @@
       if (word) { const [e, m] = lp.ex[word].split('|'); return [{ e, w: word, m: m || '' }]; }
     }
     const raw = (lp.c || {})[`${item.c}#${item.s}`] || (lp.c || {})[item.c] || '';
+    // 입문 그림도 없으면 카드의 예시 단어 그림 (기존 그림은 그대로 두고 빈 카드만 채운다)
+    if (!raw && basis() === 'chart' && lp.ex && item.x && lp.ex[item.x]) { const [e, m] = lp.ex[item.x].split('|'); return [{ e, w: item.x, m: m || '' }]; }
     return raw ? raw.split(';').map(x => { const [e, w, m] = x.split('|'); return { e, w: w || '', m: m || '' }; }) : [];
   }
   function pictureFor(item, phase, pass) {
