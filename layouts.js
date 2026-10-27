@@ -106,10 +106,9 @@ if (dialog) {
 // Category membership and display order were supplied by the owner.
 function initProjectFolders(content) {
   initGameEditorFolder(content);
-  const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니', 'radar-pc': '레이더 툴킷 PC'};
+  const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
   const projects = {
-    "radar-pc": [["레이더 툴킷[PC]", "radar-toolkit.svg"]],
-    "requested": [["레이더 툴킷[앱]", "radar-toolkit.svg"], ["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"]],
+    "requested": [["레이더 툴킷[앱]", "radar-toolkit.svg"], ["레이더 툴킷[PC]", "radar-toolkit.svg"], ["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"]],
     "fun": [
       ["코딩놀이", "coding.svg"],
       ["찌꺼기저리가[PC]", "cleaner.svg"],
@@ -157,6 +156,12 @@ function initProjectFolders(content) {
         }
       ]
     },
+
+
+
+
+
+
 
 
 
