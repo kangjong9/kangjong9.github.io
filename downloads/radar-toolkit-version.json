@@ -1,8 +1,8 @@
 {
-  "versionCode": 5,
-  "versionName": "1.0.4",
-  "apk": "https://kangjong9.github.io/downloads/Radar-Toolkit-1.0.4.apk",
-  "size": 70106,
-  "sha256": "b7565c984dae9aba09ef42a9f28b4f562e9d7af911512d7c492016547eede9c0",
-  "notes": "TDELAY·북방위 역산 추가: 결과값으로 거리차·방위차 계산, 독립 멀티캐스트 유지"
+  "versionCode": 6,
+  "versionName": "1.0.5",
+  "apk": "https://kangjong9.github.io/downloads/Radar-Toolkit-1.0.5.apk",
+  "size": 74202,
+  "sha256": "5ceab7b0565f14dc4fe9803653d3d5d1a1621102590f59bb4004ccd47dacfe1c",
+  "notes": "소수점 0~10자리 선택(기본 10): 계산·역산 공통 적용 및 표시값과 복사값 일치"
 }

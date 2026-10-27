@@ -1,8 +1,8 @@
 {
-  "versionCode": 2,
-  "versionName": "1.0.1",
-  "url": "https://kangjong9.github.io/downloads/radar-toolkit-pc/Radar-Toolkit-PC-1.0.1.zip",
-  "size": 13784168,
-  "sha256": "cfcddd7bfb6a048116d9a37aedf35a3fe7614219e5b65445dd3465a1f998637b",
-  "notes": "TDELAY·북방위 역산 추가: 결과값으로 거리차·방위차 계산, 독립 멀티캐스트 유지"
+  "versionCode": 3,
+  "versionName": "1.0.2",
+  "url": "https://kangjong9.github.io/downloads/radar-toolkit-pc/Radar-Toolkit-PC-1.0.2.zip",
+  "size": 13895485,
+  "sha256": "8071bc02d0b3efae03b565fdd72fc74c171af579917d1ae450e2661c0e5deeac",
+  "notes": "소수점 0~10자리 선택(기본 10): 계산·역산 공통 적용 및 표시값과 복사값 일치"
 }
