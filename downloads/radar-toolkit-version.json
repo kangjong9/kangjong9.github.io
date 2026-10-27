@@ -1,8 +1,8 @@
 {
-  "versionCode": 3,
-  "versionName": "1.0.2",
-  "apk": "https://kangjong9.github.io/downloads/Radar-Toolkit-1.0.2.apk",
-  "size": 61914,
-  "sha256": "b9b239eb10df0c186a902367ce12ececddf09683fcd480811a6f47389b6ba673",
-  "notes": "북방위 간소화: 방위차 직접 입력, +/− 선택, 결과값 자동 계산·복사"
+  "versionCode": 4,
+  "versionName": "1.0.3",
+  "apk": "https://kangjong9.github.io/downloads/Radar-Toolkit-1.0.3.apk",
+  "size": 70106,
+  "sha256": "e4f5b453944d25955ce6b66072c929a9544931a7bd2786d2446df0203176467c",
+  "notes": "멀티캐스트 송신·수신 분리, 각각 IP·포트 설정 및 독립 시작·중지"
 }

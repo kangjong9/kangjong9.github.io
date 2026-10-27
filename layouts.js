@@ -106,8 +106,9 @@ if (dialog) {
 // Category membership and display order were supplied by the owner.
 function initProjectFolders(content) {
   initGameEditorFolder(content);
-  const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
+  const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니', 'radar-pc': '레이더 툴킷 PC'};
   const projects = {
+    "radar-pc": [["레이더 툴킷[PC]", "radar-toolkit.svg"]],
     "requested": [["레이더 툴킷[앱]", "radar-toolkit.svg"], ["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"]],
     "fun": [
       ["코딩놀이", "coding.svg"],
@@ -131,13 +132,36 @@ function initProjectFolders(content) {
   };
   const projectDownloads = {
     "레이더 툴킷[앱]": {
-      tag: "레이더 툴킷 1.0.2 · Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판",
-      desc: "방위차 입력과 +/− 선택으로 북방위 결과를 바로 계산합니다. 지연 계산·결과 복사·IPv4 멀티캐스트 송수신을 지원합니다. Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판.",
+      tag: "레이더 툴킷 1.0.3 · Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판",
+      desc: "멀티캐스트 송신·수신을 독립 실행하고 각각 IP·포트를 설정합니다. 지연 계산·북방위 계산·결과 복사를 지원합니다. Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판.",
       links: [
-        { label: "레이더 툴킷 APK · 1.0.2 (60.5KB)", url: "./downloads/Radar-Toolkit-1.0.2.apk", download: "Radar-Toolkit-1.0.2.apk", primary: true },
+        { label: "레이더 툴킷 APK · 1.0.3 (68.5KB)", url: "./downloads/Radar-Toolkit-1.0.3.apk", download: "Radar-Toolkit-1.0.3.apk", primary: true },
         { label: "설치·사용 안내", url: "./downloads/Radar-Toolkit-guide.txt", download: "Radar-Toolkit-guide.txt", primary: false }
       ]
     },
+    "레이더 툴킷[PC]": {
+      "tag": "레이더 툴킷 PC 1.0.0 · Windows 10/11 64비트 · 포터블 ZIP",
+      "desc": "Windows 10/11 64비트용 포터블 앱입니다. 지연·북방위 계산과 멀티캐스트 송신·수신을 독립 실행합니다. 수신 IP·포트 설정 및 업데이트 확인을 지원합니다. Windows 10 별도 실측·현장 장비 통신은 미검증입니다.",
+      "links": [
+        {
+          "label": "PC ZIP · 1.0.0 (13.1MB)",
+          "url": "./downloads/radar-toolkit-pc/Radar-Toolkit-PC-1.0.0.zip",
+          "download": "Radar-Toolkit-PC-1.0.0.zip",
+          "primary": true
+        },
+        {
+          "label": "압축 해제·실행 안내",
+          "url": "./downloads/radar-toolkit-pc/사용안내.txt",
+          "download": "Radar-Toolkit-PC-guide.txt",
+          "primary": false
+        }
+      ]
+    },
+
+
+
+
+
 
 
 
