@@ -1024,6 +1024,14 @@
 
         </div>
 
+      </div>
+
+
+
+      <!-- STEP 4: 진단 질문 1 (Q0와 별도 화면, 2026-10-27 옵빠야 지시. Q0 '전혀 몰라요'면 Q1~Q4 건너뜀) -->
+
+      <div id="obStep4" class="hidden">
+
         <div style="font-size:17px; font-weight:800; color:#1e293b; margin-bottom:12px;">
 
           Q1. 현지 식당에서 메뉴판을 보고 단어(물, 커피 등)가 바로 떠오르나요?
@@ -1062,9 +1070,9 @@
 
 
 
-      <!-- STEP 4: 진단 질문 2 -->
+      <!-- STEP 5: 진단 질문 2 -->
 
-      <div id="obStep4" class="hidden">
+      <div id="obStep5" class="hidden">
 
         <div style="font-size:17px; font-weight:800; color:#1e293b; margin-bottom:12px;">
 
@@ -1104,9 +1112,9 @@
 
 
 
-      <!-- STEP 5: 진단 질문 3 -->
+      <!-- STEP 6: 진단 질문 3 -->
 
-      <div id="obStep5" class="hidden">
+      <div id="obStep6" class="hidden">
 
         <div style="font-size:17px; font-weight:800; color:#1e293b; margin-bottom:12px;">
 
@@ -1146,9 +1154,9 @@
 
 
 
-      <!-- STEP 6: 진단 질문 4 -->
+      <!-- STEP 7: 진단 질문 4 -->
 
-      <div id="obStep6" class="hidden">
+      <div id="obStep7" class="hidden">
 
         <div style="font-size:17px; font-weight:800; color:#1e293b; margin-bottom:12px;">
 
@@ -1188,9 +1196,9 @@
 
 
 
-      <!-- STEP 7: 진단 결과 보고서 -->
+      <!-- STEP 8: 진단 결과 보고서 -->
 
-      <div id="obStep7" class="hidden">
+      <div id="obStep8" class="hidden">
 
         <div style="background:linear-gradient(135deg, #eef2ff, #f0fdf4); border:2.5px solid #6366f1; border-radius:24px; padding:20px; text-align:center;">
 
@@ -19467,11 +19475,14 @@ function getCurrentRoundData() {
     return {
       1: `내가 너를 뭐로 부르면 될까?<br>마음에 드는 AI 튜터의 목소리를 골라줘.`,  
       2: `반가워 <strong>${userName}</strong>! 멋진 호칭이야 👏<br>안드로메다 탈출을 위해 어떤 외국어부터 마스터할래?`,
-      3: `좋아 <strong>${userName}</strong>! 먼저 제0문, <strong>${window.HGSCRIPT ? HGSCRIPT.scriptName(selectedLang) : '문자'}</strong>를 읽을 수 있어?<br>그리고 제1문! 외국 식당에서 원하는 메뉴나 물을 요청할 때 단어가 바로 나와?`,
-      4: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
-      5: `제3문! 문장 2개를 접속사로 이어서<br>길게 말하는 상황은 어때 <strong>${userName}</strong>?`,
-      6: `마지막 제4문! 까다로운 원어민 바이어와<br>나 엑자일과 실시간 1:1 자유 롤플레잉이 가능해?`,
-      7: `🎉 <strong>${userName}</strong>의 답변을 엑자일이 정밀 분석했어!<br>안드로메다 탈출 작전 시작 레벨을 배정했어!`
+      3: `좋아 <strong>${userName}</strong>! 먼저 제0문, <strong>${window.HGSCRIPT ? HGSCRIPT.scriptName(selectedLang) : '문자'}</strong>를 읽을 수 있어?`,
+      4: `제1문! 외국 식당에서 원하는 메뉴나 물을 요청할 때<br>단어가 바로 나와 <strong>${userName}</strong>?`,
+      5: `음! 제2문이야 <strong>${userName}</strong>.<br>식당이나 카페에서 문장으로 스스로 주문할 수 있어?`,
+      6: `제3문! 문장 2개를 접속사로 이어서<br>길게 말하는 상황은 어때 <strong>${userName}</strong>?`,
+      7: `마지막 제4문! 까다로운 원어민 바이어와<br>나 엑자일과 실시간 1:1 자유 롤플레잉이 가능해?`,
+      8: obScriptAnswer === 0
+        ? `좋아 <strong>${userName}</strong>! 문자부터 차근차근 시작하자.<br>글자를 다 익히면 Lv.1로 올라가!`
+        : `🎉 <strong>${userName}</strong>의 답변을 엑자일이 정밀 분석했어!<br>안드로메다 탈출 작전 시작 레벨을 배정했어!`
     };
   }
 
@@ -19494,6 +19505,7 @@ function getCurrentRoundData() {
     obScriptAnswer = score;
     card.parentElement.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
+    updateObMainBtn();  // '전혀 몰라요'면 다음 버튼이 바로 결과로 간다는 것을 보여 준다
   }
   function onAnswerQuestion(qNum, score, card) {
     soundTap();
@@ -19574,13 +19586,18 @@ function getCurrentRoundData() {
       speakExileTutor('먼저 제0문! 문자를 읽을 수 있는지 골라 줘.', 'ko');
       return;
     }
-    if (obStep < 6) {
+    // Q0에서 '전혀 몰라요'(Lv.0 문자 입문 확정)면 Q1~Q4는 묻지 않고 바로 결과로 (2026-10-27 옵빠야 지시)
+    if (obStep === 3 && obScriptAnswer === 0) {
+      soundLevelUp();
+      obStep = 8;
+      updateObStepUI();
+    } else if (obStep < 7) {
       soundTap();
       obStep++;
       updateObStepUI();
-    } else if (obStep === 6) {
+    } else if (obStep === 7) {
       soundLevelUp();
-      obStep = 7;
+      obStep = 8;
       updateObStepUI();
     } else {
       completeOnboardingAndStartCanvas();
@@ -19590,13 +19607,30 @@ function getCurrentRoundData() {
   function goToPrevObStep() {
     if (obStep > 1) {
       soundTap();
-      obStep--;
+      obStep = (obStep === 8 && obScriptAnswer === 0) ? 3 : obStep - 1;  // 건너뛴 Q1~Q4로는 돌아가지 않는다
       updateObStepUI();
     }
   }
 
+  function updateObMainBtn() {
+    const mainBtn = document.getElementById('obMainActionBtn');
+    if (!mainBtn) return;
+    if (obStep === 1) {
+      mainBtn.innerHTML = `<span>호칭 및 음성 설정 완료 ➔ 언어 선택</span>`;
+    } else if (obStep === 7 || (obStep === 3 && obScriptAnswer === 0)) {
+      mainBtn.className = "btn-3d btn-green btn-nav-next";
+      mainBtn.innerHTML = `<span>AI 분석 결과 확인하기 ➔</span>`;
+    } else if (obStep === 8) {
+      mainBtn.className = "btn-3d btn-indigo btn-nav-next";
+      mainBtn.innerHTML = obScriptAnswer === 0 ? `<span>🚀 Lv.0 문자 배우기 입장</span>` : `<span>🚀 Lv.${obDiagnosedLevel} 맞춤 캔버스 입장</span>`;
+    } else {
+      mainBtn.className = "btn-3d btn-green btn-nav-next";
+      mainBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
+    }
+  }
+
   function updateObStepUI() {
-    for (let i = 1; i <= 7; i++) {
+    for (let i = 1; i <= 8; i++) {
       const view = document.getElementById(`obStep${i}`);
       if (view) {
         if (i === obStep) view.classList.remove('hidden');
@@ -19604,9 +19638,9 @@ function getCurrentRoundData() {
       }
     }
 
-    const progressPercent = (obStep / 7) * 100;
+    const progressPercent = (obStep / 8) * 100;
     document.getElementById('obProgressFill').style.width = `${progressPercent}%`;
-    document.getElementById('obStepBadge').textContent = obStep === 7 ? "진단 완료" : `${obStep} / 6 단계`;
+    document.getElementById('obStepBadge').textContent = obStep === 8 ? "진단 완료" : `${obStep} / 7 단계`;
 
     const dialogs = getObDialogues();
     document.getElementById('obTutorSpeech').innerHTML = dialogs[obStep];
@@ -19636,21 +19670,13 @@ function getCurrentRoundData() {
       mainBtn.style.width = "100%";
     }
 
-    if (obStep === 1) {
-      mainBtn.innerHTML = `<span>호칭 및 음성 설정 완료 ➔ 언어 선택</span>`;
-    } else if (obStep === 6) {
-      mainBtn.innerHTML = `<span>AI 분석 결과 확인하기 ➔</span>`;
-    } else if (obStep === 7) {
+    if (obStep === 8) {
       const diag = calculateAIDiagnosis();
       document.getElementById('obReportHero').textContent = diag.title;
       document.getElementById('obReportSub').textContent = diag.sub;
       document.getElementById('obReportDesc').textContent = diag.desc;
-      mainBtn.className = "btn-3d btn-indigo btn-nav-next";
-      mainBtn.innerHTML = obScriptAnswer === 0 ? `<span>🚀 Lv.0 문자 배우기 입장</span>` : `<span>🚀 Lv.${obDiagnosedLevel} 맞춤 캔버스 입장</span>`;
-    } else {
-      mainBtn.className = "btn-3d btn-green btn-nav-next";
-      mainBtn.innerHTML = `<span>다음 단계로 ➔</span>`;
     }
+    updateObMainBtn();
   }
 
   function completeOnboardingAndStartCanvas() {
@@ -19745,6 +19771,23 @@ function getCurrentRoundData() {
 
     if (inputEl) inputEl.blur();
   }
+
+  // ⚙️ 설정 창 아래 '🆕 업데이트 확인' 버튼 + 현재 버전 (앱에서만. 켤 때 자동 확인은 MainActivity AppUpdater)
+  (function injectUpdateButton() {
+    const run = () => {
+      const sheet = document.querySelector('#settingsModal .modal-sheet');
+      if (!sheet || document.getElementById('hgUpdateBtn') || !(window.Native && window.Native.call)) return;
+      let ver = '';
+      try { const v = JSON.parse(window.Native.call('appVersion', '{}')); if (v && v.ok) ver = ` (지금 ${v.versionName})`; } catch (e) { /* 구버전 앱 */ }
+      const b = document.createElement('button');
+      b.id = 'hgUpdateBtn'; b.type = 'button';
+      b.textContent = '🆕 업데이트 확인' + ver;
+      b.style.cssText = 'width:100%;margin-top:14px;min-height:48px;border:1.5px solid #99f6e4;border-radius:12px;background:#f0fdfa;color:#0f766e;font-size:16px;font-weight:900;cursor:pointer';
+      b.addEventListener('click', () => { try { window.Native.call('appUpdateCheck', '{}'); } catch (e) { /* 구버전 앱 */ } });
+      sheet.appendChild(b);
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  })();
 
   function resetLearningProgress() {
     resetAllLearnedDataCompletely();
@@ -21342,7 +21385,7 @@ function getCurrentRoundData() {
 
       // 온보딩 상태
 
-      if (obStep < 7) {
+      if (obStep < 8) {  // 결과 화면(8)에서는 밀어서 바로 입장하지 않는다
 
         goToNextObStep();
 

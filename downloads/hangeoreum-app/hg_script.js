@@ -321,7 +321,7 @@
   // 한 글자(모음 a 등) 카드: 인터넷 인식기는 '아' 한 소리를 거의 못 알아듣고(실기기 0/9), 폰 안 인식팩 + 힌트 끔은 5/6
   // ('오'·'이'는 oh·I로 불합격). 실기기로 확인한 프랑스어와 같은 구조의 es·ru·cn. 영어·일본어는 기존 인식 유지.
   // 언어를 고르면 팩이 없을 때 자동으로 받는다(hg_voice_io). 아래 안내는 자동 요청이 실패했을 때 다시 받는 버튼.
-  // 2026-10-28 옵빠야 지시: 프랑스어 a는 되고 나머지는 안 됨 → 같은 방식(폰 안 인식기 + 힌트 끔)을 6개 언어의
+  // 2026-10-27 아침 옵빠야 지시: 프랑스어 a는 되고 나머지는 안 됨 → 같은 방식(폰 안 인식기 + 힌트 끔)을 6개 언어의
   // 모든 글자 카드(입문·문자표, '이름, 단어' 포함)에 적용. 단어 단계(w)는 기존 인식 유지.
   const DEVICE_LETTER_LANGS = ['fr', 'es', 'ru', 'cn', 'en', 'ja'];
   function letterTarget(item) {
@@ -777,7 +777,7 @@
      그래서 "읽기 → 인식기가 흔히 돌려주는 표기" 별칭표로 같은 소리를 통과시킨다. 다른 글자로 오인될 별칭(ы→и 등)은 넣지 않는다. */
   const ALIAS_SRC = {
     en: 'a:hey,eh,ay,ah;b:be,bee;c:see,sea,si;d:dee,the;e:ee,he;f:ef,eff,if;g:gee,jee,ji;h:age,aitch,eight,8;i:eye,aye,hi;j:jay;k:kay,okay,ok;l:el,elle,ell;m:em,am;n:en,and,in;o:oh,owe;p:pee,pea;q:queue,cue;r:are,our,or;s:es,yes,ass;t:tea,tee;u:you,yu;v:vee,we;w:double u,double you;x:ex,eggs;y:why;z:zee,zed',
-    // 2026-10-28: 폰 안 인식기는 한 소리를 그 소리의 낱말로 돌려준다('아'→ah·à). 입문 글자 소리 카드(pa·ta·ou·ai…)의 동음 낱말 보강
+    // 2026-10-27 아침: 폰 안 인식기는 한 소리를 그 소리의 낱말로 돌려준다('아'→ah·à). 입문 글자 소리 카드(pa·ta·ou·ai…)의 동음 낱말 보강
     fr: "a:à,ah,ha;b:bé,bébé;c:c'est,ces,ses,sait;d:dé,des;e:eux,euh,œufs,heu;f:effe,ef;g:j'ai,geai,gé;h:hache,ache;i:il,y,hi;j:ji,gi;k:ka,ca,ça,cas;l:elle,el;m:aime,emme;n:haine,aine;o:eau,au,oh,haut,aux,ho;p:paix,pé,pet;q:cul,qu,ku;r:air,erre,hair;s:esse,es;t:thé,té,tes;u:eu,hu,eut,hue;v:vé,vais;w:double vé;x:ixe,iks;y:i grec,igrec;z:zed,zède;" +
       "pa:pas,pat,pah;ta:tas;ba:bas,bah,bat;va:vas;ra:rat,ras,rah;ou:houx,hou,août;moi:mois;ai:et,est,hé,eh,haie,aie,ait;eu:eux,euh,œufs,heu;an:en,han,ans;on:ont,hon;vin:vingt,vain,vint,vins;un:hun,1;qui:ki;pha:fa",
     es: 'a:ah,ha;e:eh,he;i:y,hi;o:oh,ho;u:uh,hu;be:b,ve,bebe;ce:c,se,sé;de:d,dé;efe:f;ge:g,je,he;hache:h,ache;jota:j;ka:k,ca,qa;ele:l,el;eme:m;ene:n;eñe:ñ;pe:p;cu:q,qu,ku;erre:r,ere;ese:s,es;te:t,té;uve:v,ube;uve doble:w,doble uve,doble ve;equis:x;ye:y,i griega,lle;zeta:z,ceta,seta;' +

@@ -66,7 +66,7 @@
   };
   if (hasNative()) {
     setTimeout(() => packAsk('fr-FR', false), 1500);   // 받아진 언어 목록은 언어와 무관하게 한 번에 온다
-    // fr·es·ru·cn(10-28부터 en·ja도)을 고르면(또는 그 언어로 앱을 열면) 팩이 없을 때 바로 받는다 (옵빠야 지시 2026-10-27). 언어마다 한 번만 요청
+    // fr·es·ru·cn(10-27 아침부터 en·ja도)을 고르면(또는 그 언어로 앱을 열면) 팩이 없을 때 바로 받는다 (옵빠야 지시 2026-10-27). 언어마다 한 번만 요청
     const asked = new Set();
     setInterval(() => {
       const lang = PACK_LANG[window.selectedLang];
