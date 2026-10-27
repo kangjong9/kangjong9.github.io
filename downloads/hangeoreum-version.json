@@ -1,8 +1,8 @@
 {
-  "versionCode": 12,
-  "versionName": "1.0.3",
+  "versionCode": 13,
+  "versionName": "1.0.4",
   "apk": "https://kangjong9.github.io/downloads/Hangeoreum-V1.0-Exile.apk",
-  "sha256": "5f7956f5165e7da23f8ee8efe1a7e225064ad82412f36bc7a23ac4fcc36354f2",
-  "size": 1691959,
-  "notes": "문자표 글자 카드에 단어 그림 추가(일본어·중국어·스페인어)"
+  "sha256": "fbf1d873d7258f636d0f18b01da93295ee30a969d217e805065daa2110af7113",
+  "size": 1692311,
+  "notes": "마이크 권한 안내가 화면에 보이도록 수정, 백그라운드 전환 시 오류 수정"
 }
