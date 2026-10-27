@@ -1,0 +1,8 @@
+{
+  "versionCode": 2,
+  "versionName": "1.0.1",
+  "apk": "https://kangjong9.github.io/downloads/Radar-Toolkit-1.0.1.apk",
+  "size": 61914,
+  "sha256": "3896220e6e0ea54b6e4c996f6d5d2b73241d476025c0aac714ac47ec4ff7839e",
+  "notes": "자동 업데이트 확인·설치 안내 및 레이더 계산·멀티캐스트 테스트"
+}

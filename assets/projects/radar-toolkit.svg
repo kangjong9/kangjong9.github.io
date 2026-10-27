@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260" viewBox="0 0 400 260">
+<rect width="400" height="260" rx="18" fill="#0b0f19"/>
+<g transform="translate(200 98)" stroke="#5fe0c0" fill="none"><circle r="66" opacity=".7"/><circle r="44" opacity=".4"/><circle r="22" opacity=".3"/><path d="M-76 0H76M0-76V76" opacity=".25"/><path d="M0 0L48-45A66 66 0 0 1 66 0Z" fill="#5fe0c0" opacity=".18"/><path d="M0 0L48-45" stroke-width="3"/><circle cx="31" cy="-30" r="4" fill="#5fe0c0"/></g>
+<text x="200" y="202" fill="#f8fafc" font-family="sans-serif" font-weight="700" font-size="25" text-anchor="middle">레이더 툴킷</text>
+<text x="200" y="232" fill="#94a3b8" font-family="sans-serif" font-size="14" text-anchor="middle">지연 · 북방위 · 멀티캐스트</text></svg>

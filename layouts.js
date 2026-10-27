@@ -108,7 +108,7 @@ function initProjectFolders(content) {
   initGameEditorFolder(content);
   const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
   const projects = {
-    "requested": [["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"]],
+    "requested": [["레이더 툴킷[앱]", "radar-toolkit.svg"], ["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"]],
     "fun": [
       ["코딩놀이", "coding.svg"],
       ["찌꺼기저리가[PC]", "cleaner.svg"],
@@ -130,6 +130,17 @@ function initProjectFolders(content) {
     ]
   };
   const projectDownloads = {
+    "레이더 툴킷[앱]": {
+      tag: "레이더 툴킷 1.0.1 · Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판",
+      desc: "트리거 지연·북방위 정렬 계산, 결과 복사, IPv4 멀티캐스트 송수신을 한 앱에 담았습니다. Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판.",
+      links: [
+        { label: "레이더 툴킷 APK · 1.0.1 (60.5KB)", url: "./downloads/Radar-Toolkit-1.0.1.apk", download: "Radar-Toolkit-1.0.1.apk", primary: true },
+        { label: "설치·사용 안내", url: "./downloads/Radar-Toolkit-guide.txt", download: "Radar-Toolkit-guide.txt", primary: false }
+      ]
+    },
+
+
+
     "한걸음V1.0 Exile": {
       tag: "한걸음V1.0 Exile · 안드로메다에서 유배 온 안내 AI Exile · 6개 언어 · 누리 보이스 TTS 엔진",
       links: [
