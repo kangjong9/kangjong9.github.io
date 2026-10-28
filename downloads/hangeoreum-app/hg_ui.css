@@ -65,9 +65,14 @@ html:has(body[data-hg-route="languages"]), body[data-hg-route="languages"] { ove
 .hg-ui-language em { font-style:normal; }
 .hg-ui-search { display:block; font-size:12px; color:var(--hg-ui-muted); }.hg-ui-search input { width:100%; border:1px solid var(--hg-ui-line); background:white; border-radius:18px; min-height:52px; padding:12px 16px; margin-top:6px; }
 .hg-ui-card { border:1px solid var(--hg-ui-line); border-radius:24px; background:white; padding:22px; box-shadow:var(--hg-ui-shadow); }.hg-ui-card h2{font-size:22px;line-height:1.4;}
-.hg-ui-path { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:24px 0; }.hg-ui-path span { background:var(--hg-ui-mint); color:var(--hg-ui-teal); border-radius:14px; padding:14px 8px; font-size:13px; text-align:center; line-height:1.8; }
+.hg-ui-path { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:24px 0; }.hg-ui-path span, .hg-ui-path button { border:0; font:inherit; cursor:pointer; min-height:0; background:var(--hg-ui-mint); color:var(--hg-ui-teal); border-radius:14px; padding:14px 8px; font-size:13px; text-align:center; line-height:1.8; }
 .hg-ui-active #viewCanvas { padding:0 24px 24px!important; }.hg-ui-lesson-header { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 0 16px; }.hg-ui-lesson-header h1 { margin:4px 0; font-size:26px; letter-spacing:-.9px; line-height:1.3; }.hg-ui-lesson-header .hg-ui-fox { width:94px; }
-.hg-ui-mode-buttons { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 18px; }.hg-ui-mode-buttons .hg-ui-secondary {margin:0;}
+.hg-ui-mode-buttons { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:0 0 18px; }
+.hg-ui-mode-buttons button{min-width:0;min-height:46px!important;height:46px;padding:0 6px!important;gap:4px!important;font-size:15px!important;line-height:1.2!important;white-space:nowrap;}  /* 2026-10-28: 세 버튼 글자 높이·크기 통일(시인성 보강 제외) */
+.hg-ui-active #viewDrill .bottom-nav-row{display:none!important;}  /* 2026-10-28 옵빠야 지시: '이전 단계로'·'다음 단계로' 삭제(버튼은 진행 로직용으로 DOM 유지) */
+@media(max-width:379px){.hg-ui-mode-buttons button{white-space:normal;word-break:keep-all;font-size:13px!important;padding:8px 4px!important;}}
+.hg-ui-mode-buttons .hg-ui-topic-btn{background:#fff7ed;color:#c2410c;border-color:#fed7aa;}.hg-ui-mode-buttons .hg-ui-secondary {margin:0;}
+.hg-ui-advanced[hidden] { display:none!important; }
 .hg-ui-advanced { background:white; border:1px solid var(--hg-ui-line); border-radius:16px; padding:0 14px 10px; margin:18px 0; color:var(--hg-ui-muted); font-size:13px; }
 .hg-ui-advanced summary { padding:15px 2px; cursor:pointer; min-height:48px; font-weight:700; }.hg-ui-global-tools {margin:10px 24px 20px;}.hg-ui-tools {display:grid;gap:8px;}.hg-ui-tools button{margin:0;}
 .hg-ui-active .hg-ui-advanced input[type="range"] {min-height:32px;}.hg-ui-active .hg-ui-advanced button {min-height:48px!important;}
@@ -116,7 +121,7 @@ html:has(body[data-hg-route="languages"]), body[data-hg-route="languages"] { ove
 /* 고급 메뉴 한 줄: Exile 오프닝 · AI튜터 설정 · 처음으로 · AI통역사 · ⚙(맨 오른쪽) */
 .hg-ui-exile-btn{flex:none;display:flex;align-items:center;gap:6px;min-height:46px;padding:0 14px;border:1.5px solid var(--hg-ui-line);border-radius:14px;background:#fff;color:#334155;font-size:14px!important;font-weight:800;cursor:pointer;white-space:nowrap;}
 .hg-ui-exile-btn span{font-size:20px;line-height:1;}
-#viewHome .hg-ui-hero .hg-ui-eyebrow{font-size:clamp(18px,5vw,21px)!important;}  /* 현재 언어·레벨 크게 */
+#viewHome .hg-ui-hero .hg-ui-eyebrow,#viewFoundation .hg-ui-hero .hg-ui-eyebrow,#hgUiLessonMeta{font-size:clamp(18px,5vw,21px)!important;}  /* 현재 언어·레벨 크게 (기초도 홈과 같게) */
 /* 메뉴 3칸은 왼쪽에 붙이고, 비는 오른쪽 자리부터 아래 히어로의 Exile 마스코트가 시작되게 끌어올린다 */
 .hg-ui-menu-row{display:flex;justify-content:flex-start;gap:6px;padding:0 24px 10px;position:relative;z-index:1;}
 .hg-ui-menu-row button{flex:none;width:clamp(60px,18vw,80px);}
@@ -130,6 +135,91 @@ html:has(body[data-hg-route="languages"]), body[data-hg-route="languages"] { ove
 @media(min-width:700px){.hg-ui-menu-row{padding:0 40px 12px;}}
 .hg-ui-menu-row button{min-height:54px;border:1.5px solid var(--hg-ui-line);border-radius:14px;background:#fff;color:#334155;font-size:12px!important;font-weight:800;line-height:1.2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 2px;cursor:pointer;word-break:keep-all;}
 .hg-ui-menu-row button span{font-size:20px;line-height:1;}
+/* 2026-10-28 옵빠야 지시: 하단 메뉴(홈·기초·학습·회화·설정) = 흰색 대신 한걸음 민트·청록 테마. 높이는 그대로(화면 스크롤 계산 유지) */
+.hg-ui-active .hg-ui-nav{background:linear-gradient(180deg,#e9f8f5 0%,#d6f1ea 100%);border-top:1px solid #bfe3da;border-radius:20px 20px 0 0;box-shadow:0 -6px 18px #153f4914;backdrop-filter:none;}
+.hg-ui-active .hg-ui-nav button{color:#3f6b70;font-weight:800;border-radius:14px;}
+.hg-ui-active .hg-ui-nav button span{color:var(--hg-ui-teal);}
+.hg-ui-active .hg-ui-nav [aria-current="page"]{background:var(--hg-ui-teal);color:#fff;box-shadow:0 3px 0 #066b77;}
+.hg-ui-active .hg-ui-nav [aria-current="page"] span{color:#fff;}
+/* 2026-10-28 옵빠야 지시: 하단 메뉴 이모지 아이콘 — 아이콘은 하얀 동그라미 안에, 지금 화면은 청록 알약 + 아이콘이 살짝 떠오름 (높이는 그대로) */
+.hg-ui-active .hg-ui-nav{padding-top:6px;}
+.hg-ui-active .hg-ui-nav button{gap:2px;font-size:11.5px!important;letter-spacing:-.2px;transition:background .2s,color .2s;}
+.hg-ui-active .hg-ui-nav button span{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#fff;font-size:18px;line-height:1;box-shadow:0 2px 6px #0f766e22,inset 0 0 0 1px #cdeee6;transition:transform .2s;}
+.hg-ui-active .hg-ui-nav [aria-current="page"]{background:linear-gradient(160deg,#14b8a6 0%,#0f766e 100%);box-shadow:0 4px 10px #0f766e40;}
+.hg-ui-active .hg-ui-nav [aria-current="page"] span{transform:translateY(-3px) scale(1.08);box-shadow:0 4px 10px #064e4a55,inset 0 0 0 2px #99f6e4;}
+.hg-ui-active .hg-ui-nav button:active span{transform:scale(.92);}
+/* 설정 '학습 완전 초기화' (두 번 눌러 실행) */
+.hg-ui-active .hg-wipe-btn{display:flex;align-items:center;gap:8px;width:100%;margin:0;min-height:44px!important;padding:4px 14px;border:1.5px dashed #f2b8b5;border-radius:16px;background:#fff7f6;color:#9f1239;text-align:left;}
+.hg-wipe-btn span{font-size:20px;flex:none;}
+.hg-wipe-btn b{font-size:15px;flex:none;}
+.hg-wipe-btn small{font-size:11.5px;color:#7f5a5f;font-weight:700;line-height:1.25;}
+/* 초기화 줄이 들어갈 자리: 글자 크기 버튼·강사 목소리 설명을 조금 줄여 설정 화면 스크롤 없게 유지 */
+.hg-ui-active #settingsModal.hg-ui-settings-page .modal-sheet>*{margin-bottom:8px!important;}
+#settingsModal #hgTextSizeRow button{min-height:42px!important;padding-top:4px!important;padding-bottom:4px!important;}
+/* 강사 목소리 설명 문단(인라인 글자 크기 !important라 줄일 수 없음)은 화면 읽기용으로만 — 버튼 이름(여성/남성 강사)이 같은 뜻 */
+#settingsModal .modal-sheet>div:has(#btnTutorFemale) p{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+.hg-ui-active .hg-wipe-btn.is-armed{background:#dc2626;border:1.5px solid #dc2626;color:#fff;}
+.hg-wipe-btn.is-armed small{color:#fee2e2;}
+/* 2026-10-28 옵빠야 지시: '언어를 선택하세요'로 연 언어 화면 = 검색 삭제, 12개 언어를 2열 두 줄 카드로 스크롤 없이
+   1줄: 국기 · 언어(원어) / 2줄: 진행 단계 · 소개(넘치면 …) */
+body.hg-lang-pick #viewLanguages .hg-ui-search,body.hg-lang-pick #hgUiNoLanguages{display:none!important;}
+body.hg-lang-pick #viewLanguages .hg-ui-language-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;padding:2px;}
+body.hg-lang-pick #viewLanguages .hg-ui-language{display:grid;grid-template-columns:22px auto minmax(0,1fr);grid-template-areas:"f n n" "s s d";column-gap:6px;justify-items:start;row-gap:3px;align-items:center;padding:7px 8px;border-radius:14px;}
+body.hg-lang-pick #viewLanguages .hg-ui-language>span.hg-ui-lang-title{display:contents;}
+body.hg-lang-pick #viewLanguages .hg-ui-language .hg-ui-flag{grid-area:f;font-size:18px!important;}
+body.hg-lang-pick #viewLanguages .hg-ui-language .hg-ui-lang-title strong{grid-area:n;justify-self:stretch;text-align:left;font-size:14px!important;}
+body.hg-lang-pick #viewLanguages .hg-ui-language>small{justify-self:stretch;}
+body.hg-lang-pick #viewLanguages .hg-ui-language .hg-ui-native{font-size:11px;font-weight:700;color:var(--hg-ui-muted);}
+body.hg-lang-pick #viewLanguages .hg-ui-language .hg-ui-lang-title em{grid-area:s;font-size:10px!important;padding:1px 6px;}
+body.hg-lang-pick #viewLanguages .hg-ui-language>small{grid-area:d;font-size:11px!important;}
+/* 2026-10-28 옵빠야 지시: 처음 설정(홈·배울 언어) 화면 스크롤 없게 — 헤더·여우 영역은 그대로, 그 아래 여백만 축소 */
+body[data-hg-route="onboarding"] .app-root{padding-bottom:76px!important;}  /* 하단 메뉴 높이(72)+4 */
+.hg-ui-active #viewOnboarding{padding-top:6px!important;}
+#viewOnboarding>div:has(#obStepBadge){margin-bottom:10px!important;}
+#viewOnboarding>div:has(.speech-bubble){margin-bottom:6px!important;}
+.hg-ui-active #viewOnboarding .speech-bubble{padding-top:7px!important;padding-bottom:7px!important;}
+#obStep2 .hg-ob-dd-head{margin-bottom:8px;}
+/* 2026-10-28 옵빠야 지시: 설정 화면 스크롤 없게 — 효과음은 접힘(제목·켜기 한 줄), 다른 칸은 여백 축소 (헤더는 그대로) */
+.hg-sfx-fold{margin-bottom:10px!important;padding:10px 12px!important;}
+.hg-sfx-fold>:first-child>:first-child{cursor:pointer;}
+.hg-sfx-caret{margin-left:4px;font-size:13px;color:#4338ca;transition:transform .15s;}
+.hg-sfx-open .hg-sfx-caret{transform:rotate(180deg);}
+.hg-sfx-fold:not(.hg-sfx-open)>:not(:first-child){display:none!important;}
+.hg-sfx-fold:not(.hg-sfx-open)>:first-child{margin-bottom:0!important;padding-bottom:0!important;border-bottom:0!important;}
+#hgLlmSettings{margin-bottom:10px!important;}
+#settingsModal .modal-sheet>div:has(#btnTutorFemale){margin-bottom:10px!important;padding:10px 12px!important;}
+#settingsModal .modal-sheet>div:has(#btnTutorFemale)>div:first-of-type{margin-bottom:4px!important;}
+#settingsModal .modal-sheet>div:has(#btnTutorFemale) label{margin-bottom:4px!important;}
+#settingsModal .modal-sheet>div:has(#btnTutorFemale) button{padding:7px 8px!important;}
+#hgTextSizeRow{margin-bottom:10px!important;padding:8px 12px!important;}
+#hgTextSizeRow>div:first-child{margin-bottom:4px!important;}
+/* 2026-10-28 옵빠야 지시: 효과음 맞춤 설정 = 효과음 이름 한 줄, 그 아래 줄에 선택칸(넓게) + 오른쪽 미리듣기 */
+#soundEventsList>div{flex-direction:column!important;align-items:stretch!important;gap:6px;}
+#soundEventsList>div>div{width:100%;}
+#soundEventsList>div>div>select{flex:1;min-width:0;min-height:34px;font-size:13px!important;}
+#soundEventsList>div>div>button{flex:none;min-height:34px;white-space:nowrap;}
+/* 2026-10-28 옵빠야 지시: 언어 고를 때 이어서 하기 / 새로 하기 */
+.hg-ui-confirm-row [data-pick]{display:flex;flex-direction:column;align-items:center;gap:2px;}
+/* 2026-10-28 분기 팝업 위 '이어서 하기 / 새로 하기' 토글 (기본 이어서) */
+.hg-ui-pick-mode{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 12px;}
+.hg-ui-pick-mode button{min-height:52px;padding:8px;border-radius:14px;border:2px solid #cbd5e1;background:#fff;color:#334155;font:inherit;font-size:15px;font-weight:900;line-height:1.25;}
+.hg-ui-pick-mode button small{display:block;font-size:12px;font-weight:700;opacity:.85;}
+.hg-ui-pick-mode [data-mode="resume"][aria-checked="true"]{background:#0f766e;border-color:#0f766e;color:#fff;}
+.hg-ui-pick-mode [data-mode="fresh"][aria-checked="true"]{background:#dc2626;border-color:#dc2626;color:#fff;}
+/* 2026-10-28 옵빠야 지시: 2단계 언어 목록 = 드롭다운(머리를 누르면 펼침, 목록 안에서 두 번 누르면 선택) */
+.hg-ob-dd-head{width:100%;display:flex;align-items:center;gap:10px;min-height:58px;padding:10px 16px;border:2px solid #0f766e;border-radius:16px;background:#fff;color:#0f172a;font-size:17px;font-weight:900;text-align:left;cursor:pointer;margin-bottom:10px;}
+.hg-ob-dd-head .ob-lang-flag{font-size:26px;line-height:1;}
+.hg-ob-dd-head .hg-ob-dd-name{flex:1;min-width:0;}
+.hg-ob-dd-head .ob-lang-pos{font-size:13px;font-weight:800;color:#0f766e;white-space:nowrap;}
+.hg-ob-dd-caret{font-size:16px;color:#0f766e;transition:transform .15s;}
+.hg-ob-dd-head[aria-expanded="true"] .hg-ob-dd-caret{transform:rotate(180deg);}
+html body #viewOnboarding #obStep2 .hg-ob-dd-list[hidden]{display:none!important;}  /* 2단계 목록의 기존 display:grid!important보다 우선 */
+.hg-ob-dd-list{max-height:52vh;overflow-y:auto;padding:2px;}
+/* 2026-10-28 옵빠야 지시: 홈·배울 언어·AI튜터·AI통역사 4칸을 예전 3칸이 차지하던 가로폭 안에 (칸 크기 줄임) */
+.hg-ui-menu-row{gap:5px;}
+.hg-ui-menu-row button{width:calc((clamp(60px,18vw,80px) * 3 + 12px - 15px) / 4);min-height:46px;border-radius:12px;font-size:11px!important;gap:2px;padding:4px 1px;}
+.hg-ui-menu-row button span{font-size:16px;}
+@media(max-width:359px){.hg-ui-menu-row{gap:4px;}.hg-ui-menu-row button{width:calc((clamp(60px,18vw,80px) * 3 + 8px - 12px) / 4);}}
 .hg-ui-menu-row button.gear{background:#eef2ff;border-color:#c7d2fe;color:#4338ca;}
 /* 언어 선택 확인 팝업 */
 .hg-ui-confirm{position:fixed;inset:0;z-index:9500;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;padding:16px;}
@@ -200,6 +290,41 @@ body.hg-tutor-open .app-root>section.hg-ui-page:not(#hgTutorVoice),body.hg-tutor
 /* 2026-10-27 옵빠야 지시: 튜터 화면에서 TTS 엔진 전체 박스·누리 보이스 박스 테두리 해제(내용은 그대로) */
 #hgTutorVoice .hg-ui-tutor-body>div,#hgTutorVoice .ob-nuri-box{border:0!important;background:transparent!important;box-shadow:none!important;padding-left:0!important;padding-right:0!important;border-radius:0!important;}
 #obStep1 .ob-exile-note{margin:10px 0 0;padding:9px 12px;border-radius:14px;background:#eef8f6;color:#36545b;font-size:12.5px;line-height:1.5;word-break:keep-all;}
+/* 2026-10-28 옵빠야 지시: Exile 소개 = 카드(여우·약속·목표 50) — 높이는 예전 문단 이하로 */
+#obStep1 .ob-exile-story{display:flex;align-items:center;gap:10px;padding:10px 12px;background:linear-gradient(135deg,#eef8f6 0%,#fff7ec 100%);border:1px solid #cfe9e3;}
+.ob-exile-story-icon{flex:none;width:38px;height:38px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 1px 3px rgba(15,118,110,.18);}
+.ob-exile-story>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.ob-exile-story b{font-size:13.5px;color:#0f766e;font-weight:900;}
+.ob-exile-story em{font-style:normal;font-weight:900;color:#c2410c;}
+.ob-exile-story small{font-size:11.5px;color:#64748b;}
+.ob-exile-story-goal{display:inline-block;margin-left:4px;font-size:11px;font-weight:900;color:#c2410c;line-height:1.3;padding:1px 7px;border-radius:999px;background:#fff;border:1px dashed #fdba74;vertical-align:1px;}
+#obStep1 .ob-exile-story{padding:8px 12px;margin-top:8px;}
+/* 2026-10-28 옵빠야 지시: 2단계 언어 문구 아래 빈자리 = 한걸음 언어 확장 홍보(지금 6개 + 준비 중 6개 + 지역별 억양) */
+.hg-ob-promo{margin-top:0;padding:10px 14px;border-radius:16px;background:linear-gradient(135deg,#0f766e 0%,#0e7490 100%);color:#fff;word-break:keep-all;}
+.hg-ob-promo b{display:block;font-size:15px;font-weight:900;margin-bottom:6px;}
+.hg-ob-promo-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:3px 0;}
+.hg-ob-promo-row em{font-style:normal;font-size:11px;font-weight:800;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.2);white-space:nowrap;}
+.hg-ob-promo-row em.soon{background:rgba(253,186,116,.35);}
+.hg-ob-promo-flags{font-size:19px;letter-spacing:2px;line-height:1.2;}
+.hg-ob-promo-row.soon .hg-ob-promo-flags{opacity:.75;}
+.hg-ob-promo p{margin:6px 0 0;font-size:12px;line-height:1.45;opacity:.95;}
+/* 2026-10-28 폰(Fold7) 실측 넘침 홈 7px·배울 언어 24px → 머리 영역 아래 여백과 홍보 카드 간격을 줄여 스크롤 0 */
+#viewHome .hg-ui-hero,#viewOnboarding .hg-ui-hero{min-height:160px;}
+#viewFoundation .hg-ui-path{margin:12px 0 0;}#viewFoundation .hg-ui-path button{padding:12px 4px;line-height:1.9;white-space:nowrap;}  /* 01~03 칸 줄 높이 넉넉히 */
+/* 2026-10-28 옵빠야 지시: 로드맵 제목 꾸미기 + 지금 진행 위치(언어·Lv·T) 칩, 단계 버튼은 한 줄 6칸 그대로 높이만 맞춤 */
+#viewFoundation .hg-ui-roadmap{padding:10px 12px 12px!important;border:1.5px solid #c7d2fe!important;background:linear-gradient(135deg,#eef2ff 0%,#f0fdfa 100%)!important;box-shadow:0 4px 14px rgba(79,70,229,.10);}
+#viewFoundation .hg-ui-roadmap>div:nth-child(2){display:none!important;}  /* 예전 제목 줄 */
+.hg-ui-rm-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;}
+.hg-ui-rm-title{font-size:16px;font-weight:900;color:#312e81;letter-spacing:-.2px;white-space:nowrap;}
+.hg-ui-rm-title b{background:linear-gradient(90deg,#4f46e5,#0d9488);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.hg-ui-rm-now{flex:none;padding:4px 10px;border-radius:999px;background:linear-gradient(90deg,#4f46e5,#0d9488);color:#fff;font-size:12.5px;font-weight:900;white-space:nowrap;box-shadow:0 2px 6px rgba(13,148,136,.25);}
+#viewFoundation .hg-ui-roadmap #levelSlider{height:6px!important;margin:2px 0 10px!important;}
+#viewFoundation .hg-ui-roadmap button[id^="quickTier"]{height:38px;padding:0 2px!important;border-radius:10px!important;font-size:12px!important;line-height:1.15;background:#fff!important;color:#64748b!important;border:1px solid #e2e8f0!important;white-space:normal;}
+#viewFoundation .hg-ui-roadmap button[id^="quickTier"].is-now{background:linear-gradient(135deg,#4f46e5,#0d9488)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 3px 8px rgba(79,70,229,.30);transform:translateY(-1px);}
+#viewFoundation .hg-ui-card>.hg-ui-muted{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}  /* 설명은 화면 읽기용(스크롤 없게) */
+#viewFoundation #quickLetters{display:none;}  /* 01~03 칸과 같은 기능 */
+#viewFoundation .hg-ui-roadmap{margin:10px 0 0!important;}#viewFoundation .hg-ui-roadmap span{white-space:nowrap;}  /* 기초 맨 아래 '50단계 실전 로드맵' */
+.hg-ob-promo{padding:8px 14px;}.hg-ob-promo b{margin-bottom:3px;}.hg-ob-promo-row{margin:2px 0;}.hg-ob-promo p{margin-top:3px;line-height:1.35;}
 .hg-ui-name-field{position:relative;}
 .hg-ui-name-field #obUserNameInput{padding-right:64px!important;}
 /* #viewOnboarding button{min-height:48px!important}보다 우선하도록 id 포함 */
@@ -237,8 +362,65 @@ body.hg-tutor-open .app-root>section.hg-ui-page:not(#hgTutorVoice),body.hg-tutor
 /* 2026-10-28 옵빠야 지시: 설정은 팝업이 아니라 튜터처럼 헤더·메뉴 줄 아래 일반 화면 */
 body.hg-settings-open .app-root>section.hg-ui-page:not(#settingsModal),body.hg-settings-open #viewOnboarding,body.hg-settings-open #viewCanvas,body.hg-settings-open #hgTutorVoice{display:none!important;}
 #settingsModal.hg-ui-settings-page{padding-bottom:0!important;}
+/* 2026-10-28 옵빠야 지시: 효과음 맞춤 설정 = 설정에서 들어가는 별도 화면(뒤로 = 설정) */
+body.hg-sfx-page-open .app-root>section.hg-ui-page:not(#hgSfxPage),body.hg-sfx-page-open #viewOnboarding,body.hg-sfx-page-open #viewCanvas,body.hg-sfx-page-open #hgTutorVoice,body.hg-sfx-page-open #settingsModal{display:none!important;}
+#hgSfxPage h1{outline:none;}
+.hg-ui-sfx-body{padding:4px 16px 8px;}
+.hg-ui-sfx-body #soundEventsList{gap:6px!important;}
+/* 스크롤 없게: 효과음 줄 여백 축소, 하단 메뉴 자리 76px(처음 설정 화면과 같게) */
+body.hg-sfx-page-open .app-root{padding-bottom:76px!important;}
+.hg-ui-sfx-body #soundEventsList>div{padding:5px 12px!important;gap:4px!important;}
+.hg-ui-sfx-body #soundEventsList>div>div>select,.hg-ui-sfx-body #soundEventsList>div>div>button{min-height:30px;}
 #settingsModal.hg-ui-settings-page h1{outline:none;}
 .hg-ui-active #settingsModal.hg-ui-settings-page .modal-sheet{position:static;max-width:none!important;width:auto;max-height:none;overflow:visible;box-shadow:none;border-radius:0!important;animation:none;background:transparent;padding:4px 16px 24px;}
+/* 2026-10-28 옵빠야 지시: 오늘의 주제(일상 대화)도 헤더·메뉴 줄 아래 일반 화면, 시작 버튼 없음 · 글로/말로 입력 */
+body.hg-topic-open:has(#dailyCheckinModal:not(.hidden)) .app-root>section.hg-ui-page,body.hg-topic-open:has(#dailyCheckinModal:not(.hidden)) #viewOnboarding,body.hg-topic-open:has(#dailyCheckinModal:not(.hidden)) #viewCanvas,body.hg-topic-open:has(#dailyCheckinModal:not(.hidden)) #hgTutorVoice,body.hg-topic-open:has(#dailyCheckinModal:not(.hidden)) #settingsModal{display:none!important;}
+.hg-ui-active #dailyCheckinModal.hg-ui-topic-page{position:static;inset:auto;display:block;background:transparent;backdrop-filter:none;z-index:auto;padding:0 24px 24px;align-items:initial;justify-content:initial;}
+.hg-ui-active #dailyCheckinModal.hg-ui-topic-page.hidden{display:none!important;}
+.hg-ui-active #dailyCheckinModal.hg-ui-topic-page .modal-sheet{position:static;max-width:none!important;width:auto;max-height:none;overflow:visible;box-shadow:none;border-radius:0!important;animation:none;background:transparent;padding:4px 0 24px;}
+#dailyCheckinModal.hg-ui-topic-page h1{outline:none;}
+#dailyCheckinModal.hg-ui-topic-page #dailyCheckinGreeting{display:block;}
+/* 스크롤 없게(Fold7 411×869): 엑자일 첫마디 상자는 숨김(소리로 말하고, 머리 말풍선이 같은 안내), 입력 안내 줄은 화면 읽기용,
+   빠른 선택은 한 줄 카드, 출처 표시(Chat-Gpt)는 제목 줄 오른쪽 위에 겹쳐 둠 */
+#dailyCheckinModal.hg-ui-topic-page .modal-sheet>div:first-child{display:none!important;}
+#dailyCheckinModal.hg-ui-topic-page .hg-topic-input>label{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+#dailyCheckinModal.hg-ui-topic-page .modal-sheet{padding-top:0!important;padding-bottom:0!important;}
+.hg-ui-active #dailyCheckinModal.hg-ui-topic-page{padding-bottom:8px;}
+#dailyCheckinModal.hg-ui-topic-page .modal-sheet>div:has(#hgDailySrc){margin-bottom:6px!important;}
+#dailyCheckinModal.hg-ui-topic-page #hgDailySrc{font-size:12px;}
+#dailyCheckinModal.hg-ui-topic-page .modal-sheet>div:has(#hgDailyQuick){position:relative;gap:6px!important;margin-bottom:0!important;}
+#dailyCheckinModal.hg-ui-topic-page #hgDailyQuick{gap:6px!important;}
+#dailyCheckinModal.hg-ui-topic-page #hgDailyQuick>.hg-ai-source{position:absolute;top:-24px;right:0;margin:0!important;font-size:11px!important;}
+.hg-ui-active #dailyCheckinModal.hg-ui-topic-page .choice-card{min-height:44px!important;padding:6px 12px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;gap:8px;align-items:center;text-align:left;}
+#dailyCheckinModal.hg-ui-topic-page .choice-card>span:last-child{overflow:hidden;text-overflow:ellipsis;font-size:14px!important;}
+#dailyCheckinModal.hg-ui-topic-page .hg-daily-chip>span:last-child>span{display:none;}
+.hg-topic-mode{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px;padding:4px;border-radius:16px;background:#e9f8f5;}
+.hg-ui-active .hg-topic-mode button{min-height:44px!important;border:0;border-radius:12px;background:transparent;color:#476a62;font-size:15px;font-weight:900;}
+.hg-ui-active .hg-topic-mode [aria-checked="true"]{background:#0f766e;color:#fff;box-shadow:0 4px 10px #0f766e33;}
+.hg-topic-input{position:relative;margin-bottom:12px!important;}
+.hg-topic-input label{color:#134e4a!important;}
+.hg-topic-input textarea{border-color:#14b8a6!important;padding-right:58px!important;min-height:64px;}
+.hg-ui-active .hg-topic-send{position:absolute;right:8px;bottom:12px;width:44px;height:44px;min-height:44px!important;border:0;border-radius:50%;background:#0f766e;color:#fff;font-size:18px;font-weight:900;}
+.hg-ui-active .hg-topic-mic{display:none;width:100%;min-height:64px!important;margin-top:8px;border:2px solid #14b8a6;border-radius:18px;background:#fff;color:#0f766e;align-items:center;justify-content:center;gap:10px;font-size:17px;}
+.hg-topic-mic span{font-size:26px;}
+.hg-ui-active .hg-topic-mic.is-on{background:#0f766e;color:#fff;animation:hgTopicPulse 1.2s ease-in-out infinite;}
+@keyframes hgTopicPulse{50%{box-shadow:0 0 0 8px #14b8a633;}}
+.hg-topic-input[data-mode="voice"] .hg-topic-mic{display:flex;}
+.hg-topic-input[data-mode="voice"] .hg-topic-send{display:none;}
+.hg-topic-input[data-mode="voice"] textarea{background:#f0fdfa!important;padding-right:16px!important;}
+.hg-topic-status{margin:8px 2px 0;font-size:14px;font-weight:800;color:#0f766e;}
+.hg-topic-status:empty{display:none;}
+body.hg-topic-busy #dailyCheckinModal button:not(.hg-topic-mic){pointer-events:none;opacity:.6;}
+body.hg-topic-open .app-root{padding-bottom:76px!important;}
+/* 주제 분기: 🆕 새로운 시작 / ▶️ 이어하기 */
+.hg-topic-q{font-weight:800;color:#0f766e;margin:2px 0 10px;}
+.hg-topic-choices{display:grid;gap:8px;margin-bottom:10px;}
+.hg-ui-active .hg-topic-choice{display:grid;grid-template-columns:34px 1fr;grid-template-areas:"i t" "i s";column-gap:10px;align-items:center;width:100%;min-height:62px!important;padding:8px 14px;border:2px solid #b9e6dc;border-radius:18px;background:#f0fdfa;color:#134e4a;text-align:left;}
+.hg-topic-choice span{grid-area:i;font-size:24px;}
+.hg-topic-choice b{grid-area:t;font-size:16px;}
+.hg-topic-choice small{grid-area:s;font-size:12.5px;color:#476a62;font-weight:700;}
+.hg-ui-active .hg-topic-choice[data-start="fresh"]{background:#fff7ed;border-color:#fed7aa;color:#9a3412;}
+.hg-topic-choice[data-start="fresh"] small{color:#9a5b32;}
 #hgLlmSettings details>summary{list-style:none;}
 #hgLlmSettings details>summary::-webkit-details-marker{display:none;}
 #hgLlmSettings details[data-row]>summary>span:first-child::after{content:' ▾';color:#64748b;font-size:13px;}

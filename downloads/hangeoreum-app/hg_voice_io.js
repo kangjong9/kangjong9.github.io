@@ -180,6 +180,28 @@
   const Base = hasNative() ? NativeSpeechRecognition : (window.SpeechRecognition || window.webkitSpeechRecognition || null);
   if (!Base) return;
 
+  /* ---------- 한 번 받아 적기 (2026-10-28 옵빠야 지시: 오늘의 주제 '말로 입력') ----------
+     수업 판정용 감싸기(화면이 수업일 때만 마이크)와 달리, 사용자가 누른 순간 한 번 듣고 글자로 돌려준다.
+     onPartial(글자): 말하는 중간 결과. 반환 { promise: 최종 글자(못 들으면 ''), stop(): 지금까지 들은 것으로 끝내기 } */
+  function dictate(opts = {}) {
+    const r = new Base();
+    r.lang = opts.lang || 'ko-KR'; r.continuous = false; r.interimResults = true; r.maxAlternatives = 1;
+    let last = '', done = false, settle;
+    const promise = new Promise(res => { settle = res; });
+    const end = (text) => { if (done) return; done = true; clearTimeout(cap); if (text) cue('done'); settle(text || ''); };
+    r.onresult = (ev) => {
+      const res = ev.results && ev.results[0], t = res && res[0] ? String(res[0].transcript || '').trim() : '';
+      if (t) { last = t; if (opts.onPartial) opts.onPartial(t); }
+      if (res && res.isFinal) end(t || last);
+    };
+    r.onerror = () => end(last);
+    r.onend = () => end(last);
+    const cap = setTimeout(() => { try { r.finish ? r.finish() : r.stop(); } catch (e) {} setTimeout(() => end(last), 1200); }, opts.maxMs || 15000);
+    cue('listen');
+    setTimeout(() => { if (!done) { try { r.start(); } catch (e) { end(''); } } }, CUE_GAP_MS);
+    return { promise, stop: () => { if (done) return; try { r.finish ? r.finish() : r.stop(); } catch (e) {} setTimeout(() => end(last), 1200); } };
+  }
+
   const plainResult = (res) => {
     // 브라우저 결과 객체를 화면 코드가 쓰는 모양(results[0][i].transcript)의 일반 배열로 바꾼다
     const alts = Array.from(res || []).map(a => ({ transcript: String(a && a.transcript || ''), confidence: a && a.confidence || 0 }));
@@ -403,7 +425,8 @@
     b.addEventListener('click', showLog);
     sheet.appendChild(b);
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectLogButton); else injectLogButton();
+  // 2026-10-28 옵빠야 지시: 설정의 '마이크 진단' 버튼 삭제 — 버튼은 넣지 않음(기록·HGVOICE.showLog는 보존)
+  void injectLogButton;
 
-  window.HGVOICE = { cue, native: hasNative, blocked: micBlocked, log: LOG, note, showLog, timing: { NO_INPUT_MS, FINAL_GRACE_MS, TAIL_LIMIT_MS, CUE_GAP_MS } };
+  window.HGVOICE = { cue, dictate, native: hasNative, blocked: micBlocked, log: LOG, note, showLog, timing: { NO_INPUT_MS, FINAL_GRACE_MS, TAIL_LIMIT_MS, CUE_GAP_MS } };
 })();

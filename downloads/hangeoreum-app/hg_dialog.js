@@ -41,12 +41,12 @@
   const progress = {};     // sig → 들은 줄 수 (멈췄다 돌아오면 이어서)
 
   /* ---------- 길이: 레벨별 ---------- */
-  function lineCount(level) {
-    if (level <= 10) return 8;
-    if (level <= 20) return 12;
-    if (level <= 30) return 16;
-    if (level <= 40) return 20;
-    return 26;
+  // 대화 길이 기준(대략): 구간별 자연스러운 길이. 학습 문장 수에 맞춰 늘리지 않는다 —
+  // 2026-10-28 옵빠야 지시: 대화는 주제대로 자연스럽게, 학습 문장은 그 대화에서 레벨 수만큼 고름. 단, 고를 문장 수보다는 몇 줄 더 길게
+  function lineCount(level, n) {
+    const base = level <= 10 ? 8 : level <= 20 ? 12 : level <= 30 ? 16 : level <= 40 ? 20 : 26;
+    if (n == null) n = window.HGV2 && HGV2.sentenceCount ? HGV2.sentenceCount(level) : 4;
+    return Math.max(base, n + 3);
   }
 
   /* ---------- 대화 만들기 ---------- */
@@ -54,7 +54,7 @@
     const lv = c.level || (typeof currentLevel !== 'undefined' ? currentLevel : 1);
     const band = window.HGV2 ? HGV2.bandOf(lv) : { name: '', spec: '' };
     const L = (window.HGV2 && HGV2.LANG_NAME && HGV2.LANG_NAME[lang()]) || lang();
-    const n = lineCount(lv);
+    const n = lineCount(lv, c.rounds.length);
     const rounds = c.rounds.map((r, i) => `${i + 1}. ${r.target} (뜻: ${r.ko})`).join('\n');
     return `당신은 한국인 학습자를 위한 ${L} 회화 대본 작가입니다.
 세계관: 안드로메다에서 지구로 유배 온 AI 튜터 '엑자일'이 학습자에게 지구 사람들의 실제 대화를 엿듣게 해 줍니다.
@@ -63,7 +63,7 @@
 - 상황: "${c.title}" — ${c.situationKo || ''}
 - 키워드: ${(c.keywords || []).join(', ')}
 - 레벨: Lv.${lv} (${band.name}) — 난이도 기준: ${band.spec}
-- 이 세트에서 배울 문장 4개 (대화 안에 철자 그대로, 이 순서대로, 각각 정확히 한 번씩 넣을 것):
+${window.HGV2 && HGV2.roadmapLine ? HGV2.roadmapLine(lang(), lv) + '\n' : ''}- 이 세트에서 배울 문장 ${c.rounds.length}개 (대화 안에 철자 그대로, 이 순서대로, 각각 정확히 한 번씩 넣을 것):
 ${rounds}
 
 [대본 규칙]
@@ -139,6 +139,14 @@ ${rounds}
   function cancelGpt(c) {
     const p = c && gptPending[sig(c)];
     if (p) { delete gptPending[sig(c)]; p.ctrl.abort(); }
+  }
+  // 2026-10-28: 오늘 주제 세트는 세트와 대본을 한 번에 받는다(HGV2.generateTopicSet) → 규칙 검사 후 이 세트 대본으로 저장
+  function adopt(c, obj, source) {
+    const dlg = validate(obj, c);
+    if (!dlg) return false;
+    dlg.source = source || 'gemini';
+    save(cacheKey(c), { sig: sig(c), dlg });
+    return true;
   }
   /** 다음 세트 대본을 뒤에서 미리 생성 (이미 들었거나 저장돼 있으면 생략) */
   function prefetch(c) {
@@ -480,5 +488,5 @@ ${rounds}
 
   const isOpen = () => !!document.getElementById('hgDialog');
 
-  window.HGDIALOG = { intercept, isOpen, skip, prefetch, importDialog, sourceLabel, toggle, toggleKo, replay, lineCount, _validate: validate, _fallback: fallback, _buildPrompt: buildPrompt };
+  window.HGDIALOG = { intercept, isOpen, skip, prefetch, adopt, importDialog, sourceLabel, toggle, toggleKo, replay, lineCount, _validate: validate, _fallback: fallback, _buildPrompt: buildPrompt };
 })();

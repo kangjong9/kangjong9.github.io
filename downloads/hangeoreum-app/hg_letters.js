@@ -4,8 +4,8 @@
    - 데이터 형식: { 언어, 코드, 음성, 제목, 대상, 안내, 단계:[{단계,제목,설명}], 표:[{id,단계,제목,부제,행수,열수,행머리?,열머리?,설명?}],
                    항목:[{id,단계,표,order,row,col,글자,한글발음,이름?,소리?,읽기?,예시단어,예시발음?,예시병음?,단어뜻,병음?,성조?,한자음?,설명?}] }
    - 학습 흐름: ① 표 보기 → ② 플래시카드 → ③ 퀴즈 → 다음 단계
-   - 앱 안에서는 표·플래시카드 화면의 '🎙️ 핸즈프리로 따라 읽기'로 그 단계를 입문 문자 코스(HGSCRIPT, 문자표 기준)로 넘긴다:
-     엑자일 시범 → 따라 읽기 → 판정이 자동으로 이어짐. 열고 닫을 때 window 'hg-letters' 이벤트(open/close/handoff)를 보낸다.
+   - ② 플래시카드는 버튼 없이 열면 순서대로 자동 재생(글자 소리 → 뒤집어 단어 소리 → 다음), 카드를 누르면 멈춤/재생 (2026-10-28).
+     열고 닫을 때 window 'hg-letters' 이벤트(open/close)를 보낸다.
    - 앱 안: HGLETTERS.open(lang) 전체 화면, 단독 페이지: HGLETTERS.mount(요소, {lang})
    - 진행 상태: localStorage hg_letters_<코드> = { stage, step, known:{id:1}, best:{단계:점수} } (막혀 있어도 동작) */
 (function () {
@@ -54,6 +54,20 @@
     } catch (e) { /* 음성 장치 없음 */ }
   }
   const sayOf = it => it.읽기 || it.글자;
+  // 2026-10-28 옵빠야 지시: 문자 학습 카드에 그 문자에 맞는 그림 — 입문 코스 그림표(script_pics.js HG_SCRIPT_PICS)를 같이 쓴다
+  // 순서: 예시 단어 그림(ex·w) → 그 예시 단어가 들어 있는 글자 그림 → 그 글자의 첫 그림
+  function picOf(it) {
+    const lp = (window.HG_SCRIPT_PICS || {})[lang];
+    if (!lp || !it) return null;
+    const word = String(it.예시단어 || '').trim();
+    if (word && lp.ex && lp.ex[word]) { const [e, m] = lp.ex[word].split('|'); return { e, w: word, m: m || '' }; }
+    if (word && lp.w && lp.w[word]) return { e: lp.w[word], w: word, m: it.단어뜻 || '' };
+    const parse = raw => String(raw || '').split(';').filter(Boolean).map(x => { const [e, w, m] = x.split('|'); return { e, w: w || '', m: m || '' }; });
+    if (word && lp.c) for (const k in lp.c) { const hit = parse(lp.c[k]).find(p => p.w === word); if (hit) return hit; }
+    const g = String(it.글자 || ''), keys = [g, ...g.split(/\s+/), g.toLowerCase(), ...g.toLowerCase().split(/\s+/)];
+    for (const k of keys) { const ps = lp.c && parse(lp.c[k]); if (ps && ps.length) return ps[0]; }
+    return null;
+  }
 
   /* ---------- 데이터 ---------- */
   async function loadLang(code) {
@@ -82,6 +96,10 @@
 .hgl *{box-sizing:border-box}
 .hgl-ov{position:fixed;inset:0;z-index:99990;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .hgl-in{max-width:920px;margin:0 auto;padding:12px 12px 48px}
+.hgl-ov .hgl-in{padding-bottom:12px}
+.hgl-ov .hgl-tbl{margin-top:6px}.hgl-ov .hgl-c{min-height:52px;padding:4px 2px}.hgl-ov .hgl-steps{margin:8px 0}.hgl-ov .hgl-desc{margin:2px 0 4px}
+.hgl-ov .hgl-note{display:none}
+.hgl-ov .hgl-detail{position:fixed;left:12px;right:12px;bottom:12px;z-index:2;margin:0}  /* 글자를 누르면 뜨는 설명은 화면 위에 떠서 높이를 늘리지 않음 */  /* 2026-10-28 스크롤 없게: 앱 안 문자표는 첫 안내 문단 생략(단계 설명 줄이 같은 역할) */
 .hgl-head{background:linear-gradient(135deg,#0f766e,#0e7490);color:#fff;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px}
 .hgl-head h2{margin:0;font-size:clamp(18px,5vw,22px);font-weight:900;flex:1}
 .hgl-head small{display:block;font-size:13px;font-weight:700;opacity:.9}
@@ -108,7 +126,7 @@
 .hgl-grid{display:grid;gap:4px;min-width:min-content}
 .hgl-h{font-size:12px;font-weight:800;color:var(--t);display:flex;align-items:center;justify-content:center;text-align:center;padding:2px;line-height:1.25;word-break:keep-all}
 .hgl-h.rh{position:sticky;left:0;z-index:1;background:var(--bg)}
-.hgl-c{border:1px solid var(--line);background:#fff;border-radius:10px;min-width:56px;min-height:60px;padding:6px 3px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--ink);font:inherit}
+.hgl-c{border:1px solid var(--line);background:#fff;border-radius:10px;min-width:0;min-height:60px;padding:6px 3px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--ink);font:inherit}
 .hgl-c.known{border-color:var(--t2);background:var(--tl)}
 .hgl-c.sel{box-shadow:0 0 0 3px var(--t2)}
 .hgl-c .g{font-size:clamp(20px,6vw,26px);font-weight:900;line-height:1.15;word-break:keep-all}
@@ -129,6 +147,9 @@
 .hgl-row>*{flex:1}
 .hgl-card{background:#fff;border:2px solid var(--tb);border-radius:20px;min-height:300px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;cursor:pointer;margin-top:8px}
 .hgl-card .big{font-size:clamp(64px,22vw,104px);font-weight:900;line-height:1.1;word-break:keep-all}
+.hgl-card .pic{font-size:clamp(56px,17vw,80px);line-height:1}
+.hgl-card .pcap{font-size:14px;color:var(--sub);font-weight:700;margin-top:-4px}
+.hgl-detail .dp{font-size:44px;line-height:1;flex:none}
 .hgl-card .big.long{font-size:clamp(30px,9vw,44px)}
 .hgl-card .snd{font-size:clamp(22px,6.5vw,28px);font-weight:900;color:#be185d}
 .hgl-card .sub{font-size:16px;color:var(--t);font-weight:800}
@@ -202,7 +223,8 @@
       const at = {};
       its.forEach(it => { at[`${it.row},${it.col}`] = it; });
       const rh = Array.isArray(t.행머리), ch = Array.isArray(t.열머리);
-      const cols = `${rh ? 'minmax(52px,auto) ' : ''}repeat(${t.열수}, minmax(56px,1fr))`;
+      // 2026-10-28: 폰 폭(411px)에 7칸이 들어가게 칸 최소 폭 56→44px (가로 넘침·스크롤 방지)
+      const cols = `${rh ? 'minmax(44px,auto) ' : ''}repeat(${t.열수}, minmax(44px,1fr))`;
       let g = '';
       if (ch) { if (rh) g += '<div></div>'; t.열머리.forEach(h => { g += `<div class="hgl-h">${esc(h)}</div>`; }); }
       for (let r = 0; r < t.행수; r++) {
@@ -214,13 +236,14 @@
     });
     const it = detail && data.항목.find(x => x.id === detail);
     if (it) {
-      html += `<div class="hgl-detail"><div class="dg">${esc(it.글자)}</div><div class="dt">
+      const pic = picOf(it);
+      html += `<div class="hgl-detail"><div class="dg">${esc(it.글자)}</div>${pic ? `<div class="dp" aria-hidden="true">${pic.e}</div>` : ''}<div class="dt">
         <div class="s">${esc(soundLine(it))}${it.한자음 ? ` · 한자음 ${esc(it.한자음)}` : ''}</div>
         <div><b>${esc(it.예시단어)}</b> ${it.예시병음 ? esc(it.예시병음) : ''} ${it.예시발음 ? `[${esc(it.예시발음)}]` : ''} — ${esc(it.단어뜻)}</div>
         ${it.설명 ? `<div class="n">${esc(it.설명)}</div>` : ''}</div>
         <button class="hgl-btn sm" data-say-word="${esc(it.id)}">🔊 단어</button></div>`;
     }
-    html += `<div class="hgl-row"><button class="hgl-btn" data-step="1">플래시카드로 익히기 →</button></div>${handsFreeBtn()}`;
+    // 2026-10-28 옵빠야 지시: 표 아래 '플래시카드로 익히기'·'핸즈프리로 따라 읽기' 버튼 삭제 (위 ② 플래시카드 탭으로 이동)
     return html;
   }
 
@@ -230,21 +253,43 @@
     card = Math.min(Math.max(0, card), its.length - 1);
     const it = its[card];
     const long = [...it.글자].length > 4;
-    let face = `<div class="big ${long ? 'long' : ''}">${esc(it.글자)}</div>`;
+    const pic = picOf(it);
+    // 예시 단어와 다른 그림(그 글자의 대표 그림)이면 그림 아래 그 단어·뜻을 작게 적어 헷갈리지 않게
+    const cap = pic && pic.w && pic.w !== String(it.예시단어 || '').trim() ? `<div class="pcap">${esc(pic.w)}${pic.m ? ` · ${esc(pic.m)}` : ''}</div>` : '';
+    let face = `${pic ? `<div class="pic" aria-hidden="true">${pic.e}</div>${cap}` : ''}<div class="big ${long ? 'long' : ''}">${esc(it.글자)}</div>`;
     if (flipped) {
       face += `<div class="snd">${esc(soundLine(it))}</div>`;
       const sub = [it.성조, it.병음 && it.병음 !== it.글자 ? it.병음 : '', it.한자음 ? `한자음 ${it.한자음}` : ''].filter(Boolean).join(' · ');
       if (sub) face += `<div class="sub">${esc(sub)}</div>`;
       face += `<div class="ex">${esc(it.예시단어)} ${it.예시병음 ? esc(it.예시병음) : ''}<small>${it.예시발음 ? `[${esc(it.예시발음)}] ` : ''}${esc(it.단어뜻)}</small></div>`;
       if (it.설명) face += `<div class="nt">${esc(it.설명)}</div>`;
-    } else face += '<div class="hint">눌러서 소리 듣고 뒤집기</div>';
+    }
+    face += `<div class="hint">${autoOn ? '▶ 자동 재생 중 · 누르면 멈춤' : '⏸ 멈춤 · 누르면 이어서 재생'}</div>`;
+    // 2026-10-28 옵빠야 지시: 이전·듣기·단어·다시 볼래요·알아요·핸즈프리 버튼 삭제 → 열면 순서대로 자동 재생(autoPlay), 카드를 누르면 멈춤/재생
     return `<div class="hgl-meta"><span>${card + 1} / ${its.length}</span><span>${its.filter(i => st.known[i.id]).length}개 익힘</span></div>
       <div class="hgl-bar"><div style="width:${Math.round((card + 1) / its.length * 100)}%"></div></div>
-      <div class="hgl-card" data-act="flip">${face}</div>
-      <div class="hgl-row"><button class="hgl-btn gray" data-act="prev">◀ 이전</button><button class="hgl-btn gray" data-act="say">🔊 듣기</button><button class="hgl-btn gray" data-act="sayword">🔊 단어</button></div>
-      <div class="hgl-row"><button class="hgl-btn gray" data-act="again">🤔 다시 볼래요</button><button class="hgl-btn" data-act="know">✅ 알아요 · 다음</button></div>
-      ${card === its.length - 1 ? '<div class="hgl-row"><button class="hgl-btn" data-step="2">퀴즈 풀기 →</button></div>' : ''}
-      ${handsFreeBtn()}`;
+      <div class="hgl-card" data-act="auto" aria-live="polite">${face}</div>
+      ${card === its.length - 1 && !autoOn ? '<div class="hgl-row"><button class="hgl-btn" data-step="2">퀴즈 풀기 →</button></div>' : ''}`;
+  }
+
+  // 자동 재생: 글자 소리 → (1.5초) 뒤집어 단어 소리 → (2.8초) 다음 카드 … 마지막 카드에서 멈추고 '퀴즈 풀기'
+  let autoTimer = null, autoOn = false;
+  function stopAuto() { autoOn = false; clearTimeout(autoTimer); autoTimer = null; }
+  function autoPlay() { stopAuto(); autoOn = true; runAuto(); }
+  function runAuto() {
+    if (!autoOn || !root || !data || st.step !== 1) { stopAuto(); return; }
+    const its = itemsOf(st.stage);
+    if (!its.length) { stopAuto(); return; }
+    const it = its[card];
+    flipped = false; body(); speak(sayOf(it));
+    autoTimer = setTimeout(() => {
+      if (!autoOn || st.step !== 1) return;
+      flipped = true; body(); speak(it.예시단어);
+      autoTimer = setTimeout(() => {
+        if (!autoOn || st.step !== 1) return;
+        if (card < its.length - 1) { card++; runAuto(); } else { stopAuto(); body(); }
+      }, 2800);
+    }, 1500);
   }
 
   function newQuiz(sg) {
@@ -288,21 +333,9 @@
       <div class="hgl-q">${ask}<div class="hgl-ch">${ch}</div>${after}</div>`;
   }
 
-  // 앱 안(입문 문자 코스가 있을 때)에서만: 이 단계를 핸즈프리 3회차로
-  function handsFreeBtn() {
-    if (!overlay || !window.HGSCRIPT || !HGSCRIPT.startChart) return '';
-    return '<div class="hgl-row"><button class="hgl-btn" data-act="handsfree" style="background:#6366f1;box-shadow:0 3px 0 #4338ca">🎙️ 이 단계 핸즈프리로 따라 읽기<br><small style="font-size:13px;font-weight:700">엑자일 시범 → 따라 읽기 → 판정 자동 진행</small></button></div>';
-  }
-  function handsFree() {
-    const code = lang, stage = st.stage;
-    if (typeof selectedLang !== 'undefined' && selectedLang !== code && typeof window.switchLang === 'function') window.switchLang(code);
-    close({ handoff: true });
-    HGSCRIPT.startChart(stage);
-  }
-
   /* ---------- 동작 ---------- */
-  function setStage(n) { st.stage = n; st.step = 0; card = 0; flipped = false; detail = null; quiz = null; saveSt(); body(); scrollTop(); }
-  function setStep(n) { st.step = n; card = 0; flipped = false; if (n === 2) quiz = null; saveSt(); body(); scrollTop(); if (n === 2) autoAsk(); }
+  function setStage(n) { stopAuto(); st.stage = n; st.step = 0; card = 0; flipped = false; detail = null; quiz = null; saveSt(); body(); scrollTop(); }
+  function setStep(n) { stopAuto(); st.step = n; card = 0; flipped = false; if (n === 2) quiz = null; saveSt(); body(); scrollTop(); if (n === 2) autoAsk(); if (n === 1) autoPlay(); }
   function scrollTop() { const sc = overlay || document.scrollingElement; try { (sc === overlay ? overlay : window).scrollTo({ top: 0 }); } catch (e) { /* 무시 */ } }
   function autoAsk() { if (quiz && quiz.list[quiz.i] && quiz.list[quiz.i].kind === 'listen' && !quiz.picked) setTimeout(() => speak(sayOf(quiz.list[quiz.i].it)), 250); }
 
@@ -332,19 +365,17 @@
     const its = data && itemsOf(st.stage);
     switch (d.act) {
       case 'close': close(); break;
-      case 'handsfree': handsFree(); break;
-      case 'flip': flipped = !flipped; if (flipped) speak(sayOf(its[card])); body(); break;
-      case 'say': speak(sayOf(its[card])); break;
-      case 'sayword': speak(its[card].예시단어); break;
-      case 'prev': card = Math.max(0, card - 1); flipped = false; body(); break;
-      case 'again': flipped = false; card = Math.min(its.length - 1, card + 1); body(); break;
-      case 'know': st.known[its[card].id] = 1; saveSt(); if (card < its.length - 1) { card++; flipped = false; body(); } else setStep(2); break;
+      case 'auto':
+        if (autoOn) { stopAuto(); body(); }
+        else { if (card >= its.length - 1 && flipped) card = 0; autoPlay(); }  // 끝까지 본 뒤 누르면 처음부터
+        break;
       case 'qsay': speak(sayOf(quiz.list[quiz.i].it)); break;
       case 'requiz': quiz = null; body(); autoAsk(); break;
     }
   }
 
   async function switchLang(code) {
+    stopAuto();
     lang = code; data = null; quiz = null; detail = null; card = 0; flipped = false;
     st = Object.assign({ stage: 1, step: 0, known: {}, best: {} }, store.get(`hg_letters_${code}`, {}));
     root.innerHTML = shell(); body();
@@ -353,6 +384,7 @@
       if (lang !== code) return;
       if (!stages().some(s => s.단계 === st.stage)) st.stage = stages()[0].단계;
       root.innerHTML = shell(); body();
+      if (st.step === 1) autoPlay();  // 플래시카드에서 닫았다가 다시 열어도 바로 자동 재생
     } catch (e) {
       const b = root.querySelector('#hglBody');
       if (b) b.innerHTML = `<div class="hgl-err">문자표 데이터를 읽지 못했어요.<br><small>${esc(e.message)}</small>
@@ -382,6 +414,7 @@
     notify('open');
   }
   function close(opt) {
+    stopAuto();
     if (!overlay) return;
     try { if (typeof stopAllTTSAudio === 'function') stopAllTTSAudio(); } catch (e) { /* 무시 */ }
     overlay.remove();
@@ -390,5 +423,6 @@
   }
   function notify(kind) { try { window.dispatchEvent(new CustomEvent('hg-letters', { detail: kind })); } catch (e) { /* 무시 */ } }
 
-  window.HGLETTERS = { open, close, mount, langs: LANGS.map(l => l.code), load: loadLang };
+  window.HGLETTERS = { open, close, mount, langs: LANGS.map(l => l.code), load: loadLang,
+    _picOf: (code, it) => { const keep = lang; lang = code; try { return picOf(it); } finally { lang = keep; } } };
 })();

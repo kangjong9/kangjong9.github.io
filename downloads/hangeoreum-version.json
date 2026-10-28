@@ -1,8 +1,8 @@
 {
-  "versionCode": 15,
-  "versionName": "1.0.6",
+  "versionCode": 16,
+  "versionName": "1.0.7",
   "apk": "https://kangjong9.github.io/downloads/Hangeoreum-V1.0-Exile.apk",
-  "sha256": "6e833ee0062ddd7f2ff93c858d1512ebc636ed6f812c1cbeedbafd217c89622c",
-  "size": 1761353,
-  "notes": "학습 AI 선택(ChatGPT·Claude), 한도 도달 시 무료 Gemini로 이어가기, 설정 화면 개편, 다이얼로그 빠른 시작"
+  "sha256": "00de06916690deabffc24340e35323cf8a73b8984559cdfed6b3e21427793756",
+  "size": 1788885,
+  "notes": "기초 탭 아래에 50단계 로드맵(지금 진행 단계 표시) · 주제에 맞는 대화를 먼저 만들고 학습 문장을 골라요 · 레벨별 문장 수 4~13개 · 문자 카드 자동 재생과 그림 · 화면 스크롤 줄임"
 }

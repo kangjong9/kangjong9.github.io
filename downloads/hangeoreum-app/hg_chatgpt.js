@@ -23,7 +23,7 @@
     const task = activeRequest = queue.shift();
     try {
       if (task.cancelled) throw abortError();
-      const result = await run('chatgptGenerate', {prompt:task.prompt});
+      const result = await run('chatgptGenerate', {prompt:task.prompt, search:!!task.options.search});
       if (task.cancelled) throw abortError();
       task.resolve(result.text);
     } catch(e) { noteLimit(e); task.reject(e); }

@@ -100,6 +100,7 @@
     root.querySelector('[data-model]').value = model();
     const a = active();
     root.querySelector('[data-now]').textContent = a ? `지금 학습 AI: ${a.label}` : '고른 AI가 준비되지 않아 무료 Gemini(키가 있을 때) 또는 내장 학습을 써요.';
+    const short = root.querySelector('[data-now-short]'); if (short) short.textContent = a ? a.label : '무료·내장';
   }
   const BTN = 'min-height:44px;border:1px solid #94a3b8;border-radius:10px;padding:8px 12px;background:#fff;color:#1e1b4b;font-weight:800';
   const ROW = 'border:1.5px solid #c7d2fe;border-radius:14px;background:#fff;margin:8px 0;padding:0 12px';
@@ -109,7 +110,10 @@
     if (!sheet || document.getElementById('hgLlmSettings')) return;
     const root = document.createElement('section'); root.id = 'hgLlmSettings';
     root.style.cssText = 'margin:0 0 18px;padding:14px;border:1.5px solid #c7d2fe;border-radius:18px;background:#eef2ff;color:#1e1b4b';
-    root.innerHTML = `<div style="font-size:16px;font-weight:900;margin-bottom:8px">🤖 학습 AI</div>
+    // 2026-10-28 옵빠야 지시: 학습 AI 묶음은 평소 접어 두고(한 줄: 학습 AI · 지금 쓰는 AI ▾) 누르면 펼침
+    root.style.padding = '0 14px';
+    root.innerHTML = `<details data-llm-fold><summary style="${SUM};font-size:16px;list-style:none"><span>🤖 학습 AI</span><span style="display:flex;align-items:center;gap:6px"><span data-now-short style="font-size:13px;color:#4338ca"></span><span aria-hidden="true">▾</span></span></summary>
+      <div style="padding-bottom:12px">
       <label style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800">사용할 AI
         <select data-llm-pick style="flex:1;min-height:44px;font-weight:800"><option value="chatgpt">ChatGPT</option><option value="claude">Claude</option></select></label>
       <p data-now style="font-size:13px;font-weight:700;margin:6px 0 4px"></p>
@@ -131,7 +135,7 @@
           <textarea data-json rows="5" style="width:100%;box-sizing:border-box;font-size:13px" placeholder='{"speakers":[...],"lines":[...]}'></textarea>
           <button type="button" data-import style="${BTN};background:#4338ca;color:#fff;border:0">검사 후 저장</button>
           <p data-import-msg role="status" style="font-size:13px"></p>
-        </details></details>`;
+        </details></details></div></details>`;
     // ChatGPT 칸: 기존 로그인 패널을 그대로 옮겨 담는다 (기능·id 유지). 패널 자리에 학습 AI 묶음을 둔다
     // 위치: 강사 목소리 칸 바로 위 (설정의 첫 묶음)
     const anchor = document.getElementById('btnTutorFemale')?.closest('div[style*="border-radius:18px"]');

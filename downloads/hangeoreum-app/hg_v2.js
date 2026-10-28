@@ -1,7 +1,8 @@
 /*
  * 한걸음 리뉴얼 v2 커리큘럼 엔진 (HGV2)
  *
- * - 50레벨 × 레벨당 5세트(세트마다 4라운드: 핵심 청크 → 기본 문장 → 맥락 확장 → 실전).
+ * - 50레벨 × 레벨당 5세트(세트마다 4단계: 핵심 청크 → 기본 문장 → 맥락 확장 → 실전).
+ *   세트당 문장 수는 구간마다 4·6·8·10·12개, 구간 안 6번째 레벨부터 +1 (sentenceCount).
  * - 1~10 / 11~20 / 21~30 / 31~40 / 41~50 다섯 구간, 구간 안에서도 레벨마다 점진적으로 어려워진다.
  * - 1세트 = 앱 내장 기본 세트(curriculum_v2_<언어>.js), 2~5세트 = Gemini가 직전 세트의 맥락을 이어 새 주제로 생성.
  *   키가 없거나 생성에 실패하면 같은 구간의 다른 레벨 기본 세트를 빌려 와 레벨 안 5세트가 서로 겹치지 않게 한다.
@@ -35,7 +36,7 @@
 
   // 다섯 구간 난이도 기준 (AI 생성 지시와 화면 표시에 함께 사용)
   const BANDS = [
-    { from: 1, to: 10, name: '기초 생존 청크', spec: '인사·숫자·주문·길묻기 등 생존 표현. 1라운드는 1~3단어 청크, 4라운드도 6단어 이하의 짧은 현재형 문장.' },
+    { from: 1, to: 10, name: '기초 생존 청크', spec: '인사·숫자·주문·길묻기 등 생존 표현. 첫 문장은 1~3단어 청크, 마지막 문장도 6단어 이하의 짧은 현재형 문장.' },
     { from: 11, to: 20, name: '기본 문장', spec: '주어+동사+목적어 기본 문장, 질문과 대답, 부정문, 일상 루틴. 문장 4~8단어 수준.' },
     { from: 21, to: 30, name: '시제·이유 확장', spec: '과거·미래 시제, 이유·조건 접속 표현(왜냐하면, 만약), 경험 말하기. 문장 6~11단어 수준.' },
     { from: 31, to: 40, name: '실전 의사소통', spec: '의견·제안·부탁·불만·문제 해결, 비교와 조언. 두 절을 잇는 복문 8~14단어 수준.' },
@@ -108,6 +109,22 @@
   function bandOf(level) {
     return BANDS.find(b => level >= b.from && level <= b.to) || BANDS[BANDS.length - 1];
   }
+  // 2026-10-28 옵빠야 지시: 세트당 학습 문장 수 = 구간마다 4·6·8·10·12개, 구간 안 6번째 레벨부터 +1
+  // (Lv.1~5 4개, 6~10 5개, 11~15 6개 … 41~45 12개, 46~50 13개). 4단계(핵심 청크→기본 문장→맥락 확장→실전 발화)는 문장 수에 고르게 나눔
+  const BAND_SENTENCES = [4, 6, 8, 10, 12];
+  function sentenceCount(level) {
+    const b = bandOf(level), i = BANDS.indexOf(b);
+    return BAND_SENTENCES[i] + (level - b.from + 1 > 5 ? 1 : 0);
+  }
+  // 2026-10-28 옵빠야 지시: 기초 탭 '50단계 실전 로드맵'의 단계(T0~T5)와 AI 맥락 생성을 같은 기준으로 연동
+  const TIER_NAMES = ['문자', '청크', '기본문', '복합문', '고급문', '고급'];
+  const tierOf = (level) => level < 1 ? 0 : Math.min(5, Math.ceil(level / 10));
+  const tierLabel = (level) => `T${tierOf(level)}:${TIER_NAMES[tierOf(level)]}`;
+  const roadmapLine = (lang, level) => `- 로드맵 단계: ${tierLabel(level)} · Lv.${level}/50 — 학습자가 지금 실제로 진행 중인 ${LANG_NAME[lang] || lang} 단계(기초 탭 로드맵과 연동). 이 단계보다 쉽거나 어려운 표현으로 벗어나지 말 것.`;
+  const stageOf = (i, n) => Math.min(3, Math.floor(i * 4 / n));   // i번째 문장(0부터) → 4단계 중 몇 번째
+  /** 지금 수업 세트의 문장(라운드) 수 — 예전 세트·내장 세트는 4개일 수 있어 세트 기준 */
+  const roundCount = () => (typeof activeSessionCase !== 'undefined' && activeSessionCase && Array.isArray(activeSessionCase.rounds) && activeSessionCase.rounds.length) || 4;
+  window.hgRoundCount = roundCount;
 
   // 세트 번호(1~5)는 언어별로 저장
   function getSetIdx() {
@@ -172,7 +189,8 @@
   }
 
   const cacheKey = (lang, level, k) => isThreadPos(lang, level, k) ? `hg_v2_th_${lang}_${level}_${k}` : `hg_v2_ai_${lang}_${level}_${k}`;
-  const needsAi = (lang, level, k) => k > 1 || isThreadPos(lang, level, k);
+  // 1세트도 문장 수가 4개를 넘는 레벨(6번째 레벨부터)은 AI가 그 수만큼 만든다 (내장 1세트는 4문장)
+  const needsAi = (lang, level, k) => k > 1 || isThreadPos(lang, level, k) || sentenceCount(level) > 4;
 
   function usedTargets(lang) { return load(`hg_v2_used_${lang}`, []); }
   function rememberTargets(lang, set) {
@@ -181,14 +199,126 @@
     save(`hg_v2_used_${lang}`, used.slice(-500));
   }
 
-  /** 세트 데이터 즉시 반환 (AI 캐시 → 1세트는 내장 → 없으면 내장 응용) */
+  // ---------------------------------------------------------------- 오늘의 주제 (2026-10-28 옵빠야 지시)
+  // 주제를 고르거나 바꾸면 그 주제로 지금 세트부터 AI(고른 구독 AI → 무료 Gemini)가 4문장 + 대본을 한 번에 새로 만든다.
+  // 주제 세트는 주제 번호(id)와 함께 따로 저장하고, 주제가 바뀌면 이전 주제 세트는 버린다(내장·이전 세트로 돌아가지 않게).
+  const TOPIC_KEY = 'hg_topic';
+  const topic = () => load(TOPIC_KEY, null);
+  const tpKey = (lang, level, k) => `hg_v2_tp_${lang}_${level}_${k}`;
+  function topicSet(lang, level, k) {
+    const t = topic(), s = t && load(tpKey(lang, level, k), null);
+    return s && s.topicId === t.id && s.rounds && s.rounds.length >= sentenceCount(level) ? s : null;
+  }
+  // AI 캐시 세트 — 문장 수 규칙(2026-10-28) 전에 만든 4문장 세트는 그 레벨 문장 수보다 적으면 새로 만들 대상으로 본다
+  function aiSet(lang, level, k) {
+    const s = load(cacheKey(lang, level, k), null);
+    return s && s.rounds && s.rounds.length >= sentenceCount(level) ? s : null;
+  }
+  function setTopic(q) {
+    q = String(q || '').trim();
+    if (!q) return null;
+    const t = topic();
+    if (t && t.q === q) return t;   // 같은 주제를 다시 고르면 만들어 둔 세트를 그대로 쓴다
+    const next = { q, id: Date.now() };
+    save(TOPIC_KEY, next);
+    // 이전 주제로 만든 세트는 지운다 (지금 언어만 — 다른 언어는 id가 달라 쓰이지 않고, 그 언어를 열 때 새로 만든다)
+    const prefix = `hg_v2_tp_${curLang()}_`;
+    try { Object.keys(localStorage).filter(k => k.startsWith(prefix)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+    return next;
+  }
+  const hasSet = (lang, level, k) => !!topicSet(lang, level, k) || !needsAi(lang, level, k) || !!aiSet(lang, level, k);
+  const wantTopicSet = (lang, level, k) => !!topic() && aiAvailable() && !topicSet(lang, level, k);
+  const providerId = (label) => ({ 'Chat-Gpt': 'chatgpt', Claude: 'claude', Gemini: 'gemini' })[label] || 'gemini';
+  const tpPending = {};
+  /** 지금 주제로 세트 + 대본을 한 번의 AI 호출로 만든다. 실패 시 null (호출부는 기존 세트로 진행) */
+  function generateTopicSet(lang, level, k, background = false) {
+    const t = topic();
+    if (!t || !aiAvailable()) return Promise.resolve(null);
+    const have = topicSet(lang, level, k);
+    if (have) return Promise.resolve(have);
+    const pk = `${tpKey(lang, level, k)}_${t.id}`;
+    if (tpPending[pk]) return tpPending[pk];
+    const prev = k > 1 ? getSetSync(lang, level, k - 1) : (level > 1 ? getSetSync(lang, level - 1, SETS_PER_LEVEL) : null);
+    const ns = sentenceCount(level);
+    tpPending[pk] = (async () => {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const prompt = dialogFirstPrompt(lang, level, k, prev);
+          const text = await geminiCall({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { responseMimeType: 'application/json', temperature: 0.95 }
+          }, 50000, { background });  // 대화+문장을 한 번에 → 실기기 ChatGPT 최대 50초 관측
+          const obj = JSON.parse(text.replace(/^```(json)?|```$/g, '').trim());
+          const set = validateSet(obj, lang, ns, ns);
+          if (!set) { console.warn('[HGV2] 주제 세트 반려(형식·반복)', attempt + 1); continue; }
+          if ((topic() || {}).id !== t.id) return null;   // 그사이 주제가 또 바뀜
+          const provider = lastProvider || aiName();
+          set.source = `🎯 오늘 주제 · ${provider}`;
+          set.topicId = t.id; set.topic = t.q;
+          save(tpKey(lang, level, k), set);
+          // 대본도 이 세트의 수업 화면 id·제목으로 바로 저장 → 세트를 시작하면 기다림 없이 재생
+          if (obj.dialog && window.HGDIALOG && HGDIALOG.adopt) HGDIALOG.adopt(toSessionCase(set, lang, level, k), obj.dialog, providerId(provider));
+          return set;
+        } catch (e) {
+          console.warn('[HGV2] 주제 세트 생성 실패', e.message);
+          if (/NO_KEY|API 키 오류/.test(e.message) || (window.HGLLM && HGLLM.isCancel(e))) break;
+        }
+      }
+      return null;
+    })().finally(() => { delete tpPending[pk]; });
+    return tpPending[pk];
+  }
+  // 2026-10-28 옵빠야 지시: 다이얼로그를 레벨 숫자만큼 만드는 게 아니라, (주제에 맞는) 자연스러운 대화를 먼저 쓰고
+  // 그 대화의 대사 중에서 레벨에 맞는 학습 문장 수(sentenceCount)만큼 골라 수업 문장으로 쓴다. 세트+대본 한 번의 AI 호출.
+  function dialogFirstPrompt(lang, level, k, prev) {
+    const ns = sentenceCount(level), L = LANG_NAME[lang], t = topic();
+    const n = window.HGDIALOG && HGDIALOG.lineCount ? HGDIALOG.lineCount(level, ns) : Math.max(8, ns + 3);
+    return buildSetPrompt(lang, level, k, prev).replace(/\n반드시 아래 JSON만 출력하세요:[\s\S]*$/, '') + `
+[작성 순서 — 대화 먼저, 학습 문장은 그 대화에서 고르기]
+1) 먼저 ${t ? '오늘 주제' : '이 세트 상황'} 속 실제 사람 2~3명이 주고받는 자연스러운 대화(dialog)를 쓰세요.
+   길이는 대화가 자연스럽게 시작해 마무리되는 만큼(대략 ${n}줄 안팎). 줄 수를 학습 문장 수에 맞추지 마세요.
+   대사는 레벨 난이도 안의 자연스러운 구어로, ${t ? '오늘 주제가 대화 내내 살아 있게' : '장면이 생생하게'}.
+2) 그 대화의 대사 중에서 이 레벨에 맞는 학습 문장 ${ns}개를 골라 rounds로 만드세요.
+   - target은 대사에 나온 그대로(철자·문장부호 그대로, 긴 대사면 그 안의 한 문장이나 구를 그대로), 대화에 나오는 순서대로.
+   - 위 [학습 문장 ${ns}개 구성]처럼 앞쪽은 짧고 뒤로 갈수록 길고 어렵게, 서로 겹치지 않게, 이미 학습한 표현은 피하기.
+
+반드시 아래 JSON만 출력하세요:
+{"title":"상황 제목(한국어 15자 이내)","situationKo":"상황 설명(한국어 50자 이내)","keywords":"키워드1,키워드2,키워드3","art":"장면을 그림처럼 표현한 이모지 2~3개",
+"dialog":{"speakers":[{"name":"${L} 이름","role":"역할(한국어 6자 이내)","gender":"female 또는 male","emoji":"이모지 1개"}, ...2~3명],
+"lines":[{"s":화자 번호(0부터),"t":"${L} 대사","p":"[한글 발음${lang === 'cn' ? ' · 병음' : ''}]","ko":"한국어 뜻"}, ...]},
+"rounds":[{"ko":"한국어 뜻","target":"대사에서 고른 ${L} 문장 그대로","phonetic":"[한글 발음${lang === 'cn' ? ' · 병음' : ''}]","note":"짧은 활용 팁(한국어)","emoji":"이 문장의 핵심 단어를 나타내는 이모지 1개"}, ...총 ${ns}개]}`;
+  }
+  /** 주제를 정하고(바뀌었으면) 지금 세트를 그 주제로 만든다. waitMs 안에 못 받으면 false(생성은 뒤에서 계속) */
+  async function applyTopic(q, waitMs = 25000) {
+    if (!setTopic(q)) return false;
+    const lang = curLang(), lv = currentLevel, k = getSetIdx();
+    if (!wantTopicSet(lang, lv, k)) return !!topicSet(lang, lv, k);
+    const job = generateTopicSet(lang, lv, k);
+    const set = await Promise.race([job, new Promise(r => setTimeout(() => r(null), waitMs))]);
+    return !!set;
+  }
+
+  /** 세트 데이터 즉시 반환 (오늘 주제 세트 → AI 캐시 → 1세트는 내장 → 없으면 내장 응용) */
   function getSetSync(lang, level, k) {
+    const tp = topicSet(lang, level, k);
+    if (tp) return tp;
     if (k === 1) {
-      const ai = isThreadPos(lang, level, k) ? load(cacheKey(lang, level, k), null) : null;
+      const ai = needsAi(lang, level, k) ? aiSet(lang, level, k) : null;
       if (ai) return ai;
-      const s = baseSet(lang, level); if (s) s.source = '📚 내장 기본 세트'; return s;
+      const s = baseSet(lang, level); if (s) s.source = '📚 내장 기본 세트'; return padRounds(s, lang, level);
     }
-    return load(cacheKey(lang, level, k), null) || fallbackSet(lang, level, k);
+    return aiSet(lang, level, k) || padRounds(fallbackSet(lang, level, k), lang, level);
+  }
+  // 내장 세트(4문장)는 AI가 없을 때만 쓰인다 → 그 레벨 문장 수만큼 같은 구간 다른 내장 세트의 문장을 이어 붙여 채움(겹치는 문장 제외)
+  function padRounds(s, lang, level) {
+    const n = sentenceCount(level);
+    if (!s || s.rounds.length >= n) return s;
+    const band = bandOf(level), seen = new Set(s.rounds.map(r => norm(r.target)));
+    for (let d = 1; d <= band.to - band.from && s.rounds.length < n; d++) {
+      const lv = band.from + ((level - band.from) + d) % (band.to - band.from + 1), other = baseSet(lang, lv);
+      for (const r of (other ? other.rounds : [])) { if (s.rounds.length >= n) break; if (!seen.has(norm(r.target))) { seen.add(norm(r.target)); s.rounds.push(r); } }
+    }
+    return s;
   }
 
   // ---------------------------------------------------------------- Gemini
@@ -278,9 +408,16 @@
   function buildSetPrompt(lang, level, k, prev) {
     const band = bandOf(level);
     const stepInBand = level - band.from + 1;
+    const n = sentenceCount(level);
     const used = usedTargets(lang).slice(-80);
-    const daily = (typeof currentStoryQuote !== 'undefined' && currentStoryQuote) ? currentStoryQuote : '';
+    const t = topic();
+    const daily = t ? '' : (typeof currentStoryQuote !== 'undefined' && currentStoryQuote) ? currentStoryQuote : '';
     const a = isThreadPos(lang, level, k) ? getAnchor(lang) : null;
+    // 2026-10-28 옵빠야 지시: 학습자가 고른 오늘의 주제가 이 세트의 장면·대화 소재 (레벨 난이도·배울 순서는 유지)
+    const topicLine = t ? `\n[오늘의 회화 주제 — 최우선]
+- 학습자가 방금 고른 주제: "${t.q}"
+- 이 세트의 장면·인물·대화 소재는 반드시 이 주제에서 나옵니다. 주제와 동떨어진 일반 상황(공항·호텔 등)으로 바꾸지 마세요.
+- 레벨 난이도와 ${a ? '이어지는 대화의 배울 순서(인사→안부→…)는 지키되 그 대화가 이 주제 속에서 일어나게' : '직전 세트와 겹치지 않는 표현은 지키되 주제 안에서 새 장면으로'} 만드세요.` : '';
     const flow = a ? `- 1~${THREAD_TO}레벨은 하나로 이어지는 맥락입니다. 출발 맥락: "${a.title}" — ${a.situationKo} (키워드: ${(a.keywords || []).join(', ')})
 - 지금까지 이어진 흐름: ${threadTitles(lang, level, k).join(' → ') || a.title}
 - 직전 세트: "${prev ? prev.title : a.title}" — ${prev ? prev.situationKo : a.situationKo}
@@ -295,31 +432,44 @@ ${daily ? `- 학습자가 오늘 체크인에서 한 말: "${daily}" (주제 선
 
 [이번 세트]
 - 레벨: Lv.${level} (구간 ${band.from}~${band.to} '${band.name}'의 ${stepInBand}/10단계 — 구간 안에서 단계가 오를수록 조금씩 더 어렵게)
+${roadmapLine(lang, level)}
 - 구간 난이도 기준: ${band.spec}
 ${window.HGREVIEW && HGREVIEW.learningContext ? HGREVIEW.learningContext(lang, level) : ""}
 - 이 레벨의 ${k}/5번째 세트 (${a ? '앞 세트와 표현이 겹치면 안 됨' : '같은 레벨의 다른 세트와 주제·표현이 겹치면 안 됨'})
 ${flow}
-- 이미 학습한 표현(절대 반복 금지): ${used.join(' | ') || '없음'}
+- 이미 학습한 표현(절대 반복 금지): ${used.join(' | ') || '없음'}${topicLine}
 
-[4라운드 구성] 하나의 연속된 상황 안에서 1→4라운드로 갈수록 길고 어려워집니다.
-1라운드 핵심 청크, 2라운드 기본 문장, 3라운드 맥락 확장, 4라운드 실전 발화.
+[학습 문장 ${n}개 구성] 하나의 연속된 상황 안에서 1→${n}번째 문장으로 갈수록 길고 어려워집니다.
+${stagePlan(n)}
 
 반드시 아래 JSON만 출력하세요:
 {"title":"상황 제목(한국어 15자 이내)","situationKo":"상황 설명(한국어 50자 이내)","keywords":"키워드1,키워드2,키워드3","art":"장면을 그림처럼 표현한 이모지 2~3개",
-"rounds":[{"ko":"한국어 뜻","target":"${LANG_NAME[lang]} 표현","phonetic":"[한글 발음${lang === 'cn' ? ' · 병음' : ''}]","note":"짧은 활용 팁(한국어)","emoji":"이 문장의 핵심 단어를 나타내는 이모지 1개"}, ...총 4개]}`;
+"rounds":[{"ko":"한국어 뜻","target":"${LANG_NAME[lang]} 표현","phonetic":"[한글 발음${lang === 'cn' ? ' · 병음' : ''}]","note":"짧은 활용 팁(한국어)","emoji":"이 문장의 핵심 단어를 나타내는 이모지 1개"}, ...총 ${n}개]}`;
+  }
+  // 문장 n개를 4단계에 고르게 나눈 안내 (예: 6개 → 1~2번 핵심 청크, 3번 기본 문장, 4~5번 맥락 확장, 6번 실전 발화)
+  function stagePlan(n) {
+    const names = ['핵심 청크', '기본 문장', '맥락 확장', '실전 발화'], parts = [];
+    for (let s = 0; s < 4; s++) {
+      const idx = []; for (let i = 0; i < n; i++) if (stageOf(i, n) === s) idx.push(i + 1);
+      if (idx.length) parts.push(`${idx.length > 1 ? idx[0] + '~' + idx[idx.length - 1] : idx[0]}번 ${names[s]}`);
+    }
+    return parts.join(', ') + '.';
   }
 
-  function validateSet(obj, lang) {
-    if (!obj || !Array.isArray(obj.rounds) || obj.rounds.length < 4) return null;
+  // n: 이 레벨 문장 수. maxUsed: 이미 배운 표현이 이만큼 이상 섞이면 반려(기본: 문장 수의 1/3, 최소 2).
+  // 오늘 주제 세트는 낮은 레벨의 짧은 표현이 겹치기 쉬워 n까지 허용(전부 반복일 때만 반려)
+  function validateSet(obj, lang, maxUsed, n = 4) {
+    if (maxUsed == null) maxUsed = Math.max(2, Math.ceil(n / 3));
+    if (!obj || !Array.isArray(obj.rounds) || obj.rounds.length < n) return null;
     const used = new Set(usedTargets(lang));
-    const rounds = obj.rounds.slice(0, 4).map(r => ({
+    const rounds = obj.rounds.slice(0, n).map(r => ({
       ko: String(r.ko || '').trim(), target: String(r.target || '').trim(),
       phonetic: String(r.phonetic || '').trim(), note: String(r.note || '').trim(),
       emoji: String(r.emoji || '').trim().slice(0, 8)
     }));
     if (rounds.some(r => !r.ko || !r.target)) return null;
     // 이미 배운 표현이 2개 이상 섞이면 반려 (1개는 자연스러운 연결로 허용)
-    if (rounds.filter(r => used.has(norm(r.target))).length >= 2) return null;
+    if (rounds.filter(r => used.has(norm(r.target))).length >= maxUsed) return null;
     return {
       title: String(obj.title || '새로운 상황').slice(0, 30),
       situationKo: String(obj.situationKo || '').slice(0, 120),
@@ -333,22 +483,25 @@ ${flow}
   /** k번째 세트를 AI로 생성해 캐시 (이미 있거나 진행 중이면 재사용). 실패 시 null */
   function generateSet(lang, level, k, force, background = false) {
     const ck = cacheKey(lang, level, k);
-    if (!force && load(ck, null)) return Promise.resolve(load(ck, null));
+    if (!force && aiSet(lang, level, k)) return Promise.resolve(aiSet(lang, level, k));
     if (pending[ck]) return pending[ck];
     if (!aiAvailable()) return Promise.resolve(null);
     const prev = k > 1 ? getSetSync(lang, level, k - 1) : (level > 1 ? getSetSync(lang, level - 1, SETS_PER_LEVEL) : null);
     pending[ck] = (async () => {
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
+          // 2026-10-28: 일반 세트도 대화 먼저 → 그 대화에서 레벨 문장 수만큼 골라 수업 문장 (대본은 바로 저장)
           const text = await geminiCall({
-            contents: [{ parts: [{ text: buildSetPrompt(lang, level, k, prev) }] }],
+            contents: [{ parts: [{ text: dialogFirstPrompt(lang, level, k, prev) }] }],
             generationConfig: { responseMimeType: 'application/json', temperature: 0.95 }
-          }, 15000, {background});
-          const set = validateSet(JSON.parse(text.replace(/^```(json)?|```$/g, '').trim()), lang);
+          }, 50000, {background});
+          const obj = JSON.parse(text.replace(/^```(json)?|```$/g, '').trim());
+          const set = validateSet(obj, lang, null, sentenceCount(level));
           if (set) {
             const provider = lastProvider || aiName();
             set.source = isThreadPos(lang, level, k) ? '🔗 1~10레벨 이어지는 맥락 · ' + provider : '✨ ' + provider + ' AI 맥락 연결 생성';
             save(ck, set);
+            if (obj.dialog && window.HGDIALOG && HGDIALOG.adopt) HGDIALOG.adopt(toSessionCase(set, lang, level, k), obj.dialog, providerId(provider));
             return set;
           }
         } catch (e) {
@@ -367,7 +520,7 @@ ${flow}
     return {
       id: `v2_${lang}_${level}_${k}`, title: set.title, situationKo: set.situationKo, keywords: set.keywords,
       art: set.art || TOPIC_ART[level - 1] || '🌟',
-      rounds: set.rounds.map((r, i) => ({ round: i + 1, type: `${ROUND_LABELS[i]} 세트 ${k}/5`, ...r })),
+      rounds: set.rounds.map((r, i, a) => ({ round: i + 1, type: `${ROUND_LABELS[stageOf(i, a.length)]} 세트 ${k}/5`, ...r })),
       theme: currentTheme, lang, level, set: k,
       source: `${set.source || ''} · 세트 ${k}/${SETS_PER_LEVEL}`
     };
@@ -395,11 +548,14 @@ ${flow}
   async function prefetchNext() {
     // GPT 연결 시 '오늘의 다이얼로그' 대본도 미리 만들어 새 세트 시작 때 기다리지 않게 한다 (지금 세트 → 다음 세트 순)
     const dialog = (set, level, k) => { if (set && window.HGDIALOG && HGDIALOG.prefetch) HGDIALOG.prefetch(toSessionCase(set, curLang(), level, k)); };
+    // 오늘 주제가 있으면 다음 2개를 주제 세트(+대본)로 뒤에서 만든다. 지금 세트는 주제를 고를 때(applyTopic)만 바꾼다
+    // (수업 도중 뒤에서 도착한 세트로 문장이 바뀌지 않게)
     if (activeSessionCase) dialog(getSetSync(curLang(), currentLevel, getSetIdx()), currentLevel, getSetIdx());
     let pos = { level: currentLevel, k: getSetIdx() };
     for (let i = 0; i < 2; i++) {
       pos = nextPos(pos.level, pos.k);
       if (!pos) return;
+      if (wantTopicSet(curLang(), pos.level, pos.k)) { await generateTopicSet(curLang(), pos.level, pos.k, true); continue; }
       const set = needsAi(curLang(), pos.level, pos.k) ? await generateSet(curLang(), pos.level, pos.k, false, true) : getSetSync(curLang(), pos.level, pos.k);
       if (i === 0) dialog(set, pos.level, pos.k);
     }
@@ -442,7 +598,10 @@ ${flow}
 
     if (k < SETS_PER_LEVEL) {
       const nk = k + 1;
-      if (!load(cacheKey(lang, currentLevel, nk), null) && aiAvailable()) {
+      if (wantTopicSet(lang, currentLevel, nk)) {
+        setNotice(`<span style="color:#6366f1; font-weight:800;">🎯 엑자일이 오늘 주제로 다음 세트(${nk}/5)를 만드는 중입니다...</span>`);
+        if (!await generateTopicSet(lang, currentLevel, nk) && !hasSet(lang, currentLevel, nk)) await generateSet(lang, currentLevel, nk);
+      } else if (!hasSet(lang, currentLevel, nk) && aiAvailable()) {
         setNotice(`<span style="color:#6366f1; font-weight:800;">🌌 엑자일이 다음 세트(${nk}/5)를 맥락에 이어 준비 중입니다...</span>`);
         await generateSet(lang, currentLevel, nk);
       }
@@ -458,7 +617,11 @@ ${flow}
     }
 
     if (currentLevel < 50) {
-      if (isThreadPos(lang, currentLevel + 1, 1) && !load(cacheKey(lang, currentLevel + 1, 1), null) && aiAvailable()) {
+      if (wantTopicSet(lang, currentLevel + 1, 1)) {
+        setNotice(`<span style="color:#6366f1; font-weight:800;">🎯 엑자일이 오늘 주제로 Lv.${currentLevel + 1}을 만드는 중입니다...</span>`);
+        await generateTopicSet(lang, currentLevel + 1, 1);
+        setNotice('');
+      } else if (needsAi(lang, currentLevel + 1, 1) && !aiSet(lang, currentLevel + 1, 1) && aiAvailable()) {
         setNotice(`<span style="color:#6366f1; font-weight:800;">🔗 엑자일이 Lv.${currentLevel + 1}을 지금 대화에 이어 준비 중입니다...</span>`);
         await generateSet(lang, currentLevel + 1, 1);
         setNotice('');
@@ -487,8 +650,17 @@ ${flow}
 
   // ---------------------------------------------------------------- 가장 멀리 진행한 위치 (뒤로 갔다가 다시 앞으로)
   // 2026-10-27: 이전 단계로 돌아가면 통과 기록(roundPassed)이 지금 세트 것만 남아 다시 앞으로 갈 수 없던 문제 → 언어별 최원 위치 기억
-  const farKey = (lang) => `hg_far_${lang}`;
-  const posVal = (lv, k, r) => (lv * 10 + k) * 10 + r;
+  // 2026-10-28: 세트당 문장이 최대 13개 → 라운드 자리를 두 자리로 (hg_far2_). 예전 hg_far_ 값은 한 번 옮겨 담는다
+  const farKey = (lang) => {
+    const k2 = `hg_far2_${lang}`;
+    try {
+      const old = parseInt(localStorage.getItem(`hg_far_${lang}`), 10);
+      if (old > 0 && localStorage.getItem(k2) == null) save(k2, (Math.floor(old / 10)) * 100 + old % 10);
+      localStorage.removeItem(`hg_far_${lang}`);
+    } catch (e) {}
+    return k2;
+  };
+  const posVal = (lv, k, r) => (lv * 10 + k) * 100 + r;
   function noteFar() {
     const v = posVal(currentLevel, getSetIdx(), currentRound);
     if (v > load(farKey(curLang()), 0)) save(farKey(curLang()), v);
@@ -497,7 +669,7 @@ ${flow}
   /** 이미 진행했던 곳이면 통과 없이 한 단계 앞으로. 반환: 'round' | 'set' | 'level' | false */
   function forward() {
     if (!behindFar()) return false;
-    if (currentRound < 4) { currentRound++; return 'round'; }
+    if (currentRound < roundCount()) { currentRound++; return 'round'; }
     const k = getSetIdx();
     currentRound = 1;
     roundPassed = [false, false, false, false];
@@ -518,7 +690,7 @@ ${flow}
   function goBack() {
     if (currentRound > 1) { currentRound--; return true; }
     const k = getSetIdx();
-    if (k > 1) { setSetIdx(k - 1); applyCurrent(); currentRound = 4; return true; }
+    if (k > 1) { setSetIdx(k - 1); applyCurrent(); currentRound = roundCount(); return true; }
     return false; // 레벨 이동은 기존 로직에 맡김
   }
 
@@ -687,9 +859,12 @@ ${convo}
   window.HGV2 = {
     SETS_PER_LEVEL, BANDS, PARTNER_PRESETS, TOPIC_ART, LANG_NAME, GEMINI_MODELS, cachedModels,
     lastProvider: () => lastProvider, bandOf, getSetIdx, setSetIdx, getSetSync, generateSet, applyCurrent, isSessionCurrent,
-    advanceAfterSet, goBack, noteFar, behindFar, forward, regenerateCurrent, renderArt, getAnchor, isThreadPos,
+    advanceAfterSet, goBack, noteFar, behindFar, forward, regenerateCurrent, renderArt, getAnchor, isThreadPos, sentenceCount, roundCount, _dialogFirstPrompt: dialogFirstPrompt,
+    TIER_NAMES, tierOf, tierLabel, roadmapLine,
     isFreeTalk, getPartner, setupFreeTalkView, partnerReply, speakPartner, openPartnerPicker,
     _validateSet: validateSet, _buildSetPrompt: buildSetPrompt,
+    topic, setTopic, applyTopic, generateTopicSet, topicSet, prefetch: prefetchNext,
+    saveTopicSet: (lang, level, k, set) => { const t = topic(); if (t) save(tpKey(lang, level, k), { ...set, topicId: t.id, topic: t.q }); },
     geminiCall, apiKey, aiAvailable, aiName  // 오늘의 뉴스(hg_news.js)가 같은 모델 폴백 경로를 쓴다
   };
 })();

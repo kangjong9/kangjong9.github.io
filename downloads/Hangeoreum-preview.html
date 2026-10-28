@@ -870,7 +870,13 @@
         </div>
       </div>
       <!-- 2026-10-27 옵빠야 지시: Exile 소개 문구는 '처음으로' 첫 화면 호칭 칸 아래 빈자리에 -->
-      <p class="hg-ui-note ob-exile-note">Exile은 안드로메다에서 지구로 유배 온 안내 AI예요. 내가 50단계를 마스터하면 Exile도 사면을 받아 고향 안드로메다로 돌아갈 수 있어요. 수업 음성은 설정에서 고른 목소리를 사용합니다.</p>
+      <!-- 2026-10-28 옵빠야 지시: 같은 내용을 카드로 디자인(스크롤 없는 높이 안에서) -->
+      <div class="ob-exile-note ob-exile-story" role="note">
+        <span class="ob-exile-story-icon" aria-hidden="true">🦊</span>
+        <div><b>Exile의 약속 <span class="ob-exile-story-goal" aria-hidden="true">🚀 50단계 = 사면</span></b>
+          <span>안드로메다에서 유배 온 안내 AI예요. 내가 <em>50단계</em>를 마스터하면 Exile도 고향으로 돌아가요.</span>
+          <small>🔊 수업 음성은 AI 튜터에서 고른 목소리로 들려요.</small></div>
+      </div>
     </div>
     <!-- STEP 1 종료 -->
 
@@ -1305,7 +1311,7 @@
           <span id="activeDailyKeywords" style="font-size:11.5px; font-weight:800; color:#4f46e5;">#야근 #피곤</span>
           <span id="activeDailyStoryQuote" style="font-size:11.5px; font-weight:700; color:#475569; overflow:hidden; text-overflow:ellipsis;">"오늘 야근해서 너무 피곤해..."</span>
         </div>
-        <button onclick="openDailyCheckinModal()" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:3px 8px; font-size:11px; font-weight:800; color:#475569; cursor:pointer; white-space:nowrap; box-shadow:0 1px 2px rgba(0,0,0,0.05);">💬 일상 대화</button>
+        <button onclick="openDailyCheckinModal()" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:3px 8px; font-size:11px; font-weight:800; color:#475569; cursor:pointer; white-space:nowrap; box-shadow:0 1px 2px rgba(0,0,0,0.05);">🎯 새로운 주제</button>
       </div>
     </div>
 
@@ -1365,7 +1371,7 @@
             <span id="roundBadge" class="round-pill" style="background:#4f46e5; color:#fff; font-size:11.5px; font-weight:900; padding:2px 8px;">따라하기 1 / 4</span>
             <span id="roundTypeLabel" style="font-size:12px; font-weight:800; color:#312e81;">[기준 예문] 최초 듣고 따라하기</span>
           </div>
-          <div style="display:flex; gap:4px;">
+          <div id="roundDots" style="display:flex; gap:4px; flex-shrink:0;">
             <div id="dotR1" style="width:8px; height:8px; border-radius:50%; background:#4f46e5;"></div>
             <div id="dotR2" style="width:8px; height:8px; border-radius:50%; background:#cbd5e1;"></div>
             <div id="dotR3" style="width:8px; height:8px; border-radius:50%; background:#cbd5e1;"></div>
@@ -1735,12 +1741,9 @@
 
 
       <!-- 2026-10-28 옵빠야 지시: Gemini 키·연결 테스트·저장·삭제는 위 학습 AI의 Gemini 칸으로, AI 음성 화면 이동은 헤더 AI 튜터로 -->
-      <div style="display:flex; flex-direction:column; gap:8px;">
-        <button class="btn-3d btn-secondary" onclick="resetAllLearnedDataCompletely()" style="color:#b91c1c; border:2px solid #f87171; background:#fef2f2; font-weight:900; padding:13px 14px; margin-top:6px; box-shadow:0 2px 6px rgba(239,68,68,0.15);">
-          <span>🗑️ 지금까지 학습한 모든 데이터 완전 초기화 (새로 시작)</span>
-        </button>
+      <!-- 2026-10-28 옵빠야 지시: '지금까지 학습한 모든 데이터 완전 초기화' 버튼 삭제(함수 resetAllLearnedDataCompletely는 보존).
+           언어별로 처음부터 하려면 '배울 언어'에서 언어를 두 번 누른 뒤 '새로 하기' -->
 
-      </div>
 
     </div>
 
@@ -1995,11 +1998,7 @@
 
 
 
-      <button class="btn-3d btn-green" onclick="submitDailyCheckin()">
-
-        <span>🚀 맞춤 회화 문장 생성 및 학습 시작</span>
-
-      </button>
+      <!-- 2026-10-28 옵빠야 지시: '맞춤 회화 문장 생성 및 학습 시작' 버튼 삭제 — 빠른 선택을 누르거나 입력(글·말)을 마치면 바로 적용 (hg_ui.js 주제 화면) -->
 
     </div>
 
@@ -18685,14 +18684,16 @@ const EXILE_VOICES = [
 
     const srcEl = document.getElementById('sessionCaseSource');
     if (srcEl) {
-      srcEl.textContent = caseObj.source || '✨ 상황 맞춤 로드';
-      if (caseObj.source && caseObj.source.includes('Gemini')) {
-        srcEl.style.background = 'rgba(79,70,229,0.3)';
-        srcEl.style.color = '#c7d2fe';
-      } else {
-        srcEl.style.background = 'rgba(16,185,129,0.2)';
-        srcEl.style.color = '#6ee7b7';
-      }
+      // 2026-10-28 옵빠야 지시: 맥락 출처를 Chat-Gpt 맥락 / Gemini 맥락 / Local 맥락(내장·AI 없이)으로 구분 표시 (원래 출처 문구는 title에)
+      const src = caseObj.source || '';
+      const kind = /chat-?gpt/i.test(src) ? 'chatgpt' : /gemini/i.test(src) ? 'gemini' : /claude/i.test(src) ? 'claude' : 'local';
+      const look = { chatgpt: ['🤖 Chat-Gpt 맥락', 'rgba(16,163,127,0.32)', '#a7f3d0'], gemini: ['✨ Gemini 맥락', 'rgba(79,70,229,0.35)', '#c7d2fe'],
+        claude: ['🧠 Claude 맥락', 'rgba(217,119,6,0.3)', '#fde68a'], local: ['📦 Local 맥락', 'rgba(148,163,184,0.3)', '#e2e8f0'] }[kind];
+      const setPart = (src.match(/세트 \d+\/\d+/) || [''])[0];
+      srcEl.textContent = look[0] + (/오늘 주제|오늘의 뉴스/.test(src) ? ' · 🎯 주제' : '') + (setPart ? ' · ' + setPart : '');
+      srcEl.dataset.kind = kind; srcEl.title = src;
+      srcEl.style.background = look[1];
+      srcEl.style.color = look[2];
     }
 
     const kwEl = document.getElementById('sessionCaseKeywords');
@@ -18907,11 +18908,20 @@ function getCurrentRoundData() {
     const data = getCurrentRoundData();
     if (!data) return;
 
-    document.getElementById('roundBadge').textContent = `따라하기 ${currentRound} / 4`;
+    // 2026-10-28: 세트당 문장 수가 레벨마다 달라짐(4~13개) → 배지·점 개수를 지금 세트 문장 수로
+    const roundTotal = window.hgRoundCount ? hgRoundCount() : 4;
+    document.getElementById('roundBadge').textContent = `따라하기 ${currentRound} / ${roundTotal}`;
     document.getElementById('roundTypeLabel').textContent = data.type;
 
-    for (let r = 1; r <= 4; r++) {
+    const dotBox = document.getElementById('roundDots');
+    if (dotBox && dotBox.children.length !== roundTotal) {
+      const size = roundTotal > 8 ? 6 : 8;
+      dotBox.style.gap = roundTotal > 8 ? '3px' : '4px';
+      dotBox.innerHTML = Array.from({ length: roundTotal }, (_, i) => `<div id="dotR${i + 1}" style="width:${size}px; height:${size}px; border-radius:50%; background:#cbd5e1;"></div>`).join('');
+    }
+    for (let r = 1; r <= roundTotal; r++) {
       const dot = document.getElementById(`dotR${r}`);
+      if (!dot) continue;
       if (r === currentRound) {
         dot.style.background = "#4f46e5";
         dot.style.transform = "scale(1.2)";
@@ -19093,7 +19103,7 @@ function getCurrentRoundData() {
 
   function promptManualInputTest() {
     const roundData = getCurrentRoundData();
-    const input = prompt(`[따라하기 ${currentRound}/4 단계]\n목표 문장: "${roundData.target}"\n\n발음하거나 말한 내용을 텍스트로 입력하여 정확도 평가를 진행하세요:`, roundData.target);
+    const input = prompt(`[따라하기 ${currentRound}/${window.hgRoundCount ? hgRoundCount() : 4} 단계]\n목표 문장: "${roundData.target}"\n\n발음하거나 말한 내용을 텍스트로 입력하여 정확도 평가를 진행하세요:`, roundData.target);
     if (input !== null && input.trim()) {
       soundMicEnd();
       const feedbackEl = document.getElementById('userSpokenFeedback');
@@ -19258,7 +19268,7 @@ function getCurrentRoundData() {
     }
 
     soundTap();
-    if (currentRound < 4) {
+    if (currentRound < (window.hgRoundCount ? hgRoundCount() : 4)) {
       currentRound++;
       renderCurrentRoundUI();
     } else if (window.HGV2) {
@@ -19463,7 +19473,8 @@ function getCurrentRoundData() {
     if (!mainBtn) return;
     // 2026-10-27 옵빠야 지시: 1단계 '호칭 및 음성 설정 완료 → 언어 선택' 버튼 삭제
     // (호칭 저장 → AI 튜터 설정 화면 → 뒤로 나오면 자동으로 언어 선택 단계, hg_ui.js closeTutorVoice)
-    mainBtn.style.display = obStep === 1 ? 'none' : '';
+    // 2026-10-28 옵빠야 지시: 2단계(언어)의 '이 언어로 AI 튜터 고르기' 버튼도 삭제 — 드롭다운에서 언어를 두 번 누르면 튜터로
+    mainBtn.style.display = (obStep === 1 || obStep === 2) ? 'none' : '';
     if (obStep === 1) {
       mainBtn.innerHTML = `<span>호칭 및 음성 설정 완료 ➔ 언어 선택</span>`;
     } else if (obStep === 7 || (obStep === 3 && obScriptAnswer === 0)) {
@@ -19542,7 +19553,7 @@ function getCurrentRoundData() {
     const backBtn = document.getElementById('obBackStepBtn');
     const mainBtn = document.getElementById('obMainActionBtn');
 
-    if (obStep > 1) {
+    if (obStep > 2) {  // 2026-10-28 옵빠야 지시: 2단계(언어)도 아래 '이전 단계' 없음
       backBtn.classList.remove('hidden');
       mainBtn.style.width = "";
     } else {
@@ -19666,7 +19677,9 @@ function getCurrentRoundData() {
   }
 
   // ⚙️ 설정 창 아래 '🆕 업데이트 확인' 버튼 + 현재 버전 (앱에서만. 켤 때 자동 확인은 MainActivity AppUpdater)
+  // 2026-10-28 옵빠야 지시: 버튼 삭제 — 업데이트는 앱을 켤 때 자동 확인만(AppUpdater). 아래 함수는 보존하되 호출하지 않음
   (function injectUpdateButton() {
+    if (true) return;
     const run = () => {
       const sheet = document.querySelector('#settingsModal .modal-sheet');
       if (!sheet || document.getElementById('hgUpdateBtn') || !(window.Native && window.Native.call)) return;
@@ -21974,7 +21987,7 @@ function getCurrentRoundData() {
         // 설정(호칭·목소리·API 키·글자 크기·언어 변형 선택)은 남긴다
         if (k.startsWith('hangeoreum_lv') || k.startsWith('hangeoreum_round') || k.startsWith('hangeoreum_case')
           || k.startsWith('hg_script_') || (k.startsWith('hg_v2_') && k !== 'hg_v2_models' && k !== 'hg_v2_fast_model')
-          || k === 'hg_ui_positions_v1' || k.startsWith('hg_far_') || k.startsWith('hg_letters_') || k.startsWith('hg_dlg_')
+          || k === 'hg_ui_positions_v1' || k.startsWith('hg_far_') || k.startsWith('hg_far2_') || k.startsWith('hg_letters_') || k.startsWith('hg_dlg_')
           || k.startsWith('hg_daily_') || k === 'hg_resume_snapshot' || k.startsWith('hg_review_v') || k === 'hg_ai_learning_cache_v1' || k === 'hangeoreum_daily_quote') {
           localStorage.removeItem(k);
         }
@@ -22160,7 +22173,7 @@ function getCurrentRoundData() {
 
   // 전자동 다음 라운드 또는 레벨 진행 (사용자 무버튼 진행)
   function autoProceedNextRoundOrLevel() {
-    if (currentRound < 4) {
+    if (currentRound < (window.hgRoundCount ? hgRoundCount() : 4)) {
       currentRound++;
       renderCurrentRoundUI();
     } else if (window.HGV2) {
