@@ -1,8 +1,8 @@
 {
-  "versionCode": 16,
-  "versionName": "1.0.7",
+  "versionCode": 17,
+  "versionName": "1.0.8",
   "apk": "https://kangjong9.github.io/downloads/Hangeoreum-V1.0-Exile.apk",
-  "sha256": "00de06916690deabffc24340e35323cf8a73b8984559cdfed6b3e21427793756",
-  "size": 1788885,
-  "notes": "기초 탭 아래에 50단계 로드맵(지금 진행 단계 표시) · 주제에 맞는 대화를 먼저 만들고 학습 문장을 골라요 · 레벨별 문장 수 4~13개 · 문자 카드 자동 재생과 그림 · 화면 스크롤 줄임"
+  "sha256": "9d05ce4d84ae7eeb8d17986542ea3a223f20c8bdfa102308ad39a49cb1d12dfd",
+  "size": 1789949,
+  "notes": "학습 화면을 스크롤 없이 한 화면에 · 맥락 줄과 버튼 줄을 단순하게 · 수업 카드가 더 위에 크게 보여요 · AI 대화 만들기 대기 시간 여유"
 }

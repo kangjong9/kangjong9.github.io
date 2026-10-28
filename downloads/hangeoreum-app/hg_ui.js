@@ -851,6 +851,8 @@
     lessonHeader.after(modes);
     const feedback=document.createElement('p');feedback.id='hgUiFeedbackNotice';feedback.className='hg-ui-note';feedback.textContent='시범을 듣고 따라 말하면 짧게 확인하고 이어가요. 종합 안내는 문자 카테고리와 10레벨 구간을 마칠 때 제공해요.';modes.after(feedback);
     const targetCard=$('targetDisplay').parentElement;targetCard.classList.add('hg-ui-phrase-card');
+    // 2026-10-28 옵빠야 지시(학습 탭 스크롤 없게): 카드 안 설명 라벨('오늘의 한국어 상황:'·'목표 외국어 발화:')은 숨길 수 있게 표시
+    [...targetCard.children].forEach(e=>{if(/오늘의 한국어 상황/.test(e.textContent)&&!e.id)e.classList.add('hg-ui-ko-label');if(e.querySelector('[onclick^="playTargetTTS"]'))e.classList.add('hg-ui-target-row');});
     const micPanel=$('sttStatusText').parentElement;micPanel.classList.add('hg-ui-mic-panel');
     $('feedbackSheet').classList.add('hg-ui-result-card');$('sttStatusText').setAttribute('aria-live','polite');$('userSpokenFeedback').setAttribute('aria-live','polite');
     // 2026-10-28 옵빠야 지시: 아래 '↻ 다시 듣기' 버튼 삭제 (이전/다음 단계 버튼은 hg_ui.css에서 숨김 — 좌우 밀기로 이동)

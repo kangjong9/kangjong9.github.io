@@ -247,7 +247,7 @@
           const text = await geminiCall({
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: { responseMimeType: 'application/json', temperature: 0.95 }
-          }, 50000, { background });  // 대화+문장을 한 번에 → 실기기 ChatGPT 최대 50초 관측
+          }, 60000, { background });  // 대화+문장을 한 번에 → 실기기 ChatGPT 50.7초 관측 → 여유 두고 60초
           const obj = JSON.parse(text.replace(/^```(json)?|```$/g, '').trim());
           const set = validateSet(obj, lang, ns, ns);
           if (!set) { console.warn('[HGV2] 주제 세트 반려(형식·반복)', attempt + 1); continue; }
@@ -494,7 +494,7 @@ ${stagePlan(n)}
           const text = await geminiCall({
             contents: [{ parts: [{ text: dialogFirstPrompt(lang, level, k, prev) }] }],
             generationConfig: { responseMimeType: 'application/json', temperature: 0.95 }
-          }, 50000, {background});
+          }, 60000, {background});
           const obj = JSON.parse(text.replace(/^```(json)?|```$/g, '').trim());
           const set = validateSet(obj, lang, null, sentenceCount(level));
           if (set) {
