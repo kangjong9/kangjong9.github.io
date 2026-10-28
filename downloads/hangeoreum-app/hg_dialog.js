@@ -237,14 +237,14 @@ ${rounds}
     st.id = 'hgDialogStyle';
     st.textContent = `
 #hgDialog{position:fixed;inset:0;z-index:9000;background:#f8fafc;display:flex;flex-direction:column;max-width:560px;margin:0 auto}
-#hgDialog .hd-head{padding:14px 16px 10px;background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff}
-#hgDialog .hd-kicker{font-size:13px;font-weight:800;opacity:.9}
-#hgDialog .hd-topline{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-#hgDialog .hd-source{margin-left:auto;flex:none;font-size:12px;font-weight:800;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.2);color:#fff}
-#hgDialog .hd-title{font-size:clamp(19px,5.4vw,22px);font-weight:900;margin-top:2px}
-#hgDialog .hd-sit{font-size:14px;font-weight:700;opacity:.92;margin-top:4px;line-height:1.4}
-#hgDialog .hd-cast{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-#hgDialog .hd-cast span{background:rgba(255,255,255,.2);border-radius:999px;padding:3px 10px;font-size:13px;font-weight:800}
+#hgDialog .hd-head{padding:8px 14px 7px;background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff}
+#hgDialog .hd-kicker{font-size:12px;font-weight:800;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#hgDialog .hd-topline{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap}
+#hgDialog .hd-source{margin-left:auto;flex:none;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.2);color:#fff}
+#hgDialog .hd-title{font-size:18px;font-weight:900;margin-top:1px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hgDialog .hd-sit{font-size:13px;font-weight:700;opacity:.92;margin-top:1px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hgDialog .hd-cast{display:flex;gap:5px;flex-wrap:nowrap;overflow:hidden;margin-top:4px}
+#hgDialog .hd-cast span{flex:none;background:rgba(255,255,255,.2);border-radius:999px;padding:1px 8px;font-size:12px;font-weight:800;white-space:nowrap}
 #hgDialog .hd-log{flex:1;overflow-y:auto;padding:14px 12px 8px;display:flex;flex-direction:column;gap:10px}
 #hgDialog .hd-row{display:flex;gap:8px;align-items:flex-end;max-width:100%;animation:hdIn .25s ease}
 #hgDialog .hd-row.r{flex-direction:row-reverse}
@@ -264,7 +264,62 @@ ${rounds}
 #hgDialog .hd-btn.go{background:#14b8a6;border-color:#14b8a6;color:#fff}
 #hgDialog .hd-prog{height:4px;background:#e2e8f0}
 #hgDialog .hd-prog>div{height:100%;background:#14b8a6;transition:width .3s}
-@keyframes hdIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}`;
+@keyframes hdIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#hgDialog .hd-row{animation:hdPop .38s cubic-bezier(.2,.9,.3,1.25) both}
+#hgDialog .hd-row:not(.r) .hd-bub{transform-origin:0 100%}
+#hgDialog .hd-row.r .hd-bub{transform-origin:100% 100%}
+#hgDialog .hd-bub{position:relative;perspective:600px;cursor:pointer}
+#hgDialog .hd-bub.flip{animation:hdFlip .4s ease}
+#hgDialog.no-ko .hd-bub.ko-open .hd-ko{display:block}
+#hgDialog .hd-wait .hd-bub{padding:10px 14px}
+#hgDialog .hd-wait .hd-dots{margin:0}
+#hgDialog .hd-av{position:relative;transition:transform .2s}
+#hgDialog .hd-row.talk .hd-av{animation:hdTalk .45s ease-in-out infinite alternate,hdRing 1.1s ease-out infinite}
+#hgDialog .hd-row.talk .hd-name::after{content:'';display:inline-block;width:18px;height:10px;margin-left:6px;vertical-align:middle;background:linear-gradient(currentColor,currentColor) 0 100%/3px 40% no-repeat,linear-gradient(currentColor,currentColor) 5px 100%/3px 90% no-repeat,linear-gradient(currentColor,currentColor) 10px 100%/3px 60% no-repeat,linear-gradient(currentColor,currentColor) 15px 100%/3px 80% no-repeat;animation:hdEq .5s steps(3) infinite alternate}
+#hgDialog .hd-row.talk .hd-t{background:linear-gradient(90deg,#0d9488 0 50%,#0f172a 50% 100%) 100% 0/200% 100% no-repeat;-webkit-background-clip:text;background-clip:text;color:transparent;animation:hdFill var(--dur,2s) linear forwards}
+#hgDialog .hd-row.star-in .hd-star{animation:hdStar .7s cubic-bezier(.2,.9,.3,1.4) .2s both,hdShine 1.6s ease-in-out .9s 2}
+#hgDialog .hd-row.star-in .hd-bub::after{content:'✨';position:absolute;top:-12px;right:-6px;font-size:20px;animation:hdSpark .9s ease-out .25s both}
+#hgDialog .hd-quiz{align-self:stretch;margin:4px 6px;padding:12px;border-radius:18px;background:#fff;border:2px solid #c4b5fd;box-shadow:0 6px 18px rgba(99,102,241,.16);animation:hdPop .45s cubic-bezier(.2,.9,.3,1.25) both}
+#hgDialog .hd-q{font-size:15px;font-weight:900;color:#4338ca;line-height:1.4;margin-bottom:9px}
+#hgDialog .hd-opts{display:flex;flex-direction:column;gap:7px}
+#hgDialog .hd-opt{min-height:46px;padding:9px 12px;border:2px solid #e2e8f0;border-bottom-width:4px;border-radius:14px;background:#fff;color:#0f172a;font-size:16px;font-weight:800;text-align:left;cursor:pointer;transition:transform .1s}
+#hgDialog .hd-opt:active{transform:translateY(2px);border-bottom-width:2px}
+#hgDialog .hd-opt:disabled{cursor:default;opacity:.55}
+#hgDialog .hd-opt.ok{opacity:1;background:#dcfce7;border-color:#22c55e;color:#166534;animation:hdOk .45s ease}
+#hgDialog .hd-opt.no{opacity:1;background:#fee2e2;border-color:#f87171;color:#991b1b;animation:hdShake .4s ease}
+#hgDialog .hd-qres{margin-top:8px;font-size:15px;font-weight:900;text-align:center;animation:hdPop .35s ease both}
+#hgDialog .hd-qres.ok{color:#16a34a}#hgDialog .hd-qres.no{color:#dc2626}
+#hgDialog .hd-row.hide-ko .hd-ko{visibility:hidden}
+#hgDialog .hd-quiz.done{border-color:#e2e8f0;box-shadow:none}
+#hgDialog .hd-done{align-self:stretch;margin:6px 6px 4px;padding:14px;border-radius:20px;background:linear-gradient(160deg,#f0fdfa,#eef2ff);border:2px solid #99f6e4;text-align:center;animation:hdPop .55s cubic-bezier(.2,.9,.3,1.3) both}
+#hgDialog .hd-done-top{font-size:20px;font-weight:900;color:#0f766e}
+#hgDialog .hd-done-stars{display:flex;justify-content:center;gap:6px;margin-top:4px}
+#hgDialog .hd-done-stars i{font-style:normal;font-size:34px;color:#cbd5e1;animation:hdStar .5s cubic-bezier(.2,.9,.3,1.5) both}
+#hgDialog .hd-done-stars i.on{color:#fbbf24;text-shadow:0 2px 8px rgba(251,191,36,.5)}
+#hgDialog .hd-done-score{font-size:15px;font-weight:800;color:#334155;margin-top:2px}
+#hgDialog .hd-done-score b{color:#16a34a;font-size:18px}
+#hgDialog .hd-done-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;text-align:left}
+#hgDialog .hd-done-item{display:flex;gap:8px;align-items:flex-start;background:#fff;border-radius:12px;padding:7px 10px}
+#hgDialog .hd-done-item>span{flex:none;font-size:13px;font-weight:900;color:#b45309;margin-top:2px}
+#hgDialog .hd-done-t{font-size:16px;font-weight:800;color:#0f172a}
+#hgDialog .hd-done-ko{font-size:13px;font-weight:700;color:#64748b}
+#hgDialog .hd-done-next{margin-top:10px;font-size:13px;font-weight:800;color:#0d9488}
+@keyframes hdOk{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes hdShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+#hgDialog .hd-dots{display:inline-flex;gap:6px;margin-top:8px}
+#hgDialog .hd-dots i{width:9px;height:9px;border-radius:50%;background:#14b8a6;animation:hdDot 1s ease-in-out infinite}
+#hgDialog .hd-dots i:nth-child(2){animation-delay:.15s}#hgDialog .hd-dots i:nth-child(3){animation-delay:.3s}
+@keyframes hdPop{from{opacity:0;transform:translateY(14px) scale(.85)}to{opacity:1;transform:none}}
+@keyframes hdFlip{0%{transform:rotateY(0)}50%{transform:rotateY(90deg)}100%{transform:rotateY(0)}}
+@keyframes hdTalk{from{transform:translateY(0) scale(1)}to{transform:translateY(-3px) scale(1.08)}}
+@keyframes hdRing{0%{box-shadow:0 0 0 0 rgba(20,184,166,.55)}100%{box-shadow:0 0 0 12px rgba(20,184,166,0)}}
+@keyframes hdEq{from{background-size:3px 30%,3px 90%,3px 50%,3px 70%}to{background-size:3px 90%,3px 40%,3px 100%,3px 30%}}
+@keyframes hdFill{from{background-position:100% 0}to{background-position:0 0}}
+@keyframes hdStar{from{opacity:0;transform:scale(.3) rotate(-12deg)}to{opacity:1;transform:none}}
+@keyframes hdShine{0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}50%{box-shadow:0 0 0 5px rgba(251,191,36,.45)}}
+@keyframes hdSpark{0%{opacity:0;transform:scale(.2) rotate(0)}60%{opacity:1;transform:scale(1.2) rotate(20deg)}100%{opacity:0;transform:scale(.8) translateY(-10px)}}
+@keyframes hdDot{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-6px);opacity:1}}
+@media (prefers-reduced-motion:reduce){#hgDialog *{animation:none!important}}`;
     document.head.appendChild(st);
   }
 
@@ -333,8 +388,26 @@ ${rounds}
     const log = el.querySelector('#hdLog');
     log.innerHTML = dlg.lines.slice(0, cur.idx).map(bubble).join('');
     log.scrollTop = log.scrollHeight;
+    // 말풍선을 누르면 뒤집히며 그 줄을 다시 들려준다 (뜻을 숨긴 레벨은 그 줄 뜻도 보여 줌)
+    log.onclick = (e) => {
+      const row = e.target.closest('.hd-row[data-i]');
+      if (!row || !cur || !cur.dlg || cur.playing) return;
+      const bub = row.querySelector('.hd-bub');
+      bub.classList.remove('flip'); void bub.offsetWidth; bub.classList.add('flip');
+      setTimeout(() => bub.classList.toggle('ko-open'), 200);
+      const line = cur.dlg.lines[+row.dataset.i];
+      if (line) { talk(row, line); speakLine(line, () => untalk(row)); }
+    };
     updateProg();
   }
+
+  /* 말하는 동안: 아바타 파동 + 소리 막대 + 글자가 차오르는 노래방 효과 */
+  function talk(row, line) {
+    const n = /^(ja|cn|zh)/.test(lang()) ? line.t.length * 0.16 : line.t.split(/\s+/).length * 0.42;
+    row.style.setProperty('--dur', `${Math.min(8, Math.max(1.1, n)).toFixed(2)}s`);
+    row.classList.remove('talk'); void row.offsetWidth; row.classList.add('talk');
+  }
+  function untalk(row) { if (row) row.classList.remove('talk'); }
   function updateProg() {
     const p = document.getElementById('hdProg');
     if (p && cur) p.style.width = `${Math.round((cur.idx / cur.dlg.lines.length) * 100)}%`;
@@ -348,22 +421,87 @@ ${rounds}
     const log = document.getElementById('hdLog');
     if (!log) return;
     if (cur.idx >= dlg.lines.length) { finish(); return; }
-    const i = cur.idx, line = dlg.lines[i];
-    log.querySelectorAll('.hd-row.now').forEach(r => r.classList.remove('now'));
+    const i = cur.idx, line = dlg.lines[i], my = cur;
+    log.querySelectorAll('.hd-row.now').forEach(r => { r.classList.remove('now'); untalk(r); });
+    // 짝수 별표 문장은 나오기 전에 '다음에 뭐라고 할까?'를 먼저 묻는다
+    if (line.round && quizKind(line) === 'next' && !cur.quiz[i]) { askQuiz('next', i, my, step); return; }
+    // 말하기 전 '입력 중…' 점 세 개를 잠깐 보여 메신저처럼 다음 말풍선이 오게 한다
+    const sp = dlg.speakers[line.s], col = SIDE_COLORS[line.s] || SIDE_COLORS[0];
+    log.insertAdjacentHTML('beforeend', `<div class="hd-row hd-wait ${line.s === 1 ? 'r' : ''}"><div class="hd-av" style="background:${col.avatar}">${esc(sp.emoji)}</div>
+      <div class="hd-bub" style="background:${col.bg};border-color:${col.border}"><span class="hd-dots"><i></i><i></i><i></i></span></div></div>`);
+    log.scrollTop = log.scrollHeight;
+    prefetchLine(line);
+    prefetchLine(dlg.lines[i + 1]);
+    cur.timer = setTimeout(() => {
+      log.querySelectorAll('.hd-wait').forEach(w => w.remove());
+      if (cur !== my || !cur.playing) return;
+      say(line, i, my);
+    }, 420);
+  }
+  function say(line, i, my) {
+    const log = document.getElementById('hdLog');
+    if (!log) return;
     log.insertAdjacentHTML('beforeend', bubble(line, i));
     const row = log.lastElementChild;
     row.classList.add('now');
+    if (line.round) row.classList.add('star-in');
+    talk(row, line);
     log.scrollTop = log.scrollHeight;
-    prefetchLine(dlg.lines[i + 1]);
-    const my = cur, t0 = Date.now();
+    const t0 = Date.now();
     speakLine(line, () => {
+      untalk(row);
       if (cur !== my || !cur.playing) return;
       cur.idx = i + 1;
       progress[sig(cur.c)] = cur.idx;
       updateProg();
       // 음성이 실패해 바로 끝나도(오프라인 등) 말풍선을 읽을 시간만큼은 보여 준다
       const minShow = 1000 + line.t.length * 60;
-      cur.timer = setTimeout(step, Math.max(350, minShow - (Date.now() - t0)));
+      const wait = Math.max(350, minShow - (Date.now() - t0));
+      // 홀수 별표 문장은 듣고 나서 '무슨 뜻일까?'를 묻는다
+      if (line.round && quizKind(line) === 'mean' && !cur.quiz[i]) { cur.timer = setTimeout(() => askQuiz('mean', i, my, step), Math.min(wait, 600)); return; }
+      cur.timer = setTimeout(step, wait);
+    });
+  }
+
+  /* ---------- 중간 참여 문제 (듀오링고 Stories식) ---------- */
+  const quizKind = (line) => (line.round % 2 ? 'mean' : 'next');
+  function shuffle(a) { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; }
+  function quizOptions(kind, i) {
+    const lines = cur.dlg.lines, key = kind === 'mean' ? 'ko' : 't', answer = (lines[i][key] || '').trim();
+    if (!answer) return null;
+    const others = [...new Set(lines.filter((l, k) => k !== i).map(l => (l[key] || '').trim()).filter(t => t && t !== answer))];
+    if (others.length < 2) return null;
+    return { answer, opts: shuffle([answer, ...shuffle(others).slice(0, 2)]) };
+  }
+  function askQuiz(kind, i, my, cont) {
+    const log = document.getElementById('hdLog');
+    const line = cur.dlg.lines[i], sp = cur.dlg.speakers[line.s];
+    const q = quizOptions(kind, i);
+    if (!log || !q) { cur.quiz[i] = true; cont(); return; }
+    const ask = kind === 'mean'
+      ? `🎧 방금 ${esc(sp.name)}의 말, 무슨 뜻일까?`
+      : `💬 ${esc(sp.name)}이(가) 이제 “${esc(line.ko || '')}”라고 하려고 해요.<br>어떻게 말할까?`;
+    log.insertAdjacentHTML('beforeend', `<div class="hd-quiz"><div class="hd-q">${ask}</div>
+      <div class="hd-opts">${q.opts.map((o, k) => `<button class="hd-opt" data-k="${k}">${esc(o)}</button>`).join('')}</div></div>`);
+    const box = log.lastElementChild;
+    // 뜻 문제는 바로 위 말풍선의 뜻이 정답이라, 풀 동안 그 줄 뜻을 가려 둔다
+    const said = kind === 'mean' ? log.querySelector(`.hd-row[data-i="${i}"]`) : null;
+    if (said) said.classList.add('hide-ko');
+    log.scrollTop = log.scrollHeight;
+    box.querySelectorAll('.hd-opt').forEach(btn => btn.onclick = (e) => {
+      e.stopPropagation();
+      if (box.classList.contains('done')) return;
+      box.classList.add('done');
+      if (said) said.classList.remove('hide-ko');
+      cur.quiz[i] = true;
+      const ok = q.opts[+btn.dataset.k] === q.answer;
+      cur.score.n++; if (ok) cur.score.ok++;
+      box.querySelectorAll('.hd-opt').forEach(b => { b.disabled = true; if (q.opts[+b.dataset.k] === q.answer) b.classList.add('ok'); });
+      if (!ok) btn.classList.add('no');
+      box.insertAdjacentHTML('beforeend', `<div class="hd-qres ${ok ? 'ok' : 'no'}">${ok ? '정답! 👏' : '아쉬워요 — 초록색이 정답이에요'}</div>`);
+      log.scrollTop = log.scrollHeight;
+      if (window.HGUX) HGUX.sfx(ok ? 'sparkle' : 'oops', 0.8);
+      setTimeout(() => { if (cur === my && cur.playing) cont(); }, ok ? 1000 : 1800);
     });
   }
 
@@ -378,6 +516,8 @@ ${rounds}
       const log = document.getElementById('hdLog');
       const last = log && log.querySelector(`.hd-row[data-i="${cur.idx}"]`);
       if (last) last.remove();
+      if (log) log.querySelectorAll('.hd-wait, .hd-quiz:not(.done)').forEach(w => w.remove());
+      if (log) log.querySelectorAll('.hide-ko').forEach(r => r.classList.remove('hide-ko'));
       if (btn) btn.textContent = '▶ 이어 듣기';
     } else {
       cur.playing = true;
@@ -420,21 +560,44 @@ ${rounds}
     const c = cur.c, my = cur;
     cur.playing = false;
     updateProg();
+    const log = document.getElementById('hdLog');
+    if (log) {
+      log.querySelectorAll('.hd-row.now').forEach(r => r.classList.remove('now'));
+      log.insertAdjacentHTML('beforeend', doneCard());
+      log.scrollTop = log.scrollHeight;
+    }
+    const { ok, n } = cur.score;
+    if (window.HGUX) HGUX.sfx(n && ok === n ? 'fanfare' : 'sparkle', 0.8);
     const go = document.getElementById('hdGo');
     if (go) go.textContent = '▶ 바로 수업 시작';
     const pause = document.getElementById('hdPause');
     if (pause) { pause.textContent = '🔁 다시 듣기'; pause.onclick = () => replay(); }
-    const msg = '좋아! 방금 대화에 나온 별표 문장으로 하나씩 따라 말해 보자.';
+    const praise = !n ? '좋아!' : ok === n ? `퀴즈 ${n}개 모두 맞혔어, 최고야!` : `퀴즈 ${n}개 중 ${ok}개 맞혔어!`;
+    const msg = `${praise} 이제 별표 문장으로 하나씩 따라 말해 보자.`;
     let fired = false;
     const next = () => { if (fired || cur !== my) return; fired = true; cur = null; markSeen(c); close(); startLesson(); };
-    if (typeof speakExileTutor === 'function') speakExileTutor(msg, 'ko', () => setTimeout(next, 400));
-    setTimeout(next, 6000 + msg.length * 120);
+    // 결과 카드를 볼 시간을 주고 수업으로 넘어간다
+    if (typeof speakExileTutor === 'function') speakExileTutor(msg, 'ko', () => setTimeout(next, 2500));
+    setTimeout(next, 8000 + msg.length * 120);
+  }
+
+  // 끝 보상 카드: 별점 + 퀴즈 결과 + 오늘 배울 별표 문장 요약
+  function doneCard() {
+    const { ok, n } = cur.score;
+    const stars = !n ? '' : ok === n ? 3 : ok * 2 >= n ? 2 : 1;
+    const starRow = stars ? `<div class="hd-done-stars">${[1, 2, 3].map(k => `<i class="${k <= stars ? 'on' : ''}" style="animation-delay:${0.25 + k * 0.18}s">★</i>`).join('')}</div>` : '';
+    const learn = cur.dlg.lines.filter(l => l.round).sort((a, b) => a.round - b.round);
+    return `<div class="hd-done">
+      <div class="hd-done-top">🎉 대화 끝!</div>${starRow}
+      ${n ? `<div class="hd-done-score">퀴즈 ${n}문제 중 <b>${ok}</b>개 정답</div>` : ''}
+      <div class="hd-done-list">${learn.map(l => `<div class="hd-done-item"><span>⭐${l.round}</span><div><div class="hd-done-t">${esc(l.t)}</div>${l.ko ? `<div class="hd-done-ko">${esc(l.ko)}</div>` : ''}</div></div>`).join('')}</div>
+      <div class="hd-done-next">곧 이 문장들을 하나씩 따라 말해요</div></div>`;
   }
 
   function replay() {
     if (!cur) return;
     // 새 토큰으로 바꿔 finish()가 걸어 둔 '수업 시작' 타이머가 다시 듣기를 끊지 않게 한다
-    cur = Object.assign({}, cur, { idx: 0, playing: true, epoch: epoch(), timer: null });
+    cur = Object.assign({}, cur, { idx: 0, playing: true, epoch: epoch(), timer: null, quiz: {}, score: { ok: 0, n: 0 } });
     renderPlayer();
     step();
   }
@@ -453,9 +616,9 @@ ${rounds}
   }
 
   async function open(c) {
-    const token = { c, dlg: null, idx: progress[sig(c)] || 0, playing: false, epoch: epoch(), timer: null };
+    const token = { c, dlg: null, idx: progress[sig(c)] || 0, playing: false, epoch: epoch(), timer: null, quiz: {}, score: { ok: 0, n: 0 } };
     cur = token;
-    frame(c, `<div class="hd-log"><div class="hd-typing">🌌 엑자일이 오늘의 대화를 준비하고 있어요<br><span style="font-size:15px">• • •</span></div></div>
+    frame(c, `<div class="hd-log"><div class="hd-typing">🌌 엑자일이 오늘의 대화를 준비하고 있어요<br><span class="hd-dots"><i></i><i></i><i></i></span></div></div>
       <div class="hd-bar"><button class="hd-btn go" onclick="HGDIALOG.skip()">⏭ 건너뛰고 수업 시작</button></div>`);
     const dlg = await getDialog(c);
     if (cur !== token) return;

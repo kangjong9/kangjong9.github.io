@@ -925,8 +925,11 @@ JSON만: {"text":"${L} 원어","ko":"한국어 번역"}` }] }], generationConfig
     const scene = activeSessionCase.art || '🌟';
     const main = r.emoji || [...scene][0] || '🌟';
     const key = `${activeSessionCase.id}_${currentRound}`;
+    // 2026-10-28 옵빠야 지시: 학습 이모지에 간단한 움직임 — 장면 이모지는 하나씩 번갈아 통통
+    const marks = typeof Intl !== 'undefined' && Intl.Segmenter ? [...new Intl.Segmenter().segment(scene)].map(s => s.segment) : [...scene];
+    const sceneHtml = marks.map((m, k) => m.trim() ? `<span class="hga-e" style="animation-delay:${(k * 0.22).toFixed(2)}s">${esc(m)}</span>` : esc(m)).join('');
     card.innerHTML = `<div class="hga-main">${esc(main)}</div>
-      <div class="hga-side"><div class="hga-scene">${esc(scene)}</div><div class="hga-title">${esc(activeSessionCase.title)}</div></div>`;
+      <div class="hga-side"><div class="hga-scene">${sceneHtml}</div><div class="hga-title">${esc(activeSessionCase.title)}</div></div>`;
     if (key !== lastArtKey) { card.classList.remove('pop'); void card.offsetWidth; card.classList.add('pop'); lastArtKey = key; }
   }
 

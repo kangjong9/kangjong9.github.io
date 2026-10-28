@@ -42,32 +42,31 @@ img, video, canvas { max-width: 100%; }
 /* 한글은 낱말 중간에서 끊지 않는다 (러시 / 아어 같은 줄바꿈 방지 — 시인성) */
 #viewCanvas, #viewOnboarding, .modal-sheet, .hgl-ov, .app-header { word-break: keep-all; }
 
-/* 말하는 동안 파동 */
-#hgSpeakWave { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%) scale(.6); width: 150px; height: 150px;
-  pointer-events: none; z-index: 99990; opacity: 0; transition: opacity .25s, transform .25s; }
-#hgSpeakWave.on { opacity: 1; transform: translateX(-50%) scale(1); }
-#hgSpeakWave .hgw-ring { position: absolute; inset: 35px; border-radius: 50%; border: 3px solid #ef4444;
-  animation: hgwRipple 1.6s ease-out infinite; }
-#hgSpeakWave .hgw-ring.d2 { animation-delay: .53s; }
-#hgSpeakWave .hgw-ring.d3 { animation-delay: 1.06s; }
-#hgSpeakWave .hgw-core { position: absolute; inset: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 28px; background: linear-gradient(135deg, #ef4444, #f97316); box-shadow: 0 6px 20px rgba(239,68,68,.45);
-  animation: hgwPulse .8s ease-in-out infinite alternate; }
-#hgSpeakWave .hgw-bars { position: absolute; left: 50%; bottom: -26px; transform: translateX(-50%); display: flex; gap: 4px; align-items: center; height: 26px; }
-#hgSpeakWave .hgw-bars i { width: 5px; height: 8px; border-radius: 3px; background: #ef4444; animation: hgwBar .9s ease-in-out infinite; }
-#hgSpeakWave .hgw-bars i:nth-child(2n) { animation-delay: .15s; background: #f97316; }
-#hgSpeakWave .hgw-bars i:nth-child(3n) { animation-delay: .3s; }
-#hgSpeakWave .hgw-bars i:nth-child(4n) { animation-delay: .45s; background: #f59e0b; }
-#hgSpeakWave .hgw-label { position: absolute; left: 50%; bottom: -54px; transform: translateX(-50%); white-space: nowrap;
-  font-size: 15px; font-weight: 900; color: #fff; background: #ef4444; padding: 3px 12px; border-radius: 999px; }
-@keyframes hgwRipple { from { transform: scale(1); opacity: .9; } to { transform: scale(2.1); opacity: 0; } }
-@keyframes hgwPulse { from { transform: scale(.94); } to { transform: scale(1.06); } }
-@keyframes hgwBar { 0%, 100% { height: 6px; } 50% { height: 24px; } }
-
+/* 말하는 동안 파동 — 붉은 마이크 대신 아래쪽 작은 캡슐 음파 (옵빠야 지시: 붉은 마이크 모양 싫음) */
+#hgSpeakWave { position: fixed; left: 50%; bottom: 78px; transform: translate(-50%, 8px) scale(.9); width: 120px; height: 28px;
+  border-radius: 999px; background: rgba(255,255,255,.92); border: 1.5px solid #99f6e4;
+  box-shadow: 0 6px 22px rgba(13,148,136,.28); backdrop-filter: blur(6px);
+  pointer-events: none; z-index: 99990; opacity: 0; transition: opacity .25s, transform .3s cubic-bezier(.2,.9,.3,1.3); }
+#hgSpeakWave.on { opacity: 1; transform: translate(-50%, 0) scale(1); animation: hgwGlow 1.8s ease-in-out infinite alternate; }
+#hgSpeakWave .hgw-ring, #hgSpeakWave .hgw-core, #hgSpeakWave .hgw-label { display: none; }
+#hgSpeakWave .hgw-bars { position: absolute; inset: 0; display: flex; gap: 5px; align-items: center; justify-content: center; }
+#hgSpeakWave .hgw-bars i { width: 4px; height: 6px; border-radius: 3px; background: linear-gradient(180deg, #14b8a6, #6366f1);
+  animation: hgwBar 1s ease-in-out infinite; }
+#hgSpeakWave .hgw-bars i:nth-child(2) { animation-delay: -.8s; } #hgSpeakWave .hgw-bars i:nth-child(3) { animation-delay: -.6s; }
+#hgSpeakWave .hgw-bars i:nth-child(4) { animation-delay: -.4s; } #hgSpeakWave .hgw-bars i:nth-child(5) { animation-delay: -.2s; }
+#hgSpeakWave .hgw-bars i:nth-child(6) { animation-delay: -.4s; } #hgSpeakWave .hgw-bars i:nth-child(7) { animation-delay: -.6s; }
+#hgSpeakWave .hgw-bars i:nth-child(8) { animation-delay: -.8s; } #hgSpeakWave .hgw-bars i:nth-child(9) { animation-delay: -1s; }
+@keyframes hgwBar { 0%, 100% { height: 6px; opacity: .55; } 50% { height: 18px; opacity: 1; } }
+@keyframes hgwGlow { from { box-shadow: 0 6px 22px rgba(13,148,136,.22); } to { box-shadow: 0 6px 26px rgba(99,102,241,.38); } }
 /* 장면 일러스트 카드 */
 #hgArtCard { display: flex; align-items: center; gap: 12px; margin: 0 auto 10px; padding: 10px 14px; max-width: 420px;
   background: linear-gradient(135deg, #eef2ff, #fdf2f8); border: 1.5px solid #c7d2fe; border-radius: 18px; box-sizing: border-box; }
-#hgArtCard .hga-main { font-size: 54px; line-height: 1; filter: drop-shadow(0 4px 6px rgba(79,70,229,.25)); animation: hgaFloat 3s ease-in-out infinite; }
+#hgArtCard .hga-main { font-size: 54px; line-height: 1; filter: drop-shadow(0 4px 6px rgba(79,70,229,.25)); transform-origin: 50% 90%; animation: hgaBounce 2.4s ease-in-out infinite; }
+#hgArtCard .hga-e { display: inline-block; animation: hgaHop 1.8s ease-in-out infinite; }
+@keyframes hgaBounce { 0%, 100% { transform: translateY(0) rotate(0) scale(1); } 15% { transform: translateY(-10px) rotate(-10deg) scale(1.06); }
+  30% { transform: translateY(0) rotate(8deg) scale(.97, 1.03); } 45% { transform: translateY(-4px) rotate(-5deg); } 60% { transform: translateY(0) rotate(0) scale(1); } }
+@keyframes hgaHop { 0%, 60%, 100% { transform: translateY(0) scale(1); } 20% { transform: translateY(-7px) scale(1.15) rotate(-6deg); } 40% { transform: translateY(0) scale(.95, 1.05); } }
+@media (prefers-reduced-motion: reduce) { #hgArtCard .hga-main, #hgArtCard .hga-e { animation: none; } }
 #hgArtCard .hga-side { flex: 1; min-width: 0; text-align: left; }
 #hgArtCard .hga-scene { font-size: 26px; letter-spacing: 4px; }
 #hgArtCard .hga-title { font-size: 15px; font-weight: 900; color: #3730a3; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

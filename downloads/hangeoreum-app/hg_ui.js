@@ -133,7 +133,8 @@
       if (!b.checkVisibility()) return;
       if (!b._home) b._home = b.parentElement;
       if (b.parentElement !== b._home) b._home.appendChild(b);
-      b.classList.remove('is-below'); b.style.marginBottom = ''; b.style.fontSize = '';
+      b.classList.remove('is-below', 'is-fox'); b.style.marginBottom = ''; b.style.fontSize = ''; b.style.left = b.style.top = b.style.maxWidth = '';
+      if (foxBubble(b)) return;
       const eye = b.closest('.hg-ui-hero')?.querySelector('.hg-ui-eyebrow'), range = document.createRange();
       const eyeRect = eye ? (range.selectNodeContents(eye), range.getBoundingClientRect()) : null;
       // 2026-10-28: 폰에서 말풍선이 진행도 줄(언어·Lv, ▼ 버튼 포함)의 아랫부분을 가림 → 진행도 줄 전체 아래 + 6px 여유까지 피함
@@ -147,6 +148,27 @@
         b.classList.add('is-below'); b.closest('h1').after(b);
       }
     });
+  }
+  // 2026-10-28 옵빠야 지시: 홈·기초·설정·튜터 등 모든 말풍선은 위로 올려 여우 바로 아래에 붙임(꼬리는 위 여우 쪽)
+  // 위 글자(진행도 줄·제목)와 겹치면 폭을 줄여 보고, 그래도 겹치면 false → 예전 배치로
+  function foxBubble(b) {
+    const hero = b.closest('.hg-ui-hero'), fox = hero && hero.querySelector('.hg-ui-guide');
+    if (!fox || !fox.checkVisibility()) return false;
+    // hero에 position을 주면 여우 자리(절대 위치 기준)가 바뀌므로 건드리지 않고, 말풍선의 기준 상자(offsetParent) 좌표로 놓는다
+    hero.appendChild(b); b.classList.add('is-fox');
+    const range = document.createRange();
+    const texts = [...hero.querySelectorAll('.hg-ui-eyebrow, h1')].map(e => (range.selectNodeContents(e), range.getBoundingClientRect()));
+    const place = () => {
+      const op = (b.offsetParent || document.body).getBoundingClientRect(), hr = hero.getBoundingClientRect(), fr = fox.getBoundingClientRect(), w = b.offsetWidth;
+      b.style.top = Math.round(fr.bottom - op.top - 6) + 'px';
+      b.style.left = Math.round(Math.min(fr.left + fr.width / 2 - w / 2, hr.right - w) - op.left) + 'px';
+      const r = b.getBoundingClientRect();
+      return !texts.some(t => t.width && r.left < t.right + 6 && r.right > t.left && r.top < t.bottom && r.bottom > t.top);
+    };
+    for (const mw of [190, 160, 130, 110]) { b.style.maxWidth = mw + 'px'; if (place()) return true; }
+    b.classList.remove('is-fox'); b.style.left = b.style.top = b.style.maxWidth = '';
+    b._home.appendChild(b);
+    return false;
   }
   addEventListener('resize', () => requestAnimationFrame(fitBubbles));
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(fitBubbles));  // 폰 글꼴이 늦게 적용되면 폭이 달라짐
@@ -197,7 +219,7 @@
   function renderLanguages() {
     pendingLanguage = pendingLanguage || selectedLang;
     const card = (l, status) => `<button class="hg-ui-language" data-language="${l[0]}" aria-pressed="${l[0] === pendingLanguage}" data-search="${l.slice(0,3).join(' ')}"><span class="hg-ui-lang-title"><span class="hg-ui-flag">${l[3]}</span><strong>${l[1]} <span class="hg-ui-native">(${l[2]})</span></strong><em>${status}</em></span><small>${INTRO[l[0]] || ''}</small></button>`;
-    $('viewLanguages').innerHTML = hero('MY LANGUAGE', '어떤 언어로<br>한 걸음 내딛을까요?', '언어마다 나의 학습 위치를 이어가요.') + `
+    $('viewLanguages').innerHTML = hero('MY LANGUAGE', '어떤 언어로<br>한 걸음 내딛을까요?', '어떤 언어를 배우고 싶으신가요?') + `
       <label class="hg-ui-search">언어 찾기<input id="hgUiLanguageSearch" type="search" placeholder="언어 이름을 입력하세요" autocomplete="off"></label>
       <div class="hg-ui-language-grid" role="group" aria-label="학습 언어">${LANGS.map(l => {
         const pos = read(POSITIONS, {})[l[0]], letters = read('hg_letters_' + l[0], null);
@@ -903,8 +925,21 @@
     // 2026-10-27 옵빠야 지시: '처음으로' 화면의 '직전 학습 이어서 하기' 배너 대신 홈과 같은 마스코트 영역(문구는 시작 화면용)
     if ($('viewOnboarding') && !$('hgObHero')) {
       const obHero = document.createElement('div'); obHero.id = 'hgObHero';
-      obHero.innerHTML = hero('START', '처음부터,<br>한 걸음씩.', 'Exile과 함께 호칭·언어·튜터를 정해요.');
+      obHero.innerHTML = hero('START', '처음부터,<br>한 걸음씩.', 'Exile이 너를 부를 호칭을 정해요.');
       $('viewOnboarding').prepend(obHero.firstElementChild);
+      // 2026-10-28 옵빠야 지시: 첫걸음(호칭) 말풍선 = 호칭, '배울 언어'(언어 고르기 단계) 말풍선 = 언어 — 단계가 바뀔 때마다 바꿔 씀
+      const obSay = () => (typeof obStep !== 'undefined' && obStep === 2) ? '어떤 언어를 배우고 싶으신가요?' : 'Exile이 너를 부를 호칭을 정해요.';
+      const syncObBubble = () => {
+        const v = $('viewOnboarding'), t = obSay(); if (!v) return;
+        const b = v.querySelector('.hg-ui-fox-bubble'), sr = v.querySelector('.hg-ui-hero .hg-ui-sr');
+        if (b && b.textContent !== t) { b.textContent = t; if (sr) sr.textContent = t; requestAnimationFrame(fitBubbles); }
+      };
+      if (typeof window.updateObStepUI === 'function' && !window.updateObStepUI._hgBubble) {
+        const orig = window.updateObStepUI;
+        window.updateObStepUI = function () { const r = orig.apply(this, arguments); syncObBubble(); return r; };
+        window.updateObStepUI._hgBubble = true;
+      }
+      syncObBubble();
     }
     const nav=document.createElement('nav');nav.id='hgUiNav';nav.className='hg-ui-nav';nav.setAttribute('aria-label','주 메뉴');nav.innerHTML='<button data-hg="home" data-hg-nav="home"><span>🏠</span>홈</button><button data-hg="foundation" data-hg-nav="foundation"><span>🔤</span>기초</button><button data-hg="words" data-hg-nav="lesson"><span>📚</span>학습</button><button data-hg="roleplay" data-hg-nav="roleplay"><span>💬</span>회화</button><button data-hg="settings" data-hg-nav="settings"><span>⚙️</span>설정</button>';root.append(nav);
     const notice=document.createElement('p');notice.id='hgUiNotice';notice.className='hg-ui-status';notice.setAttribute('role','status');root.append(notice);

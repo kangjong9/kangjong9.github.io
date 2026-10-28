@@ -256,7 +256,7 @@ html{scroll-padding-top:calc(var(--hg-top-h,168px) + 190px);}
 .hg-ui-active .hg-ui-lang-switch{display:inline-flex;align-items:center;gap:6px;min-height:0;margin:0;padding:2px 0;border:0;background:none;box-shadow:none;color:inherit;font:inherit;font-weight:900;cursor:pointer;}
 .hg-ui-lang-caret{display:inline-block;color:#fff;background:var(--hg-ui-teal);border-radius:50%;width:1.15em;height:1.15em;line-height:1.15em;text-align:center;font-size:.8em;}
 #viewHome .hg-ui-section-title{margin:12px 0 8px;}
-#viewHome .hg-ui-shortcuts{gap:8px;}
+#viewHome .hg-ui-shortcuts{gap:8px;grid-auto-rows:1fr;}  /* 2026-10-28 옵빠야 지시: 문자 기초 줄과 AI 회화 줄 높이를 같게 */
 #viewHome .hg-ui-shortcut{display:grid;grid-template-columns:38px minmax(0,1fr);grid-template-rows:auto auto;column-gap:10px;align-items:center;min-height:0;padding:9px 10px 9px 12px;border-radius:18px;}
 #viewHome .hg-ui-shortcut .hg-ui-icon{grid-row:1 / span 2;}
 #viewHome .hg-ui-shortcut strong{margin:0;font-size:15.5px;white-space:nowrap;}
@@ -271,7 +271,10 @@ html{scroll-padding-top:calc(var(--hg-top-h,168px) + 190px);}
 #hgTutorVoice .hg-ui-tutor-body>div{padding-bottom:0!important;}
 #hgTutorVoice #fourVoiceTabsGroup>button{min-height:38px!important;}
 /* 2026-10-27 옵빠야 지시: 샘플 듣기 아래 남은 칸 오른쪽에 작게(스크롤 안 생기게) */
-#hgTutorVoice .hg-ui-tutor-done{display:block;margin:6px 13.5px 0 auto;height:28px;min-height:0!important;padding:0 12px;border:0;border-radius:10px;background:var(--hg-ui-teal);color:#fff;font-size:12.5px!important;font-weight:900;line-height:28px;box-shadow:0 2px 0 #066b77;}  /* 속도 줄에 있던 모양 그대로 */
+/* 2026-10-28 옵빠야 지시: '설정 완료'를 스크롤 안 생기는 만큼 크게(샘플 카드 아래 남은 칸 꽉) + 깜빡여서 눈에 띄게 */
+#hgTutorVoice .hg-ui-tutor-done{display:block;width:100%;margin:6px 0 0;height:50px;min-height:0!important;padding:0 12px;border:0;border-radius:16px;background:var(--hg-ui-teal);color:#fff;font-size:18px!important;font-weight:900;line-height:50px;box-shadow:0 3px 0 #066b77;animation:hgTutorDoneBlink 1.2s ease-in-out infinite;}
+@keyframes hgTutorDoneBlink{0%,100%{opacity:1;box-shadow:0 3px 0 #066b77,0 0 0 0 rgba(20,184,166,.6);}50%{opacity:.55;box-shadow:0 3px 0 #066b77,0 0 0 8px rgba(20,184,166,0);}}
+@media (prefers-reduced-motion:reduce){#hgTutorVoice .hg-ui-tutor-done{animation:none;}}
 #hgTutorVoice #fourVoiceTabsGroup>button{border:1.5px solid #cbd5e1!important;}  /* 2026-10-27 옵빠야 지시: TTS 6개 버튼마다 테두리 */
 .hg-ui-tutor-page[hidden]{display:none!important;}
 body.hg-tutor-open .app-root>section.hg-ui-page:not(#hgTutorVoice),body.hg-tutor-open #viewOnboarding,body.hg-tutor-open #viewCanvas{display:none!important;}
@@ -282,6 +285,11 @@ body.hg-tutor-open .app-root>section.hg-ui-page:not(#hgTutorVoice),body.hg-tutor
 .hg-ui-tutor-row1>span:first-child{flex:none;}
 .hg-ui-active .hg-ui-fox-bubble{position:relative;flex:1;min-width:0;margin:-80px -4px 20px 0;padding:6px 10px;background:#fff7ed;border:2px solid #fed7aa;border-radius:14px;color:#7c2d12;font-size:12px;font-weight:700;line-height:1.4;letter-spacing:0;}
 .hg-ui-active .hg-ui-fox-bubble.is-below{display:block;flex:none;width:fit-content;max-width:calc(100% - 14px);margin:0 14px 0 0;}  /* 제목 옆이 좁은 화면: 제목 바로 아래(꼬리는 여우 쪽) */
+/* 2026-10-28 옵빠야 지시: 여우 바로 아래에 붙는 말풍선(꼬리는 위쪽 여우를 향함) — 위치는 hg_ui.js foxBubble */
+.hg-ui-active .hg-ui-fox-bubble.is-fox{position:absolute;z-index:3;display:block;flex:none;width:max-content;margin:0;text-align:center;word-break:keep-all;text-wrap:balance;animation:hgFoxBubbleIn .35s cubic-bezier(.2,.9,.3,1.3) both;}
+.hg-ui-fox-bubble.is-fox::before{right:auto;left:50%;top:-12px;margin-left:-8px;border:8px solid transparent;border-top:0;border-bottom:12px solid #fed7aa;}
+.hg-ui-fox-bubble.is-fox::after{right:auto;left:50%;top:-8px;margin-left:-6px;border:6px solid transparent;border-top:0;border-bottom:10px solid #fff7ed;}
+@keyframes hgFoxBubbleIn{from{opacity:0;transform:translateY(-6px) scale(.9);}to{opacity:1;transform:none;}}
 .hg-ui-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0!important;}
 .hg-ui-fox-bubble::before,.hg-ui-fox-bubble::after{content:'';position:absolute;top:14px;border:8px solid transparent;border-right:0;}
 .hg-ui-fox-bubble::before{right:-12px;border-left:12px solid #fed7aa;}
@@ -319,7 +327,7 @@ body.hg-tutor-open .app-root>section.hg-ui-page:not(#hgTutorVoice),body.hg-tutor
 .hg-ui-rm-title b{background:linear-gradient(90deg,#4f46e5,#0d9488);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .hg-ui-rm-now{flex:none;padding:4px 10px;border-radius:999px;background:linear-gradient(90deg,#4f46e5,#0d9488);color:#fff;font-size:12.5px;font-weight:900;white-space:nowrap;box-shadow:0 2px 6px rgba(13,148,136,.25);}
 #viewFoundation .hg-ui-roadmap #levelSlider{height:6px!important;margin:2px 0 10px!important;}
-#viewFoundation .hg-ui-roadmap button[id^="quickTier"]{height:38px;padding:0 2px!important;border-radius:10px!important;font-size:12px!important;line-height:1.15;background:#fff!important;color:#64748b!important;border:1px solid #e2e8f0!important;white-space:normal;}
+#viewFoundation .hg-ui-roadmap button[id^="quickTier"]{height:42px;padding:0 2px!important;border-radius:10px!important;font-size:12px!important;line-height:1.15;background:#fff!important;color:#64748b!important;border:1px solid #e2e8f0!important;white-space:normal;}
 #viewFoundation .hg-ui-roadmap button[id^="quickTier"].is-now{background:linear-gradient(135deg,#4f46e5,#0d9488)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 3px 8px rgba(79,70,229,.30);transform:translateY(-1px);}
 #viewFoundation .hg-ui-card>.hg-ui-muted{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}  /* 설명은 화면 읽기용(스크롤 없게) */
 #viewFoundation #quickLetters{display:none;}  /* 01~03 칸과 같은 기능 */
