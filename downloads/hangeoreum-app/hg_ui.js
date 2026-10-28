@@ -324,6 +324,9 @@
   }
   function updateLessonChrome() {
     if (!$('hgUiLessonHeader')) return;
+    // 🔊 원어민 소리는 'AI 설명·표현 · 맞춤 복습' 줄 오른쪽 끝으로 옮김(같은 줄 → 한국어 문장과 겹치지 않고 높이도 아낌)
+    const ctl = $('hgAiLearningControls'), tts = document.querySelector('.hg-ui-target-row button');
+    if (ctl && tts) { tts.classList.add('hg-ui-tts'); ctl.append(tts); }
     const script = window.HGSCRIPT && HGSCRIPT.isActive();
     if (script) mode = 'script';
     else if (!$('viewRoleplay').classList.contains('hidden')) mode = 'roleplay';
@@ -456,7 +459,7 @@
   // 그 주제로 AI가 지금 세트 4문장 + 대본을 만들고 수업 시작. 기존 #dailyCheckinModal의 요소·id·함수는 그대로 옮겨 씀
   // (.modal-backdrop 클래스는 남겨 열려 있는 동안 마이크·수업 재생이 멈추는 기존 규칙을 그대로 따른다)
   const TOPIC_MODE = 'hg_topic_input_mode';
-  let topicBusy = false, dictation = null;
+  let topicBusy = false, dictation = null, skipTopicWait = null;
   const topicOpen = () => !!$('dailyCheckinModal') && !$('dailyCheckinModal').classList.contains('hidden') && document.body.classList.contains('hg-topic-open');
   function setupTopicPage() {
     const m = $('dailyCheckinModal'); if (!m || m.classList.contains('hg-ui-topic-page')) return;
@@ -476,7 +479,9 @@
     input.rows = 2; input.removeAttribute('onclick'); input.removeAttribute('onfocus');
     input.insertAdjacentHTML('afterend', `<button type="button" class="hg-topic-send" aria-label="이 주제로 시작">➤</button>
       <button type="button" class="hg-topic-mic" aria-label="눌러서 말하기"><span>🎤</span><b>눌러서 말하기</b></button>
-      <p id="hgTopicStatus" class="hg-topic-status" role="status" aria-live="polite"></p>`);
+      <p id="hgTopicStatus" class="hg-topic-status" role="status" aria-live="polite"></p>
+      <button type="button" id="hgTopicSkip" class="hg-topic-skip" hidden>▶️ 기다리지 않고 지금 세트로 먼저 시작</button>`);
+    $('hgTopicSkip').addEventListener('click', () => { if (skipTopicWait) skipTopicWait(); });
     const setMode = (mode) => {
       box.dataset.mode = mode;
       m.querySelectorAll('[data-topic-mode]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.topicMode === mode)));
@@ -559,16 +564,28 @@
     if (!how) return;
     if (how === 'resume') { continueWithTopic(q); return; }
     topicBusy = true; document.body.classList.add('hg-topic-busy');
+    let tick = null;
     try {
       if (window.HGV2 && HGV2.setTopic) {
         if (HGV2.aiAvailable()) {
-          topicStatus(`🎯 엑자일이 "${q}" 주제로 오늘 회화와 대본을 만드는 중이에요…`);
-          const ok = await HGV2.applyTopic(q);
-          if (ok) HGV2.applyCurrent();   // 같은 자리(세트 번호)라도 새 주제 세트로 바꿔 끼움
-          else { const m = 'AI가 이 주제 세트를 아직 못 만들어 지금 세트로 먼저 시작해요. 다음 세트부터 이 주제로 이어 갈게요.'; announce(m); if (window.hgToast) hgToast(m, 4500); }
+          // 2026-10-28 옵빠야 지적('주제 선택하는데 먹통'): 대화+문장을 한 번에 만드는 데 30~60초 → 경과 초를 보여 주고, 기다리기 싫으면 바로 시작
+          const t0 = Date.now(), say = () => topicStatus(`🎯 엑자일이 "${q}" 주제로 대화와 학습 문장을 만드는 중… ${Math.round((Date.now() - t0) / 1000)}초 (보통 30~60초)`);
+          say(); tick = setInterval(say, 1000);
+          const skip = $('hgTopicSkip'); if (skip) skip.hidden = false;
+          const skipped = new Promise(r => { skipTopicWait = () => r('skip'); });
+          const ok = await Promise.race([HGV2.applyTopic(q, 65000), skipped]);
+          if (ok === true) HGV2.applyCurrent();   // 같은 자리(세트 번호)라도 새 주제 세트로 바꿔 끼움
+          else {
+            const m = ok === 'skip' ? '지금 세트로 먼저 시작해요. 주제 세트는 뒤에서 계속 만들어 다음 세트부터 이 주제로 이어 갈게요.'
+              : 'AI가 이 주제 세트를 아직 못 만들어 지금 세트로 먼저 시작해요. 다음 세트부터 이 주제로 이어 갈게요.';
+            announce(m); if (window.hgToast) hgToast(m, 4500);
+          }
         } else HGV2.setTopic(q);
       }
-    } finally { topicBusy = false; document.body.classList.remove('hg-topic-busy'); topicStatus(''); }
+    } finally {
+      clearInterval(tick); skipTopicWait = null; const skip = $('hgTopicSkip'); if (skip) skip.hidden = true;
+      topicBusy = false; document.body.classList.remove('hg-topic-busy'); topicStatus('');
+    }
     return old(...args);
   }
   // 2026-10-28 옵빠야 지시: 헤더 '배울 언어' = 처음 설정 2단계(언어 고르기). 언어 카드를 두 번 누르면(450ms 안) AI 튜터로,
@@ -634,7 +651,7 @@
       <h2 id="hgLangConfirmTitle">어떤 ${esc(l[1])}로 배울까요?</h2>
       ${has ? `<div class="hg-ui-pick-mode" role="radiogroup" aria-label="진행 방식">
         <button type="button" role="radio" aria-checked="true" data-mode="resume">이어서 하기<small>${esc(progressText(code))}부터</small></button>
-        <button type="button" role="radio" aria-checked="false" data-mode="fresh">새로 하기<small>0베이스 · 문자부터</small></button></div>` : '<p>처음부터 시작</p>'}
+        <button type="button" role="radio" aria-checked="false" data-mode="fresh">새로 하기<small>수준 테스트부터</small></button></div>` : '<p>수준 테스트로 시작해요</p>'}
       <div class="hg-ui-variants">${vs.map(v => v[4]
         ? `<button class="hg-ui-variant" data-pick-variant="${v[0]}"><span class="hg-ui-variant-flag">${v[3]}</span><span><strong>${esc(v[1])}</strong><small>${esc(v[2])}</small></span></button>`
         : `<button class="hg-ui-variant is-dev" disabled aria-disabled="true"><span class="hg-ui-variant-flag">${v[3]}</span><span><strong>${esc(v[1])}</strong><small>${esc(v[2])}</small></span><em>개발중</em></button>`).join('')}</div>
@@ -651,7 +668,7 @@
       if (m) {
         fresh = m.dataset.mode === 'fresh';
         box.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-checked', String(b === m)));
-        if (fresh) announce(`새로 하기: ${l[1]} 진행 기록만 지우고 0베이스(문자 입문)부터 — 튜터 설정을 마칠 때 지워요.`);
+        if (fresh) announce(`새로 하기: ${l[1]} 진행 기록만 지우고 수준 테스트부터 — 튜터 설정을 마칠 때 지워요.`);
         return;
       }
       const v = e.target.closest('[data-pick-variant]'); if (!v) return;
@@ -669,7 +686,8 @@
   function pickLanguage(code, fresh) {
     const vs = VARIANTS[code], saved = read(VARIANT_KEY, {});
     if (vs && !saved[code]) { const v = vs.find(x => x[4]); if (v) saveVariant(code, v[0]); }  // 변형은 구현된 기본값
-    obPick = code; obFresh = fresh; langPickMode = false;
+    // 기록이 없는 언어(처음 배우는 언어·완전 초기화 뒤)도 수준 테스트부터 — 전환 전에 판정(switchLang이 위치를 만들 수 있음)
+    obPick = code; obFresh = fresh || wiped || !langHasProgress(code); langPickMode = false;
     // 2026-10-28 옵빠야 지시: 고르는 즉시 학습 언어를 바꿈(쓰던 사람은 switchLang이 그 언어의 저장 위치를 불러옴)
     if (ready()) { if (code !== selectedLang) switchLang(code); } else selectedLang = code;
     show('onboarding'); langHead();
@@ -706,17 +724,25 @@
       if (code && code !== selectedLang) switchLang(code);
       home(); return;
     }
-    if (fresh && code) {  // 새로 하기 = 완전 0베이스: 지금 언어 위치는 저장 → 그 언어 기록만 지우고 전환 → Lv.0 문자 입문부터(레벨 측정 없음)
+    if (fresh && code) {  // 새로 하기·처음 배우는 언어: 지금 언어 위치는 저장 → 그 언어 기록만 지우고 전환 → 학습자 수준 테스트(Q0~Q4)
       if (ready()) { persist(); if (code !== selectedLang) switchLang(code); }
       else selectedLang = code;
       clearLanguageProgress(code);
       currentLevel = 1; currentRound = 1; roundPassed = [false, false, false, false];
-      obScriptAnswer = 0; obDiagnosedLevel = 1;
       wiped = false;  // 완전 초기화 뒤 첫 언어 → 여기서부터 다시 저장
-      completeOnboardingAndStartCanvas(); return;
+      startLevelTest(); return;
     }
     if (code) selectedLang = code;
     obGoNext();  // 처음인 사람: 2단계 → 3단계(Q0)
+  }
+  // 2026-10-28 옵빠야 지적('학습자 수준테스트가 없어짐'): 새로 시작하는 언어는 언제나 Q0(문자)~Q4 수준 테스트 → 결과 레벨로 입장
+  function startLevelTest() {
+    obScriptAnswer = null; obDiagnosedLevel = 1; obAnswers = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    document.querySelectorAll('#obStep3 .choice-card,#obStep4 .choice-card,#obStep5 .choice-card,#obStep6 .choice-card,#obStep7 .choice-card').forEach(c => c.classList.remove('selected'));
+    show('onboarding');
+    const splash = $('openingSplashView'); if (splash) { splash.style.opacity = '0'; splash.style.visibility = 'hidden'; splash.style.display = 'none'; }
+    $('viewCanvas').classList.add('hidden'); $('viewOnboarding').classList.remove('hidden');
+    obStep = 3; updateObStepUI(); window.scrollTo(0, 0);
   }
   let obGoNext = () => {};
   let tutorFromStep1 = false;

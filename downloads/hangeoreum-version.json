@@ -1,8 +1,8 @@
 {
-  "versionCode": 17,
-  "versionName": "1.0.8",
+  "versionCode": 18,
+  "versionName": "1.0.9",
   "apk": "https://kangjong9.github.io/downloads/Hangeoreum-V1.0-Exile.apk",
-  "sha256": "9d05ce4d84ae7eeb8d17986542ea3a223f20c8bdfa102308ad39a49cb1d12dfd",
-  "size": 1789949,
-  "notes": "학습 화면을 스크롤 없이 한 화면에 · 맥락 줄과 버튼 줄을 단순하게 · 수업 카드가 더 위에 크게 보여요 · AI 대화 만들기 대기 시간 여유"
+  "sha256": "e01f74098cd44740cb27c45af1cabc5b6a83af7c7bfa928b2a985d33e31cd3ff",
+  "size": 1792297,
+  "notes": "새로 배우는 언어는 학습자 수준 테스트부터 · 주제를 고르면 만드는 시간(초)을 보여 주고 기다리지 않고 바로 시작 가능 · 회화 상대가 지금 배우는 언어로 · 회화 화면도 스크롤 없이"
 }

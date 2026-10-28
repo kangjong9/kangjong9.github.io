@@ -17320,7 +17320,7 @@ const EXILE_VOICES = [
     const curLang = (typeof selectedLang !== 'undefined' && selectedLang) ? selectedLang : 'fr';
     const themeObj = (typeof THEMED_DATA !== 'undefined' && THEMED_DATA[currentTheme]) ? THEMED_DATA[currentTheme] : (typeof THEMED_DATA !== 'undefined' ? THEMED_DATA.work : null);
     if (!themeObj) return null;
-    const langObj = themeObj[curLang] || themeObj.fr;
+    const langObj = themeObj[curLang] || themeObj.fr;  // 세트(activeSessionCase)가 없을 때만 쓰는 예비 자료 — 호출부가 null을 못 받으므로 유지
     if (!langObj) return null;
 
     let tierKey = 't1';
@@ -18774,7 +18774,7 @@ const EXILE_VOICES = [
       }
 
       try {
-        const langName = (selectedLang === 'fr') ? 'French (프랑스어)' : (selectedLang === 'cn') ? 'Chinese (중국어 간체)' : 'Japanese (일본어)';
+        const langName = ({ fr: 'French (프랑스어)', cn: 'Chinese (중국어 간체)', ja: 'Japanese (일본어)', en: 'English (영어)', es: 'Spanish (스페인어)', ru: 'Russian (러시아어)' })[selectedLang] || 'French (프랑스어)';  // 지금 배우는 언어 그대로(영어·스페인어·러시아어가 일본어로 가던 문제)
         const themeName = (currentTheme === 'cafe') ? '카페/주문 (Cafe)' : (currentTheme === 'beer') ? '펍/뒤풀이 (Pub & Drinks)' : '회사/비즈니스 (Work)';
 
         const promptText = `당신은 초몰입 어학 학습 시나리오 전문 AI 코치입니다.
@@ -19881,8 +19881,11 @@ function getCurrentRoundData() {
   }
 
   function setupRoleplayView() {
-    if (window.HGV2 && HGV2.isFreeTalk()) { HGV2.setupFreeTalkView(); return; }
     const curLang = (typeof selectedLang !== 'undefined' && selectedLang) ? selectedLang : 'fr';
+    // 입력칸 예시도 지금 배우는 언어로 (예전엔 늘 불어 예시)
+    const rpIn = document.getElementById('rpTextInput');
+    if (rpIn) rpIn.placeholder = '원어로 직접 입력 (예: ' + ({ fr: "Oui, je suis d'accord !", ja: 'はい、そうです！', cn: '好的，我同意！', en: 'Yes, I agree!', es: '¡Sí, estoy de acuerdo!', ru: 'Да, я согласен!' }[curLang] || 'Yes!') + ')';
+    if (window.HGV2 && HGV2.isFreeTalk()) { HGV2.setupFreeTalkView(); return; }
 
     // 단일 맥락 몰입 엔진: activeSessionCase 롤플레잉 정보 우선 적용
     if (activeSessionCase && activeSessionCase.roleplay && activeSessionCase.theme === currentTheme && activeSessionCase.lang === curLang) {
@@ -19914,8 +19917,15 @@ function getCurrentRoundData() {
     }
 
     const themeObj = (typeof THEMED_DATA !== 'undefined' && THEMED_DATA[currentTheme]) ? THEMED_DATA[currentTheme] : THEMED_DATA.work;
-    const langObj = (themeObj && themeObj[curLang]) ? themeObj[curLang] : themeObj.fr;
-    const p = langObj.persona;
+    // 2026-10-28 옵빠야 지적('회화 롤플레이가 왜 불어로'): 테마 자료가 없는 언어(영어·스페인어·러시아어)는 불어로 넘어가지 않고
+    // 그 언어의 롤플레잉 상대(HGV2.PARTNER_PRESETS)로 — 지금 배우는 언어와 자동 연동
+    const langObj = (themeObj && themeObj[curLang]) ? themeObj[curLang] : null;
+    let p = langObj && langObj.persona;
+    if (!p) {
+      const ps = (window.HGV2 && HGV2.PARTNER_PRESETS && HGV2.PARTNER_PRESETS[curLang]) || [];
+      const q = ps[Math.max(0, currentLevel - 1) % Math.max(1, ps.length)] || { avatar: '🗣️', name: 'Partner', role: '현지 친구', greeting: 'Hello!', greetingKo: '안녕하세요!' };
+      p = { avatar: q.avatar, name: q.name, role: q.role, greetings: q.greeting, greetingsKo: q.greetingKo, scenarios: [] };
+    }
 
     const scenarioIdx = Math.max(0, Math.min(9, currentLevel - 41));
     const sc = (p.scenarios && p.scenarios[scenarioIdx]) ? p.scenarios[scenarioIdx] : {

@@ -410,7 +410,9 @@ body.hg-topic-open:has(#dailyCheckinModal:not(.hidden)) .app-root>section.hg-ui-
 .hg-topic-input[data-mode="voice"] textarea{background:#f0fdfa!important;padding-right:16px!important;}
 .hg-topic-status{margin:8px 2px 0;font-size:14px;font-weight:800;color:#0f766e;}
 .hg-topic-status:empty{display:none;}
-body.hg-topic-busy #dailyCheckinModal button:not(.hg-topic-mic){pointer-events:none;opacity:.6;}
+body.hg-topic-busy #dailyCheckinModal button:not(.hg-topic-mic):not(#hgTopicSkip){pointer-events:none;opacity:.6;}
+#dailyCheckinModal .hg-topic-skip{display:block;width:100%;margin:6px 0 0;min-height:44px;border:1.5px solid #0e7c86;border-radius:14px;background:#fff;color:#0e7c86;font-weight:900;font-size:15px;}
+#dailyCheckinModal .hg-topic-skip[hidden]{display:none;}
 body.hg-topic-open .app-root{padding-bottom:76px!important;}
 /* 주제 분기: 🆕 새로운 시작 / ▶️ 이어하기 */
 .hg-topic-q{font-weight:800;color:#0f766e;margin:2px 0 10px;}
@@ -448,8 +450,8 @@ body.hg-topic-open .app-root{padding-bottom:76px!important;}
 .hg-ui-active #koreanPrompt{margin-bottom:4px!important;}
 .hg-ui-active #hgAiLearningControls{margin:2px 0 4px!important;gap:6px!important;}
 .hg-ui-active #viewDrill .hg-ui-phrase-card button{min-height:32px!important;padding:2px 10px!important;}
-.hg-ui-active .hg-ui-target-row{margin:0!important;justify-content:flex-end!important;height:0;overflow:visible;position:relative;top:-33px;}
-.hg-ui-active .hg-ui-target-row>span{display:none!important;}  /* 🎯 목표 외국어 발화: — 🔊 버튼만 AI 설명·맞춤 복습 줄 오른쪽에 */
+.hg-ui-active .hg-ui-target-row{margin:0 0 2px!important;justify-content:flex-end!important;}.hg-ui-active .hg-ui-target-row:not(:has(button)){display:none!important;}#hgAiLearningControls .hg-ui-tts{margin-left:auto!important;}
+.hg-ui-active .hg-ui-target-row>span{display:none!important;}  /* 🎯 목표 외국어 발화: — 🔊 버튼은 hg_ui.js가 AI 설명·맞춤 복습 줄 끝으로 옮김 */
 .hg-ui-active #targetDisplay{margin:0 0 2px!important;}
 .hg-ui-active #targetPhonetic{margin-bottom:4px!important;}
 .hg-ui-active #buildUpNote{padding:3px 8px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -460,3 +462,19 @@ body.hg-topic-open .app-root{padding-bottom:76px!important;}
 .hg-ui-active #handsFreeStateBar{min-height:46px!important;padding:6px 12px!important;}
 .hg-ui-active #handsFreeContainer>div:last-child{display:none!important;}  /* 전자동 핸즈프리 설명 줄 */
 .hg-ui-active #handsFreeContainer{margin-bottom:0!important;}
+/* 2026-10-28 옵빠야 지시(무결점 보완): 회화(롤플레잉) 화면도 스크롤 없게 — 안내 한 줄+다시 듣기, 맥락 버튼 한 줄, 상대 카드·입력판 축소, 대화창이 남는 높이 사용 */
+.hg-ui-active #viewRoleplay .hg-ui-rp-tools{flex-wrap:nowrap!important;display:flex!important;align-items:center;gap:6px;margin-bottom:6px;}
+.hg-ui-active #viewRoleplay .hg-ui-rp-tools .hg-ui-note{flex:1 1 auto;min-width:0;padding:6px 10px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:12px;}
+.hg-ui-active #viewRoleplay .hg-ui-rp-tools button{flex:none;min-height:36px!important;padding:4px 12px!important;white-space:nowrap!important;}
+.hg-ui-active #rpSessionContextBanner{padding:6px 12px!important;margin-bottom:6px!important;gap:8px;display:flex!important;flex-wrap:nowrap!important;flex-direction:row!important;align-items:center!important;}
+.hg-ui-active #rpSessionContextBanner>div:first-child{min-width:0;flex:1;}
+.hg-ui-active #rpSessionContextBanner>div:first-child>div:first-child{display:none!important;}
+.hg-ui-active #rpSessionCaseTitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hg-ui-active #rpSessionContextBanner button{min-height:34px!important;padding:2px 8px!important;white-space:nowrap!important;}
+.hg-ui-active #viewRoleplay>div:has(#personaAvatar){padding:6px 12px!important;margin-bottom:6px!important;border-radius:16px!important;}
+.hg-ui-active #chatLog{max-height:calc(100dvh - 560px)!important;min-height:110px;margin-bottom:6px!important;padding:10px!important;}
+.hg-ui-active #rpInputArea{padding:8px 10px!important;margin-bottom:0!important;}
+.hg-ui-active #rpInputArea>div:first-child{margin-bottom:4px!important;justify-content:center!important;}
+.hg-ui-active #rpInputArea>div:first-child>span:first-child{display:none!important;}
+.hg-ui-active #btnRpMic{min-height:44px!important;margin-bottom:6px!important;}
+.hg-ui-active #rpInputArea>div:last-child button{min-height:40px!important;}
