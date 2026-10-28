@@ -15,7 +15,7 @@
   const ready = () => localStorage.getItem('hangeoreum_onboarding_done') === '1';
   const fox = '<img class="hg-ui-fox" src="images/hg-guide-fox.svg" alt="학습 안내 친구 Exile" width="150" height="150">';
   // 원래 세계관: 안드로메다에서 지구로 유배 온 안내 AI Exile
-  const guide = `<figure class="hg-ui-guide">${fox}<figcaption>Exile<small>안드로메다에서 온<br>안내 AI</small></figcaption></figure>`;
+  const guide = `<figure class="hg-ui-guide">${fox}</figure>`;  // 2026-10-28 옵빠야 지시: 여우 아래 'Exile 안드로메다에서 온 안내 AI' 문구는 모든 화면에서 삭제
   let route = 'onboarding', mode = 'words', pendingLanguage = null, epoch = 0, busy = false, restoring = false;
   let returnFocus = null;
   // 안내 문구는 하단 메뉴 위에 잠깐 떴다가 사라짐(예전엔 화면 맨 아래에 계속 남아 자리를 차지해 스크롤이 생겼음)

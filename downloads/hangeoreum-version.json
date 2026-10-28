@@ -1,8 +1,8 @@
 {
-  "versionCode": 19,
-  "versionName": "1.0.10",
+  "versionCode": 20,
+  "versionName": "1.0.11",
   "apk": "https://kangjong9.github.io/downloads/Hangeoreum-V1.0-Exile.apk",
-  "sha256": "d0a25f8486877cd0e346fd549fc8a6cf83f3bc34d54d79639c4b18c07fda1fa5",
-  "size": 1796437,
-  "notes": "회화도 핸즈프리 — 상대가 말을 마치면 자동으로 듣고 이어 가요 · 상대 카드를 두 번 누르면 GPT 회화 상대(이름·역할·성격·말투·장면)를 직접 정해요"
+  "sha256": "44d41287ead329133f5ce9aaebade54d48593eecad8158b6dc17ec56c8b52e1c",
+  "size": 1797605,
+  "notes": "회화는 핸즈프리 음성만(마이크·타이핑·상태 문구 삭제), 대화창 확대 · 학습 화면 카드 집중(녹음중·마이크켜짐 문구 삭제) · 여우 크기 복원, Exile 안내 문구 삭제 · 수준 테스트는 답을 누르면 다음 질문으로 자동 진행"
 }

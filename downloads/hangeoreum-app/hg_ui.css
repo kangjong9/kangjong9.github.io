@@ -432,7 +432,7 @@ body.hg-topic-open .app-root{padding-bottom:76px!important;}
 .hg-ui-active #viewCanvas{padding-bottom:8px!important;}
 .hg-ui-active #viewCanvas .hg-ui-lesson-header{margin:0 0 8px!important;}
 .hg-ui-active #hgUiLessonTitle{display:none!important;}
-.hg-ui-active .hg-ui-lesson-header .hg-ui-fox{width:46px!important;height:46px!important;}
+.hg-ui-active .hg-ui-lesson-header .hg-ui-fox{width:104px!important;height:auto!important;}  /* 옵빠야 지시: 여우는 다른 화면과 비슷한 크기 */
 .hg-ui-active #hgUiModeButtons{margin:0 0 6px!important;}
 .hg-ui-active #hgUiModeButtons button{height:40px!important;min-height:40px!important;}
 .hg-ui-active #hgUiFeedbackNotice{display:none!important;}
@@ -495,3 +495,27 @@ body.hg-topic-open .app-root{padding-bottom:76px!important;}
 .hg-persona-gender{display:flex;gap:14px;margin:4px 0 6px;}
 .hg-persona-gender label{display:flex;align-items:center;gap:6px;margin:0;}
 .hg-persona-status{min-height:18px;font-size:13px;color:#0e7c86;font-weight:800;margin:2px 0 6px;}
+/* 2026-10-28 옵빠야 지시: 회화는 핸즈프리 음성으로만 — 마이크 버튼·글 입력·핸즈프리 버튼·맥락 버튼 줄 없앰, 대화창을 크게 */
+.hg-ui-active #btnRpMic,.hg-ui-active #rpInputArea>div:last-child,.hg-ui-active #viewRoleplay #rpHfToggle,.hg-ui-active #rpSessionContextBanner{display:none!important;}
+.hg-ui-active #rpInputArea{padding:8px 12px!important;border-radius:14px!important;cursor:pointer;}
+.hg-ui-active #rpInputArea>div:first-child{margin:0!important;justify-content:center!important;}
+.hg-ui-active #rpMicStatus{flex:0 1 auto;text-align:center;}
+.hg-ui-active #chatLog{max-height:calc(100dvh - 455px)!important;min-height:calc(100dvh - 455px);}
+/* 2026-10-28 옵빠야 지시: 회화 — 상태 줄·마이크·입력 모두 없애고 상대 카드·위 줄을 얇게, 남는 높이 전부 대화창 / 학습 — 상태 문구(녹음 중·마이크) 없이 카드에 집중 */
+.hg-ui-active #rpInputArea{display:none!important;}
+.hg-ui-active #viewRoleplay .hg-ui-rp-tools{margin-bottom:4px!important;}
+.hg-ui-active #viewRoleplay .hg-ui-rp-tools .hg-ui-note{padding:3px 10px!important;}
+.hg-ui-active #viewRoleplay .hg-ui-rp-tools button{min-height:30px!important;padding:2px 10px!important;}
+.hg-ui-active #viewRoleplay>div:has(#personaAvatar){padding:4px 10px!important;margin-bottom:4px!important;gap:8px!important;}
+.hg-ui-active #personaAvatar{font-size:24px!important;}
+.hg-ui-active .hg-persona-card>div:has(#personaName){display:flex;align-items:baseline;gap:8px;}
+.hg-ui-active .hg-persona-card #personaName{flex:none;max-width:45%;}
+.hg-ui-active .hg-persona-card #personaRole{flex:1 1 auto;min-width:0;}
+.hg-ui-active .hg-persona-hint{width:auto;white-space:nowrap;padding:2px 6px;}
+.hg-ui-active .hg-persona-hint br{display:none;}
+.hg-ui-active #chatLog{max-height:calc(100dvh - 385px)!important;min-height:calc(100dvh - 385px)!important;margin-bottom:0!important;}
+.hg-ui-active #viewDrill .hg-ui-mic-panel,.hg-ui-active #handsFreeContainer{display:none!important;}
+.hg-ui-active #hgSpeakWave .hgw-label{display:none!important;}.hg-ui-active #viewRoleplay .hg-ui-rp-tools{display:none!important;}  /* 오로지 대화창만 (옵빠야 지시) — 상대 카드만 얇게 남김(두 번 눌러 페르소나) */
+.hg-ui-active #chatLog{max-height:calc(100dvh - 428px)!important;min-height:calc(100dvh - 428px)!important;}
+/* 2026-10-28 옵빠야 지시: 학습창도 회화창처럼 — 상태 판을 뺀 만큼 수업 카드를 크게(카드 안 내용은 위아래로 고르게) */
+.hg-ui-active[data-hg-mode] #viewDrill .hg-ui-phrase-card{min-height:calc(100dvh - 522px);display:flex;flex-direction:column;justify-content:space-between;}

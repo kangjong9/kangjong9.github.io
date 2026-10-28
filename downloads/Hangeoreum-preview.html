@@ -19363,12 +19363,16 @@ function getCurrentRoundData() {
     card.parentElement.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     updateObMainBtn();  // '전혀 몰라요'면 다음 버튼이 바로 결과로 간다는 것을 보여 준다
+    obAutoNext(3);
   }
+  // 2026-10-28 옵빠야 지시: 수준 테스트(Q0~Q4)는 이전·다음 버튼 없이 답을 터치하면 바로 다음 질문으로
+  function obAutoNext(step) { setTimeout(() => { if (obStep === step) goToNextObStep(); }, 380); }
   function onAnswerQuestion(qNum, score, card) {
     soundTap();
     obAnswers[qNum] = score;
     card.parentElement.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
+    obAutoNext(obStep);
   }
 
   function calculateAIDiagnosis() {
@@ -19475,7 +19479,7 @@ function getCurrentRoundData() {
     // 2026-10-27 옵빠야 지시: 1단계 '호칭 및 음성 설정 완료 → 언어 선택' 버튼 삭제
     // (호칭 저장 → AI 튜터 설정 화면 → 뒤로 나오면 자동으로 언어 선택 단계, hg_ui.js closeTutorVoice)
     // 2026-10-28 옵빠야 지시: 2단계(언어)의 '이 언어로 AI 튜터 고르기' 버튼도 삭제 — 드롭다운에서 언어를 두 번 누르면 튜터로
-    mainBtn.style.display = (obStep === 1 || obStep === 2) ? 'none' : '';
+    mainBtn.style.display = (obStep >= 1 && obStep <= 7) ? 'none' : '';  // 2026-10-28: 수준 테스트 Q0~Q4도 버튼 없음(답 터치 = 다음 질문)
     if (obStep === 1) {
       mainBtn.innerHTML = `<span>호칭 및 음성 설정 완료 ➔ 언어 선택</span>`;
     } else if (obStep === 7 || (obStep === 3 && obScriptAnswer === 0)) {
@@ -19554,9 +19558,13 @@ function getCurrentRoundData() {
     const backBtn = document.getElementById('obBackStepBtn');
     const mainBtn = document.getElementById('obMainActionBtn');
 
-    if (obStep > 2) {  // 2026-10-28 옵빠야 지시: 2단계(언어)도 아래 '이전 단계' 없음
-      backBtn.classList.remove('hidden');
-      mainBtn.style.width = "";
+    if (obStep >= 3 && obStep <= 7) {  // 2026-10-28 옵빠야 지시: 수준 테스트 질문 화면은 이전·다음 버튼 없음(답 터치 = 다음)
+      backBtn.classList.add('hidden');
+      mainBtn.classList.add('hidden');
+    } else if (obStep > 2) {  // 2026-10-28 옵빠야 지시: 2단계(언어)도 아래 '이전 단계' 없음
+      mainBtn.classList.remove('hidden');
+      backBtn.classList.add('hidden');  // 결과(8단계)도 '입장' 하나만
+      mainBtn.style.width = "100%";
     } else {
       backBtn.classList.add('hidden');
       mainBtn.style.width = "100%";
@@ -19968,7 +19976,8 @@ function getCurrentRoundData() {
   // 2026-10-28 옵빠야 지시('회화쪽에도 핸즈프리'): 상대가 말을 마치면 마이크가 자동으로 켜지고, 말하면 자동 전송 → 상대 답 → 다시 마이크.
   // 조용하면(no-speech) 두 번까지 다시 듣고 멈춤. 켜기/끄기는 입력판의 🤖 핸즈프리 버튼(hg_rp_handsfree, 기본 켜짐)
   let rpHfMiss = 0;
-  function rpHandsFreeOn() { try { return localStorage.getItem('hg_rp_handsfree') !== '0'; } catch (e) { return true; } }
+  // 2026-10-28 옵빠야 지시: 회화는 오로지 핸즈프리 음성으로만(마이크 버튼·글 입력 없음) → 항상 켜짐
+  function rpHandsFreeOn() { return true; }
   function rpCanListen() {
     const v = document.getElementById('viewRoleplay');
     return rpHandsFreeOn() && !!(window.SpeechRecognition || window.webkitSpeechRecognition) && v && !v.classList.contains('hidden')  // 음성 인식이 없는 기기는 자동 듣기 안 함(입력 창 팝업 방지) && !document.body.classList.contains('hg-topic-open')
@@ -19977,10 +19986,16 @@ function getCurrentRoundData() {
   function rpAfterSpeak() { setTimeout(() => { if (rpCanListen() && !isRoleplayRecording) toggleRoleplayMicListening(); }, 450); }
   function rpRetryListen() {
     if (!rpCanListen()) return false;
-    if (++rpHfMiss > 2) { rpHfMiss = 0; const s = document.getElementById('rpMicStatus'); if (s) s.textContent = '말이 들리지 않아 멈췄어요. 🎙️ 버튼을 누르면 다시 들어요.'; return false; }
+    if (++rpHfMiss > 3) { rpHfMiss = 0; const s = document.getElementById('rpMicStatus'); if (s) s.textContent = '말이 들리지 않아 잠깐 쉬어요. 대화창을 누르면 다시 들어요.'; if (window.hgToast) hgToast('대화창을 누르면 다시 들어요', 3000); return false; }
     setTimeout(() => { if (rpCanListen() && !isRoleplayRecording) toggleRoleplayMicListening(); }, 600);
     return true;
   }
+  // 쉬고 있을 때 대화창·상태 줄을 누르면 다시 듣기 (버튼 없이 음성으로만 이어 가기)
+  document.addEventListener('DOMContentLoaded', () => {
+    ['chatLog', 'rpInputArea'].forEach(id => document.getElementById(id)?.addEventListener('click', () => {
+      if (!isRoleplayRecording && rpCanListen()) { rpHfMiss = 0; try { stopAllTTSAudio(); } catch (e) {} toggleRoleplayMicListening(); }
+    }));
+  });
   function toggleRoleplayHandsFree() {
     const on = !rpHandsFreeOn();
     try { localStorage.setItem('hg_rp_handsfree', on ? '1' : '0'); } catch (e) {}
