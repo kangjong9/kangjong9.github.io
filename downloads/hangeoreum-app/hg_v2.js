@@ -713,6 +713,11 @@ ${stagePlan(n)}
   // ---------------------------------------------------------------- 50레벨 이후 실전 롤플레잉
   const isFreeTalk = () => currentLevel >= 50 && !!load(`hg_v2_freetalk_${curLang()}`, false);
   const getPartner = () => load(`hg_v2_partner_${curLang()}`, null);
+  // 2026-10-28 옵빠야 지시: 회화 = 구독 AI(GPT)와 롤플레이 → 상대 카드를 두 번 누르면 페르소나 입력판. 언어별 저장(hg_rp_persona_<lang>),
+  // 정해 두면 모든 레벨의 회화가 이 상대로(첫인사·답변 모두 AI가 이 설정과 지금 레벨 난이도로)
+  const personaKey = () => `hg_rp_persona_${curLang()}`;
+  const getPersona = () => load(personaKey(), null);
+  const activePartner = () => getPersona() || getPartner();
   let chatHistory = [];
 
   function nativeVoice(gender) {
@@ -722,29 +727,26 @@ ${stagePlan(n)}
     return (map[curLang()] || map.fr)[gender === 'male' ? 'male' : 'female'];
   }
 
-  function speakPartner(text) {
-    const p = getPartner();
-    if (typeof speakTextWithFallback === 'function') speakTextWithFallback(text, curLang(), { forceEngine: 'edge', forceVoice: nativeVoice(p && p.gender) });
+  function speakPartner(text, onDone) {
+    const p = activePartner();
+    if (typeof speakTextWithFallback === 'function') speakTextWithFallback(text, curLang(), { forceEngine: 'edge', forceVoice: nativeVoice(p && p.gender), onDone });
   }
 
   const esc = (s) => String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   function setupFreeTalkView() {
-    const p = getPartner();
+    const p = activePartner();
     if (!p) { openPartnerPicker(); return; }
     chatHistory = [{ role: 'partner', text: p.greeting }];
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     set('personaAvatar', p.avatar || '🗣️');
     set('personaName', p.name);
-    set('personaRole', `${p.role} · 실전 롤플레잉`);
-    set('rpSessionCaseTitle', `실전 롤플레잉 — ${p.name} (${p.role})`);
+    set('personaRole', `${p.role}${p.personality ? ' · ' + p.personality : ''} · ${getPersona() ? '내가 정한 상대' : '실전 롤플레잉'}`);
+    set('rpSessionCaseTitle', `실전 롤플레잉 — ${p.name} (${p.role})${p.scene ? ' · ' + p.scene : ''}`);
     if (typeof currentPersonaGreetingText !== 'undefined') currentPersonaGreetingText = p.greeting;
     const log = document.getElementById('chatLog');
     if (log) {
       log.innerHTML = `
-        <div style="display:flex; justify-content:flex-end; margin-bottom:6px;">
-          <button type="button" onclick="HGV2.openPartnerPicker()" style="font-size:12px; font-weight:800; padding:5px 10px; border-radius:10px; border:1.5px solid #c7d2fe; background:#eef2ff; color:#4338ca; cursor:pointer;">🔄 대화 상대 바꾸기</button>
-        </div>
         <div style="display:flex; gap:8px; align-items:flex-start;">
           <div style="width:32px; height:32px; border-radius:50%; background:#e0e7ff; display:flex; align-items:center; justify-content:center; font-size:16px;">${esc(p.avatar)}</div>
           <div style="background:#ffffff; border:1.5px solid #e2e8f0; padding:10px 14px; border-radius:14px; font-size:14px; text-align:left; max-width:85%;">
@@ -754,16 +756,19 @@ ${stagePlan(n)}
         </div>`;
     }
     window.HGAI?.badge(log?.lastElementChild?.lastElementChild, ['Chat-Gpt', 'Claude', 'Gemini'].includes(p.provider) ? p.provider : '');
-    setTimeout(() => speakPartner(p.greeting), 300);
+    setTimeout(() => speakPartner(p.greeting, typeof rpAfterSpeak === 'function' ? rpAfterSpeak : null), 300);  // 회화 핸즈프리: 첫인사 뒤 자동 듣기
   }
 
   /** 학습자 발화에 대한 상대 AI 답변 {text, ko} (키 없으면 null → 기존 오프라인 답변 사용) */
   async function partnerReply(userText) {
-    const p = getPartner();
+    const p = activePartner();
     if (!p || !aiAvailable()) return null;
     chatHistory.push({ role: 'learner', text: userText });
     const convo = chatHistory.slice(-12).map(m => `${m.role === 'partner' ? p.name : '학습자'}: ${m.text}`).join('\n');
-    const prompt = `당신은 ${LANG_NAME[curLang()]} 원어민 '${p.name}'(${p.role}, 성격: ${p.personality})입니다. 한국인 학습자와 실전 회화를 이어 갑니다.
+    const band = bandOf(Math.max(1, currentLevel));
+    const prompt = `당신은 ${LANG_NAME[curLang()]} 원어민 '${p.name}'(${p.role}, 성격: ${p.personality || '친절함'}${p.gender ? ', ' + (p.gender === 'male' ? '남성' : '여성') : ''})입니다. 한국인 학습자와 실전 회화를 이어 갑니다.
+${p.scene ? `- 장면·상황: ${p.scene}\n` : ''}${p.style ? `- 말투: ${p.style}\n` : ''}${p.extra ? `- 추가 설정: ${p.extra}\n` : ''}${roadmapLine(curLang(), Math.max(1, currentLevel))}
+- 학습자 수준(${band.name}): ${band.spec} — 답변 길이·어휘를 이 수준에 맞추세요.
 대화 내용:
 ${convo}
 규칙: 역할과 성격을 유지하며 1~2문장으로 자연스럽게 답하고, 대화가 이어지도록 가끔 질문을 던지세요. 학습자의 문장이 어색하면 답변 속에서 자연스러운 표현으로 되받아 주세요.
@@ -776,7 +781,76 @@ ${convo}
     return null;
   }
 
+  // ---------------------------------------------------------------- 회화 상대(GPT 페르소나) 입력판
+  function openPersonaEditor() {
+    document.getElementById('hgPersonaEditor')?.remove();
+    const nameNow = document.getElementById('personaName')?.textContent || '', roleNow = (document.getElementById('personaRole')?.textContent || '').split(' · ')[0];
+    const p = getPersona() || { name: nameNow, role: roleNow, personality: '', gender: 'female', scene: '', style: '', extra: '' };
+    const L = LANG_NAME[curLang()] || '';
+    const box = document.createElement('div'); box.id = 'hgPersonaEditor'; box.className = 'hg-ui-confirm';
+    box.innerHTML = `<div class="hg-ui-confirm-sheet hg-persona-sheet" role="dialog" aria-modal="true" aria-labelledby="hgPersonaTitle">
+      <h2 id="hgPersonaTitle">🎭 ${esc(aiName())} 회화 상대 설정</h2>
+      <p>${esc(L)} 원어민 상대를 정해요. ${esc(aiName())}가 이 사람이 되어 지금 레벨(Lv.${Math.max(1, currentLevel)}) 난이도로 대화해요.</p>
+      <label>이름<input id="hgPsName" maxlength="30" value="${esc(p.name)}" placeholder="예: Emma"></label>
+      <label>역할·관계<input id="hgPsRole" maxlength="40" value="${esc(p.role)}" placeholder="예: 뉴욕 카페 바리스타, 회사 동료"></label>
+      <label>성격<input id="hgPsPersonality" maxlength="40" value="${esc(p.personality)}" placeholder="예: 밝고 수다스러움"></label>
+      <label>말투<input id="hgPsStyle" maxlength="40" value="${esc(p.style)}" placeholder="예: 반말, 천천히, 존댓말"></label>
+      <label>장면·상황<input id="hgPsScene" maxlength="80" value="${esc(p.scene)}" placeholder="예: 아침 출근길 카페에서 주문"></label>
+      <label>추가 설정<input id="hgPsExtra" maxlength="120" value="${esc(p.extra)}" placeholder="예: 내 실수는 부드럽게 고쳐 줘"></label>
+      <div class="hg-persona-gender" role="radiogroup" aria-label="성별">
+        <label><input type="radio" name="hgPsGender" value="female" ${p.gender !== 'male' ? 'checked' : ''}> 여성 목소리</label>
+        <label><input type="radio" name="hgPsGender" value="male" ${p.gender === 'male' ? 'checked' : ''}> 남성 목소리</label></div>
+      <p class="hg-persona-status" id="hgPsStatus" role="status" aria-live="polite"></p>
+      <div class="hg-ui-confirm-row"><button type="button" class="hg-ui-primary" data-ps="save">저장하고 대화 시작</button><button type="button" class="hg-ui-secondary" data-ps="cancel">취소</button></div>
+      ${getPersona() ? '<button type="button" class="hg-ui-secondary hg-ui-variant-cancel" data-ps="reset">기본 상대로 되돌리기</button>' : ''}</div>`;
+    document.body.appendChild(box);
+    let busy = false;
+    box.addEventListener('click', async e => {
+      const b = e.target === box ? { dataset: { ps: 'cancel' } } : e.target.closest('[data-ps]');
+      if (!b || busy) return;
+      if (b.dataset.ps === 'cancel') { box.remove(); return; }
+      if (b.dataset.ps === 'reset') { try { localStorage.removeItem(personaKey()); } catch (er) {} box.remove(); if (typeof setupRoleplayView === 'function') setupRoleplayView(); return; }
+      const v = id => (document.getElementById(id)?.value || '').trim();
+      const gender = box.querySelector('input[name="hgPsGender"]:checked')?.value || 'female';
+      const np = { id: `persona_${Date.now()}`, name: v('hgPsName') || (gender === 'male' ? 'Alex' : 'Mia'), role: v('hgPsRole') || '현지 친구', personality: v('hgPsPersonality'),
+        style: v('hgPsStyle'), scene: v('hgPsScene'), extra: v('hgPsExtra'), gender, avatar: gender === 'male' ? '🧑' : '👩' };
+      busy = true; const st = document.getElementById('hgPsStatus');
+      if (st) st.textContent = `${aiName()}가 ${np.name}의 첫마디를 만드는 중…`;
+      const fb = { fr: ['Bonjour ! Enchanté de vous rencontrer.', '안녕하세요! 만나서 반가워요.'], ja: ['こんにちは！はじめまして。', '안녕하세요! 처음 뵙겠습니다.'], cn: ['你好！很高兴认识你。', '안녕하세요! 만나서 반가워요.'],
+        en: ['Hi there! Nice to meet you.', '안녕하세요! 만나서 반가워요.'], es: ['¡Hola! Encantado de conocerte.', '안녕하세요! 만나서 반가워요.'], ru: ['Здравствуйте! Очень приятно.', '안녕하세요! 만나서 반가워요.'] }[curLang()] || ['Hello!', '안녕하세요!'];
+      np.greeting = fb[0]; np.greetingKo = fb[1]; np.provider = 'builtin';
+      if (aiAvailable()) {
+        try {
+          const band = bandOf(Math.max(1, currentLevel));
+          const raw = await geminiCall({ contents: [{ parts: [{ text: `${L} 원어민 '${np.name}'(${np.role}${np.personality ? ', 성격: ' + np.personality : ''}${np.style ? ', 말투: ' + np.style : ''})가 ${np.scene ? `"${np.scene}" 장면에서 ` : ''}한국인 학습자에게 건네는 자연스러운 첫마디 1~2문장. 학습자 수준: ${band.spec}${np.extra ? ' 추가 설정: ' + np.extra : ''}
+JSON만: {"text":"${L} 원어","ko":"한국어 번역"}` }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.9 } }, 20000);
+          const o = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
+          if (o && o.text) { np.greeting = String(o.text); np.greetingKo = String(o.ko || ''); np.provider = lastProvider; }
+        } catch (er) { console.warn('[HGV2] 페르소나 첫마디 실패', er.message); }
+      }
+      save(personaKey(), np);
+      box.remove(); busy = false;
+      if (typeof setupRoleplayView === 'function') setupRoleplayView();
+    });
+    document.getElementById('hgPsName')?.focus();
+  }
+  // 상대 카드(이름·역할 부분)를 두 번 누르면 입력판 — 아바타 5번 누르기(관리자)와 겹치지 않게 아바타는 제외
+  function bindPersonaCard() {
+    const card = document.getElementById('personaName')?.parentElement?.parentElement;
+    if (!card || card.dataset.hgPs) return; card.dataset.hgPs = '1';
+    card.classList.add('hg-persona-card'); card.title = '두 번 눌러 회화 상대(페르소나) 설정';
+    card.insertAdjacentHTML('beforeend', '<span class="hg-persona-hint" aria-hidden="true">✏️<br>두 번 눌러<br>상대 설정</span>');
+    let last = 0;
+    card.addEventListener('click', e => {
+      if (e.target.closest('#personaAvatar')) return;
+      const now = Date.now();
+      if (now - last < 450) { last = 0; openPersonaEditor(); } else last = now;
+    });
+  }
+  document.addEventListener('DOMContentLoaded', bindPersonaCard);
+
   function choosePartner(partner) {
+    try { localStorage.removeItem(personaKey()); } catch (e) {}  // 준비된 상대를 고르면 직접 정한 페르소나 대신 그 상대로
     save(`hg_v2_partner_${curLang()}`, partner);
     const m = document.getElementById('hgv2PartnerModal');
     if (m) m.remove();
@@ -862,6 +936,7 @@ ${convo}
     advanceAfterSet, goBack, noteFar, behindFar, forward, regenerateCurrent, renderArt, getAnchor, isThreadPos, sentenceCount, roundCount, _dialogFirstPrompt: dialogFirstPrompt,
     TIER_NAMES, tierOf, tierLabel, roadmapLine,
     isFreeTalk, getPartner, setupFreeTalkView, partnerReply, speakPartner, openPartnerPicker,
+    getPersona, openPersonaEditor, useAiPartner: () => isFreeTalk() || !!getPersona(),
     _validateSet: validateSet, _buildSetPrompt: buildSetPrompt,
     topic, setTopic, applyTopic, generateTopicSet, topicSet, prefetch: prefetchNext,
     saveTopicSet: (lang, level, k, set) => { const t = topic(); if (t) save(tpKey(lang, level, k), { ...set, topicId: t.id, topic: t.q }); },

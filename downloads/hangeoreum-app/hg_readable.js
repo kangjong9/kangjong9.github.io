@@ -11,7 +11,7 @@
 (function () {
   const ROOTS = '#viewHome, #viewLanguages, #viewFoundation, #viewCanvas, #viewOnboarding, #openingSplashView, .modal-sheet, #hgCelebrate, .hgl-ov';
   // 여우 말풍선(.hg-ui-fox-bubble)은 빈칸에 맞춰 hg_ui.js fitBubbles가 크기를 정하므로 키우지 않음
-  const SKIP = 'svg, svg *, canvas, script, style, #hgSpeakWave, #hgSpeakWave *, #hgTextSizeRow, #hgTextSizeRow *, .hg-ui-fox-bubble, #hgUiModeButtons, #hgUiModeButtons *';  // 학습 화면 세 버튼은 한 줄 높이 고정
+  const SKIP = 'svg, svg *, canvas, script, style, #hgSpeakWave, #hgSpeakWave *, #hgTextSizeRow, #hgTextSizeRow *, .hg-ui-fox-bubble, #hgUiModeButtons, #hgUiModeButtons *, .hg-persona-hint, .hg-persona-hint *';  // 학습 화면 세 버튼은 한 줄 높이 고정
   const LEVELS = { normal: ['보통', 1], large: ['크게', 1.12], xlarge: ['아주 크게', 1.25] };
   const KEY = 'hg_text_size';
 

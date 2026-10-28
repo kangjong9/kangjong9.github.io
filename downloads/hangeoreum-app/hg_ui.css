@@ -478,3 +478,20 @@ body.hg-topic-open .app-root{padding-bottom:76px!important;}
 .hg-ui-active #rpInputArea>div:first-child>span:first-child{display:none!important;}
 .hg-ui-active #btnRpMic{min-height:44px!important;margin-bottom:6px!important;}
 .hg-ui-active #rpInputArea>div:last-child button{min-height:40px!important;}
+
+/* 2026-10-28 옵빠야 지시: 회화 핸즈프리 켜기/끄기 + GPT 회화 상대(페르소나) 입력판 */
+.hg-ui-active #rpInputArea>div:first-child{justify-content:space-between!important;gap:8px;flex-wrap:nowrap!important;display:flex!important;}
+.hg-ui-active #rpMicStatus{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hg-ui-active #viewRoleplay #rpHfToggle{flex:none;min-height:30px!important;padding:2px 10px!important;border-radius:999px;border:1.5px solid #cbd5e1;background:#f1f5f9;color:#475569;font-weight:900;white-space:nowrap!important;}
+.hg-ui-active #viewRoleplay #rpHfToggle.is-on{background:#0e7c86;border-color:#0e7c86;color:#fff;}
+.hg-persona-card{position:relative;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.hg-persona-hint{position:absolute;top:50%;right:10px;transform:translateY(-50%);width:58px;text-align:center;font-size:11px;line-height:1.25;font-weight:800;color:#0e7c86;background:#ecfeff;border-radius:12px;padding:4px 4px;pointer-events:none;}
+.hg-persona-card>div:has(#personaName){min-width:0;padding-right:66px;}.hg-persona-card #personaName,.hg-persona-card #personaRole{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hg-persona-sheet{max-height:calc(100dvh - 32px);overflow-y:auto;text-align:left;}
+.hg-persona-sheet h2{margin:0 0 4px;font-size:19px;}
+.hg-persona-sheet>p{margin:0 0 8px;font-size:14px;color:#475569;}
+.hg-persona-sheet label{display:block;font-size:13px;font-weight:800;color:#334155;margin:0 0 6px;}
+.hg-persona-sheet input:not([type=radio]){display:block;width:100%;box-sizing:border-box;margin-top:3px;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:12px;font-size:15px;background:#f8fafc;}
+.hg-persona-gender{display:flex;gap:14px;margin:4px 0 6px;}
+.hg-persona-gender label{display:flex;align-items:center;gap:6px;margin:0;}
+.hg-persona-status{min-height:18px;font-size:13px;color:#0e7c86;font-weight:800;margin:2px 0 6px;}

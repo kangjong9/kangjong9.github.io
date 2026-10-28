@@ -1488,6 +1488,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <span style="font-size:12.5px; font-weight:900; color:#4338ca;">🎯 실전 원어 대화 (추천 없이 자유 발화)</span>
           <span id="rpMicStatus" style="font-size:11px; font-weight:700; color:#64748b;">원어로 소리내어 답변하세요</span>
+          <button type="button" id="rpHfToggle" onclick="toggleRoleplayHandsFree()" aria-pressed="true">🤖 핸즈프리 켜짐</button>
         </div>
 
         <!-- 원어 음성 발화 마이크 버튼 -->
@@ -19885,7 +19886,11 @@ function getCurrentRoundData() {
     // 입력칸 예시도 지금 배우는 언어로 (예전엔 늘 불어 예시)
     const rpIn = document.getElementById('rpTextInput');
     if (rpIn) rpIn.placeholder = '원어로 직접 입력 (예: ' + ({ fr: "Oui, je suis d'accord !", ja: 'はい、そうです！', cn: '好的，我同意！', en: 'Yes, I agree!', es: '¡Sí, estoy de acuerdo!', ru: 'Да, я согласен!' }[curLang] || 'Yes!') + ')';
-    if (window.HGV2 && HGV2.isFreeTalk()) { HGV2.setupFreeTalkView(); return; }
+    rpHfMiss = 0; syncRoleplayHandsFree();
+    // 첫 답 전에도 지금 연결된 구독 AI를 보여 줌(예전엔 연결돼 있어도 'AI 연결 전' 문구가 남아 있었음)
+    const srcEl = document.getElementById('hgUiReplySource');
+    if (srcEl && window.HGV2 && HGV2.aiAvailable) srcEl.textContent = HGV2.aiAvailable() ? `🤖 ${HGV2.aiName()}와 회화 · 상대는 카드를 두 번 눌러 설정` : 'AI 연결 전 · 설정에서 학습 AI를 연결하면 실제 대화 상대가 돼요';
+    if (window.HGV2 && HGV2.useAiPartner()) { HGV2.setupFreeTalkView(); return; }  // 50레벨 자유 대화 또는 내가 정한 페르소나 → AI 상대
 
     // 단일 맥락 몰입 엔진: activeSessionCase 롤플레잉 정보 우선 적용
     if (activeSessionCase && activeSessionCase.roleplay && activeSessionCase.theme === currentTheme && activeSessionCase.lang === curLang) {
@@ -19911,7 +19916,7 @@ function getCurrentRoundData() {
       // 페르소나 첫 인사 음성 자동 발화
       setTimeout(() => {
         if (window.HGUI && (!HGUI.canPractice() || HGUI.mode() !== 'roleplay')) return;
-        speakTextWithFallback(rp.greetings, curLang);
+        speakTextWithFallback(rp.greetings, curLang, { onDone: rpAfterSpeak });
       }, 300);
       return;
     }
@@ -19956,8 +19961,36 @@ function getCurrentRoundData() {
     // 페르소나 첫 인사 음성 자동 발화
     setTimeout(() => {
       if (window.HGUI && (!HGUI.canPractice() || HGUI.mode() !== 'roleplay')) return;
-      speakTextWithFallback(sc.greetings || p.greetings, curLang);
+      speakTextWithFallback(sc.greetings || p.greetings, curLang, { onDone: rpAfterSpeak });
     }, 300);
+  }
+
+  // 2026-10-28 옵빠야 지시('회화쪽에도 핸즈프리'): 상대가 말을 마치면 마이크가 자동으로 켜지고, 말하면 자동 전송 → 상대 답 → 다시 마이크.
+  // 조용하면(no-speech) 두 번까지 다시 듣고 멈춤. 켜기/끄기는 입력판의 🤖 핸즈프리 버튼(hg_rp_handsfree, 기본 켜짐)
+  let rpHfMiss = 0;
+  function rpHandsFreeOn() { try { return localStorage.getItem('hg_rp_handsfree') !== '0'; } catch (e) { return true; } }
+  function rpCanListen() {
+    const v = document.getElementById('viewRoleplay');
+    return rpHandsFreeOn() && !!(window.SpeechRecognition || window.webkitSpeechRecognition) && v && !v.classList.contains('hidden')  // 음성 인식이 없는 기기는 자동 듣기 안 함(입력 창 팝업 방지) && !document.body.classList.contains('hg-topic-open')
+      && (!window.HGUI || (HGUI.canPractice() && HGUI.mode() === 'roleplay' && HGUI.route() === 'lesson'));
+  }
+  function rpAfterSpeak() { setTimeout(() => { if (rpCanListen() && !isRoleplayRecording) toggleRoleplayMicListening(); }, 450); }
+  function rpRetryListen() {
+    if (!rpCanListen()) return false;
+    if (++rpHfMiss > 2) { rpHfMiss = 0; const s = document.getElementById('rpMicStatus'); if (s) s.textContent = '말이 들리지 않아 멈췄어요. 🎙️ 버튼을 누르면 다시 들어요.'; return false; }
+    setTimeout(() => { if (rpCanListen() && !isRoleplayRecording) toggleRoleplayMicListening(); }, 600);
+    return true;
+  }
+  function toggleRoleplayHandsFree() {
+    const on = !rpHandsFreeOn();
+    try { localStorage.setItem('hg_rp_handsfree', on ? '1' : '0'); } catch (e) {}
+    syncRoleplayHandsFree();
+    if (on) rpAfterSpeak(); else if (isRoleplayRecording && roleplayRecognizer) roleplayRecognizer.stop();
+  }
+  function syncRoleplayHandsFree() {
+    const b = document.getElementById('rpHfToggle'); if (!b) return;
+    const on = rpHandsFreeOn();
+    b.textContent = on ? '🤖 핸즈프리 켜짐' : '🤖 핸즈프리 꺼짐'; b.setAttribute('aria-pressed', String(on)); b.classList.toggle('is-on', on);
   }
 
   // [옵빠야 요청] 실력이 늘었으므로 원어로 직접 마이크 입력을 받아 롤플레잉 수행
@@ -20022,11 +20055,13 @@ function getCurrentRoundData() {
           transcript = (event.results[0][0].transcript || '').trim();
         }
 
-        if (statusEl) statusEl.innerHTML = `🗣️ 인식 완료: <strong>"${transcript}"</strong>`;
+        if (statusEl) statusEl.innerHTML = `🗣️ 인식 완료: <strong>"${window.HGUI ? HGUI.escape(transcript) : transcript}"</strong>`;
         if (transcript) {
+          rpHfMiss = 0;
           handleRoleplayUserTurn(transcript);
         } else {
           if (statusEl) statusEl.textContent = "음성이 인식되지 않았습니다. 다시 말씀해 보세요.";
+          rpRetryListen();
         }
       };
 
@@ -20037,6 +20072,7 @@ function getCurrentRoundData() {
         if (btn) btn.style.background = "";
         console.warn("Roleplay speech error:", event.error);
         if (statusEl) statusEl.textContent = `음성 감지 실패 (${event.error}). 다시 말씀해 보세요!`;
+        if (event.error === 'no-speech' && rpRetryListen() && statusEl) statusEl.textContent = '🤖 핸즈프리: 다시 듣고 있어요. 원어로 말해 보세요.';
       };
 
       roleplayRecognizer.onend = () => {
@@ -20105,7 +20141,7 @@ function getCurrentRoundData() {
     let replyProvider = "";
 
     const apiKey = getActiveApiKey();
-    if (window.HGV2 && HGV2.isFreeTalk()) {
+    if (window.HGV2 && HGV2.useAiPartner()) {
       try { const r = await HGV2.partnerReply(userSpokenText); if (r) { replyText = r.text; replyKo = r.ko || ''; replyProvider=r.provider||'AI'; } } catch (e) {}
     }
     // callGeminiFlashRaw는 정의된 적이 없어 키가 있어도 늘 내장 응답으로 떨어졌다 (실기기 2026-10-26)
@@ -20222,8 +20258,8 @@ function getCurrentRoundData() {
 
     // 페르소나 음성 출력 (자유 대화는 고른 상대의 성별 원어민 목소리)
     if (window.HGUX) HGUX.sfx('bubble', 0.7);
-    if (window.HGV2 && HGV2.isFreeTalk()) HGV2.speakPartner(replyText);
-    else speakTextWithFallback(replyText, curLang);
+    if (window.HGV2 && HGV2.useAiPartner()) HGV2.speakPartner(replyText, rpAfterSpeak);
+    else speakTextWithFallback(replyText, curLang, { onDone: rpAfterSpeak });
   }
 
   function advanceRoleplayLevel() {
