@@ -1,0 +1,9 @@
+{
+  "versionCode": 34,
+  "versionName": "1.0.12-training.14",
+  "packageName": "com.hangeoreum.training",
+  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-34/Hangeoreum-Training-34.apk",
+  "size": 458745112,
+  "sha256": "b5797e55b16b3ce93c4a458ea8efb9d8ee9cdbbec8f8f9f5b42c25f2a8924957",
+  "notes": "한국어 22·영어 22 감정 보이스와 즉시 미리듣기, 로컬 대사 합성, 작은 화면 무스크롤 개선. 최초 감정 대사 합성 시 약 1.5GB 모델 다운로드가 필요합니다."
+}
