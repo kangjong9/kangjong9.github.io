@@ -108,7 +108,7 @@ function initProjectFolders(content) {
   initGameEditorFolder(content);
   const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
   const projects = {
-    "requested": [["레이더 툴킷[앱]", "radar-toolkit.svg"], ["레이더 툴킷[PC]", "radar-toolkit.svg"], ["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"], ["한걸음 17 · 맞춤훈련", "hangeoreum-training.svg"], ["한걸음 17 · 맞춤훈련", "hangeoreum-training.svg"]],
+    "requested": [["레이더 툴킷[앱]", "radar-toolkit.svg"], ["레이더 툴킷[PC]", "radar-toolkit.svg"], ["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"], ["한걸음 17 · 맞춤훈련", "hangeoreum-training.svg"], ["한걸음 17 · 맞춤훈련", "hangeoreum-training.svg"], ["한걸음 17 · 맞춤훈련", "hangeoreum-training.svg"]],
     "fun": [
       ["코딩놀이", "coding.svg"],
       ["찌꺼기저리가[PC]", "cleaner.svg"],
@@ -194,6 +194,14 @@ function initProjectFolders(content) {
       desc: "한국어·영어 감정 보이스, 누리 TTS 최적화, Google ML Kit 문장 단위 연속 통역. 첫 합성·통역은 기기에서 모델 준비가 필요해요.",
       links: [
         {label: "17번 APK 받기 · 478 MB · Android 8 이상", url: "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-35/Hangeoreum-Training-35.apk", external: true, primary: true},
+        {label: "사용법 · 업데이트 안내", url: "./downloads/Hangeoreum-Training-guide.txt", external: true}
+      ]
+    },
+    "한걸음 17 · 맞춤훈련": {
+      tag: "별도 설치 · 감정 보이스 · AI 문장 통역",
+      desc: "한국어·영어 감정 보이스, 누리 TTS 최적화, Google ML Kit 문장 단위 연속 통역. 첫 합성·통역은 기기에서 모델 준비가 필요해요.",
+      links: [
+        {label: "17번 APK 받기 · 478 MB · Android 8 이상", url: "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-36/Hangeoreum-Training-36.apk", external: true, primary: true},
         {label: "사용법 · 업데이트 안내", url: "./downloads/Hangeoreum-Training-guide.txt", external: true}
       ]
     },
