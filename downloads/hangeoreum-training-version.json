@@ -1,9 +1,9 @@
 {
-  "versionCode": 34,
-  "versionName": "1.0.12-training.14",
+  "versionCode": 38,
+  "versionName": "1.0.13-training.18",
   "packageName": "com.hangeoreum.training",
-  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-34/Hangeoreum-Training-34.apk",
-  "size": 458745112,
-  "sha256": "b5797e55b16b3ce93c4a458ea8efb9d8ee9cdbbec8f8f9f5b42c25f2a8924957",
-  "notes": "한국어 22·영어 22 감정 보이스와 즉시 미리듣기, 로컬 대사 합성, 작은 화면 무스크롤 개선. 최초 감정 대사 합성 시 약 1.5GB 모델 다운로드가 필요합니다."
+  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-35/Hangeoreum-Training-35.apk",
+  "size": 478285710,
+  "sha256": "521893d6fef52aa608e393f9ba176de65d7898aa3bee37e99a76c32e4ee10eea",
+  "notes": "뉴스 기사 드롭다운 한 화면 배치, 누리 TTS 합성·캐시 지연 최적화, Google ML Kit 기반 문장 단위 연속 통역을 추가했습니다. 기존 한국어·영어 감정 목소리와 설정을 유지합니다. 첫 통역 언어 팩 다운로드와 Android 음성 인식이 필요합니다. 실기기 통역·속도는 확인하지 못했습니다."
 }
