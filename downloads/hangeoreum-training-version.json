@@ -1,9 +1,9 @@
 {
-  "versionCode": 39,
-  "versionName": "1.0.14-training.19",
+  "versionCode": 40,
+  "versionName": "1.0.15-training.20",
   "packageName": "com.hangeoreum.training",
-  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-36/Hangeoreum-Training-36.apk",
-  "size": 478285698,
-  "sha256": "58e372851e3064f73a6ef1cb2e115d73fca8f97d9a0bc321eac0e68fd8345f55",
-  "notes": "뉴스 기사 드롭다운 한 화면 배치, 누리 TTS 합성·캐시 지연 최적화, Google ML Kit 기반 문장 단위 연속 통역을 추가했습니다. 기존 한국어·영어 감정 목소리와 설정을 유지합니다. 첫 통역 언어 팩 다운로드와 Android 음성 인식이 필요합니다. 실기기 통역·속도는 확인하지 못했습니다."
+  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-37/Hangeoreum-Training-37.apk",
+  "size": 478285718,
+  "sha256": "8ae4c4c55547aff33daecf77c496a1021689f9c8cbfa221b01c37dc474252aa8",
+  "notes": "AI 통역사의 한국어·영어·프랑스어·중국어·일본어·스페인어·러시아어 언어 태그를 ML Kit 언어 코드에 명시적으로 연결해 지원 언어 간 조합 오류를 수정했습니다. 통역사는 별도 팝업 대신 앱 전체 화면에 표시하고 우측 하단 뒤로가기로 닫을 수 있습니다. 첫 통역 언어 팩 다운로드와 Android 음성 인식이 필요합니다. 폰 설치와 버전은 확인했으나 통역 실사용은 확인하지 못했습니다."
 }

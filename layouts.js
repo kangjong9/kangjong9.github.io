@@ -185,7 +185,7 @@ function initProjectFolders(content) {
       tag: "별도 설치 · 감정 보이스 · AI 문장 통역",
       desc: "한국어·영어 감정 보이스, 누리 TTS 최적화, Google ML Kit 문장 단위 연속 통역. 첫 합성·통역은 기기에서 모델 준비가 필요해요.",
       links: [
-        {label: "17번 APK 받기 · 478 MB · Android 8 이상", url: "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-36/Hangeoreum-Training-36.apk", external: true, primary: true},
+        {label: "17번 APK 받기 · 478 MB · Android 8 이상", url: "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-37/Hangeoreum-Training-37.apk", external: true, primary: true},
         {label: "사용법 · 업데이트 안내", url: "./downloads/Hangeoreum-Training-guide.txt", external: true}
       ]
     },
