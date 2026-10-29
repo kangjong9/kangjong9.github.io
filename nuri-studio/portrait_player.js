@@ -74,6 +74,10 @@
     if (!toggle) return;
     const report = text => { document.getElementById('portraitStatus').textContent = text; };
     const video = document.getElementById('portraitVideo');
+    const panel = document.getElementById('nuriPortraitPanel');
+    const vector = document.getElementById('nuriVectorStage');
+    const controls = document.getElementById('nuriVectorControls');
+    const preview = document.getElementById('portraitPreview');
     if (!['127.0.0.1', 'localhost'].includes(location.hostname)) {
       report('실사 립싱크는 PC의 누리 로컬 스튜디오에서 사용할 수 있습니다.');
       toggle.disabled = true; return;
@@ -81,13 +85,36 @@
     try {
       const state = await request('status');
       toggle.disabled = !state.ready;
-      if (state.photo) video.poster = '/api/portrait/photo';
+      if (state.photo) {
+        video.poster = '/api/portrait/photo';
+        panel.hidden = false;
+        video.hidden = false;
+        vector.hidden = true;
+        controls.hidden = true;
+        document.getElementById('nuriCharacterTitle').textContent = '숨 · 나의 실사 캐릭터';
+        document.getElementById('canvasFpsBadge').textContent = '로컬 전용';
+      }
+      preview.hidden = !state.preview;
       report(state.ready ? '생성 후 재생 · 8초 이내 음성 · CPU 생성은 수 분 이상 걸립니다.' : '실사 립싱크 모델을 준비 중입니다.');
     } catch (_) { toggle.disabled = true; report('누리 로컬 서버 연결을 확인해 주세요.'); }
     toggle.addEventListener('change', () => {
       window.OurVoiceMasterEngine.setPortraitRenderer(toggle.checked ? new window.NuriPortraitRenderer(video, report) : null);
-      video.hidden = !toggle.checked;
       report(toggle.checked ? '다음 음성을 실사 영상으로 생성합니다.' : '기존 음성 재생 모드');
+    });
+    preview.addEventListener('click', async () => {
+      const engine = window.OurVoiceMasterEngine;
+      engine.stop(); engine.isPlaying = true;
+      video.hidden = false; vector.hidden = true; controls.hidden = true;
+      report('검증된 숨 실사 샘플 영상을 재생합니다.');
+      try { await engine._playMediaUrl('/api/portrait/preview', engine.currentPlayToken, video); }
+      catch (error) { if(error.message!=='CANCELED') report('영상 재생 오류: '+error.message); }
+      finally { engine.isPlaying = false; }
+    });
+    document.getElementById('portraitViewToggle').addEventListener('click', event => {
+      const showVector = vector.hidden;
+      vector.hidden = !showVector; controls.hidden = !showVector; video.hidden = showVector;
+      event.currentTarget.textContent = showVector ? '숨 실사 보기' : '2D 캐릭터 보기';
+      document.getElementById('nuriCharacterTitle').textContent = showVector ? '✨ 2D 캐릭터 캔버스' : '숨 · 나의 실사 캐릭터';
     });
   });
 })();
