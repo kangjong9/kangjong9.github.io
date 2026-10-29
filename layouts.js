@@ -108,7 +108,7 @@ function initProjectFolders(content) {
   initGameEditorFolder(content);
   const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
   const projects = {
-    "requested": [["레이더 툴킷[앱]", "radar-toolkit.svg"], ["레이더 툴킷[PC]", "radar-toolkit.svg"], ["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"], ["한걸음 17 · 맞춤훈련", "hangeoreum-training.svg"]],
+    "requested": [["레이더 툴킷[앱]", "radar-toolkit.svg"], ["레이더 툴킷[PC]", "radar-toolkit.svg"], ["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"]],
     "fun": [
       ["코딩놀이", "coding.svg"],
       ["찌꺼기저리가[PC]", "cleaner.svg"],
@@ -193,6 +193,8 @@ function initProjectFolders(content) {
       tag: "한걸음V1.0 Exile · 안드로메다에서 유배 온 안내 AI Exile · 6개 언어 · 누리 보이스 TTS 엔진",
       links: [
         { label: "한걸음V1.0 Exile APK (1.7MB) · Android 8 이상", url: "./downloads/Hangeoreum-V1.0-Exile.apk", download: "Hangeoreum-V1.0-Exile.apk", primary: true },
+        { label: "📎 한걸음 17 맞춤훈련 APK · 1.0.15 · Android 8 이상", url: "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-37/Hangeoreum-Training-37.apk", external: true },
+        { label: "📎 한걸음 17 사용 안내", url: "./downloads/Hangeoreum-Training-guide.txt", external: true },
         { label: "화면 시안 체험 · 6개 언어 문자표 & 입문 문자 & 오늘의 뉴스", url: "./downloads/Hangeoreum-preview.html", external: true },
         { label: "사용 안내 · 안드로메다 유배 스토리 및 음성 코칭", url: "./downloads/Hangeoreum-guide.txt", download: "Hangeoreum-guide.txt", primary: false }
       ]
