@@ -776,6 +776,7 @@
       {
         Object.keys(NATIVE_WAITERS).forEach(id => {
           const w = NATIVE_WAITERS[id];
+          if (w.retainOnStop) return; // 합성 완료는 캐시로 받고, 재생은 playToken으로 차단.
           delete NATIVE_WAITERS[id];
           w.reject(new Error('CANCELED'));
         });
@@ -1141,6 +1142,7 @@
           if (NATIVE_WAITERS[id]) { delete NATIVE_WAITERS[id]; reject(new Error('Edge(Android) 응답 시간 초과')); }
         }, 15000);
         NATIVE_WAITERS[id] = {
+          retainOnStop: true,
           resolve: (b) => { clearTimeout(timer); resolve(b); },
           reject: (e) => { clearTimeout(timer); reject(e); }
         };
@@ -1206,6 +1208,11 @@
       if((selected.hidden || PIPER_VOICES.some(v=>v.hidden&&v.modelVoice===voice)) && !(typeof window !== 'undefined' && typeof window.isAdminVoiceUnlocked === 'function' && window.isAdminVoiceUnlocked())) throw new Error('관리자 인증이 필요합니다.');
       const modelVoice = selected.modelVoice || voice;
       const speed = Math.max(.5, Math.min(2, (opts.rate || 1) * (opts.engine==='supertonic'?1:(selected.rate || 1))));
+      // Native Qwen already splits at these boundaries; play each completed chunk
+      // while preparing the next, preserving its instruction, seed and wording.
+      if (opts.engine === 'qwen' && typeof window !== 'undefined' && window.Native?.call && text.trim().length > (selected.lang.startsWith('ko') ? 65 : 130)) {
+        return this._speakQwenChunks(text, opts, selected, speed);
+      }
       let blob;
       if(typeof window!=='undefined' && window.Native && typeof window.Native.call==='function') {
         blob=await this._localViaAndroid(text,modelVoice,speed,opts.engine);
@@ -1214,13 +1221,72 @@
         if(!response.ok){let message='로컬 음성 합성 실패';try{message=(await response.json()).error||message;}catch(_){}throw new Error(message);}
         blob=await response.blob();
       }
+      if (opts.useCache && this.config.enableCache) await this.cache.set(this.cache.makeKey(opts.engine, opts.voice, text, opts.rate), blob);
       if(opts.playToken!==undefined && opts.playToken!==this.currentPlayToken) throw new Error('CANCELED');
       await this._playAudioUrl(URL.createObjectURL(blob),opts.playToken);
       return {voice,spokenText:text,blob,mode:opts.engine==='qwen'?'qwen-local-ggml':opts.engine+'-local-onnx'};
     }
 
+    async _speakQwenChunks(text, opts, selected, speed) {
+      const chunks = [];
+      let remaining = text.trim();
+      const limit = selected.lang.startsWith('ko') ? 65 : 130;
+      while (remaining) {
+        let end = Math.min(limit, remaining.length);
+        if (end < remaining.length) {
+          const space = remaining.lastIndexOf(' ', end);
+          if (space > 15) end = space;
+          const code = remaining.charCodeAt(end - 1);
+          if (code >= 0xD800 && code <= 0xDBFF) end--;
+        }
+        chunks.push(remaining.slice(0, end).trim());
+        remaining = remaining.slice(end).trim();
+      }
+      const stale = () => opts.playToken !== this.currentPlayToken;
+      const prepare = async chunk => {
+        if (stale()) throw new Error('CANCELED');
+        const key = this.cache.makeKey('qwen', opts.voice, chunk, opts.rate);
+        const cached = opts.useCache ? await this.cache.get(key) : null;
+        if (cached) return cached;
+        if (stale()) throw new Error('CANCELED');
+        const blob = await this._localViaAndroid(chunk, selected.modelVoice || selected.id, speed, 'qwen');
+        if (opts.useCache && this.config.enableCache) await this.cache.set(key, blob);
+        return blob;
+      };
+      // Attach rejection handlers immediately while the previous chunk plays.
+      const pending = chunk => prepare(chunk).then(blob => ({blob}), error => ({error}));
+      let next = pending(chunks[0]);
+      const buffers = [];
+      for (let i = 0; i < chunks.length; i++) {
+        const result = await next;
+        if (result.error) throw result.error;
+        if (stale()) throw new Error('CANCELED');
+        buffers.push(await result.blob.arrayBuffer());
+        if (i + 1 < chunks.length) next = pending(chunks[i + 1]);
+        await this._playAudioUrl(URL.createObjectURL(result.blob), opts.playToken);
+        if (i + 1 < chunks.length) await new Promise(resolve => setTimeout(resolve, 150));
+        if (stale()) throw new Error('CANCELED');
+      }
+      // Native Qwen WAV is PCM16 mono / 24kHz with a 44-byte header.
+      const pauseBytes = 3600 * 2;
+      const length = 44 + buffers.reduce((sum, b) => sum + b.byteLength - 44, 0) + (buffers.length - 1) * pauseBytes;
+      const joined = new Uint8Array(length);
+      joined.set(new Uint8Array(buffers[0], 0, 44));
+      let offset = 44;
+      buffers.forEach((buffer, i) => {
+        joined.set(new Uint8Array(buffer, 44), offset);
+        offset += buffer.byteLength - 44 + (i + 1 < buffers.length ? pauseBytes : 0);
+      });
+      const view = new DataView(joined.buffer);
+      view.setUint32(4, length - 8, true); view.setUint32(40, length - 44, true);
+      const blob = new Blob([joined], {type:'audio/wav'});
+      if (opts.useCache && this.config.enableCache) await this.cache.set(this.cache.makeKey(opts.engine, opts.voice, text, opts.rate), blob);
+      return {voice:selected.id,spokenText:text,blob,mode:'qwen-chunk-pipeline'};
+    }
+
     async _speakEdge(rawText, opts) {
       const { blob, voiceKey, mode } = await this._synthEdge(rawText, opts);
+      if (opts.useCache && this.config.enableCache) await this.cache.set(this.cache.makeKey(opts.engine, opts.voice, rawText, opts.rate), blob);
       if (opts.playToken !== undefined && opts.playToken !== this.currentPlayToken) throw new Error('CANCELED');
 
       const audioUrl = URL.createObjectURL(blob);
@@ -1259,7 +1325,17 @@
     }
 
     /** Edge 합성만 수행 (재생 없음): 안드로이드 네이티브 → 포터블 서버 순 */
-    async _synthEdge(rawText, opts) {
+    _synthEdge(rawText, opts) {
+      if (!this._edgeSynthesis) this._edgeSynthesis = new Map();
+      const voice = OurVoiceMasterEngine.resolveEdgeVoice(opts.voice, rawText);
+      const key = JSON.stringify([voice, opts.rate || 1, rawText]);
+      if (this._edgeSynthesis.has(key)) return this._edgeSynthesis.get(key);
+      const job = this._synthEdgeOnce(rawText, opts).finally(() => this._edgeSynthesis.delete(key));
+      this._edgeSynthesis.set(key, job);
+      return job;
+    }
+
+    async _synthEdgeOnce(rawText, opts) {
       const voiceKey = OurVoiceMasterEngine.resolveEdgeVoice(opts.voice, rawText);
       let blob = null;
       let mode = '';

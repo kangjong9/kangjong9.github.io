@@ -59,7 +59,10 @@
           const state = await request('jobs/' + job.id, { signal });
           if (state.status === 'ready') {
             this.report('실사 립싱크 · 선택한 TTS 음성으로 재생');
-            return { url: '/api/portrait/jobs/' + job.id + '/video', element: this.video };
+            const url = '/api/portrait/jobs/' + job.id + '/video';
+            const save = document.getElementById('portraitSave');
+            if(save) { save.dataset.videoUrl = url; save.hidden = false; }
+            return { url, element: this.video };
           }
           if (['error', 'canceled'].includes(state.status)) throw new Error(state.error || 'CANCELED');
           await pause(1000, signal);
@@ -78,6 +81,7 @@
     const vector = document.getElementById('nuriVectorStage');
     const controls = document.getElementById('nuriVectorControls');
     const preview = document.getElementById('portraitPreview');
+    const save = document.getElementById('portraitSave');
     if (!['127.0.0.1', 'localhost'].includes(location.hostname)) {
       report('실사 립싱크는 PC의 누리 로컬 스튜디오에서 사용할 수 있습니다.');
       toggle.disabled = true; return;
@@ -95,6 +99,7 @@
         document.getElementById('canvasFpsBadge').textContent = '로컬 전용';
       }
       preview.hidden = !state.preview;
+      if(state.preview) { save.dataset.videoUrl = '/api/portrait/preview'; save.hidden = false; }
       report(state.ready ? '생성 후 재생 · 8초 이내 음성 · CPU 생성은 수 분 이상 걸립니다.' : '실사 립싱크 모델을 준비 중입니다.');
     } catch (_) { toggle.disabled = true; report('누리 로컬 서버 연결을 확인해 주세요.'); }
     toggle.addEventListener('change', () => {
@@ -106,6 +111,7 @@
       engine.stop(); engine.isPlaying = true;
       video.hidden = false; vector.hidden = true; controls.hidden = true;
       report('검증된 숨 실사 샘플 영상을 재생합니다.');
+      save.dataset.videoUrl = '/api/portrait/preview'; save.hidden = false;
       try { await engine._playMediaUrl('/api/portrait/preview', engine.currentPlayToken, video); }
       catch (error) { if(error.message!=='CANCELED') report('영상 재생 오류: '+error.message); }
       finally { engine.isPlaying = false; }
@@ -115,6 +121,35 @@
       vector.hidden = !showVector; controls.hidden = !showVector; video.hidden = showVector;
       event.currentTarget.textContent = showVector ? '숨 실사 보기' : '2D 캐릭터 보기';
       document.getElementById('nuriCharacterTitle').textContent = showVector ? '✨ 2D 캐릭터 캔버스' : '숨 · 나의 실사 캐릭터';
+    });
+    save.addEventListener('click', async () => {
+      const url = save.dataset.videoUrl;
+      if (!url) { report('먼저 실사 영상을 생성해 주세요.'); return; }
+      if (typeof window.showSaveFilePicker !== 'function') {
+        report('폴더 지정 저장은 PC의 Edge 또는 Chrome에서 로컬 누리 스튜디오를 열어 사용해 주세요.');
+        return;
+      }
+      let writable;
+      try {
+        // Invoke directly inside the user's click so the browser can open Save As.
+        const handle = await window.showSaveFilePicker({
+          id: 'nuri-portrait-video', suggestedName: '숨-립싱크.mp4',
+          types: [{ description: 'MP4 동영상', accept: { 'video/mp4': ['.mp4'] } }],
+          excludeAcceptAllOption: true
+        });
+        save.disabled = true;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('저장할 영상을 불러오지 못했습니다.');
+        const blob = await response.blob();
+        writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        writable = null;
+        report('지정한 폴더에 ' + handle.name + ' 저장을 완료했습니다.');
+      } catch (error) {
+        if (writable) { try { await writable.abort(); } catch (_) {} }
+        report(error.name === 'AbortError' ? '영상 저장을 취소했습니다.' : '영상 저장 실패: ' + error.message);
+      } finally { save.disabled = false; }
     });
   });
 })();
