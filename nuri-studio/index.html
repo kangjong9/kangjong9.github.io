@@ -11,7 +11,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Engine Scripts -->
   <script src="../assets/gemini_human_voice_engine.js"></script>
-  <script src="../assets/our_voice_master_engine.js"></script>
+  <script src="../assets/our_voice_master_engine.js?v=20261029-portrait1"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -293,6 +293,11 @@
             </div>
           </div>
 
+          <div class="w-full space-y-2 border-t border-slate-700 pt-2">
+            <label class="text-sm"><input id="portraitEnabled" type="checkbox" disabled> 숨 · 실사 립싱크</label>
+            <video id="portraitVideo" hidden playsinline class="w-full rounded-xl" style="max-height:260px;object-fit:contain"></video>
+            <p id="portraitStatus" class="text-xs text-slate-400" role="status">로컬 엔진 연결 확인 중</p>
+          </div>
           <!-- 8대 상태 머신 수동 테스트 버튼 -->
           <div class="w-full space-y-1.5 pt-1">
             <div class="flex items-center justify-between text-[11px] text-slate-400">
@@ -656,6 +661,18 @@
           </div>
 
         </div>
+
+        <section class="glass-card rounded-2xl p-4 border border-teal-500/30">
+          <h3 class="font-bold">누리 로컬 신경망 음성 · Piper / MeloTTS</h3>
+          <p class="text-sm">위 문장을 선택한 언어 모델로 PC에서 합성합니다. 최초 사용 시 모델을 내려받습니다. 한국어 Melo는 숫자·영문을 한글로 입력해 주세요.</p>
+          <select id="localEngineKind" onchange="refreshLocalVoices()" aria-label="로컬 엔진" style="color:#111"><option value="piper">Piper</option><option value="melo">Melo</option><option value="kokoro">Kokoro</option><option value="supertonic">직업별 한국어 보이스</option></select>
+          <select id="localVoiceChoice" aria-label="로컬 목소리" style="color:#111;max-width:65%"></select>
+          <button onclick="playLocalEngine(document.getElementById('localEngineKind').value,true)" class="px-4 py-2 rounded bg-teal-700">선택한 목소리 듣기</button>
+          <a href="PIPER_CUSTOM_VOICE_GUIDE.txt" target="_blank" rel="noopener" style="text-decoration:underline">Piper 고유 목소리 제작 방법</a>
+          <button onclick="playLocalEngine('piper')" class="px-4 py-2 rounded bg-teal-700">Piper KSS 듣기</button>
+          <button onclick="playLocalEngine('melo')" class="px-4 py-2 rounded bg-sky-700">Melo 한국어 듣기</button>
+          <p id="localTtsStatus" role="status"></p>
+        </section>
 
         <!-- ================= 5. OS SYSTEM TTS / 완전 오프라인 자립 엔진 ================= -->
         <div class="glass-card rounded-2xl p-4 border border-indigo-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -1046,6 +1063,23 @@
       });
     }
 
+    function refreshLocalVoices() {
+      const kind=document.getElementById('localEngineKind').value;
+      const select=document.getElementById('localVoiceChoice');select.replaceChildren();
+      for(const v of OurVoiceMasterEngine.VOICES[kind]) {
+        const option=document.createElement('option');option.value=v.id;option.textContent=`${v.lang} · ${v.name} · ${v.id}`;select.appendChild(option);
+      }
+    }
+    window.addEventListener('DOMContentLoaded',refreshLocalVoices);
+    async function playLocalEngine(kind,selected=false) {
+      const status=document.getElementById('localTtsStatus'),text=document.getElementById('targetText').value.trim();
+      if(!text){status.textContent='문장을 입력해 주세요.';return;}
+      status.textContent='기기에서 음성을 만드는 중…';
+      const voice=selected?document.getElementById('localVoiceChoice').value:kind==='piper'?'ko_KR-kss-medium':'ko-KR-melo-0';
+      const result=await engine.speak(text,{engine:kind,voice,fallback:false,onError:e=>{status.textContent=e.message;}});
+      if(result?.ok)status.textContent='재생 완료';
+    }
+
     async function playEngine5() {
       const text = document.getElementById('targetText').value.trim();
       if (!text) return alert('텍스트를 입력하세요.');
@@ -1214,5 +1248,6 @@
       updateCacheBadge();
     });
   </script>
+  <script src="portrait_player.js?v=20261029-portrait1"></script>
 </body>
 </html>
