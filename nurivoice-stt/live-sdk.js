@@ -9,9 +9,13 @@ export class NuriVoiceLive {
   emit(name,value){try{this.options[name]?.(value);}catch(error){console.error(error);}}
   async startPCM(){
     if(this.closed||this.worker)throw Error('새 인식 세션을 생성하세요.');
-    const streaming=this.options.task==='streaming';
-    if(streaming&&this.options.language!=='fr')throw Error('온라인 스트리밍은 프랑스어를 선택하세요.');
-    this.worker=new Worker(new URL(streaming?'./stream-worker.js':'./worker.js',import.meta.url),streaming?{}:{type:'module'});
+    this.nativeStreaming=this.options.task==='transcribe'&&this.options.language==='ko'&&
+      this.options.nativeStreaming!==false&&globalThis.NuriNative?.capabilities()==='ko-stream-v1';
+    const streaming=this.options.task==='streaming'||this.nativeStreaming;
+    this.online=streaming;
+    if(streaming&&!this.nativeStreaming&&this.options.language!=='fr')throw Error('온라인 스트리밍은 프랑스어를 선택하세요.');
+    if(this.nativeStreaming){const {NativeStreamWorker}=await import('./native-stream.js');this.worker=new NativeStreamWorker();}
+    else this.worker=new Worker(new URL(streaming?'./stream-worker.js':'./worker.js',import.meta.url),streaming?{}:{type:'module'});
     this.worker.onmessage=event=>this.message(event.data);
     this.worker.onerror=event=>this.fail(Error(event.message||'음성 엔진 실행 오류'));
     this.id=++this.counter;
@@ -71,7 +75,7 @@ export class NuriVoiceLive {
     if(data.type==='error')this.fail(Error(data.message||data.reason||'엔진 오류'));
     if(data.type==='ack')this.ack=data.received_samples;
     if(data.type==='partial')this.emit('onPartial',{status:'partial',transcript:data.transcript,utterance_index:0,task:'streaming'});
-    if(data.type==='result'&&this.options.task==='streaming')this.emit('onResult',{...data.result,utterance_index:0,input_source:'live_pcm'});
+    if(data.type==='result'&&this.online)this.emit('onResult',{...data.result,utterance_index:0,input_source:'live_pcm'});
   }
   acceptAudio(audio){
     if(!this.started||this.closed)return;
@@ -81,7 +85,7 @@ export class NuriVoiceLive {
     this.sessionAudio.push(audio.slice());
     let energy=0;for(const x of audio)energy+=x*x;
     const rms=Math.sqrt(energy/audio.length);this.emit('onLevel',Math.min(1,rms*8));
-    if(this.options.task==='streaming'){
+    if(this.online){
       if(this.sent-this.ack>32000){this.fail(Error('기기가 실시간 입력을 따라가지 못합니다. 입력을 중지했습니다.'));return;}
       this.sent+=audio.length;
       const copy=audio.slice();this.worker.postMessage({id:this.id,type:'audio',audio:copy},[copy.buffer]);return;
@@ -130,7 +134,7 @@ export class NuriVoiceLive {
     if(this.node){await new Promise(resolve=>{this.flushDone=resolve;this.node.port.postMessage({type:'flush'});setTimeout(resolve,1000);});}
     await this.closeCapture();
     try{
-      if(this.started&&this.options.task==='streaming'){
+      if(this.started&&this.online){
         const done=this.wait(this.id,'result');this.worker.postMessage({id:this.id,type:'finish'});await done;
       }else if(this.started){
         this.finalizeUtterance();
