@@ -1,9 +1,9 @@
 {
-  "versionCode": 41,
-  "versionName": "1.0.16-training.21",
+  "versionCode": 44,
+  "versionName": "1.0.18-training.24",
   "packageName": "com.hangeoreum.training",
-  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-38/Hangeoreum-Training-38.apk",
-  "size": 478285718,
-  "sha256": "96fbe09c1ed33afc1d51af976cfc8136fe571edb572bbe42a56d19331e06d619",
-  "notes": "앱 내부 웹뷰 리소스 요청 처리의 정규식을 미리 컴파일해 처리 효율을 높였습니다. 화면·기능·배치는 변경하지 않았습니다. 실행 속도 개선 폭은 실측에서 확인되지 않았습니다."
+  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-44/Hangeoreum-Training-44.apk",
+  "size": 579249465,
+  "sha256": "d2a01aeb5b1d0a752e9b9d2def94555926b616864d78e79a61a4da9a17ee50c6",
+  "notes": "AI 통역사에 180도 대면 분할 화면, 양쪽 마이크·언어 선택·번역 듣기/복사, 언어 교환, 센서 자동/수동 전환을 추가했습니다. 기존 문장 단위 기기 번역을 사용합니다. PC 검증 완료, 스마트폰 실기 시험은 누리보이스 디버깅과의 충돌을 피하기 위해 보류했습니다."
 }
