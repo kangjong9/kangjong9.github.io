@@ -46,6 +46,12 @@ export class NuriVoiceLive {
         if(data.type==='flushed')this.flushDone?.();
       };
       this.source.connect(this.node);this.node.connect(this.context.destination); // processor outputs silence
+      // Android의 마이크 권한/오디오 장치 전환 뒤 컨텍스트가 중단될 수 있다.
+      await this.context.resume();
+      this.node.onprocessorerror=()=>this.fail(Error('마이크 PCM 처리기가 중단되었습니다. 다시 시작하세요.'));
+      this.captureWatchdog=setTimeout(()=>{
+        if(!this.closed&&!this.stopping&&this.total===0)this.fail(Error('마이크 입력이 전달되지 않습니다. 다른 녹음 앱을 종료한 뒤 다시 시작하세요.'));
+      },8000);
       this.emit('onStatus','마이크 연결됨 · 말하면 바로 인식합니다.');
       return this;
     }catch(error){this.fail(error);throw error;}
@@ -152,6 +158,7 @@ export class NuriVoiceLive {
     }catch(error){if(!this.closed)this.fail(error);}
   }
   async closeCapture(){
+    clearTimeout(this.captureWatchdog);
     this.media?.getTracks().forEach(t=>t.stop());this.media=null;
     try{this.source?.disconnect();this.node?.disconnect();}catch{}
     this.source=null;this.node=null;
