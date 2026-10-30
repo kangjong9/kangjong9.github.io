@@ -96,3 +96,7 @@ export function recognizePhones(audio, {language='fr', target=null, l1=null, onP
 export function disposePhones() {
   return serial(async () => { if (loaded) { await loaded.session.release(); loaded = null; } });
 }
+
+export function preparePhones(onProgress=()=>{}) {
+  return serial(async()=>{await load(onProgress);});
+}

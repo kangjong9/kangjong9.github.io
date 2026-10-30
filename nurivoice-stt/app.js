@@ -1,7 +1,9 @@
 // 음성은 로컬 Worker로만 전달하며 네트워크로 전송하지 않습니다.
+import {NuriVoiceLive} from './live-sdk.js';
 const $ = id => document.getElementById(id);
 let worker, workerKind, activeId = 0, busy = false, recording = false;
-let stream, recorder, recordTimer, recordStarted, chunks = [], lastResult = null;
+let live = null, recordTimer, recordStarted, lastResult = null;
+let liveResults = new Map(), livePartial = '', stopping = false;
 let pendingResolve = null;
 const MAX_SECONDS = 60, MAX_BYTES = 32 * 1024 * 1024;
 
@@ -38,7 +40,8 @@ function setControls() {
   $('vad').disabled = busy || recording || $('task').value==='streaming';
   document.querySelector('.file-button').style.pointerEvents = busy || recording ? 'none' : '';
   $('record').hidden = recording; $('stop').hidden = !recording;
-  $('progressArea').hidden = !busy;
+  $('progressArea').hidden = !busy && !recording;
+  $('stop').disabled = stopping;
   $('recordZone').classList.toggle('recording', recording);
 }
 function begin(message) {
@@ -52,14 +55,11 @@ function fail(message) {
   $('statusBadge').textContent = '확인 필요'; finish();
   if (pendingResolve) { pendingResolve({status:'error', message}); pendingResolve = null; }
 }
-function stopTracks() {
-  stream?.getTracks().forEach(track => track.stop()); stream = null;
-  clearInterval(recordTimer); recording = false; setControls();
-}
 function cancel() {
   activeId++;
-  if (recorder?.state === 'recording') { recorder.onstop = null; recorder.stop(); }
-  recorder = null; chunks = []; stopTracks();
+  const cancelled = live; live = null;
+  if (cancelled) Promise.resolve(cancelled.cancel()).catch(() => {});
+  clearInterval(recordTimer); recording = false; stopping = false;
   worker?.terminate(); worker = null; busy = false;
   $('statusBadge').textContent = '취소됨'; $('recordHint').textContent = '준비되면 편하게 말해주세요';
   if (pendingResolve) { pendingResolve({status:'cancelled'}); pendingResolve = null; }
@@ -130,41 +130,80 @@ async function runSample(language) {
 async function startRecording() {
   if (busy || recording) return;
   if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) return fail('마이크는 HTTPS 연결에서 사용할 수 있습니다. 최신 브라우저로 HTTPS 주소를 열어주세요.');
-  if (!window.MediaRecorder) return fail('이 브라우저는 녹음을 지원하지 않습니다. 음성 파일 선택을 사용하세요.');
-  const id = begin('마이크 권한을 확인하고 있습니다');
+  const id = begin('음성 엔진을 준비하고 있습니다. 준비가 끝나면 마이크 권한을 요청합니다.');
+  worker?.terminate(); worker = null;
+  liveResults = new Map(); livePartial = ''; lastResult = null;
+  $('resultArea').hidden = true; $('empty').hidden = false;
+  $('copy').disabled = true; $('download').disabled = true;
+  $('statusBadge').textContent = '엔진 준비 중';
+  $('recordHint').textContent = '엔진을 준비하고 있어요';
+  const liveError = error => {
+    if (id !== activeId) return;
+    cancel(); fail(error?.name === 'NotAllowedError' ? '마이크 권한이 허용되지 않았습니다. 브라우저 설정에서 허용하거나 파일을 선택하세요.' : error?.message || String(error));
+  };
   try {
-    const acquired = await navigator.mediaDevices.getUserMedia({audio:true});
-    if (id !== activeId) { acquired.getTracks().forEach(track => track.stop()); return; }
-    stream = acquired; chunks = [];
-    recorder = new MediaRecorder(stream);
-    recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
-    recorder.onerror = () => { cancel(); fail('녹음 장치 오류가 발생했습니다. 마이크 연결을 확인하세요.'); };
-    recorder.onstop = async () => {
-      const blob = new Blob(chunks, {type:recorder.mimeType}); chunks = []; stopTracks();
-      if (id !== activeId) return;
-      busy = true; setControls(); $('recordHint').textContent = '준비되면 편하게 말해주세요';
-      try { await recognizeBuffer(await blob.arrayBuffer(), id); }
-      catch(error) { if (id === activeId) fail(error.message); }
-    };
-    recorder.start(250); busy = false; recording = true; recordStarted = performance.now();
-    $('statusBadge').textContent = '녹음 중'; $('recordHint').textContent = '듣고 있어요. 끝나면 버튼을 눌러주세요';
-    $('timer').textContent = '00:00 / 01:00'; setControls();
+    const session = new NuriVoiceLive({
+      task:$('task').value, language:$('language').value, model:$('model').value,
+      l1:$('task').value === 'phoneme' ? $('l1').value || null : null,
+      target:$('task').value === 'phoneme' ? $('target').value || null : null,
+      onStatus:message => { if (id === activeId) $('progressText').textContent = String(message); },
+      onPartial:result => {
+        if (id !== activeId) return;
+        livePartial = typeof result === 'string' ? result : result.transcript || '';
+        showLiveText(); $('statusBadge').textContent = '부분 인식 중';
+      },
+      onResult:result => {
+        if (id !== activeId) return;
+        if (result.replace_session) liveResults.clear();
+        liveResults.set(result.utterance_index ?? liveResults.size, result);
+        livePartial = '';
+        const utterances = [...liveResults.values()];
+        renderResult({...result, transcript:utterances.map(item => item.transcript || '').filter(Boolean).join('\n'), utterances, input_mode:'live'});
+        showLiveText();
+        $('statusBadge').textContent = stopping ? '마지막 발화 처리 중' : '듣는 중';
+      },
+      onError:liveError,
+      onEnd:({reason} = {}) => {
+        if (id !== activeId) return;
+        clearInterval(recordTimer); live = null; recording = false; stopping = false; finish();
+        $('statusBadge').textContent = reason === 'limit' ? '120초 인식 종료' : reason === 'cancelled' ? '취소됨' : '인식 종료';
+        $('recordHint').textContent = '준비되면 편하게 말해주세요';
+      },
+      onLevel:level => { if (id === activeId) $('recordZone').setAttribute('aria-label', `마이크 입력 ${Math.round(Math.min(1,Math.max(0,level || 0))*100)}퍼센트`); }
+    });
+    live = session;
+    await session.start();
+    if (id !== activeId) { await session.cancel(); return; }
+    busy = false; recording = true; stopping = false; recordStarted = performance.now();
+    $('statusBadge').textContent = '듣는 중'; $('recordHint').textContent = '말하면서 결과를 확인하세요';
+    $('progressText').textContent = '마이크 입력 중 · 음성은 저장하지 않습니다';
+    $('timer').textContent = '00:00 / 02:00'; setControls();
     recordTimer = setInterval(() => {
       const elapsed = Math.floor((performance.now()-recordStarted)/1000);
-      $('timer').textContent = `00:${String(Math.min(elapsed,59)).padStart(2,'0')} / 01:00`;
-      // 컨테이너 인코딩 여유를 위해 59초에서 끝내어 60초 상한을 지킵니다.
-      if (elapsed >= 59) stopRecording();
+      $('timer').textContent = `${String(Math.floor(elapsed/60)).padStart(2,'0')}:${String(elapsed%60).padStart(2,'0')} / 02:00`;
+      if (elapsed >= 120) stopRecording();
     }, 200);
-  } catch(error) {
-    stopTracks();
-    if (id === activeId) fail(error.name === 'NotAllowedError' ? '마이크 권한이 허용되지 않았습니다. 브라우저 설정에서 허용하거나 파일을 선택하세요.' : `마이크를 사용할 수 없습니다: ${error.message}`);
-  }
+  } catch(error) { liveError(error); }
 }
-function stopRecording() {
-  if (recorder?.state !== 'recording') return;
-  busy = true; recorder.stop(); stopTracks();
-  $('statusBadge').textContent = '처리 중';
-  $('progressText').textContent = '녹음한 음성을 준비하고 있습니다';
+function showLiveText() {
+  const completed = [...liveResults.values()].map(item => item.transcript || (item.phone_hypotheses?.length ? JSON.stringify(item.phone_hypotheses) : item.reject_reason || '')).filter(Boolean);
+  $('transcript').textContent = [...completed, livePartial].filter(Boolean).join('\n');
+  $('empty').hidden = true; $('resultArea').hidden = false;
+}
+async function stopRecording() {
+  if (!live || stopping || !recording) return;
+  const id = activeId, session = live;
+  stopping = true; busy = true; clearInterval(recordTimer); setControls();
+  $('statusBadge').textContent = '마지막 발화 처리 중';
+  $('progressText').textContent = '마이크를 종료하고 마지막 발화를 처리하고 있습니다';
+  try {
+    await session.stop();
+    if (id !== activeId) return;
+    live = null; recording = false; stopping = false; finish();
+    $('statusBadge').textContent = '인식 종료'; $('recordHint').textContent = '준비되면 편하게 말해주세요';
+  } catch(error) {
+    if (id === activeId) { cancel(); fail(error.message || String(error)); }
+  }
 }
 $('record').addEventListener('click', startRecording);
 $('stop').addEventListener('click', stopRecording);
