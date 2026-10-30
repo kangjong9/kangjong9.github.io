@@ -1,7 +1,7 @@
 /** Reusable live PCM SDK. No recording file and no voice network upload. */
 export class NuriVoiceLive {
   constructor(options={}){
-    this.options={task:'transcribe',language:'auto',model:'tiny',...options};
+    this.options={task:'transcribe',language:'auto',model:'base',...options};
     this.counter=0;this.pending=new Map();this.queue=[];this.preroll=[];this.parts=[];
     this.samples=0;this.quiet=0;this.utterance=0;this.total=0;this.lastPartial=0;this.sessionAudio=[];
     this.sent=0;this.ack=0;this.started=false;this.closed=false;this.stopping=false;
@@ -26,7 +26,7 @@ export class NuriVoiceLive {
     return this;
   }
   optionsForWorker(){
-    const {task,language,model,target,l1}=this.options;return {task,language,model,target,l1};
+    const {task,language,model,target,l1}=this.options;return {task,language,model,target,l1,timestamps:false};
   }
   async start(){
     if(!navigator.mediaDevices?.getUserMedia||!globalThis.AudioWorkletNode)throw Error('HTTPS와 AudioWorklet을 지원하는 브라우저가 필요합니다.');

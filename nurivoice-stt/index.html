@@ -17,8 +17,8 @@
     <div class="file-row"><label class="file-button" for="audioFile">↥ 음성 파일 선택</label><input type="file" id="audioFile" accept="audio/*"><span id="fileName">WAV · MP3 · M4A 등</span></div>
     <div class="samples"><span>먼저 체험하기</span><button data-sample="en">영어</button><button data-sample="fr">프랑스어</button><button data-sample="ko">한국어</button></div>
     <details class="settings" open><summary>인식 설정 <span aria-hidden="true">⌄</span></summary><div class="settings-grid">
-      <label>음성 언어<select id="language"><option value="auto">자동 감지</option><option value="ko">한국어</option><option value="en">영어</option><option value="fr">프랑스어</option><option value="ja">일본어</option><option value="zh">중국어</option><option value="es">스페인어</option><option value="ru">러시아어</option><option value="pt">포르투갈어</option><option value="it">이탈리아어</option><option value="de">독일어</option><option value="no">노르웨이어</option></select></label>
-      <label>인식 모델<select id="model"><option value="tiny">Tiny · 가볍게</option><option value="base">Base · 비교 모델</option></select></label>
+      <label>음성 언어<select id="language"><option value="auto">자동 감지 · 오인식 가능</option><option value="ko" selected>한국어</option><option value="en">영어</option><option value="fr">프랑스어</option><option value="ja">일본어</option><option value="zh">중국어</option><option value="es">스페인어</option><option value="ru">러시아어</option><option value="pt">포르투갈어</option><option value="it">이탈리아어</option><option value="de">독일어</option><option value="no">노르웨이어</option></select></label>
+      <label>인식 모델<select id="model"><option value="base" selected>Base · 기본 인식</option><option value="tiny">Tiny · 경량 실험용</option></select></label>
       <label>작업<select id="task"><option value="transcribe">문장 받아쓰기 · 발화 단위</option><option value="phoneme">음소 가설 · 발화 단위</option><option value="streaming">프랑스어 온라인 전사</option></select></label>
       <label>모국어<select id="l1"><option value="">지정 안 함</option><option value="ko">한국어</option></select></label>
       <label id="targetField" hidden>목표 음소<select id="target"><option value="a">a</option><option value="i">i</option><option value="u">u</option><option value="ɛ">ɛ</option></select></label>

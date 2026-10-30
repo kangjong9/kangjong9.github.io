@@ -90,6 +90,7 @@ self.onmessage = async ({data}) => {
     await prepareModel(data,progress);
     progress('휴대폰 안에서 음성을 인식하고 있습니다.');
     const options={task:'transcribe',return_timestamps:true,chunk_length_s:20,stride_length_s:3};
+    if(data.timestamps===false&&audio.length<=480000){options.return_timestamps=false;options.chunk_length_s=0;}
     if (result.language!=='auto') options.language=result.language;
     const answer=await current(audio,options);
     result.transcript=answer.text?.trim()||'';
