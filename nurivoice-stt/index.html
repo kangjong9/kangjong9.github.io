@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#2357B2"><meta name="description" content="내 기기에서 처리하는 NuriVoice 음성 인식 실험실">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; connect-src 'self'; img-src 'self' data:; media-src 'self' blob:; style-src 'self'; object-src 'none'; base-uri 'self'">
+  <title>NuriVoice STT · 음성 인식</title><link rel="stylesheet" href="./style.css"><link rel="manifest" href="./manifest.webmanifest">
+</head>
+<body>
+<main class="shell">
+  <header><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">n.</span>NuriVoice</a><span class="local-badge"><i></i> 기기 안에서 처리</span></header>
+  <section class="intro"><p class="eyebrow">YOUR VOICE, YOUR DEVICE</p><h1>말하는 순간,<br><span>글이 됩니다.</span></h1><p>녹음하거나 파일을 선택하세요.<br>음성은 서버에 업로드하지 않고 이 기기에서 처리합니다.</p></section>
+  <div class="workspace">
+  <section class="panel input-panel" aria-labelledby="input-title">
+    <div class="section-head"><h2 id="input-title"><span>01</span> 음성 입력</h2><span class="muted">최대 60초</span></div>
+    <div class="record-zone" id="recordZone"><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p id="recordHint">준비되면 편하게 말해주세요</p><button id="record" class="primary"><span aria-hidden="true">●</span> 녹음 시작</button><button id="stop" class="primary stop" hidden>■ 녹음 끝내고 인식</button><span id="timer" class="timer">00:00 / 01:00</span></div>
+    <div class="file-row"><label class="file-button" for="audioFile">↥ 음성 파일 선택</label><input type="file" id="audioFile" accept="audio/*"><span id="fileName">WAV · MP3 · M4A 등</span></div>
+    <div class="samples"><span>먼저 체험하기</span><button data-sample="en">영어</button><button data-sample="fr">프랑스어</button><button data-sample="ko">한국어</button></div>
+    <details class="settings" open><summary>인식 설정 <span aria-hidden="true">⌄</span></summary><div class="settings-grid">
+      <label>음성 언어<select id="language"><option value="auto">자동 감지</option><option value="ko">한국어</option><option value="en">영어</option><option value="fr">프랑스어</option><option value="ja">일본어</option><option value="zh">중국어</option><option value="es">스페인어</option><option value="ru">러시아어</option><option value="pt">포르투갈어</option><option value="it">이탈리아어</option><option value="de">독일어</option><option value="no">노르웨이어</option></select></label>
+      <label>인식 모델<select id="model"><option value="tiny">Tiny · 가볍게</option><option value="base">Base · 비교 모델</option></select></label>
+      <label>작업<select id="task"><option value="transcribe">문장 받아쓰기</option><option value="phoneme">음소 가설 확인</option><option value="streaming">프랑스어 청크 전사</option></select></label>
+      <label>모국어<select id="l1"><option value="">지정 안 함</option><option value="ko">한국어</option></select></label>
+      <label id="targetField" hidden>목표 음소<select id="target"><option value="a">a</option><option value="i">i</option><option value="u">u</option><option value="ɛ">ɛ</option></select></label>
+    </div><label class="check"><input type="checkbox" id="vad"> 음성 구간 감지 (VAD)</label><p class="help">첫 실행은 모델 다운로드로 시간이 걸릴 수 있습니다. Base는 더 많은 메모리가 필요합니다. 음소 가설은 검증된 발음 점수가 아닙니다.</p></details>
+  </section>
+  <section class="panel output-panel" aria-labelledby="output-title"><div class="section-head"><h2 id="output-title"><span>02</span> 인식 결과</h2><span id="statusBadge" class="status-badge">대기 중</span></div>
+    <div id="progressArea" hidden><div class="progress-label"><span id="progressText" role="status" aria-live="polite">준비 중</span><button id="cancel" class="text-button">취소</button></div><progress id="progress" max="100"></progress></div>
+    <div id="error" class="error" role="alert" hidden></div>
+    <div id="empty" class="empty"><div aria-hidden="true">“</div><p>당신의 목소리를 기다리고 있어요</p><span>인식한 내용이 이곳에 표시됩니다.</span></div>
+    <div id="resultArea" hidden><p id="transcript" class="transcript" tabindex="0"></p><dl id="resultMeta" class="result-meta"></dl><details class="raw"><summary>상세 결과 JSON</summary><pre id="json"></pre></details></div>
+    <div class="result-actions"><button id="copy" disabled>텍스트 복사</button><button id="download" disabled>JSON 저장</button><button id="clear" class="text-button">비우기</button></div>
+    <p class="output-note">실험용 음성 인식 · 결과를 확인한 뒤 사용하세요.<br>자동 언어 감지가 맞지 않으면 언어를 직접 선택하세요.</p>
+  </section></div>
+  <footer><span>NuriVoice / On-device speech lab</span><span>내 목소리는, 내 기기에.</span></footer>
+</main><script type="module" src="./app.js"></script>
+</body></html>

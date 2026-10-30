@@ -121,6 +121,7 @@ function initProjectFolders(content) {
     ],
     "network": [
       ["누리보이스 스튜디오 TTS엔진", "nuri-studio.png"],
+      ["누리보이스 STT엔진", "nuri-stt.svg"],
       ["포터블", "portable.svg"],
       ["현재 홈페이지", "homepage.png"]
     ],
@@ -202,6 +203,13 @@ function initProjectFolders(content) {
       ]
     },
 
+    "누리보이스 STT엔진": {
+      tag: "NuriVoice STT · 폰에서 음성을 글로 · 11개 언어 · GitHub 운영",
+      desc: "녹음하거나 음성 파일을 고르면 브라우저 안에서 인식합니다. 일반 전사·프랑스어 음소 연구·청크 처리를 직접 확인하세요. 첫 사용에는 선택 모델 다운로드가 필요하며 음성은 서버로 보내지 않습니다.",
+      links: [
+        { label: "🎤 누리보이스 STT 열기 · 폰에서도 바로", url: "./nurivoice-stt/", external: true, primary: true }
+      ]
+    },
     "누리보이스 스튜디오 TTS엔진": {
       tag: "누리보이스 스튜디오 TTS엔진 · 5대 엔진 86종+ 목소리 · 일반/애니 캐릭터 모드 · 오프라인 대비 5계층",
       desc: "글자를 사람의 숨결로 — 5대 엔진 86종이 넘는 목소리를 한 화면에서 골라 듣고, 애니 캐릭터 립싱크까지. 인터넷이 흔들려도 다음 엔진이 이어받아 끝까지 말해 주는 누리 보이스 TTS 엔진이에요.",

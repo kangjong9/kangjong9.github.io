@@ -1,0 +1,2 @@
+en.wav: LibriSpeech, Panayotov et al. (2015), CC-BY-4.0, speaker1272/chapter128104/sample0000. Source https://www.openslr.org/12 and https://github.com/QwenLM/Qwen-Audio/tree/main/assets/audio. WAV conversion by NuriVoice.
+fr.wav, ko.wav: FLEURS, Conneau et al. (2022), Google, CC-BY-4.0. Source and conversion hashes in FLEURS_ATTRIBUTION.json.

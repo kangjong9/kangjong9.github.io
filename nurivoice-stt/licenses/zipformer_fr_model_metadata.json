@@ -1,0 +1,153 @@
+{
+  "_id": "6438b875dca827292271e089",
+  "id": "shaojieli/sherpa-onnx-streaming-zipformer-fr-2023-04-14",
+  "private": false,
+  "tags": [
+    "onnx",
+    "license:apache-2.0",
+    "region:us"
+  ],
+  "downloads": 0,
+  "likes": 0,
+  "modelId": "shaojieli/sherpa-onnx-streaming-zipformer-fr-2023-04-14",
+  "author": "shaojieli",
+  "sha": "3db9565d9633758d6b87b9a7b3dc09ebfb6b2c73",
+  "lastModified": "2023-04-14T06:06:42.000Z",
+  "gated": false,
+  "disabled": false,
+  "model-index": null,
+  "config": {},
+  "cardData": {
+    "license": "apache-2.0"
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes",
+      "blobId": "c7d9f3332a950355d5a77d85000f05e6f45435ea",
+      "size": 1477
+    },
+    {
+      "rfilename": "README.md",
+      "blobId": "86737d6cd67923e18660bb36bddbcb4a919132c8",
+      "size": 204
+    },
+    {
+      "rfilename": "decoder-epoch-29-avg-9-with-averaged-model.int8.onnx",
+      "blobId": "699863365dabebe483494f139e3ef71d23ba49f7",
+      "size": 1307157,
+      "lfs": {
+        "sha256": "e72b2b9ed36355bd0dd43433f7dd258e7226ab54c9ef42b28c73ebb785805623",
+        "size": 1307157,
+        "pointerSize": 132
+      }
+    },
+    {
+      "rfilename": "decoder-epoch-29-avg-9-with-averaged-model.onnx",
+      "blobId": "4a032fdb76fd74c11afc66d365e2c82b5ea5558f",
+      "size": 2092272,
+      "lfs": {
+        "sha256": "3ef2840b684440e26382af87b2174d25732a9f113f1965cd8abba7ffc5d033fb",
+        "size": 2092272,
+        "pointerSize": 132
+      }
+    },
+    {
+      "rfilename": "encoder-epoch-29-avg-9-with-averaged-model.int8.onnx",
+      "blobId": "bbfe687b2bbfa6488226d901d08184bfed8bdb67",
+      "size": 126655903,
+      "lfs": {
+        "sha256": "47a94a7fdc8dff63d708be4ea0535747640224467f91e238311f1ddbdd09327e",
+        "size": 126655903,
+        "pointerSize": 134
+      }
+    },
+    {
+      "rfilename": "encoder-epoch-29-avg-9-with-averaged-model.onnx",
+      "blobId": "187f130a5df21ae6938048c5031736d91894cde0",
+      "size": 292543537,
+      "lfs": {
+        "sha256": "1a2f33ff22e239197fa19fbf202a598afa60e0f71e0b358cf6de0df10a57cd81",
+        "size": 292543537,
+        "pointerSize": 134
+      }
+    },
+    {
+      "rfilename": "export-onnx-stateless7-streaming.sh",
+      "blobId": "0bbcbf96cfce2e5932429e23643ea4275ed2ec25",
+      "size": 829
+    },
+    {
+      "rfilename": "joiner-epoch-29-avg-9-with-averaged-model.int8.onnx",
+      "blobId": "203c0c64b89a68159bf847ef613c6dc87201e06a",
+      "size": 259572,
+      "lfs": {
+        "sha256": "fc2f3bb851a15a532c6f2422d53eecd1ca949f12b0897e07a852021c30481711",
+        "size": 259572,
+        "pointerSize": 131
+      }
+    },
+    {
+      "rfilename": "joiner-epoch-29-avg-9-with-averaged-model.onnx",
+      "blobId": "f1000adad5d3f826c341c05cb67308e2f199c493",
+      "size": 1026462,
+      "lfs": {
+        "sha256": "7c40deab303e1d5fe92c87a691e72819a8c385a58ad5c6f5ee6f6315a973d167",
+        "size": 1026462,
+        "pointerSize": 132
+      }
+    },
+    {
+      "rfilename": "test_wavs/common_voice_fr_19364697.wav",
+      "blobId": "d981651b17fac81fa52c5561617ad2605615aeed",
+      "size": 228174
+    },
+    {
+      "rfilename": "test_wavs/common_voice_fr_19738183.wav",
+      "blobId": "756a5ac760068488cfb20a04e01b46d21417df8f",
+      "size": 122190
+    },
+    {
+      "rfilename": "test_wavs/common_voice_fr_27024649.wav",
+      "blobId": "3d921b26ef2d70761bd8a390d98b904b5ad641cc",
+      "size": 202830
+    },
+    {
+      "rfilename": "test_wavs/trans.txt",
+      "blobId": "16e2b4fc4b5833466996f7461c471048125e264d",
+      "size": 299
+    },
+    {
+      "rfilename": "tokens.txt",
+      "blobId": "903e1478ca8de7a5d28a0fb86a984e9ea1626934",
+      "size": 4819
+    }
+  ],
+  "spaces": [
+    "k2-fsa/automatic-speech-recognition",
+    "hynt/k2-automatic-speech-recognition-demo",
+    "ealbinu/automatic-speech-recognition",
+    "yuekai/triton-asr-client",
+    "RO-Rtechs/Am-Srt-v1",
+    "chenoi/automatic-speech-recognition",
+    "IhebJettPilot/meetingsum",
+    "intelli-zen/asr",
+    "jguerrisi/automatic-speech-recognition",
+    "danhtran8989/k2-automatic-speech-recognition-demo",
+    "phamhapa101/hoanglinhn0",
+    "Achilles13/automatic-speech-recognition",
+    "Audrey178/automatic-speech-recognition",
+    "hoanglinhn0/CUT-DATA",
+    "hoanglinhn0/K2_STT",
+    "hoanglinhn0/SUB-CN-01",
+    "skvsmdarman/automatic-speech-recognition",
+    "phamhapa101/CUTPRO",
+    "hoanglinhn0/CUTDATA",
+    "hoanglinhn0/CUTDATA01",
+    "hoanglinhn0/MOI-DATA",
+    "Raju2024/automatic-speech-recognition",
+    "zliyk/automatic-speech-recognition",
+    "bhhoang/k2-automatic-speech-recognition-demo"
+  ],
+  "createdAt": "2023-04-14T02:20:37.000Z",
+  "usedStorage": 423884903
+}
