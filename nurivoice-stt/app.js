@@ -70,6 +70,8 @@ function renderResult(result) {
   $('copy').textContent = '텍스트 복사';
   $('json').textContent = JSON.stringify(result, null, 2);
   const phones = result.phone_hypotheses;
+  $('studioPhones').textContent = phones?.length ? JSON.stringify(phones, null, 2) : '음소 분석 결과를 기다리고 있습니다.';
+  $('studioAnalysisStatus').textContent = phones?.length ? '음소 가설 확인' : '분석 대기';
   $('transcript').textContent = result.transcript || (phones?.length ? JSON.stringify(phones, null, 2) : result.reject_reason || '인식된 텍스트가 없습니다.');
   if(result.status==='error'){$('error').textContent=result.error||result.reject_reason||'인식 오류';$('error').hidden=false;}
   const status = {recognized:'인식 완료', rejected:'입력 확인', unsupported:'지원 범위 확인', error:'오류', phoneme_hypothesis:'음소 가설'};
@@ -206,6 +208,14 @@ async function stopRecording() {
   }
 }
 $('record').addEventListener('click', startRecording);
+$('phonemeMode').addEventListener('click', () => {
+  if (busy || recording) return;
+  $('task').value = 'phoneme';
+  $('task').dispatchEvent(new Event('change'));
+  $('settings').open = true;
+  $('settings').scrollIntoView({behavior:'smooth',block:'start'});
+});
+$('target').addEventListener('change', () => { $('studioTarget').textContent = `/${$('target').value}/`; });
 $('stop').addEventListener('click', stopRecording);
 $('cancel').addEventListener('click', cancel);
 $('audioFile').addEventListener('change', event => useFile(event.target.files[0]));
@@ -231,6 +241,8 @@ $('clear').addEventListener('click', () => {
   $('resultArea').hidden = true; $('empty').hidden = false; $('error').hidden = true;
   $('copy').disabled = true; $('download').disabled = true; $('copy').textContent = '텍스트 복사';
   $('json').textContent = ''; $('transcript').textContent = ''; $('statusBadge').textContent = '대기 중';
+  $('studioPhones').textContent = '음소 분석 결과를 기다리고 있습니다.';
+  $('studioAnalysisStatus').textContent = '분석 대기';
 });
 window.addEventListener('pagehide', cancel);
 window.nurivoiceTest = {runSample, cancel, getResult:() => lastResult, getState:() => ({busy,recording,activeId})};
