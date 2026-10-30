@@ -1,4 +1,4 @@
-const VERSION='nurivoice-web-0.3.0-7';
+const VERSION='nurivoice-web-0.3.0-8';
 const ROOT=new URL('./',self.location.href);
 const SHELL=['./','index.html','style.css','studio.css','app.js','worker.js','live-sdk.js','native-stream.js','pcm-capture.js','resample.js','version.json'];
 self.addEventListener('install',event=>{
