@@ -75,7 +75,7 @@ export class NuriVoiceLive {
     if(data.type==='error')this.fail(Error(data.message||data.reason||'엔진 오류'));
     if(data.type==='ack')this.ack=data.received_samples;
     if(data.type==='partial')this.emit('onPartial',{status:'partial',transcript:data.transcript,utterance_index:0,task:'streaming'});
-    if(data.type==='result'&&this.online)this.emit('onResult',{...data.result,utterance_index:0,input_source:'live_pcm'});
+    if(data.type==='result'&&this.online&&data.id===this.id)this.emit('onResult',{...data.result,utterance_index:0,input_source:'live_pcm'});
   }
   acceptAudio(audio){
     if(!this.started||this.closed)return;
