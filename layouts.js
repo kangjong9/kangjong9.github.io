@@ -106,8 +106,11 @@ if (dialog) {
 // Category membership and display order were supplied by the owner.
 function initProjectFolders(content) {
   initGameEditorFolder(content);
-  const categories = {fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
+  const categories = {matrix: 'KJG-Matrix 3D 가상공간', fun: '심심해서 맹근', network: '네트워크 해봐?', work: '일하기 싫어서 제작', requested: '맹그러달라카니'};
   const projects = {
+    "matrix": [
+      ["KJGMatrix 3D 가상세계[8단계 통합]", "matrix.svg"]
+    ],
     "requested": [["레이더 툴킷[앱]", "radar-toolkit.svg"], ["레이더 툴킷[PC]", "radar-toolkit.svg"], ["보컬트레이너[앱]", "vocalmate.svg"], ["한걸음V1.0 Exile", "hangeoreum.svg"]],
     "fun": [
       ["코딩놀이", "coding.svg"],
@@ -127,8 +130,7 @@ function initProjectFolders(content) {
     ],
     "work": [
       ["내역서 마스터[개발중 30%]", "estimate.svg"],
-      ["AI친구들과 함께 실시간 회의실[개발중 90%]", "meeting.svg"],
-      ["KJGMatrix 3D 가상세계[8단계 통합]", "matrix.svg"]
+      ["AI친구들과 함께 실시간 회의실[개발중 90%]", "meeting.svg"]
     ]
   };
   const projectDownloads = {
