@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KJG-Matrix 3D 캐릭터 & 관절 본(Bone) 구조 & 건축 시안 갤러리</title>
+  <style>
+    :root {
+      --bg-dark: #0a0c16;
+      --card-bg: rgba(22, 27, 46, 0.9);
+      --card-border: rgba(99, 102, 241, 0.3);
+      --accent-pink: #ff6584;
+      --accent-blue: #38bdf8;
+      --accent-green: #34d399;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at top, #1e1b4b 0%, var(--bg-dark) 100%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+      padding: 30px 20px 80px;
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      max-width: 960px;
+      margin: 0 auto 40px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: linear-gradient(135deg, rgba(255,101,132,0.25), rgba(56,189,248,0.25));
+      border: 1px solid var(--accent-pink);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #ff9ab2;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 30%, #c4b5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    p.lead {
+      font-size: 16px;
+      color: var(--text-sub);
+    }
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 40px 0 20px;
+      padding-left: 14px;
+      border-left: 4px solid var(--accent-pink);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 28px;
+    }
+    .concept-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.45);
+      backdrop-filter: blur(14px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    .concept-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(56, 189, 248, 0.6);
+      box-shadow: 0 20px 45px rgba(56, 189, 248, 0.25);
+    }
+    .card-header {
+      padding: 18px 24px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .tag {
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+    .tag-female { background: rgba(255, 101, 132, 0.2); color: #ff85a1; border: 1px solid rgba(255,101,132,0.4); }
+    .tag-male { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; border: 1px solid rgba(56,189,248,0.4); }
+    .tag-joint { background: rgba(251, 191, 36, 0.2); color: #fde047; border: 1px solid rgba(251,191,36,0.4); }
+    .tag-arch { background: rgba(52, 211, 153, 0.2); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.4); }
+
+    .visual-preview {
+      width: 100%;
+      height: 420px;
+      background: #080a12;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+    .visual-preview svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6));
+    }
+    .card-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+    }
+    .desc {
+      font-size: 14.5px;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+    .feature-list {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 14px 16px;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .feature-list li {
+      font-size: 13px;
+      color: #94a3b8;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .feature-list li strong {
+      color: #e2e8f0;
+      min-width: 70px;
+    }
+    .joint-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+    .banner-box {
+      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(236,72,153,0.15));
+      border: 1px solid rgba(236,72,153,0.3);
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .banner-box h4 {
+      font-size: 17px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .banner-box p {
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge">SPECIFICATION & DESIGN PREVIEW</div>
+    <h1>KJG-Matrix 3D 캐릭터 & 관절 본(Bone) & 건축 시안</h1>
+    <p class="lead">레고 블록을 완전히 탈피하고, <strong>[눈·코·입 이목구비]</strong>, <strong>[헤어스타일]</strong>, <strong>[여성 가슴 볼륨감 & 의복 핏]</strong> 및 의자에 자연스럽게 앉을 수 있는 <strong>[무릎·팔꿈치 2단 굴절 관절(Joint)]</strong>을 시각화한 검토용 시안 갤러리입니다.</p>
+  </header>
+
+  <div class="container">
+
+    <!-- 사령관님 핵심 요구사항 요약 안내 배너 -->
+    <div class="banner-box">
+      <div style="font-size: 32px;">🪑</div>
+      <div>
+        <h4>사령관 옵빠야의 핵심 관절 요구사항 반영</h4>
+        <p>"무릎관절과 팔관절(팔꿈치)이 한 번 꺾이는 부위가 있어야 의자에 편안하게 앉고 다양한 모션을 취할 수 있다." ➔ <strong>어깨-상완-팔꿈치-하완-손목</strong> 및 <strong>골반-대퇴부(허벅지)-무릎관절-하퇴부(종아리)-발목</strong> 2단 관절 체계를 시안에 반영했습니다!</p>
+      </div>
+    </div>
+
+    <!-- 1. 캐릭터 디자인 시안 섹션 -->
+    <h2 class="section-title">👤 캐릭터 디자인 & 관절 굴절 시안</h2>
+    <div class="grid">
+
+      <!-- 시안 1-A: 여성 아바타 (이목구비 + 헤어 + 가슴 볼륨 + 의복) -->
+      <div class="concept-card">
+        <div class="card-header">
+          <h3>시안 1-A. 여성 카툰 아바타 (정면 핏)</h3>
+          <span class="tag tag-female">여성 (Female)</span>
+        </div>
+        <div class="visual-preview">
+          <!-- SVG 여성 정면 핏 -->
+          <svg viewBox="0 0 320 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="skinF" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fff0ea"/>
+                <stop offset="100%" stop-color="#fed7cb"/>
+              </linearGradient>
+              <linearGradient id="hairF" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ff6b8b"/>
+                <stop offset="100%" stop-color="#ff8da9"/>
+              </linearGradient>
+              <radialGradient id="eyeF" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#38bdf8"/>
+                <stop offset="70%" stop-color="#0284c7"/>
+                <stop offset="100%" stop-color="#075985"/>
+              </radialGradient>
+            </defs>
+
+            <!-- 뒷머리 트윈테일 (풍성한 볼륨) -->
+            <path d="M115 100 Q65 140 75 240 Q85 260 100 220 Q95 150 120 120 Z" fill="url(#hairF)" />
+            <path d="M205 100 Q255 140 245 240 Q235 260 220 220 Q225 150 200 120 Z" fill="url(#hairF)" />
+            <circle cx="110" cy="115" r="7" fill="#f43f5e" />
+            <circle cx="210" cy="115" r="7" fill="#f43f5e" />
+
+            <!-- 목 & 쇄골 -->
+            <path d="M152 140 L152 165 L168 165 L168 140 Z" fill="url(#skinF)" />
+            <path d="M148 162 Q160 166 172 162" stroke="#fca5a5" stroke-width="1.5" fill="none" />
+
+            <!-- 상체 & 여성 가슴(바스트) 볼륨감 굴곡 표현 -->
+            <!-- 베이스 상체 코르셋 -->
+            <path d="M135 168 Q160 165 185 168 L192 235 Q160 245 128 235 Z" fill="#2563eb" />
+            
+            <!-- 가슴 입체 굴곡 (Bust Volume) 및 음영 -->
+            <!-- 좌측 가슴 -->
+            <ellipse cx="147" cy="195" rx="14" ry="12" fill="#1d4ed8" opacity="0.9" />
+            <path d="M135 188 Q146 206 158 198" stroke="#60a5fa" stroke-width="1.5" fill="none" />
+            <!-- 우측 가슴 -->
+            <ellipse cx="173" cy="195" rx="14" ry="12" fill="#1d4ed8" opacity="0.9" />
+            <path d="M162 198 Q174 206 185 188" stroke="#60a5fa" stroke-width="1.5" fill="none" />
+            <!-- 가슴 중앙 골 넥라인 -->
+            <path d="M153 168 Q160 188 167 168" stroke="#fca5a5" stroke-width="2" fill="url(#skinF)" />
+
+            <!-- 잘록한 허리 & 리본 벨트 -->
+            <rect x="135" y="230" width="50" height="12" rx="3" fill="#0f172a" />
+            <circle cx="160" cy="236" r="5" fill="#fbbf24" />
+
+            <!-- 양팔 (어깨 - 팔꿈치 관절 - 하완 - 손) -->
+            <!-- 좌측 팔: 2단 굴절 구조 -->
+            <path d="M130 170 Q115 200 112 215" stroke="#3b82f6" stroke-width="10" stroke-linecap="round" fill="none" />
+            <circle cx="112" cy="215" r="5" fill="#facc15" /> <!-- 팔꿈치 관절 힌지 포인트 -->
+            <path d="M112 215 L118 250" stroke="url(#skinF)" stroke-width="8" stroke-linecap="round" fill="none" />
+            <circle cx="118" cy="254" r="5" fill="url(#skinF)" /> <!-- 손 -->
+
+            <!-- 우측 팔: 2단 굴절 구조 -->
+            <path d="M190 170 Q205 200 208 215" stroke="#3b82f6" stroke-width="10" stroke-linecap="round" fill="none" />
+            <circle cx="208" cy="215" r="5" fill="#facc15" /> <!-- 팔꿈치 관절 힌지 포인트 -->
+            <path d="M208 215 L202 250" stroke="url(#skinF)" stroke-width="8" stroke-linecap="round" fill="none" />
+            <circle cx="202" cy="254" r="5" fill="url(#skinF)" /> <!-- 손 -->
+
+            <!-- A라인 플리츠 스커트 -->
+            <path d="M135 242 L115 305 Q160 320 205 305 L185 242 Z" fill="#ffffff" />
+            <line x1="138" y1="242" x2="130" y2="308" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="150" y1="242" x2="150" y2="312" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="160" y1="242" x2="160" y2="313" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="170" y1="242" x2="170" y2="312" stroke="#cbd5e1" stroke-width="2" />
+            <line x1="182" y1="242" x2="190" y2="308" stroke="#cbd5e1" stroke-width="2" />
+
+            <!-- 양다리 (허벅지 - 무릎 관절 - 종아리 - 발) -->
+            <!-- 좌측 다리 -->
+            <line x1="145" y1="310" x2="143" y2="355" stroke="#1e1b4b" stroke-width="12" stroke-linecap="round" />
+            <circle cx="143" cy="355" r="6" fill="#facc15" /> <!-- 무릎 관절 힌지 포인트 -->
+            <line x1="143" y1="355" x2="143" y2="395" stroke="#1e1b4b" stroke-width="10" stroke-linecap="round" />
+            <path d="M135 395 L152 395 L152 405 L133 405 Z" fill="#2563eb" /> <!-- 슈즈 -->
+
+            <!-- 우측 다리 -->
+            <line x1="175" y1="310" x2="177" y2="355" stroke="#1e1b4b" stroke-width="12" stroke-linecap="round" />
+            <circle cx="177" cy="355" r="6" fill="#facc15" /> <!-- 무릎 관절 힌지 포인트 -->
+            <line x1="177" y1="355" x2="177" y2="395" stroke="#1e1b4b" stroke-width="10" stroke-linecap="round" />
+            <path d="M168 395 L185 395 L187 405 L168 405 Z" fill="#2563eb" /> <!-- 슈즈 -->
+
+            <!-- 얼굴 형 (갸름한 V라인) -->
+            <path d="M128 85 Q125 125 140 142 Q160 156 180 142 Q195 125 192 85 Z" fill="url(#skinF)" />
+
+            <!-- 눈망울 (크고 반짝이는 아이즈) -->
+            <ellipse cx="144" cy="112" rx="9" ry="12" fill="url(#eyeF)" />
+            <ellipse cx="144" cy="114" rx="5" ry="7" fill="#0f172a" />
+            <circle cx="141" cy="108" r="3.5" fill="#ffffff" />
+            <circle cx="146" cy="117" r="1.5" fill="#ffffff" />
+            <path d="M135 102 Q145 98 154 103" stroke="#1e293b" stroke-width="2.5" fill="none" stroke-linecap="round" />
+
+            <ellipse cx="176" cy="112" rx="9" ry="12" fill="url(#eyeF)" />
+            <ellipse cx="176" cy="114" rx="5" ry="7" fill="#0f172a" />
+            <circle cx="173" cy="108" r="3.5" fill="#ffffff" />
+            <circle cx="178" cy="117" r="1.5" fill="#ffffff" />
+            <path d="M166 103 Q175 98 185 102" stroke="#1e293b" stroke-width="2.5" fill="none" stroke-linecap="round" />
+
+            <!-- 볼터치 (생기 블러셔) -->
+            <ellipse cx="137" cy="123" rx="6" ry="3" fill="#f43f5e" opacity="0.4" />
+            <ellipse cx="183" cy="123" rx="6" ry="3" fill="#f43f5e" opacity="0.4" />
+
+            <!-- 오뚝하고 앙증맞은 코 -->
+            <path d="M159 119 L161 123 L158 124" stroke="#f87171" stroke-width="1.2" fill="none" />
+
+            <!-- 미소 짓는 입 -->
+            <path d="M154 133 Q160 137 166 133" stroke="#e11d48" stroke-width="2" fill="none" stroke-linecap="round" />
+
+            <!-- 앞머리 뱅 스타일 -->
+            <path d="M125 80 Q160 60 195 80 Q195 105 185 110 Q175 95 168 112 Q160 92 152 112 Q142 95 135 110 Q125 105 125 80 Z" fill="url(#hairF)" />
+            <ellipse cx="160" cy="74" rx="25" ry="4" fill="#ffffff" opacity="0.4" />
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="desc"><strong>여성 캐릭터의 이목구비와 체형 미학</strong>을 반영한 시안입니다. 섬세한 눈·코·입, 쇄골과 여성스러운 가슴 볼륨감, 팔꿈치와 무릎의 꺾임 관절 힌지가 결합되었습니다.</p>
+          <ul class="feature-list">
+            <li><strong>이목구비 & 헤어:</strong> 반짝이는 아니메 아이즈, 미소 입, 생기 볼터치, 트윈테일 롱 헤어</li>
+            <li><strong>바디 & 바스트:</strong> 뚜렷한 여성 가슴(흉부) 볼륨 굴곡, 잘록한 허리, 플리츠 스커트</li>
+            <li><strong>관절 포인트:</strong> <span class="joint-indicator">● 노란색 포인트</span> 팔꿈치 및 무릎 관절 2단 굴절</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 시안 1-B: 의자에 앉아 있는 모습 (무릎/팔꿈치 관절 90도 꺾임 시연) -->
+      <div class="concept-card">
+        <div class="card-header">
+          <h3>시안 1-B. 의자 착석 시연 (관절 90° 굴절)</h3>
+          <span class="tag tag-joint">관절 본(Bone) 굴절</span>
+        </div>
+        <div class="visual-preview">
+          <!-- SVG 측면 의자 착석 및 관절 꺾임 -->
+          <svg viewBox="0 0 320 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="chairGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#475569"/>
+                <stop offset="100%" stop-color="#334155"/>
+              </linearGradient>
+            </defs>
+
+            <!-- 의자 3D 가구 그래픽 (등받이 + 방석 + 다리) -->
+            <!-- 등받이 -->
+            <rect x="80" y="160" width="16" height="150" rx="4" fill="url(#chairGrad)" />
+            <!-- 의자 방석 -->
+            <rect x="80" y="270" width="115" height="16" rx="4" fill="#1e293b" />
+            <!-- 의자 다리 -->
+            <line x1="90" y1="286" x2="85" y2="400" stroke="#64748b" stroke-width="6" stroke-linecap="round" />
+            <line x1="185" y1="286" x2="185" y2="400" stroke="#64748b" stroke-width="6" stroke-linecap="round" />
+
+            <!-- 앉은 캐릭터 측면 바디 -->
+            <!-- 머리 (측면) -->
+            <circle cx="150" cy="95" r="30" fill="url(#skinF)" />
+            <!-- 측면 헤어 & 포니테일 -->
+            <path d="M125 90 Q120 60 155 65 Q185 70 175 105 Q150 85 130 95 Z" fill="url(#hairF)" />
+            <path d="M125 90 Q85 110 80 180 Q95 190 100 160 Q95 120 130 100 Z" fill="url(#hairF)" />
+            <!-- 옆모습 이목구비 (콧날, 입술, 속눈썹) -->
+            <path d="M172 90 L182 98 L176 103 Q182 108 175 112" stroke="#e08a68" stroke-width="1.8" fill="none" />
+            <path d="M165 92 Q172 90 176 96" stroke="#0f172a" stroke-width="2.5" fill="none" />
+            <ellipse cx="168" cy="105" rx="5" ry="3" fill="#fb7185" opacity="0.5" />
+
+            <!-- 상체 & 등받이에 기댄 자세 -->
+            <path d="M125 130 L120 260 L155 260 L165 140 Z" fill="#2563eb" rx="5" />
+            <!-- 측면 가슴(Bust) 볼륨 라인 -->
+            <path d="M160 150 Q185 165 162 185" stroke="#1d4ed8" stroke-width="4" fill="#3b82f6" />
+
+            <!-- [핵심 1] 팔 관절: 어깨 ➔ 팔꿈치(90도 꺾임) ➔ 무릎 위에 올린 손 -->
+            <!-- 상완 (어깨 -> 팔꿈치) -->
+            <line x1="145" y1="145" x2="160" y2="205" stroke="#3b82f6" stroke-width="10" stroke-linecap="round" />
+            <!-- 팔꿈치 관절 포인트 (Elbow Joint) -->
+            <circle cx="160" cy="205" r="7" fill="#facc15" stroke="#eab308" stroke-width="2" />
+            <text x="175" y="210" fill="#fde047" font-size="11" font-weight="bold">팔꿈치 관절 (90°)</text>
+            <!-- 하완 (팔꿈치 -> 손목) -->
+            <line x1="160" y1="205" x2="215" y2="235" stroke="url(#skinF)" stroke-width="8" stroke-linecap="round" />
+            <circle cx="218" cy="237" r="5" fill="url(#skinF)" /> <!-- 손 -->
+
+            <!-- 힙 (엉덩이 방석 밀착) -->
+            <rect x="110" y="255" width="50" height="20" rx="8" fill="#1e1b4b" />
+
+            <!-- [핵심 2] 무릎 관절: 골반 ➔ 대퇴부(허벅지 가로 수평) ➔ 무릎(90도 꺾임) ➔ 종아리 수직 하강 -->
+            <!-- 대퇴부 (허벅지 수평 뻗음) -->
+            <line x1="130" y1="265" x2="225" y2="265" stroke="#1e1b4b" stroke-width="14" stroke-linecap="round" />
+            <!-- 무릎 관절 포인트 (Knee Joint) -->
+            <circle cx="225" cy="265" r="8" fill="#facc15" stroke="#eab308" stroke-width="2" />
+            <text x="240" y="270" fill="#fde047" font-size="12" font-weight="bold">무릎 관절 (90°)</text>
+
+            <!-- 하퇴부 (종아리 90도 아래로 하강) -->
+            <line x1="225" y1="265" x2="225" y2="375" stroke="#1e1b4b" stroke-width="12" stroke-linecap="round" />
+            <!-- 발목 관절 & 구두 -->
+            <circle cx="225" cy="375" r="5" fill="#facc15" />
+            <path d="M220 375 L250 375 L250 388 L215 388 Z" fill="#2563eb" rx="2" />
+
+            <!-- 자연스럽게 무릎 위로 덮인 스커트 단락 -->
+            <path d="M120 250 Q170 245 220 255 L225 275 L120 275 Z" fill="#ffffff" opacity="0.95" />
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="desc"><strong>의자에 걸터앉았을 때의 실제 굴절 매커니즘</strong>입니다. 레고 통짜 다리와 달리 대퇴부와 하퇴부 사이에 <strong>무릎 힌지 본(Bone)</strong>이 장착되어 자연스러운 90도 직각 착석이 완벽히 가능합니다.</p>
+          <ul class="feature-list">
+            <li><strong>무릎 관절:</strong> 엉덩이가 의자에 닿고 허벅지가 수평(0°), 무릎에서 직각(90°)으로 꺾여 발이 바닥에 안착</li>
+            <li><strong>팔꿈치 관절:</strong> 어깨에서 내려와 팔꿈치에서 꺾여 무릎이나 책상 위에 손을 가지런히 올림</li>
+            <li><strong>착석 모션:</strong> 향후 카페, 벤치, 의자 상호작용(Sit 액션) 시 100% 자연스러운 애니메이션 지원</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 시안 2: 남성 카툰 아바타 (이목구비 + 울프컷 + 어깨 벌크업 + 관절) -->
+      <div class="concept-card">
+        <div class="card-header">
+          <h3>시안 2. 남성 카툰 아바타 (정면 핏)</h3>
+          <span class="tag tag-male">남성 (Male)</span>
+        </div>
+        <div class="visual-preview">
+          <!-- SVG 남성 아바타 -->
+          <svg viewBox="0 0 320 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="skinM" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fff5eb"/>
+                <stop offset="100%" stop-color="#fedac2"/>
+              </linearGradient>
+              <linearGradient id="hairM" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8"/>
+                <stop offset="100%" stop-color="#0284c7"/>
+              </linearGradient>
+            </defs>
+
+            <!-- 단단한 남성 목 -->
+            <path d="M150 135 L150 165 L170 165 L170 135 Z" fill="url(#skinM)" />
+
+            <!-- 역삼각형 넓은 어깨 & 블레이저 상체 -->
+            <path d="M118 165 L202 165 L188 250 L132 250 Z" fill="#1e293b" />
+            <path d="M142 165 L160 195 L178 165" stroke="#f8fafc" stroke-width="4" fill="none" />
+
+            <!-- 양팔 (어깨 -> 팔꿈치 관절 -> 하완) -->
+            <line x1="120" y1="170" x2="105" y2="215" stroke="#1e293b" stroke-width="12" stroke-linecap="round" />
+            <circle cx="105" cy="215" r="5" fill="#facc15" /> <!-- 팔꿈치 관절 -->
+            <line x1="105" y1="215" x2="110" y2="255" stroke="url(#skinM)" stroke-width="9" stroke-linecap="round" />
+            <circle cx="110" cy="258" r="5" fill="url(#skinM)" />
+
+            <line x1="200" y1="170" x2="215" y2="215" stroke="#1e293b" stroke-width="12" stroke-linecap="round" />
+            <circle cx="215" cy="215" r="5" fill="#facc15" /> <!-- 팔꿈치 관절 -->
+            <line x1="215" y1="215" x2="210" y2="255" stroke="url(#skinM)" stroke-width="9" stroke-linecap="round" />
+            <circle cx="210" cy="258" r="5" fill="url(#skinM)" />
+
+            <!-- 벨트 버클 -->
+            <rect x="130" y="245" width="60" height="12" rx="3" fill="#334155" />
+            <rect x="153" y="247" width="14" height="8" rx="2" fill="#e2e8f0" />
+
+            <!-- 스트레이트 슬랙스 팬츠 (허벅지 -> 무릎 관절 -> 종아리) -->
+            <!-- 좌측 다리 -->
+            <line x1="140" y1="260" x2="138" y2="330" stroke="#0f172a" stroke-width="15" stroke-linecap="round" />
+            <circle cx="138" cy="330" r="6" fill="#facc15" /> <!-- 무릎 관절 포인트 -->
+            <line x1="138" y1="330" x2="136" y2="390" stroke="#0f172a" stroke-width="13" stroke-linecap="round" />
+            <path d="M125 390 L148 390 L148 402 L120 402 Z" fill="#0284c7" />
+
+            <!-- 우측 다리 -->
+            <line x1="180" y1="260" x2="182" y2="330" stroke="#0f172a" stroke-width="15" stroke-linecap="round" />
+            <circle cx="182" cy="330" r="6" fill="#facc15" /> <!-- 무릎 관절 포인트 -->
+            <line x1="182" y1="330" x2="184" y2="390" stroke="#0f172a" stroke-width="13" stroke-linecap="round" />
+            <path d="M172 390 L195 390 L198 402 L170 402 Z" fill="#0284c7" />
+
+            <!-- 얼굴 윤곽 (샤프한 턱선) -->
+            <path d="M128 85 L130 115 L160 148 L190 115 L192 85 Z" fill="url(#skinM)" />
+
+            <!-- 남성 눈매 (날렵한 자신감) -->
+            <path d="M136 106 L154 108 L150 116 L138 114 Z" fill="#0f172a" />
+            <circle cx="145" cy="111" r="3" fill="#38bdf8" />
+            <circle cx="143" cy="109" r="1.2" fill="#ffffff" />
+            <path d="M134 102 L154 104" stroke="#0369a1" stroke-width="2.5" fill="none" stroke-linecap="round" />
+
+            <path d="M166 108 L184 106 L182 114 L170 116 Z" fill="#0f172a" />
+            <circle cx="175" cy="111" r="3" fill="#38bdf8" />
+            <circle cx="177" cy="109" r="1.2" fill="#ffffff" />
+            <path d="M166 104 L186 102" stroke="#0369a1" stroke-width="2.5" fill="none" stroke-linecap="round" />
+
+            <!-- 오뚝한 콧날 -->
+            <path d="M160 112 L163 122 L158 124" stroke="#e08a68" stroke-width="1.8" fill="none" />
+
+            <!-- 자신감 있는 입 -->
+            <path d="M153 133 Q160 137 167 132" stroke="#9a3412" stroke-width="2" fill="none" stroke-linecap="round" />
+
+            <!-- 울프 샤기 컷 헤어 -->
+            <path d="M120 85 Q110 50 160 45 Q210 50 200 85 L208 105 L195 95 L190 120 L180 95 L170 115 L160 90 L150 115 L140 95 L130 120 L125 95 Z" fill="url(#hairM)" />
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="desc"><strong>직각 어깨와 피지컬이 돋보이는 남성 카툰 아바타</strong>입니다. 다부진 상체와 엣지 있는 헤어, 정확한 무릎/팔꿈치 관절 구조로 역동적인 보행 및 착석이 가능합니다.</p>
+          <ul class="feature-list">
+            <li><strong>이목구비:</strong> 샤프하고 당당한 눈매, 뚜렷한 콧날선, 정돈된 입술 라인</li>
+            <li><strong>바디 & 의복:</strong> 역삼각형 핏 블레이저 재킷, 슬랙스 팬츠, 스포티 스니커즈</li>
+            <li><strong>관절 포인트:</strong> 무릎과 팔꿈치 2단 분할 구조로 자연스러운 보행/착석 모션 대응</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 2. 건축 및 풍경 시안 섹션 -->
+    <h2 class="section-title">🏛️ 건축 및 풍경 테마 시안</h2>
+    <div class="grid">
+
+      <!-- 건축 시안 1: 판타지 아카데미 & 벚꽃 정원 -->
+      <div class="concept-card">
+        <div class="card-header">
+          <h3>풍경 시안 1. 판타지 아카데미 & 벚꽃 정원</h3>
+          <span class="tag tag-arch">감성 힐링</span>
+        </div>
+        <div class="visual-preview">
+          <!-- SVG 판타지 건축 그래픽 시안 -->
+          <svg viewBox="0 0 320 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="skyGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#c4b5fd"/>
+                <stop offset="50%" stop-color="#fbcfe8"/>
+                <stop offset="100%" stop-color="#fed7aa"/>
+              </linearGradient>
+              <linearGradient id="roofGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#6366f1"/>
+                <stop offset="100%" stop-color="#a855f7"/>
+              </linearGradient>
+            </defs>
+            <rect width="320" height="420" fill="url(#skyGrad1)" />
+            <ellipse cx="160" cy="380" rx="150" ry="60" fill="#86efac" />
+            <path d="M10 380 Q160 420 310 380 L310 420 L10 420 Z" fill="#65a30d" />
+
+            <!-- 아카데미 본관 -->
+            <rect x="110" y="190" width="100" height="150" fill="#f8fafc" rx="4" />
+            <polygon points="160,110 100,190 220,190" fill="url(#roofGrad1)" />
+            <circle cx="160" cy="105" r="5" fill="#f59e0b" />
+
+            <!-- 아치 창문 -->
+            <path d="M135 220 Q160 200 185 220 L185 260 L135 260 Z" fill="#38bdf8" opacity="0.8" />
+            <path d="M140 290 Q160 275 180 290 L180 340 L140 340 Z" fill="#78350f" />
+
+            <!-- 벚꽃 나무 & 벤치 -->
+            <path d="M50 270 Q60 310 55 360" stroke="#78350f" stroke-width="8" fill="none" stroke-linecap="round" />
+            <circle cx="50" cy="240" r="35" fill="#f472b6" opacity="0.85" />
+            <circle cx="35" cy="260" r="25" fill="#fb7185" opacity="0.8" />
+            <circle cx="70" cy="255" r="28" fill="#fda4af" opacity="0.8" />
+
+            <!-- 공원 벤치 (앉을 수 있는 가구) -->
+            <rect x="220" y="340" width="50" height="8" rx="2" fill="#78350f" />
+            <line x1="225" y1="348" x2="225" y2="370" stroke="#334155" stroke-width="3" />
+            <line x1="265" y1="348" x2="265" y2="370" stroke="#334155" stroke-width="3" />
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="desc"><strong>부드러운 곡선 첨탑 지붕과 파스텔 벚꽃 정원</strong> 테마입니다. 공원 벤치와 카페 테라스가 배치되어 아바타가 관절을 꺾어 자유롭게 앉아 쉴 수 있습니다.</p>
+          <ul class="feature-list">
+            <li><strong>건축 양식:</strong> 대리석 기둥, 퍼플 그라디언트 삼각 첨탑, 아치형 글래스</li>
+            <li><strong>휴게 공간:</strong> 벚꽃 나무 아래 휴식용 벤치 가구 배치 (착석 인터랙션 지원)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 건축 시안 2: 네오 메트릭스 글래스 타워 -->
+      <div class="concept-card">
+        <div class="card-header">
+          <h3>풍경 시안 2. 네오 메트릭스 글래스 타워</h3>
+          <span class="tag tag-arch" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid rgba(14,165,233,0.4);">SF 메트릭스</span>
+        </div>
+        <div class="visual-preview">
+          <!-- SVG SF 글래스타워 -->
+          <svg viewBox="0 0 320 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="neonSky" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#050515"/>
+                <stop offset="100%" stop-color="#1e1035"/>
+              </linearGradient>
+            </defs>
+            <rect width="320" height="420" fill="url(#neonSky)" />
+
+            <!-- 네온 바닥 런웨이 -->
+            <line x1="20" y1="380" x2="300" y2="380" stroke="#06b6d4" stroke-width="2" />
+            <line x1="160" y1="380" x2="160" y2="420" stroke="#06b6d4" stroke-width="1.5" opacity="0.6" />
+
+            <!-- 중앙 글래스 타워 -->
+            <rect x="110" y="100" width="100" height="280" fill="rgba(30, 41, 59, 0.85)" stroke="#38bdf8" stroke-width="2" rx="6" />
+            <line x1="110" y1="150" x2="210" y2="150" stroke="#06b6d4" stroke-width="1.5" />
+            <line x1="110" y1="210" x2="210" y2="210" stroke="#a855f7" stroke-width="1.5" />
+            <line x1="110" y1="270" x2="210" y2="270" stroke="#ec4899" stroke-width="1.5" />
+
+            <!-- 홀로그램 코어 -->
+            <circle cx="160" cy="210" r="25" fill="none" stroke="#22d3ee" stroke-width="3" stroke-dasharray="8 4" />
+            <circle cx="160" cy="210" r="12" fill="#38bdf8" opacity="0.8" />
+
+            <!-- 상단 비콘 빔 -->
+            <line x1="160" y1="100" x2="160" y2="40" stroke="#e0e7ff" stroke-width="2" />
+            <polygon points="160,30 150,40 170,40" fill="#38bdf8" />
+            <path d="M160 30 L90 0 L230 0 Z" fill="rgba(56, 189, 248, 0.15)" />
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="desc"><strong>네오 메트릭스 & SF 글래스 타워</strong> 테마입니다. 반투명 글래스 외벽과 회전하는 홀로그램 코어가 미래지향적인 세련미를 뽐냅니다.</p>
+          <ul class="feature-list">
+            <li><strong>건축물:</strong> 반사 글래스 타워, 홀로그램 비콘 빔, 네온 발광 프레임</li>
+            <li><strong>분위기:</strong> 사이버펑크 딥 네이비 감성과 모던 테크 조명</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 검토 안내 -->
+    <div style="text-align: center; margin-top: 50px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);">
+      <p style="font-size: 15px; color: #cbd5e1;">
+        ✨ 사령관 옵빠야! 본 시안 갤러리를 검토해 보시고 <strong>"이 디자인으로 가자!"</strong>라고 말씀해 주시면, 메인 가상공간에 <strong>무릎/팔꿈치 꺾임 관절 뼈대(Bone Skeleton) 및 착석 가능한 의자</strong>를 즉각 구축해 올리겠습니다!
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>
