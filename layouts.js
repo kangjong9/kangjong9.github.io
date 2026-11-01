@@ -127,10 +127,19 @@ function initProjectFolders(content) {
     ],
     "work": [
       ["내역서 마스터[개발중 30%]", "estimate.svg"],
-      ["AI친구들과 함께 실시간 회의실[개발중 90%]", "meeting.svg"]
+      ["AI친구들과 함께 실시간 회의실[개발중 90%]", "meeting.svg"],
+      ["KJGMatrix 3D 가상세계[8단계 통합]", "matrix.svg"]
     ]
   };
   const projectDownloads = {
+    "KJGMatrix 3D 가상세계[8단계 통합]": {
+      tag: "Babylon.js 3D 가상세계 · 8단계 통합 · 웹/스마트폰 즉시 입장",
+      desc: "3차원 지형, 8대 구역, 4종 앱 3D 빌딩, 7대 AI 에이전트 동반자, 실시간 작업 큐와 랜드마크가 내재된 메타버스 가상세계입니다. 설치 없이 웹/스마트폰 브라우저에서 바로 입장하여 3D 공간을 탐험할 수 있습니다.",
+      links: [
+        { label: "🌐 3D 월드 바로 입장하기 (체험)", url: "./kjg-matrix/index.html", external: true, primary: true }
+      ]
+    },
+
     "레이더 툴킷[앱]": {
       tag: "레이더 툴킷 1.0.6 · Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판",
       desc: "멀티캐스트 송신·수신을 독립 실행하고 각각 IP·포트를 설정합니다. TDELAY·북방위 계산과 역산에 소수점 0~10자리(기본 10)를 공통 적용하고 표시값 그대로 복사합니다. Android 8 이상 · 자동 업데이트 안내 · 실기기 미검증 개발판.",

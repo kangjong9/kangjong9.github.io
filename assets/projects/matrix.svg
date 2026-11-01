@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+<defs>
+  <linearGradient id="matrixBg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#0f172a"/>
+    <stop offset="50%" stop-color="#1e293b"/>
+    <stop offset="100%" stop-color="#0a3c2a"/>
+  </linearGradient>
+  <linearGradient id="cubeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#38bdf8"/>
+    <stop offset="100%" stop-color="#34d399"/>
+  </linearGradient>
+</defs>
+<rect x="8" y="8" width="240" height="240" rx="54" fill="url(#matrixBg)"/>
+<rect x="10" y="10" width="236" height="236" rx="52" fill="none" stroke="#34d399" stroke-width="6" opacity="0.8"/>
+<!-- 3D Grid Plane -->
+<path d="M48 180 L128 220 L208 180 L128 140 Z" fill="#14532d" opacity="0.6" stroke="#4ade80" stroke-width="2"/>
+<path d="M88 160 L168 200 M168 160 L88 200" stroke="#4ade80" stroke-width="1.5" opacity="0.4"/>
+<!-- 3D Cube Landmark -->
+<path d="M128 65 L178 95 L128 125 L78 95 Z" fill="#38bdf8" opacity="0.9"/>
+<path d="M78 95 L128 125 L128 175 L78 145 Z" fill="#0284c7" opacity="0.95"/>
+<path d="M178 95 L128 125 L128 175 L178 145 Z" fill="#0369a1" opacity="0.85"/>
+<!-- Orbiting Nodes (Agents) -->
+<circle cx="60" cy="80" r="9" fill="#f43f5e" stroke="#fff" stroke-width="2"/>
+<circle cx="196" cy="80" r="9" fill="#fbbf24" stroke="#fff" stroke-width="2"/>
+<circle cx="128" cy="40" r="9" fill="#a855f7" stroke="#fff" stroke-width="2"/>
+<circle cx="128" cy="125" r="5" fill="#ffffff"/>
+<text x="128" y="240" text-anchor="middle" fill="#4ade80" font-size="16" font-weight="bold" font-family="sans-serif" letter-spacing="1">KJG-MATRIX 3D</text>
+</svg>
