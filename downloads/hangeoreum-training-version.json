@@ -1,9 +1,9 @@
 {
-  "versionCode": 61,
-  "versionName": "1.0.35-training.41",
+  "versionCode": 62,
+  "versionName": "1.0.36-training.42",
   "packageName": "com.hangeoreum.training",
-  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-61/Hangeoreum-Training-61.apk",
-  "size": 583086944,
-  "sha256": "d6b1c4d85a909b2bce40549ea287f38a3483052684cdee2f02a39bc1b8b1ce92",
-  "notes": "문자 학습 화면을 정리했습니다. 단계 표시는 드롭다운으로 접고, 엑자일 말풍선은 옆으로 넓혀 낮췄습니다."
+  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-62/Hangeoreum-Training-62.apk",
+  "size": 583087552,
+  "sha256": "a79a047c4a0d0cb7ddd6eb369b7d4b864458ac083752172d57f761108e746a17",
+  "notes": "문자 학습 화면을 한 화면에 들어오게 정리했습니다. 문자표·기준 변경은 제목 아래 작은 버튼, 글자 넘기기는 좌우 밀기입니다."
 }
