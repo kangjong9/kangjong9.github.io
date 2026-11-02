@@ -1,0 +1,511 @@
+{
+ "generatedAt": "2026-11-02T02:12:03.996Z",
+ "folders": [
+  "apps",
+  "brain",
+  "coordination",
+  "inbox",
+  "manual",
+  "presentations",
+  "projects",
+  "workspaces"
+ ],
+ "apps": [
+  {
+   "id": "goal-map",
+   "name": "목표 지도",
+   "description": "대화로 목표를 구체화하고, 방법과 계획을 비교하며 실행을 함께 기록하는 공간",
+   "status": "ready",
+   "error": null,
+   "url": null,
+   "space": {
+    "version": 1,
+    "kind": "goals",
+    "endpoint": "/api/space",
+    "focusParameter": "focus"
+   }
+  },
+  {
+   "id": "memory-browser",
+   "name": "집단기억 탐색기",
+   "description": "기억·원문·관계·수정 이력과 동료의 활용·피드백을 살펴봅니다",
+   "status": "ready",
+   "error": null,
+   "url": null,
+   "space": {
+    "version": 1,
+    "kind": "memory"
+   }
+  },
+  {
+   "id": "memory-guide-slides",
+   "name": "집단기억과 목표지도 · 쉬운 슬라이드",
+   "description": "실제 화면과 저장 사례로 배우는 여백·집단기억·탐색기·목표지도 그림 사용설명서 41장",
+   "status": "ready",
+   "error": null,
+   "url": null,
+   "space": null
+  },
+  {
+   "id": "task-notes",
+   "name": "작업 메모",
+   "description": "메모를 추가하고 저장하는 간단한 메모장",
+   "status": "ready",
+   "error": null,
+   "url": null,
+   "space": null
+  }
+ ],
+ "modules": [
+  {
+   "folder": "brain",
+   "name": "집단기억",
+   "openApp": "memory-browser",
+   "error": null
+  }
+ ],
+ "workspace": [
+  {
+   "id": "99787c601c7c",
+   "group": "apps",
+   "name": "귀염뽀작 가계부",
+   "kind": "exe",
+   "status": "complete"
+  },
+  {
+   "id": "f81535ede69c",
+   "group": "apps",
+   "name": "다이어트 저리가",
+   "kind": "exe",
+   "status": "complete"
+  },
+  {
+   "id": "e2f81264fca9",
+   "group": "apps",
+   "name": "찌꺼기 저리가",
+   "kind": "exe",
+   "status": "complete"
+  },
+  {
+   "id": "aa9a3d162d8b",
+   "group": "apps",
+   "name": "유나 세레나데",
+   "kind": "media",
+   "status": "complete"
+  },
+  {
+   "id": "2ca485fe6d68",
+   "group": "apps",
+   "name": "개인 홈페이지",
+   "kind": "html",
+   "status": "complete"
+  },
+  {
+   "id": "b95336d1aa90",
+   "group": "apps",
+   "name": "RisoHiki Trainer",
+   "kind": "exe",
+   "status": "complete"
+  },
+  {
+   "id": "35301b0f7493",
+   "group": "apps",
+   "name": "Mana Save Editor",
+   "kind": "exe",
+   "status": "complete"
+  },
+  {
+   "id": "0cff45e57f15",
+   "group": "apps",
+   "name": "Three Language Learning",
+   "kind": "apk",
+   "status": "complete"
+  },
+  {
+   "id": "fb39acbdfca3",
+   "group": "apps",
+   "name": "VoiceAI Duplex",
+   "kind": "apk",
+   "status": "complete"
+  },
+  {
+   "id": "3b31c5e78dca",
+   "group": "apps",
+   "name": "Hangeoreum UI Renewal",
+   "kind": "apk",
+   "status": "complete"
+  },
+  {
+   "id": "9c40ee99d6f1",
+   "group": "apps",
+   "name": "Radar Toolkit",
+   "kind": "apk",
+   "status": "complete"
+  },
+  {
+   "id": "43848cdfb3c3",
+   "group": "folders",
+   "name": "Google Drive 포터블",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "7b7899e75a5c",
+   "group": "folders",
+   "name": "클라우드 에이전트",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "af69c2284b5d",
+   "group": "folders",
+   "name": "협업",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "c2befe6499a5",
+   "group": "folders",
+   "name": "원본설치파일",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "7e9bb9f51628",
+   "group": "folders",
+   "name": "배포",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "eb56e78a4be4",
+   "group": "folders",
+   "name": "Program",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "a34407c6e65f",
+   "group": "folders",
+   "name": "SKILL",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "c4a6f7925b39",
+   "group": "folders",
+   "name": "내역서",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "60f9e4ff2f78",
+   "group": "folders",
+   "name": "history",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "566cd62113f0",
+   "group": "folders",
+   "name": "헌법",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "1c90355d715c",
+   "group": "folders",
+   "name": "API 백엔드",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "ecbf39f6b904",
+   "group": "folders",
+   "name": "헌법 law.md",
+   "kind": "document",
+   "status": null
+  },
+  {
+   "id": "ec6d7180b4f3",
+   "group": "gate",
+   "name": "AGY 실행",
+   "kind": "exe",
+   "status": null
+  },
+  {
+   "id": "22c4ee5eb61f",
+   "group": "gate",
+   "name": "Codex 실행",
+   "kind": "exe",
+   "status": null
+  },
+  {
+   "id": "5e189e6417ce",
+   "group": "gate",
+   "name": "Claude 실행",
+   "kind": "exe",
+   "status": null
+  },
+  {
+   "id": "28d9c76098d0",
+   "group": "gate",
+   "name": "Copilot 실행",
+   "kind": "exe",
+   "status": null
+  },
+  {
+   "id": "33c106fdf9b6",
+   "group": "gate",
+   "name": "AI회의실 V2 GUI 실행",
+   "kind": "exe",
+   "status": null
+  },
+  {
+   "id": "1c732f465627",
+   "group": "gate",
+   "name": "사람음성 TTS스튜디오 실행",
+   "kind": "exe",
+   "status": null
+  },
+  {
+   "id": "10f559d64be4",
+   "group": "gate",
+   "name": "웹 LLM 로그인",
+   "kind": "exe",
+   "status": null
+  },
+  {
+   "id": "aca70fdd5376",
+   "group": "gate",
+   "name": "내역서 마스터 GUI 사용자",
+   "kind": "exe",
+   "status": null
+  },
+  {
+   "id": "805e0c473bd2",
+   "group": "gate",
+   "name": "내역서 마스터 AI 엔진",
+   "kind": "exe",
+   "status": null
+  },
+  {
+   "id": "f5ed57715155",
+   "group": "projects",
+   "name": "내역서 마스터 AI to GUI",
+   "kind": "folder",
+   "status": "project"
+  },
+  {
+   "id": "257500169187",
+   "group": "projects",
+   "name": "VocalMate P0",
+   "kind": "exe",
+   "status": "project"
+  },
+  {
+   "id": "8b15152ea234",
+   "group": "projects",
+   "name": "FallenFlower Editor",
+   "kind": "exe",
+   "status": "project"
+  },
+  {
+   "id": "3f9af6211a7e",
+   "group": "projects",
+   "name": "Human Voice TTS Studio",
+   "kind": "exe",
+   "status": "project"
+  },
+  {
+   "id": "e2ef9c6a394e",
+   "group": "projects",
+   "name": "Hangeoreum UI Renewal 2",
+   "kind": "apk",
+   "status": "project"
+  },
+  {
+   "id": "2b008d18468c",
+   "group": "projects",
+   "name": "NuriVoice STT Engine Design",
+   "kind": "exe",
+   "status": "project"
+  },
+  {
+   "id": "102920bb7792",
+   "group": "projects",
+   "name": "AI 회의실 V2",
+   "kind": "exe",
+   "status": "project"
+  },
+  {
+   "id": "89d7611f909f",
+   "group": "projects",
+   "name": "내역서 마스터 GUI 사용자",
+   "kind": "exe",
+   "status": "project"
+  },
+  {
+   "id": "290ff346ebba",
+   "group": "projects",
+   "name": "내역서 마스터 AI 엔진",
+   "kind": "exe",
+   "status": "project"
+  },
+  {
+   "id": "147d249a4da8",
+   "group": "homepage",
+   "name": "한걸음 V1.0 Exile",
+   "kind": "web",
+   "status": null,
+   "web": "downloads/Hangeoreum-preview.html",
+   "links": [
+    {
+     "title": "안내",
+     "href": "downloads/Hangeoreum-guide.txt"
+    },
+    {
+     "title": "APK",
+     "href": "downloads/Hangeoreum-V1.0-Exile.apk"
+    }
+   ]
+  },
+  {
+   "id": "31eed1869df7",
+   "group": "homepage",
+   "name": "한걸음 맞춤훈련",
+   "kind": "web",
+   "status": null,
+   "web": "downloads/Hangeoreum-Training-guide.txt",
+   "links": [
+    {
+     "title": "APK 1.0.33-training.39",
+     "href": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-59/Hangeoreum-Training-59.apk"
+    }
+   ]
+  },
+  {
+   "id": "70f776ea8b3f",
+   "group": "homepage",
+   "name": "누리보이스 스튜디오",
+   "kind": "web",
+   "status": null,
+   "web": "nuri-studio/index.html",
+   "links": []
+  },
+  {
+   "id": "7e4f523f23ed",
+   "group": "homepage",
+   "name": "누리보이스 STT 엔진",
+   "kind": "web",
+   "status": null,
+   "web": "nurivoice-stt/index.html",
+   "links": []
+  },
+  {
+   "id": "6f332d7fe716",
+   "group": "homepage",
+   "name": "레이더 툴킷",
+   "kind": "web",
+   "status": null,
+   "web": "downloads/Radar-Toolkit-guide.txt",
+   "links": [
+    {
+     "title": "APK",
+     "href": "downloads/Radar-Toolkit-1.0.6.apk"
+    },
+    {
+     "title": "PC판",
+     "href": "downloads/radar-toolkit-pc/Radar-Toolkit-PC-1.0.3.zip"
+    }
+   ]
+  },
+  {
+   "id": "255d819940f9",
+   "group": "homepage",
+   "name": "보컬트레이너 VocalMate",
+   "kind": "web",
+   "status": null,
+   "web": "downloads/VocalMate-설치안내.txt",
+   "links": [
+    {
+     "title": "APK",
+     "href": "downloads/VocalMate-0.12.0-dev.apk"
+    }
+   ]
+  },
+  {
+   "id": "81d85985117a",
+   "group": "homepage",
+   "name": "귀염뽀짝 가계부",
+   "kind": "web",
+   "status": null,
+   "web": "downloads/CuteLedger_v1.0_Release.apk",
+   "links": [
+    {
+     "title": "PC판",
+     "href": "downloads/귀염뽀작_가계부.exe"
+    }
+   ]
+  },
+  {
+   "id": "5c7cbd5cef1d",
+   "group": "homepage",
+   "name": "맹맹 다이어트",
+   "kind": "web",
+   "status": null,
+   "web": "downloads/MaengDiet_v2.8_Release_GreenLight.apk",
+   "links": [
+    {
+     "title": "PC판",
+     "href": "downloads/MaengDiet.exe"
+    }
+   ]
+  },
+  {
+   "id": "d65fe5a92d62",
+   "group": "homepage",
+   "name": "찌꺼기 저리가",
+   "kind": "web",
+   "status": null,
+   "web": "downloads/찌꺼기저리가.exe",
+   "links": []
+  },
+  {
+   "id": "2e747414b426",
+   "group": "homepage",
+   "name": "코딩놀이터OS 데스크톱",
+   "kind": "web",
+   "status": null,
+   "web": "desktop.html",
+   "links": []
+  },
+  {
+   "id": "8f2fb59f3dec",
+   "group": "homepage",
+   "name": "KJG-Matrix 갤러리",
+   "kind": "web",
+   "status": null,
+   "web": "gallery.html",
+   "links": []
+  },
+  {
+   "id": "a59e2e6da2a1",
+   "group": "homepage",
+   "name": "코딩놀이방 전시형",
+   "kind": "web",
+   "status": null,
+   "web": "exhibition.html",
+   "links": []
+  },
+  {
+   "id": "02bbb2f5a7c2",
+   "group": "homepage",
+   "name": "개인 홈페이지",
+   "kind": "web",
+   "status": null,
+   "web": "index.html",
+   "links": []
+  }
+ ]
+}
