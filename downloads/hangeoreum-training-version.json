@@ -1,9 +1,9 @@
 {
-  "versionCode": 59,
-  "versionName": "1.0.33-training.39",
+  "versionCode": 60,
+  "versionName": "1.0.34-training.40",
   "packageName": "com.hangeoreum.training",
-  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-59/Hangeoreum-Training-59.apk",
-  "size": 583085372,
-  "sha256": "45babd9114db5453bc147c72f8b7f455c190d763442c498da9dcf37dfc919f94",
-  "notes": "다이얼로그 원어민 음성의 사전 합성 충돌을 줄이고 다음 대사를 미리 준비하도록 개선했습니다."
+  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-60/Hangeoreum-Training-60.apk",
+  "size": 583086180,
+  "sha256": "005543de2da2e7ee0dc2dbe714cddf6712155b49d17a645453855dd36c8a4cb4",
+  "notes": "폰 기종에 맞춰 화면 크기를 자동으로 맞춥니다. 세로가 짧은 폰에서도 학습 화면의 문장·글자가 한 화면에 들어옵니다."
 }
