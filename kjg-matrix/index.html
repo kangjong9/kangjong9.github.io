@@ -9,10 +9,14 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <script type="module" crossorigin src="./assets/index-Dzpl999c.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CNYrKyoN.css">
+    <script type="module" crossorigin src="./assets/index-Cz3SP5K3.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DzWixq3B.css">
   </head>
   <body>
     <div id="app"></div>
+    <script>
+      // 휴대폰(Tailscale 주소)에서만 켜진 PC 찾기 서비스워커를 등록한다.
+      if ('serviceWorker' in navigator && location.hostname.endsWith('.ts.net')) navigator.serviceWorker.register('/sw.js').catch(() => {});
+    </script>
   </body>
 </html>
