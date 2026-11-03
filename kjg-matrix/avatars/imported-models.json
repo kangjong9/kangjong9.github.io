@@ -1,0 +1,230 @@
+{
+  "schema": 1,
+  "verifiedOn": "2026-11-04",
+  "models": [
+    {
+      "id": "matrix-paladin",
+      "file": "matrix-paladin.vrm",
+      "bytes": 2780052,
+      "sha256": "007b4642321a11f483199c8022bb0c65e5a61a708dc4ed7c3f75c095ff73c6a8",
+      "cost": 0,
+      "loginRequired": false,
+      "localUse": true,
+      "modificationAllowed": true,
+      "homepageRedistribution": true,
+      "license": "CC0-1.0",
+      "components": [
+        {
+          "author": "crownjoshua",
+          "title": "Knight (Rigged - Mid Poly)",
+          "license": "CC0-1.0",
+          "url": "https://opengameart.org/content/knight-rigged-mid-poly",
+          "download": "https://opengameart.org/sites/default/files/Knight_0.blend",
+          "sha256": "d7461ba21f3d5768e4f8a782ac4e5283eac73fdb991e44fddeb5cb487c045e0c"
+        },
+        {
+          "author": "VRoid Project / pixiv",
+          "file": "vroid-base-male.vrm",
+          "sha256": "ab9af434a229283c192546486f9e6eb9cd855bf7d8d45b5037ac211938cb903c",
+          "license": "CC0-1.0",
+          "url": "https://vroid.pixiv.help/hc/en-us/articles/4402614652569"
+        }
+      ],
+      "conditions": [],
+      "adaptation": [
+        "Matrix toon materials and VRM0 humanoid mapping",
+        "Original face blink, left/right wink, smile morphs",
+        "Original armor hand/finger and shin/foot skin weights; neck bridge"
+      ],
+      "converter": "scripts/import-cc0-knight.py"
+    },
+    {
+      "id": "matrix-knight",
+      "file": "matrix-knight.vrm",
+      "bytes": 2780040,
+      "sha256": "283aee8812088f022078b9e3ef005801835bcfac06b2f2118d0707a30ed38df0",
+      "cost": 0,
+      "loginRequired": false,
+      "localUse": true,
+      "modificationAllowed": true,
+      "homepageRedistribution": true,
+      "license": "CC0-1.0",
+      "components": [
+        {
+          "author": "crownjoshua",
+          "title": "Knight (Rigged - Mid Poly)",
+          "license": "CC0-1.0",
+          "url": "https://opengameart.org/content/knight-rigged-mid-poly",
+          "download": "https://opengameart.org/sites/default/files/Knight_0.blend",
+          "sha256": "d7461ba21f3d5768e4f8a782ac4e5283eac73fdb991e44fddeb5cb487c045e0c"
+        },
+        {
+          "author": "VRoid Project / pixiv",
+          "file": "vroid-base-male.vrm",
+          "sha256": "ab9af434a229283c192546486f9e6eb9cd855bf7d8d45b5037ac211938cb903c",
+          "license": "CC0-1.0",
+          "url": "https://vroid.pixiv.help/hc/en-us/articles/4402614652569"
+        }
+      ],
+      "conditions": [],
+      "adaptation": [
+        "Matrix toon materials and VRM0 humanoid mapping",
+        "Original face blink, left/right wink, smile morphs",
+        "Original armor hand/finger and shin/foot skin weights; neck bridge"
+      ],
+      "converter": "scripts/import-cc0-knight.py"
+    },
+    {
+      "id": "matrix-ranger-male",
+      "file": "matrix-ranger-male.vrm",
+      "bytes": 16622532,
+      "sha256": "d1b40fe627267e718eb5c729ee4be858730c738cc7e95ad456e1179461e3b588",
+      "cost": 0,
+      "loginRequired": false,
+      "localUse": true,
+      "modificationAllowed": true,
+      "homepageRedistribution": true,
+      "license": "CC0-1.0 + VRoid sample terms",
+      "components": [
+        {
+          "author": "Quaternius",
+          "title": "Modular Character Outfits - Fantasy [Standard]",
+          "license": "CC0-1.0",
+          "url": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
+          "downloadPage": "https://quaternius.itch.io/modular-character-outfits-fantasy",
+          "sha256": "c3468b18871cc8c8f05ab14df7712baf22cb9f389cbd870babf130e595187f70",
+          "edition": "Free Standard"
+        },
+        {
+          "author": "VRoid Project / pixiv",
+          "file": "vroidhub-sample-c.vrm",
+          "sha256": "6ad4acb74c2ea91b46a2c6755243efd9da4e0857635b659acd55d0de5832330a",
+          "license": "VRoid sample terms (not CC0)",
+          "url": "https://vroid.pixiv.help/hc/en-us/articles/4402394424089"
+        }
+      ],
+      "conditions": [
+        "Preserve VRoid sample terms; do not relabel the face as CC0, sell the sample data itself, or use it in a character-creation service."
+      ],
+      "adaptation": [
+        "Matrix toon materials and VRM0 humanoid mapping",
+        "Original face blink, left/right wink, smile morphs",
+        "VRM0 facing alignment, native outfit skinning, hood room adjusted for hair"
+      ],
+      "converter": "scripts/import-cc0-outfits.py"
+    },
+    {
+      "id": "matrix-ranger-female",
+      "file": "matrix-ranger-female.vrm",
+      "bytes": 16586980,
+      "sha256": "fd4fa41cca1268dc44c83c34e0824477440e17eb768e5712f1f0b8434a631dd6",
+      "cost": 0,
+      "loginRequired": false,
+      "localUse": true,
+      "modificationAllowed": true,
+      "homepageRedistribution": true,
+      "license": "CC0-1.0",
+      "components": [
+        {
+          "author": "Quaternius",
+          "title": "Modular Character Outfits - Fantasy [Standard]",
+          "license": "CC0-1.0",
+          "url": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
+          "downloadPage": "https://quaternius.itch.io/modular-character-outfits-fantasy",
+          "sha256": "c3468b18871cc8c8f05ab14df7712baf22cb9f389cbd870babf130e595187f70",
+          "edition": "Free Standard"
+        },
+        {
+          "author": "VRoid Project / pixiv",
+          "file": "vroid-e.vrm",
+          "sha256": "aea824cc43a95dd022a57d460ed901534a45fc2ac195f26ffc4d0d5beb0d7911",
+          "license": "CC0-1.0",
+          "url": "https://vroid.pixiv.help/hc/en-us/articles/4402614652569"
+        }
+      ],
+      "conditions": [],
+      "adaptation": [
+        "Matrix toon materials and VRM0 humanoid mapping",
+        "Original face blink, left/right wink, smile morphs",
+        "VRM0 facing alignment, native outfit skinning, hood room adjusted for hair"
+      ],
+      "converter": "scripts/import-cc0-outfits.py"
+    },
+    {
+      "id": "matrix-peasant-male",
+      "file": "matrix-peasant-male.vrm",
+      "bytes": 13811652,
+      "sha256": "ee266cc6bea92b1e1bf7a25b5670edcbadd75f9c9f6daa09b83d47771b45a226",
+      "cost": 0,
+      "loginRequired": false,
+      "localUse": true,
+      "modificationAllowed": true,
+      "homepageRedistribution": true,
+      "license": "CC0-1.0 + VRoid sample terms",
+      "components": [
+        {
+          "author": "Quaternius",
+          "title": "Modular Character Outfits - Fantasy [Standard]",
+          "license": "CC0-1.0",
+          "url": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
+          "downloadPage": "https://quaternius.itch.io/modular-character-outfits-fantasy",
+          "sha256": "c3468b18871cc8c8f05ab14df7712baf22cb9f389cbd870babf130e595187f70",
+          "edition": "Free Standard"
+        },
+        {
+          "author": "VRoid Project / pixiv",
+          "file": "vroidhub-sample-c.vrm",
+          "sha256": "6ad4acb74c2ea91b46a2c6755243efd9da4e0857635b659acd55d0de5832330a",
+          "license": "VRoid sample terms (not CC0)",
+          "url": "https://vroid.pixiv.help/hc/en-us/articles/4402394424089"
+        }
+      ],
+      "conditions": [
+        "Preserve VRoid sample terms; do not relabel the face as CC0, sell the sample data itself, or use it in a character-creation service."
+      ],
+      "adaptation": [
+        "Matrix toon materials and VRM0 humanoid mapping",
+        "Original face blink, left/right wink, smile morphs",
+        "VRM0 facing alignment, native outfit skinning, hood room adjusted for hair"
+      ],
+      "converter": "scripts/import-cc0-outfits.py"
+    },
+    {
+      "id": "matrix-peasant-female",
+      "file": "matrix-peasant-female.vrm",
+      "bytes": 12087616,
+      "sha256": "933f0fcb5f427b10de5b663ad2f9fe7c1ab73cbb4b9c1496ea4c4a535eefec44",
+      "cost": 0,
+      "loginRequired": false,
+      "localUse": true,
+      "modificationAllowed": true,
+      "homepageRedistribution": true,
+      "license": "CC0-1.0",
+      "components": [
+        {
+          "author": "Quaternius",
+          "title": "Modular Character Outfits - Fantasy [Standard]",
+          "license": "CC0-1.0",
+          "url": "https://quaternius.com/packs/modularcharacteroutfitsfantasy.html",
+          "downloadPage": "https://quaternius.itch.io/modular-character-outfits-fantasy",
+          "sha256": "c3468b18871cc8c8f05ab14df7712baf22cb9f389cbd870babf130e595187f70",
+          "edition": "Free Standard"
+        },
+        {
+          "author": "VRoid Project / pixiv",
+          "file": "vroid-e.vrm",
+          "sha256": "aea824cc43a95dd022a57d460ed901534a45fc2ac195f26ffc4d0d5beb0d7911",
+          "license": "CC0-1.0",
+          "url": "https://vroid.pixiv.help/hc/en-us/articles/4402614652569"
+        }
+      ],
+      "conditions": [],
+      "adaptation": [
+        "Matrix toon materials and VRM0 humanoid mapping",
+        "Original face blink, left/right wink, smile morphs",
+        "VRM0 facing alignment, native outfit skinning, hood room adjusted for hair"
+      ],
+      "converter": "scripts/import-cc0-outfits.py"
+    }
+  ]
+}

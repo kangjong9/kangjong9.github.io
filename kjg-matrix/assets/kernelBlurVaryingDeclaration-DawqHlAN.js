@@ -1,1 +1,0 @@
-import{o as e}from"./babylon-rE-0nigO.js";const r="kernelBlurVaryingDeclaration",a="varying sampleCoord{X}: vec2f;";e.IncludesShadersStoreWGSL[r]||(e.IncludesShadersStoreWGSL[r]=a);const n={name:r,shader:a};export{n as k};

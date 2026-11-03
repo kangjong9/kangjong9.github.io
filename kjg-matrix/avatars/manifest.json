@@ -1,0 +1,32 @@
+{
+  "mode": "public",
+  "models": [
+    "matrix-paladin",
+    "matrix-knight",
+    "matrix-ranger-male",
+    "matrix-ranger-female",
+    "matrix-peasant-male",
+    "matrix-peasant-female",
+    "vroid-d",
+    "vroid-d-darkness",
+    "vroid-e",
+    "vroid-g",
+    "vroid-shino",
+    "vroid-base-female",
+    "vroid-f",
+    "vroid-base-male",
+    "vroidhub-sample-c",
+    "vroidhub-tomari-mari",
+    "vroidhub-alchemist-girl",
+    "vroidhub-dark-magical",
+    "vroidhub-hikari",
+    "vroidhub-chapelle",
+    "vroidhub-yukino",
+    "vroidhub-reya",
+    "vroidhub-hayato",
+    "vroidhub-boy-tbb",
+    "vroidhub-avalon-male",
+    "vroidhub-ken",
+    "vroidhub-osashi-1"
+  ]
+}

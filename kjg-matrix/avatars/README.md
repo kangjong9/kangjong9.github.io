@@ -1,4 +1,4 @@
-# VRM 아바타 (CC0)
+# VRM 아바타 — 모델별 출처·이용 조건
 
 VRoid Studio 알파판 샘플 모델. VRoid(pixiv)가 CC0으로 공개한 모델을 OpenGameArt에서 받았다(2026-11-02).
 
@@ -13,7 +13,27 @@ VRoid Studio 알파판 샘플 모델. VRoid(pixiv)가 CC0으로 공개한 모델
 | vroid-g.vrm | AvatarSample_G |
 | vroid-shino.vrm | Sendagaya Shino |
 
-AvatarSample A~C(별도 조건)는 쓰지 않는다.
+위 CC0 묶음에는 AvatarSample A~C를 넣지 않았다. 이후 등록된 AvatarSample_C와 그 얼굴을 쓴 남성 레인저·주민은 아래의 별도 VRoid 샘플 조건을 유지한다.
+
+## 2026-11-04 추가: 무료 판타지 캐릭터 6종
+
+Mixamo는 Adobe 로그인이 필요해 이번에는 파일을 받지 않았다. 공식 제작자의 무료 공개 파일을 받아 기존 매트릭스의 셀 명암·휴머노이드 동작·실제 얼굴 표정을 적용했다. 원작 권리를 자체 제작물로 바꾸어 표시하지 않는다.
+
+| 파일 | 구성·변환 | 이용 조건 |
+|---|---|---|
+| matrix-paladin.vrm | crownjoshua 기사 + VRoid CC0 기본 남성 얼굴, 은금 갑옷 | CC0 |
+| matrix-knight.vrm | 같은 기사 원본의 청록 갑옷 변형 | CC0 |
+| matrix-ranger-male.vrm | Quaternius 남성 Ranger + VRoid AvatarSample_C 얼굴·머리 | 의상 CC0 + VRoid 샘플 조건 |
+| matrix-ranger-female.vrm | Quaternius 여성 Ranger + VRoid CC0 E 얼굴·머리 | CC0 |
+| matrix-peasant-male.vrm | Quaternius 남성 Peasant + VRoid AvatarSample_C 얼굴·머리 | 의상 CC0 + VRoid 샘플 조건 |
+| matrix-peasant-female.vrm | Quaternius 여성 Peasant + VRoid CC0 E 얼굴·머리 | CC0 |
+
+- 기사: [Knight (Rigged - Mid Poly), crownjoshua](https://opengameart.org/content/knight-rigged-mid-poly), [원본 blend](https://opengameart.org/sites/default/files/Knight_0.blend).
+- 의상: [Quaternius Modular Character Outfits – Fantasy](https://quaternius.com/packs/modularcharacteroutfitsfantasy.html)의 무료 **Standard**. 유료 Source 미사용. [공식 다운로드](https://quaternius.itch.io/modular-character-outfits-fantasy).
+- 얼굴: [VRoid CC0 안내](https://vroid.pixiv.help/hc/en-us/articles/4402614652569), [AvatarSample_C 등 별도 샘플 조건](https://vroid.pixiv.help/hc/en-us/articles/4402394424089). C는 수정·무료 재배포가 허용되지만 CC0로 재지정, 샘플 데이터 자체 유료 재배포, 캐릭터 제작 서비스로의 데이터 전용 등은 금지된다. 원 조건을 그대로 따른다.
+- 파일 해시·구성 요소별 조건: [imported-models.json](./imported-models.json). 최종 VRM의 권리 메타데이터도 보존했다.
+- 변환: `scripts/import-cc0-knight.py`, `scripts/import-cc0-outfits.py`. 원본은 `.local/character-import-20261104`에 보관한다. 외부 blend 내장 스크립트는 실행하지 않는다. baseColor 텍스처 원본 해상도를 유지한다.
+- 로컬 목록은 총69종, 공개 허용 목록은27종이다. 공개 빌드는 `avatar-assets.mjs`가 허용한27개 `.vrm`만 복사하고 실제 목록을 검사한다. 로컬42종은 배포 파일에서 제외한다. 다른 기존 모델은 아래의 개별 조건을 따른다.
 
 ## VRoid Hub 모델 (작가별 이용 조건)
 
