@@ -1,9 +1,9 @@
 {
-  "versionCode": 62,
-  "versionName": "1.0.36-training.42",
+  "versionCode": 63,
+  "versionName": "1.0.37-training.43",
   "packageName": "com.hangeoreum.training",
-  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-62/Hangeoreum-Training-62.apk",
-  "size": 583087552,
-  "sha256": "a79a047c4a0d0cb7ddd6eb369b7d4b864458ac083752172d57f761108e746a17",
-  "notes": "문자 학습 화면을 한 화면에 들어오게 정리했습니다. 문자표·기준 변경은 제목 아래 작은 버튼, 글자 넘기기는 좌우 밀기입니다."
+  "apk": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-63/Hangeoreum-Training-63.apk",
+  "size": 583098501,
+  "sha256": "97d8a1329451428022b5f82110d990626b8669fb6aebde131dc66551138fcd27",
+  "notes": "위쪽 메뉴 AI 통역사 옆에 📻 Radio를 추가했습니다. 배우는 언어의 실제 라디오를 뉴스·예능·스포츠·다큐로 골라 들을 수 있습니다."
 }
