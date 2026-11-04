@@ -5,8 +5,8 @@
     {
       "id": "matrix-paladin",
       "file": "matrix-paladin.vrm",
-      "bytes": 2780052,
-      "sha256": "007b4642321a11f483199c8022bb0c65e5a61a708dc4ed7c3f75c095ff73c6a8",
+      "bytes": 3100128,
+      "sha256": "be26bd01efe73b6d92b8aad5e7b0671944a52725c0027ce28853c365f4249edd",
       "cost": 0,
       "loginRequired": false,
       "localUse": true,
@@ -21,28 +21,22 @@
           "url": "https://opengameart.org/content/knight-rigged-mid-poly",
           "download": "https://opengameart.org/sites/default/files/Knight_0.blend",
           "sha256": "d7461ba21f3d5768e4f8a782ac4e5283eac73fdb991e44fddeb5cb487c045e0c"
-        },
-        {
-          "author": "VRoid Project / pixiv",
-          "file": "vroid-base-male.vrm",
-          "sha256": "ab9af434a229283c192546486f9e6eb9cd855bf7d8d45b5037ac211938cb903c",
-          "license": "CC0-1.0",
-          "url": "https://vroid.pixiv.help/hc/en-us/articles/4402614652569"
         }
       ],
       "conditions": [],
       "adaptation": [
-        "Matrix toon materials and VRM0 humanoid mapping",
-        "Original face blink, left/right wink, smile morphs",
-        "Original armor hand/finger and shin/foot skin weights; neck bridge"
+        "Original Knight face, eyes, teeth, tongue and complete rig preserved",
+        "Original topology/UV and effective skin weights verified; original mirror modifiers evaluated",
+        "Original Cycles albedo/image converted to glTF PBR; no invented expressions or neck bridge",
+        "Only two armor material colors distinguish the existing variants"
       ],
-      "converter": "scripts/import-cc0-knight.py"
+      "converter": "scripts/restore-cc0-knight.py"
     },
     {
       "id": "matrix-knight",
       "file": "matrix-knight.vrm",
-      "bytes": 2780040,
-      "sha256": "283aee8812088f022078b9e3ef005801835bcfac06b2f2118d0707a30ed38df0",
+      "bytes": 3100124,
+      "sha256": "3867600b5af5febf98dec8ffde272542e2e5cc04943e185ea9f9eed85f35f083",
       "cost": 0,
       "loginRequired": false,
       "localUse": true,
@@ -57,22 +51,16 @@
           "url": "https://opengameart.org/content/knight-rigged-mid-poly",
           "download": "https://opengameart.org/sites/default/files/Knight_0.blend",
           "sha256": "d7461ba21f3d5768e4f8a782ac4e5283eac73fdb991e44fddeb5cb487c045e0c"
-        },
-        {
-          "author": "VRoid Project / pixiv",
-          "file": "vroid-base-male.vrm",
-          "sha256": "ab9af434a229283c192546486f9e6eb9cd855bf7d8d45b5037ac211938cb903c",
-          "license": "CC0-1.0",
-          "url": "https://vroid.pixiv.help/hc/en-us/articles/4402614652569"
         }
       ],
       "conditions": [],
       "adaptation": [
-        "Matrix toon materials and VRM0 humanoid mapping",
-        "Original face blink, left/right wink, smile morphs",
-        "Original armor hand/finger and shin/foot skin weights; neck bridge"
+        "Original Knight face, eyes, teeth, tongue and complete rig preserved",
+        "Original topology/UV and effective skin weights verified; original mirror modifiers evaluated",
+        "Original Cycles albedo/image converted to glTF PBR; no invented expressions or neck bridge",
+        "Only two armor material colors distinguish the existing variants"
       ],
-      "converter": "scripts/import-cc0-knight.py"
+      "converter": "scripts/restore-cc0-knight.py"
     },
     {
       "id": "matrix-ranger-male",
