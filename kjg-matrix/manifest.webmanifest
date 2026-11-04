@@ -1,7 +1,7 @@
 {
-  "name": "KJG 매트릭스",
-  "short_name": "KJG 매트릭스",
-  "description": "KJG-Matrix 3D 가상 업무공간",
+  "name": "KJG 매트릭스 공개 체험",
+  "short_name": "매트릭스 체험",
+  "description": "홈페이지 공개 체험판 · PC 작업 공간과 오라클 실시간 감시는 전용 접속 아이콘을 사용하세요.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,17 @@
   "theme_color": "#f4f3e9",
   "lang": "ko",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

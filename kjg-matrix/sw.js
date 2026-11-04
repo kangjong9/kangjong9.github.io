@@ -45,7 +45,7 @@ self.addEventListener('fetch', event => {
   if (event.request.mode !== 'navigate') return;
   event.respondWith((async () => {
     try {
-      const response = await fetch(event.request, { signal: AbortSignal.timeout(8000) });
+      const response = await fetch(event.request, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
       // PC는 켜졌지만 매트릭스 서버가 꺼졌을 때(Tailscale 502·503·504)도 다른 PC를 찾는다.
       if (response.status < 502 || response.status > 504) { event.waitUntil(refreshHosts()); return response; }
       throw Error('matrix off');
