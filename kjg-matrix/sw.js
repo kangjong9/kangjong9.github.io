@@ -1,7 +1,8 @@
 // [사령관님 지시 2026-11-02] 휴대폰 아이콘 하나로 사무실·집 중 켜진 PC의 매트릭스를 찾아간다.
-// 화면 이동(navigate)만 다룬다. 앱 파일·데이터 요청은 건드리지 않고 캐시도 하지 않는다.
+// 화면 이동은 PC 자동 찾기, 정적 풍경만 재사용한다. 업무 데이터와 API는 캐시하지 않는다.
 const STORE = 'kjg-matrix-hosts';
 const HOSTS = '/_cnv/hosts.json';
+const SCENERY_CACHE = 'kjg-matrix-scenery-20261104-v1';
 
 async function knownHosts() {
   const saved = await caches.open(STORE).then(cache => cache.match(HOSTS)).then(r => r?.json(), () => null);
@@ -42,6 +43,21 @@ retry.onclick = find; find();
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  // 정적 마을 부품만 캐시한다. 연결 상태·대화·파일 목록·API는 매번 실제 서버에서 확인한다.
+  if (event.request.method === 'GET' && url.origin === location.origin && /^\/assets\/(medieval|nature)\/[\w./-]+\.(gltf|bin|png|jpg|jpeg|webp)$/.test(url.pathname)) {
+    event.respondWith((async () => {
+      let cache, saved;
+      try { cache = await caches.open(SCENERY_CACHE); saved = await cache.match(event.request); }
+      catch { cache = null; /* 저장소 제한·손상 때도 정상 네트워크로 마을을 읽는다. */ }
+      if (saved) return saved;
+      const response = await fetch(event.request);
+      if (cache && response.ok && !/text\/html/i.test(response.headers.get('content-type') || '')) {
+        event.waitUntil(cache.put(event.request, response.clone()).catch(() => {}));
+      }
+      return response;
+    })()); return;
+  }
   if (event.request.mode !== 'navigate') return;
   event.respondWith((async () => {
     try {
