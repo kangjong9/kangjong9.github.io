@@ -138,8 +138,7 @@ function initProjectFolders(content) {
       tag: "Babylon.js 3D 가상세계 · 8단계 통합 · 웹/스마트폰 즉시 입장",
       desc: "3차원 지형, 8대 구역, 4종 앱 3D 빌딩, 7대 AI 에이전트 동반자, 실시간 작업 큐와 랜드마크가 내재된 메타버스 가상세계입니다. 설치 없이 웹/스마트폰 브라우저에서 바로 입장하여 3D 공간을 탐험할 수 있습니다.",
       links: [
-        { label: "🌐 3D 월드 바로 입장하기 (체험)", url: "./kjg-matrix/index.html", external: true, primary: true },
-        { label: "📘 캐릭터 도감 PDF · 공개 27종 (1.0MB)", url: "./downloads/kjg-matrix/KJGMatrix-Character-Archive-Public.pdf", download: "KJGMatrix-Character-Archive-Public.pdf", primary: false }
+        { label: "🌐 3D 월드 바로 입장하기 (체험)", url: "./kjg-matrix/index.html", external: true, primary: true }
       ]
     },
 
