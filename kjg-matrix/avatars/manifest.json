@@ -31,193 +31,193 @@
   ],
   "transport": {
     "matrix-paladin": {
-      "encoding": "gzip",
-      "originalBytes": 3100128,
-      "bytes": 1707195,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/bca611cef1d6436314d2c143a7862d692d341eea42d9e606d8e4b7008ad74fc9.vrm.gz",
       "originalSha256": "be26bd01efe73b6d92b8aad5e7b0671944a52725c0027ce28853c365f4249edd",
-      "sha256": "44a4ded9a3536a8f28696abb78a50aaeae46cfde76eff40d494c6ce99f77b1c1"
+      "runtimeSha256": "587b79a36f2668e4a6d479b15caaf07fa9d0a46f0f932c58309e78b84c3fc268",
+      "sha256": "bca611cef1d6436314d2c143a7862d692d341eea42d9e606d8e4b7008ad74fc9"
     },
     "matrix-knight": {
-      "encoding": "gzip",
-      "originalBytes": 3100124,
-      "bytes": 1707191,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/a8db5f2a7cfb12a3cef5162562c930f02a4313c5a6af1fb8127b213dcdd53b22.vrm.gz",
       "originalSha256": "3867600b5af5febf98dec8ffde272542e2e5cc04943e185ea9f9eed85f35f083",
-      "sha256": "c4e71a634ee813c14fb4640b002609cfa22d285cef5c5f8416ae8875daf9bcb1"
+      "runtimeSha256": "cfa9dcf772407501d9af6d0944dfbca06d2d401b85a61c20c9e6b89bb8a67ec6",
+      "sha256": "a8db5f2a7cfb12a3cef5162562c930f02a4313c5a6af1fb8127b213dcdd53b22"
     },
     "matrix-ranger-male": {
-      "encoding": "gzip",
-      "originalBytes": 16622532,
-      "bytes": 14445650,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/6d430dc6c3ecd7a837274aa950e6c1436ddfce0a698a8d4e14020854beb05183.vrm.gz",
       "originalSha256": "d1b40fe627267e718eb5c729ee4be858730c738cc7e95ad456e1179461e3b588",
-      "sha256": "f61edbc20c0cce3f45a7fdc58fa7cd740b46627db3e1d647577091b17e42ae32"
+      "runtimeSha256": "274d2b68898918292c92787aeea286cb175c3ebfb50ef5f74620fa4e8761ff82",
+      "sha256": "6d430dc6c3ecd7a837274aa950e6c1436ddfce0a698a8d4e14020854beb05183"
     },
     "matrix-ranger-female": {
-      "encoding": "gzip",
-      "originalBytes": 16586980,
-      "bytes": 14521614,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/a9fb2d15a3b2c242a232b93dc4df9bc622fea97235a510339d8884862ccb442d.vrm.gz",
       "originalSha256": "fd4fa41cca1268dc44c83c34e0824477440e17eb768e5712f1f0b8434a631dd6",
-      "sha256": "07f5bea2857d1d046abc214e7acb72815949f98ffcdcc39b5ad82ee70d905429"
+      "runtimeSha256": "003b271b071455f9522f4e4467d66ef4c3b736cbf5fd9f1270c471081d09962e",
+      "sha256": "a9fb2d15a3b2c242a232b93dc4df9bc622fea97235a510339d8884862ccb442d"
     },
     "matrix-peasant-male": {
-      "encoding": "gzip",
-      "originalBytes": 13811652,
-      "bytes": 12540125,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/a75a0a57b62c0edb0cbbb5dd5fe1f83b1aa8ad2f6d50e6516644b1e3ca9959c0.vrm.gz",
       "originalSha256": "ee266cc6bea92b1e1bf7a25b5670edcbadd75f9c9f6daa09b83d47771b45a226",
-      "sha256": "989b49bded3e6ab2b103bf4623499b1763347ceb3696a1baca4e40d8ef4faf9e"
+      "runtimeSha256": "f85f9ce50562dd8121008ecb27265caa38f8b0ea621e26098b58e2320572b7ed",
+      "sha256": "a75a0a57b62c0edb0cbbb5dd5fe1f83b1aa8ad2f6d50e6516644b1e3ca9959c0"
     },
     "matrix-peasant-female": {
-      "encoding": "gzip",
-      "originalBytes": 12087616,
-      "bytes": 11209110,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/3a35f5c0c804f5bd288c9bda8d5e6c1249a04c4c245727c6c53c0217106e7f90.vrm.gz",
       "originalSha256": "933f0fcb5f427b10de5b663ad2f9fe7c1ab73cbb4b9c1496ea4c4a535eefec44",
-      "sha256": "f59fbe3438ba6403e9219584d522a89f082031d127c5aa7e0c22a7503af75d8b"
+      "runtimeSha256": "73da186e833420d6ecb9c915a9d4ec8c875e692fa646fb90ec06a088ea3d4746",
+      "sha256": "3a35f5c0c804f5bd288c9bda8d5e6c1249a04c4c245727c6c53c0217106e7f90"
     },
     "vroid-d": {
-      "encoding": "gzip",
-      "originalBytes": 16851352,
-      "bytes": 13611553,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/04f6716ce1141a2e61a9595dd2247558117dddee542215c81dc42f7c467f47d5.vrm.gz",
       "originalSha256": "9adf1b44e959d2688d62c2dd558e74315d6aa40e3bf8d281390b7a85dc0df9b7",
-      "sha256": "4a88112062a192be541f20b46ae23cf61f1852899ac5925e2db647736f615d87"
+      "runtimeSha256": "4f9f63833b61618080b85201055bfd64918b96d7e90691f87360fe7e25c43f7c",
+      "sha256": "04f6716ce1141a2e61a9595dd2247558117dddee542215c81dc42f7c467f47d5"
     },
     "vroid-d-darkness": {
-      "encoding": "gzip",
-      "originalBytes": 21043628,
-      "bytes": 17214002,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/380d1cb2ca66e83476bcd7f7433971360eff84c0d2b6c62f52c21a49b69aef5d.vrm.gz",
       "originalSha256": "037951ea624ff5ab8ef302e00abe74edfe823f381f009a8455f962e62357d42a",
-      "sha256": "7dc45f8d25383c76f97cfbaf44dc34a8c63bad88b66d5cf56627a0a62ee6e441"
+      "runtimeSha256": "97f6b067d11c999c98685aceb1ff558add057b76a3af6a79c1fc80463009e0e0",
+      "sha256": "380d1cb2ca66e83476bcd7f7433971360eff84c0d2b6c62f52c21a49b69aef5d"
     },
     "vroid-e": {
-      "encoding": "gzip",
-      "originalBytes": 17936516,
-      "bytes": 14965786,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/dd450a664daf87dc8b25b089c356f6485a67181201acc524a8156b688457a15d.vrm.gz",
       "originalSha256": "aea824cc43a95dd022a57d460ed901534a45fc2ac195f26ffc4d0d5beb0d7911",
-      "sha256": "d8d308423e2c386102aed4c14d42a1d714fc30263687a0e7f4e924f0d79d0354"
+      "runtimeSha256": "892b79067fddfa51d8addfcca5828aee27679f86d9b831e4a4bc053fe59fdfeb",
+      "sha256": "dd450a664daf87dc8b25b089c356f6485a67181201acc524a8156b688457a15d"
     },
     "vroid-g": {
-      "encoding": "gzip",
-      "originalBytes": 15321932,
-      "bytes": 12251724,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/3e1d9cf76a6cc8d983dc8360dc337ed774118b6d742395d02f8c6503eb0aba11.vrm.gz",
       "originalSha256": "ad5750ce944b708155abb7ac6807e19d7f5e73a939f0ee32daf0539acfca57c0",
-      "sha256": "695e3c6af8b4c2a606d88efc67aded23fd9496036259a09fe9692b21c50b4159"
+      "runtimeSha256": "3d5da06ae4ce1165efbfca48bf66656694c7e9c47266fda4c9d3f0605382dee1",
+      "sha256": "3e1d9cf76a6cc8d983dc8360dc337ed774118b6d742395d02f8c6503eb0aba11"
     },
     "vroid-shino": {
-      "encoding": "gzip",
-      "originalBytes": 14870776,
-      "bytes": 11748566,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/a396acfd5a15841ee2bd390c5113bc460b602ec44f02f6d75cb12982749d2f72.vrm.gz",
       "originalSha256": "f11b2648e7e588ae171ad1c32e465f84e5b130b1d1789e3a3702946c0981d2a9",
-      "sha256": "432c60cc7fc27cfdd9a99c6ebf02cbd696fc496b3578d592e6a64b3d7a38055b"
+      "runtimeSha256": "cd5e0c22d41b88c2bf044a14cee70ef1ebd86cf5eccfd7e4553ca9b87eaa6050",
+      "sha256": "a396acfd5a15841ee2bd390c5113bc460b602ec44f02f6d75cb12982749d2f72"
     },
     "vroid-base-female": {
-      "encoding": "gzip",
-      "originalBytes": 16323872,
-      "bytes": 13156430,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/51583640bdc78fdf9b7877a56b08bcc3c51571f0e08f9b8391d8db28cdc4832e.vrm.gz",
       "originalSha256": "1995f174f6c8f2211f3c56c9e5fe4f9daf27ee5e648f129479582a259238149b",
-      "sha256": "9ec129fd8973655b3421626157868f788328014f749e4af0ba9ce11a935b82a0"
+      "runtimeSha256": "7c34418a12368352ece0c59a490f0f4ba4556e94eb5fe8a03cb1ed68e2023d99",
+      "sha256": "51583640bdc78fdf9b7877a56b08bcc3c51571f0e08f9b8391d8db28cdc4832e"
     },
     "vroid-f": {
-      "encoding": "gzip",
-      "originalBytes": 14198800,
-      "bytes": 11170766,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/402fd03f6d322be12c65c22728b75b318f2099276a2f08dc70681df33cd8e013.vrm.gz",
       "originalSha256": "d8eff1ed09b41afb94e30da27997560fb901dde925c813f835ab1986708521bb",
-      "sha256": "4689c4bb0ea37a8c17ef9537e927f8312e8846f065d61ceddf7670b3ca12887a"
+      "runtimeSha256": "d5d27a4cbd1e3eb9b8b30730ca07bd7fc3d955fc3c0cc71cff0046dac8b29b4f",
+      "sha256": "402fd03f6d322be12c65c22728b75b318f2099276a2f08dc70681df33cd8e013"
     },
     "vroid-base-male": {
-      "encoding": "gzip",
-      "originalBytes": 17914788,
-      "bytes": 14829170,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/44239bda7cf24b954e167f1574d4d9df6339de42ee1f6c45525ffdd5e8b700d3.vrm.gz",
       "originalSha256": "ab9af434a229283c192546486f9e6eb9cd855bf7d8d45b5037ac211938cb903c",
-      "sha256": "0fd7734160ed9edc296bd676131bc3d1aaa027e08965c15f2d2dfa5f70354132"
+      "runtimeSha256": "b51e54e76f0074fc6a848c408339fecd4c974b17d3e7208a0abe8308e4504bbd",
+      "sha256": "44239bda7cf24b954e167f1574d4d9df6339de42ee1f6c45525ffdd5e8b700d3"
     },
     "vroidhub-sample-c": {
-      "encoding": "gzip",
-      "originalBytes": 20015220,
-      "bytes": 13128500,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/86f8ec546f827c194e2dd16349708cfe797c321b1e777f3ff4be5236086e2bb5.vrm.gz",
       "originalSha256": "6ad4acb74c2ea91b46a2c6755243efd9da4e0857635b659acd55d0de5832330a",
-      "sha256": "59d1139246a921a40b6a348e1f9d134f7f56ea68528a636d728845d3b1eeb8f4"
+      "runtimeSha256": "f90f65c96f5d113b90e5edfb3909b523766ae915c98f734b787a5a18123b077b",
+      "sha256": "86f8ec546f827c194e2dd16349708cfe797c321b1e777f3ff4be5236086e2bb5"
     },
     "vroidhub-tomari-mari": {
-      "encoding": "gzip",
-      "originalBytes": 31467836,
-      "bytes": 12021710,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/f458249b54ce024e27c1efd7fb56d3b19ce0c3decf8dff4c59bd99c3a22d9356.vrm.gz",
       "originalSha256": "a7579530b56d438d3039128785d5c55c3a9d530ec78893ed23c6572a19b4ad67",
-      "sha256": "5b818fce0c88bbb86fdd439f4e570048f47d86332af8c1d3f85406f184c59a9d"
+      "runtimeSha256": "617c5ab47715990941055217281885adb3cebb8a8c0149f13aa66c446d570022",
+      "sha256": "f458249b54ce024e27c1efd7fb56d3b19ce0c3decf8dff4c59bd99c3a22d9356"
     },
     "vroidhub-alchemist-girl": {
-      "encoding": "gzip",
-      "originalBytes": 25627588,
-      "bytes": 18318660,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/a078fef6325c0434fd1f9233a357b0e5367d536c155f704bf43f564cfcc23976.vrm.gz",
       "originalSha256": "71e892c832ef1c9698e7ed806127e14de5dcd2b57532a664e0dfa39a098dbdf5",
-      "sha256": "df68c40990c718810aaea30d64fb96b0380ed07391b6b0232ddbd826d0b9eddb"
+      "runtimeSha256": "6fc1f0ba92b764a0bb358a9f1d9f34e7396fad8c6e08a8775e19e761a14bc6e5",
+      "sha256": "a078fef6325c0434fd1f9233a357b0e5367d536c155f704bf43f564cfcc23976"
     },
     "vroidhub-dark-magical": {
-      "encoding": "gzip",
-      "originalBytes": 19176068,
-      "bytes": 11661589,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/cc302016ec9e41ca356af31b84228b5270125557df20723fea8e9e8ae748a3f4.vrm.gz",
       "originalSha256": "7d9b50d6db5523dc4eb8abc759c5295b2c795eb7a0642b4b371e3f1ef2f34565",
-      "sha256": "adbb1bad17275e36fd1fc4373936a74653124bbd572eeeb93aa97ddbf5815040"
+      "runtimeSha256": "0df8126fc4c8b0ed448c3f0b3370f5ee44dd4420ced4f057074e031e49bf02d7",
+      "sha256": "cc302016ec9e41ca356af31b84228b5270125557df20723fea8e9e8ae748a3f4"
     },
     "vroidhub-hikari": {
-      "encoding": "gzip",
-      "originalBytes": 34545364,
-      "bytes": 27332938,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/ae4b44584907cd5a14b4f8982cca2121a7b5196dfae64f7d1c90b50e59d4523d.vrm.gz",
       "originalSha256": "93b9dc0d926604d1ae9107f6cd33a6199c3f21121c7bf281b4ae6637c6d7e12e",
-      "sha256": "283482576759da7c5ecabb04d22ea1bdd8f7cc7862c9b9519d613e6437652c78"
+      "runtimeSha256": "0d29591cee4dc3e178d7d3e22b5b51f0f7169f00f4e528929223584bc8c5c0c9",
+      "sha256": "ae4b44584907cd5a14b4f8982cca2121a7b5196dfae64f7d1c90b50e59d4523d"
     },
     "vroidhub-chapelle": {
-      "encoding": "gzip",
-      "originalBytes": 30017440,
-      "bytes": 13442487,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/698f38c0242b16947dbbc105c5bfe775bb48ab711e1fc00e1334366da0793dd1.vrm.gz",
       "originalSha256": "6b1e2e2249d2f774841791ee5c3635701e4fecebeabc3859f0bdf493b9a93385",
-      "sha256": "6a165e1b70c3df61ceb6b36eece7679e655bcf9013eaea03efcf4a07618519aa"
+      "runtimeSha256": "1926c8147836ebaa1f0d9886af6a9f20f8289d43d47ce010641b28facfd8c084",
+      "sha256": "698f38c0242b16947dbbc105c5bfe775bb48ab711e1fc00e1334366da0793dd1"
     },
     "vroidhub-yukino": {
-      "encoding": "gzip",
-      "originalBytes": 16512128,
-      "bytes": 9302183,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/974ea8fb8510f57ec8ff0720c0869ef5529d5e9a787786246e76f2b1fbcdb30c.vrm.gz",
       "originalSha256": "5f748646459f1159b23f2ee75b95339d81c146344ac66e29646f16d4b7eb2965",
-      "sha256": "157602cce405be2e879d678674ed23cfc59b96e09b443cf81e3bc38c09db7da6"
+      "runtimeSha256": "7a26c2e8c257a47377a446cdaf83e067fad8d0106ec880116aa4a7e344d5b93b",
+      "sha256": "974ea8fb8510f57ec8ff0720c0869ef5529d5e9a787786246e76f2b1fbcdb30c"
     },
     "vroidhub-reya": {
-      "encoding": "gzip",
-      "originalBytes": 12427372,
-      "bytes": 9634344,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/9a7aba35dc8ee693216c4a9895e4c010ee4f2e30a05c4ee89aed2c29b0f6a020.vrm.gz",
       "originalSha256": "d82d5ea75d112bb01902b0e42cea275b35f931dbfbfe223a894af250b6cb68b5",
-      "sha256": "b154bfc424a6da91fa4ed1f31eefbcc945fe4c9c7d384bdb8ff816705a53ca9d"
+      "runtimeSha256": "b7a9796d712bba5a36ccd51ad42a2a8c0292d4980a160c807b39251dee08ace4",
+      "sha256": "9a7aba35dc8ee693216c4a9895e4c010ee4f2e30a05c4ee89aed2c29b0f6a020"
     },
     "vroidhub-hayato": {
-      "encoding": "gzip",
-      "originalBytes": 16577568,
-      "bytes": 14241520,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/db5c463f5c6e244dffe70857fc446f5dba7171b6a52c8917ba29127756bb9559.vrm.gz",
       "originalSha256": "db5f239f9816938c6c27a342e59744e172a8395e1eae095bf4a05b5a4d88a7e9",
-      "sha256": "43f76f9dca68e90cfb1e052268e47c09b5dfe4ca177a70af7412f2af045c9d70"
+      "runtimeSha256": "ee08b7aa1c5b2307bac0789210200302074e57e8d07d9be1b9f5d74dd6d0dc97",
+      "sha256": "db5c463f5c6e244dffe70857fc446f5dba7171b6a52c8917ba29127756bb9559"
     },
     "vroidhub-boy-tbb": {
-      "encoding": "gzip",
-      "originalBytes": 16641704,
-      "bytes": 9518173,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/d0e7a2ee514dfdb08016e179550f096a6bdb14c607f9487ebbafd96307547a9e.vrm.gz",
       "originalSha256": "775b8d8dee887b686f1fbd38300bf83d4385965746589a8fd6a2706bd7193d72",
-      "sha256": "7c81364093c515bd5a6d090d5c46786f70660aa78ff7914884bb5e0be57e5405"
+      "runtimeSha256": "35f2b10801a43d4264128239fd2568b4038d9836ab06528a5570d2941ffc4a5d",
+      "sha256": "d0e7a2ee514dfdb08016e179550f096a6bdb14c607f9487ebbafd96307547a9e"
     },
     "vroidhub-avalon-male": {
-      "encoding": "gzip",
-      "originalBytes": 15034920,
-      "bytes": 8133770,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/92d69df575213b228a6c73dcce3f6e0bab7b76612a2c16e39f62f2885cbff9a1.vrm.gz",
       "originalSha256": "8650e29bd468e7560148a9bc59aa173fc8f5246ae51396bebd98d3c6b6c3aa11",
-      "sha256": "d578c1a7667032d0f28dff57494d842f94674549757cbe6e7105517a473dcea3"
+      "runtimeSha256": "a6ca3479db92f9c024f3433ce788b9bf4377f7c0e983c2783743c9c50053a036",
+      "sha256": "92d69df575213b228a6c73dcce3f6e0bab7b76612a2c16e39f62f2885cbff9a1"
     },
     "vroidhub-ken": {
-      "encoding": "gzip",
-      "originalBytes": 19982188,
-      "bytes": 16442038,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/c7fb8fa90fb359f29e7e9f15cefb7171ddc87dd9efef91fcc74da6dd22f60a90.vrm.gz",
       "originalSha256": "8dd889971f46602d5caabcff3f28ba3fca7a3fd93ba4ec46ee83d439b8867d26",
-      "sha256": "43fa30545cce0c134648a77e6f2f3cccfe2c2fde1294378127860ad59ee4ae6d"
+      "runtimeSha256": "9c5d77011ad5f18aa02ad77e1b70a60a412f396da1158ce21e611cb707f06f42",
+      "sha256": "c7fb8fa90fb359f29e7e9f15cefb7171ddc87dd9efef91fcc74da6dd22f60a90"
     },
     "vroidhub-osashi-1": {
-      "encoding": "gzip",
-      "originalBytes": 7698196,
-      "bytes": 4350661,
+      "encoding": "split-gzip-v1",
+      "file": "../avatar-runtime/models/af9ec97f7c9afe49ce5060c56a453e203154298ffdc089a4fa3dbcdffbb1e679.vrm.gz",
       "originalSha256": "a731f820b3f3e6d88cf2312b6d504c6af5c1a5145beb9d97671ac8b0f2eff79b",
-      "sha256": "787a80ff35295c9506127f9de3de7e8128410beded761d06f4415f9fe0f9ea64"
+      "runtimeSha256": "20664c8713f9457c301e61122538f7d0a8a907d9b83a25073c186bdfdc2199a3",
+      "sha256": "af9ec97f7c9afe49ce5060c56a453e203154298ffdc089a4fa3dbcdffbb1e679"
     }
   }
 }
