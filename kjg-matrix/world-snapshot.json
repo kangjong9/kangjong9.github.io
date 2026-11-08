@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-03T05:36:09.527Z",
+ "generatedAt": "2026-11-08T15:43:16.751Z",
  "folders": [
   "apps",
   "brain",
@@ -40,7 +40,7 @@
   {
    "id": "memory-guide-slides",
    "name": "집단기억과 목표지도 · 쉬운 슬라이드",
-   "description": "실제 화면과 저장 사례로 배우는 여백·집단기억·탐색기·목표지도 그림 사용설명서 41장",
+   "description": "실제 화면과 저장 사례로 배우는 KJG-Matrix·집단기억·탐색기·목표지도 그림 사용설명서 41장",
    "status": "ready",
    "error": null,
    "url": null,
@@ -171,13 +171,6 @@
    "status": null
   },
   {
-   "id": "7e9bb9f51628",
-   "group": "folders",
-   "name": "배포",
-   "kind": "folder",
-   "status": null
-  },
-  {
    "id": "eb56e78a4be4",
    "group": "folders",
    "name": "Program",
@@ -216,6 +209,13 @@
    "id": "1c90355d715c",
    "group": "folders",
    "name": "API 백엔드",
+   "kind": "folder",
+   "status": null
+  },
+  {
+   "id": "10fcfd30b0e7",
+   "group": "folders",
+   "name": "KJGMatrixV1",
    "kind": "folder",
    "status": null
   },
@@ -276,6 +276,13 @@
    "status": null
   },
   {
+   "id": "da5d7516ebb9",
+   "group": "gate",
+   "name": "오라클 실시간감시기",
+   "kind": "exe",
+   "status": null
+  },
+  {
    "id": "aca70fdd5376",
    "group": "gate",
    "name": "내역서 마스터 GUI 사용자",
@@ -332,6 +339,13 @@
    "status": "project"
   },
   {
+   "id": "d122f9145eec",
+   "group": "projects",
+   "name": "Oracle HQ Monitor",
+   "kind": "exe",
+   "status": "project"
+  },
+  {
    "id": "102920bb7792",
    "group": "projects",
    "name": "AI 회의실 V2",
@@ -379,8 +393,8 @@
    "web": "downloads/Hangeoreum-Training-guide.txt",
    "links": [
     {
-     "title": "APK 1.0.36-training.42",
-     "href": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-62/Hangeoreum-Training-62.apk"
+     "title": "APK 1.0.38-training.44",
+     "href": "https://github.com/kangjong9/kangjong9.github.io/releases/download/hangeoreum-training-64/Hangeoreum-Training-64.apk"
     }
    ]
   },

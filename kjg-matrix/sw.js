@@ -2,7 +2,7 @@
 // 화면 이동은 PC 자동 찾기, 정적 풍경만 재사용한다. 업무 데이터와 API는 캐시하지 않는다.
 const STORE = 'kjg-matrix-hosts';
 const HOSTS = '/_cnv/hosts.json';
-const SCENERY_CACHE = 'kjg-matrix-scenery-20261104-v1';
+const SCENERY_CACHE = 'kjg-matrix-scenery-20261108-v2';
 
 async function knownHosts() {
   const saved = await caches.open(STORE).then(cache => cache.match(HOSTS)).then(r => r?.json(), () => null);
@@ -45,7 +45,7 @@ self.addEventListener('activate', event => event.waitUntil(self.clients.claim())
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   // 정적 마을 부품만 캐시한다. 연결 상태·대화·파일 목록·API는 매번 실제 서버에서 확인한다.
-  if (event.request.method === 'GET' && url.origin === location.origin && /^\/assets\/(medieval|nature)\/[\w./-]+\.(gltf|bin|png|jpg|jpeg|webp)$/.test(url.pathname)) {
+  if (event.request.method === 'GET' && url.origin === location.origin && /^\/parts\/kits\/(medieval|nature)\/[\w./-]+\.(gltf|bin|png|jpg|jpeg|webp)$/.test(url.pathname)) {
     event.respondWith((async () => {
       let cache, saved;
       try { cache = await caches.open(SCENERY_CACHE); saved = await cache.match(event.request); }
